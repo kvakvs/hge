@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeCreate function</h1>
+<p>
+Creates the <b>HGE</b> object if needed and returns a pointer to the <b>HGE</b> interface.
+</p>
+<pre>
+HGE *hgeCreate(
+  int <i><b>ver</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>ver</i>
+<dd><b>HGE</b> API version number. Just pass the <b>HGE_VERSION</b> constant here.
+</dl>
+<h2>Return value</h2>
+<p>
+If the loaded HGE.DLL contains compatible API, <b>hgeCreate</b> returns a pointer to the <b>HGE</b> interface. Otherwise it returns 0.
+</p>
+<h2>Remarks</h2>
+<p>
+<b>hgeCreate</b> is a global C function. It is located outside of any classes and is imported from the <b>HGE</b> DLL.
+<br><br>
+To access <b>HGE</b> functions you need the HGE interface pointer that is returned by <b>hgeCreate</b> function.
+<b>hgeCreate</b> creates a <b>HGE</b> object if needed and increases the internal reference counter.
+To free obtained interface you must call the <a href="hgefunc_interfacerelease.html">Release</a>
+function.
+<br><br>
+You may call <b>hgeCreate</b> every time you need access to <b>HGE</b>,
+then call <a href="hgefunc_interfacerelease.html">Release</a>. Or you may get the
+interface just once during startup and store it in a global variable, then release during cleanup.
+Although the latter is supposed to be 'bad style', this works fine with not very big projects.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_interfacerelease.html">Release</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

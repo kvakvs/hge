@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgepmanager.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeParticleManager::SpawnPS</h1>
+<p>
+Creates a particle system instance.
+</p>
+<pre>
+hgeParticleSystem *SpawnPS(
+  hgeParticleSystemInfo *<i><b>psi</b></i>,
+  float <i><b>x</b></i>,
+  float <i><b>y</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>psi</i>
+<dd>Pointer to a valid <a href="hgeparticle_psinfo.html">hgeParticleSystemInfo</a> structure, describing the particle system.
+<dt><i>x</i>
+<dd>Screen x-coordinate.
+<dt><i>y</i>
+<dd>Screen y-coordinate.
+</dl>
+<h2>Return value</h2>
+<p>
+If succeeded returns pointer to the created particle system,
+otherwise returns 0.
+</p>
+<h2>Remarks</h2>
+<p>
+The maximum number of simultaneously allowed particle systems within one manager is 100.
+If you try to create more particle systems, <b>SpawnPS</b> will return 0.
+<br><br>
+The manager monitors a particle system created by <b>SpawnPS</b> method and
+removes it from memory as soon as it is stopped (either manually or
+because of it's life time have passed) and all it's particles are dead.
+<br><br>
+If you want to access the particle system via the pointer returned by <b>SpawnPS</b>,
+you should first ensure that the pointer is valid with <a href="hgepmanager_ispsalive.html">IsPSAlive</a> method.
+Also, don't delete the returned pointer manually, this may cause system crash.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgeparticle.h<br>
+<b>Import library:</b> hgehelp.lib<br>
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgepmanager_ispsalive.html">IsPSAlive</a>,
+<a href="hgepmanager_killps.html">KillPS</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

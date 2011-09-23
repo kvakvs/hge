@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::Texture_Load</h1>
+<p>
+Loads a texture from memory, resource pack or disk file.
+</p>
+<pre>
+HTEXTURE Texture_Load(
+  const char *<i><b>filename</b></i>,
+  DWORD <i><b>size</b></i> = 0,
+  bool <i><b>bMipmap</b></i> = false
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>filename</i>
+<dd>Texture file name.
+<dt><i>size</i>
+<dd>If this parameter isn't 0, it is the size of memory block containing the texture
+in one of the known formats and the parameter <b>filename</b> is treated as a pointer to this block.
+<dt><i>bMipmap</i>
+<dd>If <b>true</b>, a set of mipmap levels is automatically created and used for rendering.
+</dl>
+<h2>Return value</h2>
+<p>
+If successful, returns the texture handle.
+Otherwise returns 0.
+</p>
+<h2>Remarks</h2>
+<p>
+Supports <b>BMP</b>, <b>DDS</b>, <b>DIB</b>, <b>JPG</b>, <b>PNG</b> and <b>TGA</b> graphics file formats.
+<b>DDS</b> format allows usage of DXT1-DXT5 texture compression which results in better performance
+and lower video memory requirements.
+<br><br>
+Texture dimensions must be a power of 2. If this condition isn't met, the texture is
+automatically padded to the closest power of 2 dimensions, bigger than it's actual size.
+<br><br>
+If <b>filename</b> specifies relative path, texture file is first searched within all resource packs attached with
+<a href="hgefunc_resourceattachpack.html">Resource_AttachPack</a>, then in the application disk folder.
+If <b>filename</b> specifies absolute disk path, texture file is loaded directly from disk.
+<br><br>
+If mipmapping requested, a set of consequent smaller versions of the texture is generated and used for rendering.
+This results in faster and higher quality rendering of sprites which are significantly reduced compared to their original size.
+Textures with this option require 1/3 more video memory.
+<br><br>
+If the function fails, you may obtain error message with <a href="hgefunc_systemgeterror.html">System_GetErrorMessage</a>
+function. Also if <a href="hgeconst_systemstate.html#HGE_LOGFILE">HGE_LOGFILE</a> system state was set, the
+error message is written to log.
+<br><br>
+When the texture isn't needed longer, you must delete it with
+<a href="hgefunc_texturefree.html">Texture_Free</a> function.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_texturecreate.html">Texture_Create</a>,
+<a href="hgefunc_texturefree.html">Texture_Free</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

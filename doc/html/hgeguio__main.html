@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="switchContents('cnt_main.html','cnt_hgeguio.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeGUIObject helper class</h1>
+<p>
+<b>hgeGUIObject</b> is an abstract class used to define custom GUI controls.
+The default classes <a href="hgegui_guitext.html">hgeGUIText</a>,
+<a href="hgegui_guibutton.html">hgeGUIButton</a> and <a href="hgegui_guislider.html">hgeGUISlider</a>
+are derived from it. You can create your own controls deriving their classes from <b>hgeGUIObject</b>.
+<br><br>
+All the methods of <b>hgeGUIObject</b> are <b>virtual</b>. If you don't need some of the methods, you could just use defaults and not redefine them.
+The only methods you must define in a derived class are <a href="hgeguio_constructor.html">Constuctor</a> and <a href="hgeguio_render.html">Render</a>.
+You could also use virtual destructor.
+</p>
+<h2>hgeGUIObject methods</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td width=22%><a href="hgeguio_constructor.html">Constructor</a></td>
+<td>Should initialize <b>hgeGUIObject</b> object.</td>
+</tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td><a href="hgeguio_render.html">Render</a></td>
+<td>Should render the control to the screen.</td>
+</tr>
+<tr>
+<td><a href="hgeguio_update.html">Update</a></td>
+<td>Is called each GUI update to allow control animation.</td>
+</tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td><a href="hgeguio_enter.html">Enter</a></td>
+<td>Is called when the GUI is about to appear on the screen.</td>
+</tr>
+<tr>
+<td><a href="hgeguio_leave.html">Leave</a></td>
+<td>Is called when the GUI is about to disappear from the screen.</td>
+</tr>
+<tr>
+<td><a href="hgeguio_reset.html">Reset</a></td>
+<td>Is called when the user requests GUI to be reset in default state.</td>
+</tr>
+<tr>
+<td><a href="hgeguio_isdone.html">IsDone</a></td>
+<td>Used to test if the control has finished it's Enter/Leave animation.</td>
+</tr>
+<tr>
+<td><a href="hgeguio_focus.html">Focus</a></td>
+<td>Is called when the control gains or loses keyboard input focus.</td>
+</tr>
+<tr>
+<td><a href="hgeguio_mouseover.html">MouseOver</a></td>
+<td>Is called when the mouse cursor enters/leaves the control's area.</td>
+</tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td><a href="hgeguio_mousemove.html">MouseMove</a></td>
+<td>Notifies the control of mouse movements.</td>
+</tr>
+<tr>
+<td><a href="hgeguio_mouselbutton.html">MouseLButton</a></td>
+<td>Notifies the control of left mouse button state changes.</td>
+</tr>
+<tr>
+<td><a href="hgeguio_mouserbutton.html">MouseRButton</a></td>
+<td>Notifies the control of right mouse button state changes.</td>
+</tr>
+<tr>
+<td><a href="hgeguio_mousewheel.html">MouseWheel</a></td>
+<td>Notifies the control of mouse wheel shift.</td>
+</tr>
+<tr>
+<td><a href="hgeguio_keyclick.html">KeyClick</a></td>
+<td>Notifies the control of pressed keys.</td>
+</tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td><a href="hgeguio_setcolor.html">SetColor</a></td>
+<td>Is called when user requests to change the control's color.</td>
+</tr>
+</table>
+</p>
+<h2>Related information</h2>
+<p>
+<a href="hgeguio_datamembers.html">hgeGUIObject data members</a>
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgegui.h<br>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

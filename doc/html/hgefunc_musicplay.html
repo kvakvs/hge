@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::Music_Play</h1>
+<p>
+Starts playing a music.
+</p>
+<pre>
+HCHANNEL Music_Play(
+  HMUSIC <i><b>music</b></i>,
+  bool <i><b>loop</b></i>,
+  int <i><b>volume</b></i> = 100,
+  int <i><b>order</b></i> = -1,
+  int <i><b>row</b></i> = -1
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>music</i>
+<dd>Handle of a music to be played.
+<dt><i>loop</i>
+<dd>If <b>true</b>, the music is looped until the audio channel is stopped manually.<br>
+If <b>false</b> the music is played once.
+<dt><i>volume</i>
+<dd>Starting volume, 0..100. Optional.
+<dt><i>order</i>
+<dd>Starting order. -1 = use current. Optional.
+<dt><i>row</i>
+<dd>Starting row. -1 = use current. Optional.
+</dl>
+<h2>Return value</h2>
+<p>
+Returns the audio channel handle through which the music is played.
+Use this handle with audio channel control functions.
+</p>
+<h2>Remarks</h2>
+<p>
+Only one instance of a music can be played at the same time.
+If the music is already playing, it is restarted with default parameters.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_musicload.html">Music_Load</a>,
+<a href="hgefunc_musicfree.html">Music_Free</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

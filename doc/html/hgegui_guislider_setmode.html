@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgegui.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeGUISlider::SetMode</h1>
+<p>
+Changes the slider's behaviour mode.
+</p>
+<pre>
+void SetMode(
+  float <i><b>fMin</b></i>,
+  float <i><b>fMax</b></i>,
+  int   <i><b>mode</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>fMin</i>
+<dd>The minimum value allowed for the slider.
+<dt><i>fMax</i>
+<dd>The maximum value allowed for the slider.
+<dt><i>mode</i>
+<dd>The slider's visualization mode. May be one of these:
+<ul>
+<li><b>HGESLIDER_BAR</b><br>
+The slider is displayed as a bar that starts at the slider's leftmost point
+and ends at the current slider's position. The slider's image is stretched,
+so, to avoid visual distortion, ensure that it spreads for one pixel in each
+direction outside of the specified region of the texture.
+<li><b>HGESLIDER_BARRELATIVE</b><br>
+The slider is displayed as a bar that starts at the slider's center
+and ends at the current slider's position. The slider's image is stretched,
+so, to avoid visual distortion, ensure that it spreads for one pixel in each
+direction outside of the specified region of the texture.
+<li><b>HGESLIDER_SLIDER</b><br>
+The slider is displayed as a fixed size head that is
+positioned based on the current slider's value.
+</ul>
+</dl>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgeguictrls.h<br>
+<b>Import library:</b> hgehelp.lib
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

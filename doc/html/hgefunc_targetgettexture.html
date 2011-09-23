@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::Target_GetTexture</h1>
+<p>
+Returns a render target's texture handle.
+</p>
+<pre>
+HTEXTURE Target_GetTexture(
+  HTARGET <i><b>target</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>target</i>
+<dd>Handle of the render target which  texture handle will be returned.
+</dl>
+<h2>Return value</h2>
+<p>
+Returns the render target's texture handle.
+</p>
+<h2>Remarks</h2>
+<p>
+You may use the returned texture for rendering to screen or other render targets.
+<br><br>
+<b>DON'T</b> delete the textures obtained with <b>Target_GetTexture</b> call!
+The results are unpredictable. A render target's texture is deleted
+automatically during render target deletion.
+<br><br>
+The texture handle, returned by <b>Target_GetTexture</b> may change when
+contents of video memory is lost (eg. mode switching). So, obtain the handle every
+time you need it. If you want to use cached handles you have to update them
+in your <a href="hgeconst_systemstate.html#HGE_GFXRESTOREFUNC">HGE_GFXRESTOREFUNC</a> function.
+<br><br>
+Render targets' content can be lost due to events like video mode switching.
+If you render a texture each frame this is not a problem. But if you render
+it once, at startup - you must rerender it upon signal from <b>HGE</b>.
+To do this - write a rendering function and attach it by setting
+<a href="hgeconst_systemstate.html#HGE_GFXRESTOREFUNC">HGE_GFXRESTOREFUNC</a> system state.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

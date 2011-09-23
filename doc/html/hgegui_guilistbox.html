@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgegui.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeGUIListbox class</h1>
+<p>
+<b>hgeGUIListbox</b> is a class for listbox GUI control.
+To create a <b>hgeGUIListbox</b> object you may use this constructor:
+</p>
+<pre>
+hgeGUIListbox(
+  int       <i><b>id</b></i>,
+  float     <i><b>x</b></i>,
+  float     <i><b>y</b></i>,
+  float     <i><b>w</b></i>,
+  float     <i><b>h</b></i>,
+  hgeFont  *<i><b>fnt</b></i>,
+  DWORD     <i><b>tColor</b></i>,
+  DWORD     <i><b>thColor</b></i>,
+  DWORD     <i><b>hColor</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>id</i>
+<dd>Integer identificator for the created control.
+<dt><i>x</i>
+<dd>The listbox's top-left corner x-coordinate.
+<dt><i>y</i>
+<dd>The listbox's top-left corner y-coordinate.
+<dt><i>w</i>
+<dd>The listbox's width.
+<dt><i>h</i>
+<dd>The listbox's height.
+<dt><i>fnt</i>
+<dd>Pointer to the <a href="hgefont__main.html">hgeFont</a> object to be used for rendering listbox items text.
+<dt><i>tColor</i>
+<dd>The <a href="hgedata_hwcolor.html">color</a> to use for rendering listbox items.
+<dt><i>thColor</i>
+<dd>The <a href="hgedata_hwcolor.html">color</a> to use for rendering highlighted listbox items.
+<dt><i>hColor</i>
+<dd>The <a href="hgedata_hwcolor.html">color</a> to use for rendering the stripe under highlighted listbox item.
+</dl>
+<h2>Other methods</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td><a href="hgegui_guilistbox_additem.html">AddItem</a></td>
+<td>Adds an item to the listbox.</td>
+</tr>
+<tr>
+<td><a href="hgegui_guilistbox_deleteitem.html">DeleteItem</a></td>
+<td>Deletes an item from the listbox.</td>
+</tr>
+<tr>
+<td><a href="hgegui_guilistbox_getselecteditem.html">GetSelectedItem</a></td>
+<td>Returns the index of currently selected item.</td>
+</tr>
+<tr>
+<td><a href="hgegui_guilistbox_setselecteditem.html">SetSelectedItem</a></td>
+<td>Changes selection to the specified item.</td>
+</tr>
+<tr>
+<td><a href="hgegui_guilistbox_gettopitem.html">GetTopItem</a></td>
+<td>Returns the index of the first displayed item.</td>
+</tr>
+<tr>
+<td><a href="hgegui_guilistbox_settopitem.html">SetTopItem</a></td>
+<td>Changes the first displayed item to the specified one.</td>
+</tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td><a href="hgegui_guilistbox_getitemtext.html">GetItemText</a></td>
+<td>Returns the text string of the specified item.</td>
+</tr>
+<tr>
+<td><a href="hgegui_guilistbox_getnumitems.html">GetNumItems</a></td>
+<td>Returns total number of items in the listbox.</td>
+</tr>
+<tr>
+<td><a href="hgegui_guilistbox_getnumrows.html">GetNumRows</a></td>
+<td>Returns the number of simultaneously visible items.</td>
+</tr>
+<tr>
+<td><a href="hgegui_guilistbox_clear.html">Clear</a></td>
+<td>Removes all items from the listbox.</td>
+</tr>
+</table>
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgeguictrls.h<br>
+<b>Import library:</b> hgehelp.lib<br>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::Stream_Play</h1>
+<p>
+Starts playing an audio stream.
+</p>
+<pre>
+HCHANNEL Stream_Play(
+  HSTREAM <i><b>stream</b></i>,
+  bool <i><b>loop</b></i>,
+  int <i><b>volume</b></i> = 100
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>stream</i>
+<dd>Handle of an audio stream to be played.
+<dt><i>loop</i>
+<dd>If <b>true</b>, the stream is looped until the audio channel is stopped manually.<br>
+If <b>false</b> the stream is played once.
+<dt><i>volume</i>
+<dd>The stream's initial volume, ranging from 0 to 100.
+</dl>
+<h2>Return value</h2>
+<p>
+Returns the audio channel handle through which the stream is played.
+Use this handle with audio channel control functions.
+</p>
+<h2>Remarks</h2>
+<p>
+Only one instance of a stream can be played at the same time.
+If the stream is already playing, it is restarted with default parameters.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_streamload.html">Stream_Load</a>,
+<a href="hgefunc_streamfree.html">Stream_Free</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

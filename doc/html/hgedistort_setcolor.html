@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgedistort.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeDistortionMesh::SetColor</h1>
+<p>
+Sets color and alpha for the specified distortion node.
+</p>
+<pre>
+void SetColor(
+  int <i><b>col</b></i>,
+  int <i><b>row</b></i>,
+  DWORD <i><b>color</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>col</i>
+<dd>Column of the node to be changed. The numeration starts from 0.
+<dt><i>row</i>
+<dd>Row of the node to be changed. The numeration starts from 0.
+<dt><i>color</i>
+<dd>The new color value.
+</dl>
+<h2>Remarks</h2>
+<p>
+The color parameter includes alpha value. See the
+<a href="hgedata_hwcolor.html">Hardware color format</a>
+section for details.
+The way the color is applied to the texture data depends on the blending mode.
+See <a href="hgeconst_blendmode.html">Blending modes</a> for more information.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgedistort.h<br>
+<b>Import library:</b> hgehelp.lib<br>
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgedistort_getcolor.html">GetColor</a>,
+<a href="hgedistort_setz.html">SetZ</a>,
+<a href="hgedistort_setdisplacement.html">SetDisplacement</a>,
+<a href="hgedistort_setblendmode.html">SetBlendMode</a>,
+<a href="hgedata_hwcolor.html">Hardware color format</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

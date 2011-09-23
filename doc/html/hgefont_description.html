@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefont.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Font description file format</h1>
+<p>
+To create and use a <a href="hgefont__main.html">hgeFont</a> object you will need a couple of files
+that describe your font.
+</p>
+<h2>Font description file</h2>
+<p>
+This file must be passed to the <a href="hgefont_constructor.html">hgeFont constructor</a>.
+It is just plain text file that contains specification
+for all the font symbols.
+</p>
+<p>
+The first line should contain the font description file marker:
+</p>
+<pre>
+[HGEFONT]
+</pre>
+<p>
+The font bitmap file name should follow (the path is relative to the description file itself):
+</p>
+<pre>
+Bitmap=font_bitmap.png
+</pre>
+<p>
+Then should follow descriptions for each character in the font:
+</p>
+<pre>
+Char=" ",1,1,3,30,-1,4
+Char="!",5,1,7,30,1,0
+Char=""",13,1,8,30,3,2
+...
+Char=FE,445,187,17,30,0,0
+Char=FF,463,187,16,30,-2,-1
+</pre>
+<p>
+The first value in a line specifies the character to be described. This can be a character itself
+within double quotes or it's hexadecimal code.
+</p>
+<p>
+Then follow four numbers, defining the character placing on the font bitmap: X-coordinate,
+Y-coordinate, character's width and character's height.
+</p>
+<p>
+The last two numbers define horizontal position offsets when rendering the character in a line of text.
+First is offset before the character, second is offset after the character. The offsets can be negative.
+These allow usage of italic, script and artistic fonts.
+</p>
+<p>
+The complete font description file may look like this:
+</p>
+<pre>
+[HGEFONT]
+
+Bitmap=font_bitmap.png
+
+Char=" ",1,1,3,30,-1,4
+Char="!",5,1,7,30,1,0
+Char=""",13,1,8,30,3,2
+...
+Char=FE,445,187,17,30,0,0
+Char=FF,463,187,16,30,-2,-1
+</pre>
+<h2>Font bitmap file</h2>
+<p>
+This file must hold the images of all the symbols, specified
+in the font description file. The font bitmap file dimensions
+must be a power of 2. 
+</p>
+<h2>See also</h2>
+<p>
+<a href="fbuilder__main.html">Bitmap Font Builder</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::Gfx_StartBatch</h1>
+<p>
+Starts rendering of user's graphic primitives batch.
+</p>
+<pre>
+hgeVertex *Gfx_StartBatch(
+  int <i><b>prim_type</b></i>,
+  HTEXTURE <i><b>tex</b></i>,
+  int <i><b>blend</b></i>,
+  int *<i><b>max_prim</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>prim_type</i>
+<dd>Type of graphic primitives to be rendered:<br>
+<b>HGEPRIM_LINES</b> - lines<br>
+<b>HGEPRIM_TRIPLES</b> - triples<br>
+<b>HGEPRIM_QUADS</b> - quads
+<dt><i>tex</i>
+<dd>Handle of the texture to use or 0. 
+<dt><i>blend</i>
+<dd>Blending mode.
+<dt><i>max_prim</i>
+<dd>Pointer to an <b>int</b> that will receive the maximum number of primitives allowed within a single batch.
+</dl>
+<h2>Return value</h2>
+<p>
+If successful, returns pointer to the vertex buffer to be filled with vertices and stores the maximum allowed number
+of primitives into <b>max_prim</b>. Otherwise returns 0.
+</p>
+<h2>Remarks</h2>
+<p>
+<b>Gfx_StartBatch</b> is a backdoor to the heart of <b>HGE</b> and <b>DirectX</b> for expert use.
+It provides direct access to hardware vertex buffer and allows extremely fast rendering of large
+arrays of graphic primitives. This may be used for tasks like sofisticated geometry or texture effects
+or complex precalculated objects rendering.
+<br><br>
+<b>Gfx_StartBatch</b> function must be called between the <a href="hgefunc_gfxbeginscene.html">Gfx_BeginScene</a>
+and <a href="hgefunc_gfxendscene.html">Gfx_EndScene</a> calls. To finish a batch use 
+<a href="hgefunc_gfxfinishbatch.html">Gfx_FinishBatch</a> function. No other rendering functions
+are allowed inside <b>Gfx_StartBatch</b>/<b>Gfx_FinishBatch</b> calls pair.
+<br><br>
+Vertex buffer size is constant and unlikely to change. It can hold up to 1000 quads / 1333 triples /
+2000 lines. You should write to the buffer 2 vertices per line, 3 vertices per triple or 4 vertices per quad.
+The actual number of primitives written to the buffer should be passed to <a href="hgefunc_gfxfinishbatch.html">Gfx_FinishBatch</a>.
+<br><br>
+<b>Gfx_StartBatch</b> flushes all previously accumulated graphic primitives.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_gfxfinishbatch.html">Gfx_FinishBatch</a>,
+<a href="hgefunc_gfxbeginscene.html">Gfx_BeginScene</a>,
+<a href="hgefunc_gfxendscene.html">Gfx_EndScene</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

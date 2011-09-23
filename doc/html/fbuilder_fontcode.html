@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_fbuilder.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Using Bitmap Fonts in your game</h1>
+<h2>Loading a font</h2>
+<p>
+To load a font you should just create a <a href="hgefont__main.html">hgeFont</a>
+object and pass the font file name to it's constructor:
+</p>
+<pre>
+hgeFont *fnt;
+fnt = new hgeFont("font1.fnt");
+</pre>
+<p>
+Alternatively you may want to describe a font within
+<a href="hgeresource_script.html">resource script</a> and use
+<a href="hgeresource__main.html">hgeResourceManager</a> to load it.
+</p>
+<h2>Rendering text</h2>
+<p>
+The simplest way to render a text is <a href="hgefont_render.html">hgeFont::Render</a> method.
+You should just specify an anchor point on the screen, text alignment mode and the string to be rendered:
+<pre>
+fnt->Render(20, 20, HGETEXT_LEFT, "Hello, world!");
+</pre>
+<p>
+You may use '\n' character in the string to indicate line breaks:
+</b>
+<pre>
+fnt->Render(20, 20, HGETEXT_LEFT,
+       "Hello, Peter!\nLet's meet in 2012.");
+</pre>
+<p>
+A more advanced <a href="hgefont_printf.html">hgeFont::printf</a> methods allows to render complex formatted strings
+with variables in a usual C-like syntax:
+</p>
+<pre>
+char *player;
+int score;
+
+fnt->printf(780, 10, HGETEXT_RIGHT,
+       "Player:%s Score:%d", player, score);
+</pre>
+<p>
+The most powerful method is <a href="hgefont_printfb.html">hgeFont::printfb</a>. It has all functionality
+of <b>printf</b> plus it can automatically format the string into a rectangle on the screen.
+</p>
+<pre>
+int level;
+
+fnt->printfb(200, 200, 400, 100, HGETEXT_CENTER | HGETEXT_MIDDLE,
+       "Level:%d\nOnce upon a time in a galaxy far away..."
+       "There was a great hero of unbelievable strength.", level);
+</pre>
+<h2>Adjusting text appearance</h2>
+<p>
+You may alter the font appearance with
+<a href="hgefont_setcolor.html">SetColor</a>,
+<a href="hgefont_setblendmode.html">SetBlendMode</a>,
+<a href="hgefont_setscale.html">SetScale</a>,
+<a href="hgefont_setrotation.html">SetRotation</a>,
+<a href="hgefont_settracking.html">SetTracking</a>,
+<a href="hgefont_setspacing.html">SetSpacing</a>
+methods:
+</p>
+<pre>
+fnt->SetColor(0x80FFFF00);
+fnt->SetBlendMode(BLEND_DEFAULT);
+fnt->SetScale(1.3f);
+fnt->SetRotation(0.1f);
+fnt->SetTracking(8.0f);
+fnt->SetSpacing(1.4f);
+</pre>
+<h2>Clean up</h2>
+<p>
+When the font isn't needed longer, you must delete it:
+</p>
+<pre>
+delete fnt;
+</pre>
+<p>
+If the font was loaded with <b>hgeResourceManager</b> you must NOT delete it.
+Leave this to the resource manager.
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefont__main.html">hgeFont</a>,
+<a href="hgeresource__main.html">hgeResourceManager</a>,
+<a href="fbuilder__main.html">Bitmap Font Builder</a>,
+<a href="tutorials_tut03.html">Tutorial 03</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

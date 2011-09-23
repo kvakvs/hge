@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::Input_GetKeyName</h1>
+<p>
+Returns a key or mouse button name from it's code.
+</p>
+<pre>
+char *Input_GetKeyName(
+  int <i><b>key</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>key</i>
+<dd>Specifies one of virtual-key codes.
+For more information see <a href="hgeconst_keycodes.html">Key codes</a> section. 
+</dl>
+<h2>Return value</h2>
+<p>
+Returns a pointer to the string holding the specified key name.
+For undefined key codes returns "?".
+</p>
+<h2>Remarks</h2>
+<p>
+<b>Input_GetKeyName</b> handles keyboard keys and mouse buttons.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_inputgetkeystate.html">Input_GetKeyState</a>,
+<a href="hgefunc_inputgetkey.html">Input_GetKey</a>,
+<a href="hgefunc_inputgetchar.html">Input_GetChar</a>,
+<a href="hgeconst_keycodes.html">Key codes</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_peditor.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Using HGE Particle Systems Editor's presets in your game</h1>
+<p>
+<b>T</b>he editor saves it's presets in files <b>particle1.psi</b> - <b>particle9.psi</b>,
+which can be loaded and used directly in your game. Here follows detailed step by step
+explanation of how to use them.
+</p>
+<h2>Initialization, the simple way</h2>
+<p>
+Use this method if you need just the particle system parameters
+from the preset and have your sprite for rendering particles ready:
+</p>
+<pre>
+hgeParticleSystem *ps;
+ps = new hgeParticleSystem("particle1.psi", sprite);
+</pre>
+<p>
+Voila! The particle system is ready to run!
+</p>
+<h2>Initialization, the not so simple way</h2>
+<p>
+Use this method if you want to recreate the particle system exactly as
+it was in editor, using information from the preset only.
+<br><br>
+First, you need to load the particle system preset and the texture, holding the particle image:
+</p>
+<pre>
+HTEXTURE tex = hge->Texture_Load("particles.png");
+hgeParticleSystemInfo *psi =
+          hge->Resource_Load("particle1.psi");
+</pre>
+<p>
+Now the sprite object must be created and set up. You may use any sprite
+you have, but if you want to use the editor's sprite parameters, they are stored
+in the <b>sprite</b> member of <a href="hgeparticle_psinfo.html">hgeParticleSystemInfo</a>
+structure in the following way: the higher <b>WORD</b> contains the blending mode,
+and the lower <b>WORD</b> contains the sprite number from 0 to 15. To extract
+these values use the following code:
+</p>
+<pre>
+int nSprite = ((DWORD)psi->sprite & 0xFFFF);
+int blend = ((DWORD)psi->sprite >> 16);
+</pre>
+<p>
+So, let's create the sprite now and store the actual pointer to it into the preset:
+</p>
+<pre>
+#define SIZE 32
+
+// calculate the texx and texy texture coordinates here
+// based on editor's sprite number or in any other way you want
+float texx = SIZE * (nSprite % 4);
+float texy = SIZE * (nSprite / 4);
+
+hgeSprite *spr = new hgeSprite(tex, texx, texy, SIZE, SIZE);
+spr->SetHotSpot(SIZE/2, SIZE/2);
+spr->SetBlendMode(blend);
+psi->sprite = spr;
+</pre>
+<p>
+If you want to use a sprite with dimensions other than 32x32,
+you have to adjust the <b>fSizeStart</b> and <b>fSizeEnd</b> parameters of the
+particle system preset to keep the particle sizes the same as they were in editor:
+</p>
+<pre>
+psi->fSizeStart = 32.0f * psi->fSizeStart / SIZE;
+psi->fSizeEnd = 32.0f * psi->fSizeEnd / SIZE;
+</pre>
+<p>
+And finally let's create the particle system object and delete the preset
+from memory as it isn't needed longer:
+</p>
+<pre>
+hgeParticleSystem *ps = new hgeParticleSystem(psi);
+hge->Resource_Free(psi);
+</pre>
+<p>
+The particle system is initialized and ready to run now!
+<br><br>
+You could save the preset in memory and use it later to spawn
+instances of your particle system either manually or with <a href="hgepmanager__main.html">hgeParticleManager</a>.
+</p>
+<h2>Running</h2>
+<p>
+Now call the <a href="hgeparticle__main.html">hgeParticleSystem</a> method
+<a href="hgeparticle_fireat.html">FireAt</a> to start the particle system:
+</p>
+<pre>
+ps->FireAt(100, 100);
+</pre>
+<p>
+Then use <a href="hgeparticle_update.html">Update</a>
+and <a href="hgeparticle_render.html">Render</a> methods in your
+frame function to update and render the particle system respectively:
+</p>
+<pre>
+ps->Update(fDeltaTime);
+ps->Render();
+</pre>
+<p>
+Also you may control the particle system with <a href="hgeparticle_stop.html">Stop</a>
+and <a href="hgeparticle_moveto.html">MoveTo</a> methods or by modifying the members
+of it's <a href="hgeparticle_datamembers.html">info</a> structure.
+</p>
+<h2>Clean up</h2>
+<p>
+When the particle system isn't needed longer, you must delete it
+and all associated resources:
+</p>
+<pre>
+delete ps;
+delete spr;
+hge->Texture_Free(tex);
+</pre>
+<h2>See also</h2>
+<p>
+<a href="hgesprite__main.html">hgeSprite</a>,
+<a href="hgeparticle__main.html">hgeParticleSystem</a>,
+<a href="hgepmanager__main.html">hgeParticleManager</a>,
+<a href="tutorials_tut03.html">Tutorial 03</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_peditor.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Particle systems hints</h1>
+<p>
+<b>Y</b>ou may use particle systems to simulate natural phenomenon like
+smoke, flame, plasma, sparks, fountains, projectile effects, etc.
+Also you may invent some artificial life-like "magic" effects.
+Here are some more tips and ideas how to use particle systems in your game:
+<ul>
+<li>
+Maximum number of particles simultaneously allowed in one particle system is 500.
+If this number is exceeded, new particles wouldn't be created until some
+of the current particles die.
+<br><br>
+<li>
+Try to achieve the desired effect with minimal number of particles
+of the smallest possible size. These two parameters affect
+application performance.
+<br><br>
+<li>
+Place two particle systems at the same location with different parameters
+to achieve a very complex look. For example you could take one system that
+looks like fire and place it on top of a system that looks like smoke.
+<br><br>
+<li>
+Change the parameters of the particle system in real-time for different situations.
+For example you could have a system emitting smoke and when the player
+approached, tweak the values so it turned to fire. Or you could adjust the <b>nEmission</b>
+parameter periodically to simulate surges.
+<br><br>
+<li>
+Morph in real-time one particle system to another. To do this just make linear interpolation
+of <a href="hgeparticle_psinfo.html">hgeParticleSystemInfo</a> members between two particle
+system presets. The only parameter you probably couldn't morph is the particle system's sprite.
+<br><br>
+<li>
+Put a sprite with <b>HGEBLEND_ALPHAADD</b> blending mode under the particle system and scale
+it randomly or depending on number of alive particles each frame to simulate lighting.
+<br><br>
+<li>
+Try using a colored particle sprite with <b>HGEBLEND_ALPHABLEND</b> blending mode to
+create cartoon-like effects.
+<br><br>
+<li>
+Try using a sprite with off-center anchor point.
+<br><br>
+<li>
+You may create a particle system with animated particles using
+<a href="hgeanim__main.html">hgeAnimation</a> class to initialize it instead of 
+<a href="hgesprite__main.html">hgeSprite</a>. Also you may use your own classes
+with additional functionality, derived from <a href="hgesprite__main.html">hgeSprite</a>.
+Although no <a href="hgesprite__main.html">hgeSprite</a> methods are virtual for simplicity,
+and the only parameter you can tweak with derived classes is texture coordinates.
+<br><br>
+<li>
+Make the particle system to follow a complex path. Try using short linear
+segment or a circle and fast movement along it. Or try running the particle system
+along a Lissajous figure. Or attach a particle system to a moving object.
+<br><br>
+<li>
+Make the particle system to follow the mouse. This gives an exciting interactive
+experience to the player!
+</ul>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

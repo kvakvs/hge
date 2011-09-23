@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgeguio.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeGUIObject::MouseRButton</h1>
+<p>
+Notifies the control of right mouse button state changes.
+</p>
+<pre>
+virtual bool MouseRButton(
+  bool <i><b>bDown</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt>bDown
+<dd>If the right mouse button has been pressed, <b>bDown</b> is <b>true</b>.
+If the right mouse button has been released, <b>bDown</b> is <b>false</b>.
+</dl>
+<h2>Return value</h2>
+<p>
+If the control has modified it's state and wants the caller to be notified,
+<b>MouseRButton</b> should return <b>true</b>. Otherwise it should return <b>false</b>.
+</p>
+<h2>Remarks</h2>
+<p>
+<a href="hgeguio__main.html">hgeGUIObject</a> has default implementation,
+so you could not redefine this method if you don't need it.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgegui.h<br>
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgeguio_mouselbutton.html">MouseLButton</a>,
+<a href="hgeguio_mousemove.html">MouseMove</a>,
+<a href="hgeguio_mousewheel.html">MouseWheel</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_tutorials.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Tutorial 08 - The Big Calm</h1>
+<p>
+<b>T</b>his tutorial demonstrates usage of special effects and complex lighting simulation. 
+<br><br>
+<img src="t08_1.gif" width=150 height=113>&nbsp;&nbsp;
+<img src="t08_2.gif" width=150 height=113>&nbsp;&nbsp;
+<img src="t08_3.gif" width=150 height=113>&nbsp;&nbsp;
+</p>
+<h2>Shades of the Sky</h2>
+<p>
+To render the sky we use a sprite without texture:
+</p>
+<pre>
+hgeSprite *sky;
+
+sky=new hgeSprite(0, 0, 0, SCREEN_WIDTH, SKY_HEIGHT);
+</pre>
+<p>
+It's top and bottom vertices are tinted into different colors, resulting in smooth transition:
+</p>
+<pre>
+hgeColor colSkyTop;
+hgeColor colSkyBtm;
+
+sky->SetColor(colSkyTop.GetHWColor(), 0);
+sky->SetColor(colSkyTop.GetHWColor(), 1);
+sky->SetColor(colSkyBtm.GetHWColor(), 2);
+sky->SetColor(colSkyBtm.GetHWColor(), 3);
+sky->Render(0, 0);
+</pre>
+<p>
+The sky colors depend on time of day and are calculated by interpolation
+between several constant tints:
+</p>
+<pre>
+hgeColor col1, col2;
+
+col1.SetHWColor(skyTopColors[seq[seq_id]]);
+col2.SetHWColor(skyTopColors[seq[seq_id+1]]);
+colSkyTop=col2*seq_residue + col1*(1.0f-seq_residue);
+
+col1.SetHWColor(skyBtmColors[seq[seq_id]]);
+col2.SetHWColor(skyBtmColors[seq[seq_id+1]]);
+colSkyBtm=col2*seq_residue + col1*(1.0f-seq_residue);
+</pre>
+<h2>The Sea and Waves</h2>
+<p>
+The same coloring technique is used for the sea. But this time we use
+<a href="hgedistort__main.html">hgeDistortionMesh</a> class instead
+of <a href="hgesprite__main.html">hgeSprite</a> to allow waves simulation:
+</p>
+<pre>
+hgeDistortionMesh *sea;
+
+sea=new hgeDistortionMesh(SEA_SUBDIVISION, SEA_SUBDIVISION);
+sea->SetTextureRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT-SKY_HEIGHT);
+</pre>
+<p>
+To create waves we set a displacement and tint for every distortion mesh node
+(we skip first and last line for now as we don't want them to move):
+</p>
+<pre>
+for(i=1; i&lt;SEA_SUBDIVISION-1; i++)
+{
+  <font color=#008000>// these are constants for each vertices line</font>
+  a=float(i)/(SEA_SUBDIVISION-1);
+  col1=colSeaTop*(1-a)+colSeaBtm*a;
+  dwCol1=col1.GetHWColor();
+  fTime=2.0f*hge->Timer_GetTime();
+  a*=20;
+
+  for(j=0; j&lt;SEA_SUBDIVISION; j++)
+  {
+    sea->SetColor(j, i, dwCol1);
+    dy=a*sinf(seaP[i]+ <font color=#008000>// precalculated phase shift</font>
+         (float(j)/(SEA_SUBDIVISION-1)-0.5f)*M_PI*16.0f-fTime);
+    sea->SetDisplacement(j, i, 0.0f, dy, HGEDISP_NODE);
+  }
+}
+</pre>
+<p>
+Now we set tints for previously skipped first and last lines of distortion mesh nodes:
+</p>
+<pre>
+dwCol1=colSeaTop.GetHWColor();
+dwCol2=colSeaBtm.GetHWColor();
+
+for(j=0; j&lt;SEA_SUBDIVISION; j++)
+{
+  sea->SetColor(j, 0, dwCol1);
+  sea->SetColor(j, SEA_SUBDIVISION-1, dwCol2);
+}
+</pre>
+<p>
+The sea is ready now and we render it with just one call:
+</p>
+<pre>
+sea->Render(0, SKY_HEIGHT);
+</pre>
+<p>
+In actual source code a light path from moon and sun is also simulated.
+To do this we just add a bit of white tint into distortion mesh nodes
+that are currently under the sun/moon.
+</p>
+<h2>Celestial Bodies</h2>
+<p>
+Stars, moon and sun are just scaled and tinted sprites:
+</p>
+<pre>
+hgeSprite *sun;
+hgeSprite *moon;
+hgeSprite *star;
+
+sun=new hgeSprite(texObjects,81,0,114,114);
+sun->SetHotSpot(57,57);
+moon=new hgeSprite(texObjects,0,0,81,81);
+moon->SetHotSpot(40,40);
+star=new hgeSprite(texObjects,72,81,9,9);
+star->SetHotSpot(5,5);
+</pre>
+<p>
+The interesting part about them are halos and reflection
+on the sea surface. These are just sprites too:
+</p>
+<pre>
+hgeSprite *glow;
+hgeSprite *seaglow;
+
+glow=new hgeSprite(texObjects,128,128,128,128);
+glow->SetHotSpot(64,64);
+glow->SetBlendMode(BLEND_COLORADD | BLEND_ALPHABLEND);
+
+seaglow=new hgeSprite(texObjects,128,224,128,32);
+seaglow->SetHotSpot(64,0);
+seaglow->SetBlendMode(BLEND_COLORADD | BLEND_ALPHAADD);
+</pre>
+<p>
+Note that halo sprites use different blending modes to achieve proper coloring.
+Also note that both sprites share the same texture region.
+<br><br>
+The sun and the moon positions, scaling and tints are calculated in
+<b>UpdateSimulation</b> function and then they are rendered in <b>RenderSimulation</b>:
+</p>
+<pre>
+glow->SetColor(colSunGlow.GetHWColor());
+glow->RenderEx(sunX, sunY, 0.0f, sunGlowS);
+sun->SetColor(colSun.GetHWColor());
+sun->RenderEx(sunX, sunY, 0.0f, sunS);
+
+glow->SetColor(colMoonGlow.GetHWColor());
+glow->RenderEx(moonX, moonY, 0.0f, moonGlowS);
+moon->SetColor(colMoon.GetHWColor());
+moon->RenderEx(moonX, moonY, 0.0f, moonS);
+</pre>
+<p>
+The same for sea reflection:
+</p>
+<pre>
+seaglow->SetColor(colSeaGlow.GetHWColor());
+seaglow->RenderEx(seaGlowX, SKY_HEIGHT,
+                     0.0f, seaGlowSX, seaGlowSY);
+</pre>
+<p>
+Note that sea reflection sprite is scaled non proportionally.
+</p>
+<h2>Performance</h2>
+<p>
+Despite visual complexity this tutorial runs at rather high FPS. This is 
+possible because when rendering sprites via <b>Direct3D</b> the bottleneck
+is texture bandwidth. And this tutorial renders just several sprites from
+one small texture. Large screen areas are filled with flat color.
+</p>
+<p>
+The complete source code with detailed comments for this tutorial you may find in the folder
+<b>tutorials\tutorial08</b>. The required media files you'll find in the folder <b>tutorials\precompiled</b>.
+</p>
+<p>
+Use keys <b>1</b> to <b>9</b> to change simulation speed, <b>0</b> for real time and <b>ESC</b> to exit.
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

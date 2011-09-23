@@ -1,0 +1,118 @@
+input, select,textarea {
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:11px;
+	border-width : 1px;
+	border-color:#000000 #BBD5E5 #BBD5E5 #000000;
+}
+
+pre {
+	background : #E0E0E0;
+	font-size : 110%;
+	padding : 10px 10px 10px 10px;
+	margin : 0px 20px 15px 20px;
+}
+
+dl {
+	margin-top : 5px;
+	padding-top : 0px;
+	margin-bottom : 15px;
+}
+
+dt {
+	margin-top : 0px;
+	padding-top : 0px;
+	margin-left : 20px;
+	margin-right : 20px;
+	font-weight : bold;
+}
+
+dd {
+	padding-left : 0px;
+	margin-left : 35px;
+	margin-right : 20px;
+}
+
+ol, ul {
+	margin-top : 0px;
+	margin-left : 50px;
+	margin-right : 20px;
+}
+
+td, body {
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 70%;
+}
+
+p {
+	text-align : justify;
+	padding : 0px 20px 0px 20px;
+	margin : 5px 0px 15px 0px;
+}
+
+.copyr {
+	font-size:90%;
+	color:#999999;
+	padding-top: 5px;
+}
+
+.titl {
+	color : #4087B4;
+	font-weight : bold;
+}
+
+.big {
+	font-size : 130%;
+	font-weight : bold;
+}
+
+.nobold {
+	font-weight: normal;
+}
+
+.white {
+	color : #FFFFFF;
+}
+
+h1 {
+	font-family : Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 140%;
+	color : #4087B4;
+	border-bottom : 1px solid #4087B4;
+	font-weight : bold;
+	line-height : 20px;
+	margin: 20px 0px 15px 0px;
+}
+
+h2 {
+	font-family : Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 120%;
+	color : #4087B4;
+	font-weight : bold;
+	line-height : 20px;
+	margin: 0px 20px 0px 20px;
+}
+
+h3 {
+	font-family : Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 100%;
+	color : #FFFFFF;
+	font-weight : bold;
+	line-height : 16px;
+	margin: 0px 0px 0px 0px;
+}
+
+h4 {
+	font-family : Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 90%;
+	color : #FFFFFF;
+	font-weight : normal;
+	margin: 0px 0px 0px 17px;
+}
+
+a {text-decoration:none; color:#7F0000;}
+a:hover {text-decoration:underline}
+
+a.mnu {color:#FFFFFF; font-size:110%;}
+a.mnu:visited {color:#FFFFFF;}
+a.mnu:hover {color:#000000;}
+

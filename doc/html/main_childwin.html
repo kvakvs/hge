@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_main.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE in a child window</h1>
+<p>
+<b>R</b>unning <b>HGE</b> in a child window hosted by a <b>Windows</b> application may be useful to create authoring tools and ActiveX controls or
+to integrate <b>HGE</b> into a third party IDE. Here follow the guidelines how to do that.
+</p>
+<h2>Creating HGE window as a child</h2>
+<p>
+To run <b>HGE</b> in a child window mode you should just specify the parent window handle. To do this set <a href="hgeconst_systemstate.html#HGE_HWNDPARENT">HGE_HWNDPARENT</a> system state
+before calling to <a href="hgefunc_systeminitiate.html">System_Initiate</a>:
+</p>
+<pre>
+hge->System_SetState(HGE_HWNDPARENT, hwnd);
+</pre>
+<h2>Mouse cursor</h2>
+<p>
+You may prefer <b>HGE</b> to use standard Windows cursor while in child window mode.
+This can be done by setting <a href="hgeconst_systemstate.html#HGE_HIDEMOUSE">HGE_HIDEMOUSE</a> system state to <b>false</b>:
+</p>
+<pre>
+hge->System_SetState(HGE_HIDEMOUSE, false);
+</pre>
+<h2>Dispatching application's messages and running Frame Function</h2>
+<p>
+To provide additional flexibility <a href="hgefunc_systemstart.html">System_Start</a> behaves a bit differently in child window mode. First, it returns after just one call
+to user's frame function regardless of the value returned by it. Second, it doesn't dispatch window messages. So you should set up your own message processing loop.
+Here's the simpliest loop enough to run <b>HGE</b> properly:
+</p>
+<pre>
+for(;;)
+{
+  if(hge->System_GetState(HGE_HWND))
+    hge->System_Start();
+
+  if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+  { 
+    if(msg.message == WM_QUIT) break;
+    DispatchMessage(&msg);
+  }
+}
+</pre>
+<h2>Moving and resizing HGE window</h2>
+<p>
+You can move and resize <b>HGE</b> window with WinAPI functions like <b>MoveWindow</b>.
+When it's window resized, <b>HGE</b> will reinitiate DirectX to meet new window dimensions:
+</p>
+<pre>
+MoveWindow(hge->System_GetState(HGE_HWND),
+           x, y, width, height, true);
+</pre>
+<h2>Destroying HGE window</h2>
+<p>
+<b>HGE</b> has lots of resources associated with it's window. So you should use <a href="hgefunc_systemshutdown.html">System_Shutdown</a>
+call to free them, don't rely on just destroying the window. The good place to do this is <b>WM_DESTROY</b> handler of the parent window:
+</p>
+<pre>
+case WM_DESTROY:
+    FreeLoadedHGEResources();
+    hge->System_Shutdown();
+    PostQuitMessage(0);
+    return FALSE;
+</pre>
+<h2>Child window mode limitations</h2>
+<p>
+<b>1. To accept keyboard events</b> in child window mode <b>HGE</b>
+window must have input focus. It gains focus automatically when you click
+somewhere inside. Use the following call to set the focus explicitly:
+</p>
+<pre>
+SetFocus(hge->System_GetState(HGE_HWND));
+</pre>
+<p>
+<b>2. Switching into fullscreen</b> is unavailable when running in child window mode.
+Regardless of <a href="hgeconst_systemstate.html#HGE_WINDOWED">HGE_WINDOWED</a> system state <b>HGE</b> will run in a window.
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

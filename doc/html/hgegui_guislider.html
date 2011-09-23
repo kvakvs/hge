@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgegui.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeGUISlider class</h1>
+<p>
+<b>hgeGUISlider</b> is a class for slider GUI control.
+To create a <b>hgeGUISlider</b> object you may use this constructor:
+</p>
+<pre>
+hgeGUISlider(
+  int       <i><b>id</b></i>,
+  float     <i><b>x</b></i>,
+  float     <i><b>y</b></i>,
+  float     <i><b>w</b></i>,
+  float     <i><b>h</b></i>,
+  HTEXTURE  <i><b>tex</b></i>,
+  float     <i><b>tx</b></i>,
+  float     <i><b>ty</b></i>,
+  float     <i><b>sw</b></i>,
+  float     <i><b>sh</b></i>,
+  bool      <i><b>vertical</b></i> = false
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>id</i>
+<dd>Integer identificator for the created control.
+<dt><i>x</i>
+<dd>The slider's top-left corner x-coordinate.
+<dt><i>y</i>
+<dd>The slider's top-left corner y-coordinate.
+<dt><i>w</i>
+<dd>The slider's width.
+<dt><i>h</i>
+<dd>The slider's height.
+<dt><i>tex</i>
+<dd>A handle of the texture, holding the slider's image.
+Depending on the slider's mode the image may be interpreted
+in different ways. See the <a href="hgegui_guislider_setmode.html">SetMode</a>
+function description for details.
+<dt><i>tx</i>
+<dd>The slider image's top-left corner texture x-coordinate in pixels.
+<dt><i>ty</i>
+<dd>The slider image's top-left corner texture y-coordinate in pixels.
+<dt><i>sw</i>
+<dd>The slider image's width.
+<dt><i>sh</i>
+<dd>The slider image's height.
+<dt><i>vertical</i>
+<dd>Specifies if the slider should be vertical.
+</dl>
+<h2>Other methods</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td><a href="hgegui_guislider_setmode.html">SetMode</a></td>
+<td>Changes the slider's behaviour mode.</td>
+</tr>
+<tr>
+<td><a href="hgegui_guislider_setvalue.html">SetValue</a></td>
+<td>Changes the current slider's position.</td>
+</tr>
+<tr>
+<td><a href="hgegui_guislider_getvalue.html">GetValue</a></td>
+<td>Returns the current slider's position.</td>
+</tr>
+</table>
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgeguictrls.h<br>
+<b>Import library:</b> hgehelp.lib<br>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

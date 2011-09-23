@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgestring.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">String table file format</h1>
+<p>
+This file must be passed to the <a href="hgestring_constructor.html">hgeStringTable constructor</a>.
+It is just plain text file that contains definitions of text strings you would like to use in your game.
+<br><br>
+Holding your strings in a separate file gives two advantages. First, your designers may alter the strings
+during whole development process without disturbing your programmers. Second, this approach makes localization
+for different countries much easier.
+</p>
+<p>
+The first line of the file should contain the string table file marker:
+</p>
+<pre>
+[HGESTRINGTABLE]
+</pre>
+<p>
+Then should follow the strings definitions, like this:
+</p>
+<pre>
+StringName="The string itself"
+</pre>
+<p>
+You may have as much strings in a single file as you wish.
+The string names are case sensitive and no whitespaces are allowed within them.
+The maximum string name length is 63 characters. All extra characters are ignored.
+<br><br>
+The string values should be enclosed into double quotes ("). They can be placed
+on several lines, whitespaces at the begin and the end of each line are ignored:
+</p>
+<pre>
+Chapter1Story =
+  "Once upon a time in a deep deep forest there was a hero
+   of unbelievable strength. His glory spread around the
+   world faster than light."
+</pre>
+<p>
+Three special characters can be used via '\' prefix: '\n' - line break,
+'\"' - double quotes, '\\' - the backslash itself. Also you may use <b>printf</b>
+specificators. They are not parsed by <b>hgeStringTable</b> class and returned
+by <a href="hgestring_getstring.html">GetString</a> function as is:
+</p>
+<pre>
+OutOfRange =
+  "Player \"%s\" is out of range.\nUse the radar to locate him."
+</pre>
+<p>
+You may place comments with ";" symbol. The rest of the line after this symbol will be ignored.
+</p>
+<pre>
+; Comments
+; look like this
+</pre>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_main.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Hints & Tips</h1>
+<h2>Video cards support</h2>
+<p>
+<b>HGE</b> will run even on low-end video cards, including built in video cards
+such as <b>Intel Solano</b> (i815 chipset).
+</p>
+<h2>Batching</h2>
+<p>
+For performance reasons <a href="hgefunc_gfxrenderline.html">Gfx_RenderLine</a>,
+<a href="hgefunc_gfxrendertriple.html">Gfx_RenderTriple</a> and <a href="hgefunc_gfxrenderquad.html">Gfx_RenderQuad</a>
+accumulate consecutive primitives with the same texture and blending mode and then
+render them with a single call to <b>DirectX</b>. In most cases you will not
+see any difference and don't have to deal with this batching at all. But to be sure
+and safe it is recommended to group your primitive rendering calls first by primitive type,
+then by texture, then by blending mode. Also you can use <a href="hgefunc_gfxstartbatch.html">Gfx_StartBatch</a>
+and <a href="hgefunc_gfxfinishbatch.html">Gfx_FinishBatch</a> for ultra fast rendering of large primitive arrays.
+</p>
+<h2>Texture dimensions</h2>
+<p>
+The dimensions of any texture must be a power of 2. And it is not recommended to use
+textures bigger than 1024x1024, because they can be slow and some video cards may have
+no support for them. Try to place all your graphics onto several big textures to minimize
+texture switching that affects performance.
+</p>
+<h2>Using Z-buffer</h2>
+<p>
+Use Z-buffer only if you need to, because this affects performance. By default the
+Z-buffer is turned off. To turn it on set the <a href="hgeconst_systemstate.html#HGE_ZBUFFER">HGE_ZBUFFER</a> system state
+to <b>true</b> with <a href="hgefunc_systemsetstate.html">System_SetState</a> call.
+When the Z-buffer is turned on, it is a good idea to sort your rendering in front-to-back
+order for better performance.
+</p>
+<h2>Clearing screen</h2>
+<p>
+Clear the screen only if you need to, because this affects performance. If you
+cover the whole screen with graphics each frame - there is no need to clear.
+Although, when using Z-buffer you probably have to clear the screen anyway
+to reset it.
+</p>
+<h2>Scaling and rotation</h2>
+<p>
+If you plan to scale or rotate your sprite - ensure that the graphics spread at least
+for 1 pixel beneath the alpha mask and/or bounding box edges to avoid distortion.
+<p>
+</p>
+<h2>Sprite and tile libraries</h2>
+<p>
+You can use <a href="hgeanim__main.html">hgeAnimation</a> helper class as a sprite or tile library.
+Just don't call the <a href="hgeanim_update.html">Update</a> method and select the needed sprite
+manually with the <a href="hgeanim_setframe.html">SetFrame</a> method.
+</p>
+<h2>Cloning</h2>
+<p>
+You can use asignment operator (=) or copy constructor to easily clone an instance of most helper classes.
+Eg. in case of sprite pointers the syntax will be <b>*sprite2=*sprite1;</b> or <b>hgeSprite *sprite2=new hgeSprite(*sprite1);</b>
+Exceptions are <a href="hgegui__main.html">hgeGUI</a>, <a href="hgeresource__main.html">hgeResourceManager</a> and <a href="hgepmanager__main.html">hgeParticleManager</a>.
+</p>
+<h2>Distortion mesh and Sprite without a texture</h2>
+<p>
+You can use <a href="hgedistort__main.html">hgeDistortionMesh</a>
+and <a href="hgesprite__main.html">hgeSprite</a> instances without
+a texture to apply colorful effects to your whole scene or it's part.
+Try using <a href="hgeconst_blendmode.html">BLEND_ALPHAADD</a> blending mode.
+</p>
+<h2>Displaying a mouse cursor</h2>
+<p>
+To display a mouse cursor, render anything you want at the coordinates
+returned by <a href="hgefunc_inputgetmousepos.html">Input_GetMousePos</a>
+in your frame function. For more correct behaviour do this only when
+<a href="hgefunc_inputismouseover.html">Input_IsMouseOver</a> returns <b>true</b>.
+</p>
+<h2>Using external sound routines</h2>
+<p>
+If you don't want to use <b>BASS</b> for handling sound, and have your own sound routines,
+set <a href="hgeconst_systemstate.html#HGE_USESOUND">HGE_USESOUND</a> system state to <b>false</b> with <a href="hgefunc_systemsetstate.html">System_SetState</a>
+function before calling <a href="hgefunc_systeminitiate.html">System_Initiate</a>. Now you can also get rid of <b>BASS.DLL</b>.
+</p>
+<h2>Managing HGE interface pointer</h2>
+<p>
+Any time you need access to <b>HGE</b>, you may call the <a href="hgefunc_interfaceget.html">hgeCreate</a>
+function, then use the received pointer and release it with <a href="hgefunc_interfacerelease.html">Release</a>.
+Or you may get the interface once during startup and store it in a global variable, then release during cleanup.
+Although the latter is supposed to be 'bad style', this works fine with not very big projects
+and all <b>HGE</b> helper classes use this approach.
+</p>
+<h2>Float to int conversion</h2>
+<p>
+If there are a plenty of <b>float</b> to <b>int</b> conversions in your code, you
+may use the <b>/QIfist</b> option of <b>Visual C++</b> compiler. With that you can't
+be sure of the rounding method being used, but in most cases it doesn't matter and
+you'll receive improvement in performance. To activate this option, type it into
+<b>Project Options</b> text box in the <b>Project->Settings...->C/C++</b> dialog tab
+for debug and release configurations. If you use different compiler you should find
+similar option or use one of fast <b>float</b> to <b>int</b> conversion routines from
+the net instead of standard cast.
+</p>
+<h2>Speed synchronization</h2>
+<p>
+To make your game independent of execution speed,
+scale all your internal speeds by the value, returned by
+<a href="hgefunc_timergetdelta.html">Timer_GetDelta</a>.
+Alternatively you may set <a href="hgeconst_systemstate.html#HGE_FPS">HGE_FPS</a>
+system state to use fixed FPS mode.
+</p>
+<h2>Resources</h2>
+<p>
+While developing, you may keep all your data in plain disk files.
+Then just compile the resource pack with <b>pkzip</b> and attach it with
+<a href="hgefunc_resourceattachpack.html">Resource_AttachPack</a>.
+Nothing else need to be modified in your code to use resource pack.
+See <a href="main_respack.html">Compiling resource pack</a> section for more information.
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::System_Log</h1>
+<p>
+Writes a formatted message to the log file.
+</p>
+<pre>
+void System_Log(
+  const char *<i><b>format</b></i>,
+  <i><b>...</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>format</i>
+<dd>C language printf-style format specification.
+<dt><i>...</i>
+<dd>Optional arguments list to be written to the log.
+</dl>
+<h2>Remarks</h2>
+<p>
+See your compiler online help or C language reference for details about format specification.
+<br><br>
+<a href="hgeconst_systemstate.html#HGE_LOGFILE">HGE_LOGFILE</a> system state must be set before
+call to <a href="hgefunc_systeminitiate.html">System_Initiate</a> for this function to work.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_systemsetstate.html">System_SetState</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

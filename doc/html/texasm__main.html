@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_main.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Texture Assembler</h1>
+<p>
+<b>Texture Assembler</b> is a tool that processes your image folders or resource scripts
+and builds optimized texture sheets with corresponding resource scripts from your sprites.
+The syntax is:
+</p>
+<pre>
+texasm.exe &lt;res-file&gt;|&lt;wildcard&gt; &lt;output-wildcard&gt; [&lt;task&gt;]
+</pre>
+
+<dl>
+<dt>&lt;res-file&gt;
+<dd>Resource script to process.
+To be able to locate the resources, texasm.exe must be run from the folder
+of the executable that uses the specified script.
+
+<dt>&lt;wildcard&gt;
+<dd>A wildcard to search image files for processing.
+Either &lt;res-file&gt; or &lt;wildcard&gt; should be specified, not both.
+All image formats supported by HGE can be handled.
+
+<dt>&lt;output-wildcard&gt;
+<dd>Wildcard to store the result to.
+For example, "opt_textures\TitleTex" will generate the following files:
+<br>&nbsp;&nbsp;opt_textures\TitleTex1.png, opt_textures\TitleTex1.res
+<br>&nbsp;&nbsp;opt_textures\TitleTex2.png, opt_textures\TitleTex2.res
+<br>&nbsp;&nbsp;...
+
+<dt>&lt;task&gt;
+<dd>Optional resource filter.
+If omitted, all resources found in the script/folder will be processed.
+The default resgroup assigned to folder resources is 0.
+</dl>
+<h2>Examples:</h2>
+<p>
+<b>texasm game.res tex 2</b><br>
+Process all sprites described in game.res (or scripts included in it) 
+that have resgroup=2. Store the result into tex01.png, tex01.res, tex02.png, tex02.res etc.
+</p>
+<p>
+<b>texasm game.res out\tex 7+sprFlower/sprLeaf/sprTrunk</b><br>
+Process all sprites described in game.res (or scripts included in it) 
+that have resgroup=7 and whose names start with sprFlower, sprLeaf or sprTrunk.
+Store the result into out\tex01.png, out\tex01.res, out\tex02.png, out\tex02.res etc.
+</p>
+<p>
+<b>texasm data\* tex</b><br>
+Process all image files found in the folder "data". Assign resgroup=0 to generated descriptions.
+Store the result into tex01.png, tex01.res, tex02.png, tex02.res etc.
+</p>
+<p>
+<b>texasm data\* tex 3-gui\menu\title</b><br>
+Process all image files found in the folder "data" whose names DON'T start with gui, menu or title.
+Assign resgroup=3 to generated descriptions. Store the result into tex01.png, tex01.res, tex02.png, tex02.res etc.
+</p>
+<p>
+<b>texasm data\* tex +mars/earth/mercury</b><br>
+Process all image files found in the folder "data" whose names start with gui, menu or title.
+Assign resgroup=0 to generated descriptions. Store the result into tex01.png, tex01.res, tex02.png, tex02.res etc.
+</p>
+<p>
+<b>texasm game.res tex -gui\\menu\\title</b><br>
+Process all sprites described in game.res (or scripts included in it)whose names DON'T start with gui, menu or title.
+Store the result into tex01.png, tex01.res, tex02.png, tex02.res etc.
+</p>
+<p>
+<b>Note:</b> Currently only Sprite resources and only 32bit PNG output are supported.
+</p>
+
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

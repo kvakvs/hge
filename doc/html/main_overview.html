@@ -1,0 +1,270 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_main.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<div class=big>HGE version 1.81</div>
+Copyright &copy; 2003-2008, Relish Games. All rights reserved.<br>
+<a href="http://hge.relishgames.com" target=_blank>http://hge.relishgames.com</a>
+<h1>Overview</h1>
+<p>
+<b>HGE</b> is an easy to use yet powerful hardware accelerated <b>2D game engine</b>.
+It is a full featured middleware for all who want to develop commercial
+quality <b>2D games</b> rapidly and easily. It covers all imaginable <b>2D game</b> genres:
+you could create everything from a simple puzzle to advanced multilayered
+platformer or strategy without even thinking of any non game logic code!
+And you don't have to know anything about "window messages", <b>DirectX</b>
+programming and all that stuff. Instead you can start developing your
+own game within <b>15 minutes</b>!
+</p>
+<p>
+<b>HGE</b> runs on Microsoft Windows 98, 2000, NT, ME, XP and requires <b>DirectX 8.0</b>.
+It will run even on low-end video cards, including built in video cards such as <b>Intel Solano</b> (i815 chipset).
+<b>HGE</b> can be used with virtually any C++ compiler including
+<b>Visual C++</b>, <b>Borland C++</b>, <b>MinGW</b> and <b>Metrowerks Codewarrior</b>.
+<br><br>
+<table width=484 cellspacing=0 cellpadding=0>
+<tr>
+<td align=center><center class=copyr><img src="shot1.gif" width=117 height=88 hspacing=0 alt="HGE Screenshot" border=0></center></td>
+<td align=center><center class=copyr><img src="shot2.gif" width=117 height=88 hspacing=0 alt="HGE Screenshot" border=0></center></td>
+<td align=center><center class=copyr><img src="shot3.gif" width=117 height=88 hspacing=0 alt="HGE Screenshot" border=0></center></td>
+<td align=center><center class=copyr><img src="shot4.gif" width=117 height=88 hspacing=0 alt="HGE Screenshot" border=0></center></td>
+</tr>
+</table>
+</p>
+<h1>Key features</h1>
+<p>
+<table width=484 cellspacing=0 cellpadding=0>
+<tr>
+<td valign=top><img src="feat3.gif" width=17 height=12 alt=""></td>
+<td><b>Strict concentration on subject "2D games"</b><br>
+Task oriented design. Nothing redundant and lots of higher level features.</td>
+</tr>
+<tr><td colspan=2><img src="1.gif" width=1 height=8></td></tr>
+
+<tr>
+<td valign=top><img src="feat3.gif" width=17 height=12 alt=""></td>
+<td><b>Simple interface and extreme easiness</b><br>
+You don't have to know anything about system programming
+and don't need any additional libraries. Classes and headers that make sense.
+Very easy to set up and use.</td>
+</tr>
+<tr><td colspan=2><img src="1.gif" width=1 height=8></td></tr>
+
+<tr>
+<td valign=top><img src="feat3.gif" width=17 height=12 alt=""></td>
+<td><b>Technical advanceness</b><br>
+HGE is built upon modern Direct3D API what allows lots of special effects and great performance.
+Alpha blending, color tinting, geometry transformations etc. without performance hit at all!</td>
+</tr>
+<tr><td colspan=2><img src="1.gif" width=1 height=8></td></tr>
+
+<tr>
+<td valign=top><img src="feat3.gif" width=17 height=12 alt=""></td>
+<td><b>Complete and clear documentation</b><br>
+All the features thoroughly grouped and described, lots of general game development hints provided.</td>
+</tr>
+<tr><td colspan=2><img src="1.gif" width=1 height=8></td></tr>
+
+<tr>
+<td valign=top><img src="feat3.gif" width=17 height=12 alt=""></td>
+<td><b>HGE just feels right!</b><br>
+HGE is highly consistent. Every minor feature is carefully planned and interconnected with others.</td>
+</tr>
+<tr><td colspan=2><img src="1.gif" width=1 height=8></td></tr>
+
+<tr>
+<td valign=top><img src="feat3.gif" width=17 height=12 alt=""></td>
+<td><b>Free</b><br>
+HGE is distributed under <a href="http://www.opensource.org/licenses/zlib-license.php" target=_blank>The zlib/libpng license</a>, i.e. it is completely free for any uses including commercial ones.</td>
+</tr>
+</table>
+</p>
+<h1>Architecture</h1>
+<p>
+<b>HGE</b> provides three layers of abstraction covering all the various needs of a single game developer
+or a game development team:
+<br><br>
+<table width=484 cellspacing=0 cellpadding=0>
+<tr>
+ <td width=33%><b>Core functions</b></td>
+ <td width=33%><b>Helper classes</b></td>
+ <td><b>Authoring tools</b></td>
+</tr>
+<tr>
+<td>All the system-dependent functions and routines.</td>
+<td>Higher level game object classes.</td>
+<td>Set of tools for game development.</td>
+</tr>
+</table>
+<br>
+<img src="architecture.gif" width=484 height=234 alt="HGE Architecture">
+</p>
+<h1>Core functions</h1>
+<p>
+<b>Hardware accelerated 2D graphics</b><br>
+Support for BMP, DDS, DIB, JPG, PNG, TGA file formats; windowed and fullscreen modes;
+ exact texel-to-pixel rendering; arbitrary shapes rendering; drawing lines and filled shapes;
+rendering to texture; direct texture data access; clipping regions; various blending modes;
+alpha channels and blending; tinting; global scene transformations; Z-buffer.
+<br><br>
+<b>Audio effects and music playback</b><br>
+Support for WAV, MP3, MP2, MP1 and OGG audio file formats;
+support for MO3, IT, XM, S3M, MTM, MOD and UMX music file formats;
+compressed streams playback; flexible volume, panning and pitch control.
+<br><br>
+<b>Keyboard and mouse input handling</b><br>
+Get keys state and clicks; get key names; translate keycode to character;
+mouse position & wheel tracking; event-based and poll-based input handling.
+<br><br>
+<b>Resources</b><br>
+Load resources from disk files; load resources from ZIP file (resource pack);
+easy switching between both; multiple resource packs support.
+<br><br>
+<b>Timing functions</b><br>
+Frame rate synchronisation with unlimited FPS; fixed FPS mode;
+monitor refresh synchronisation; FPS counting; idle time handling.
+<br><br>
+<b>Initialization & Log files</b><br>
+Write and read strings, integers and floats; printf-style log file output.
+<br><br>
+</p>
+<h1>Helper classes</h1>
+<p>
+<b>Sprites & Animations</b><br>
+Transparent interface to all hardware features;
+anchor point support; stretching, rotation and scaling support;
+horizontal and vertical flipping; timing functions; various playback modes.
+<br><br>
+<b>Fonts</b><br>
+Load and render bitmap fonts; various text alignment modes;
+font tracking, scaling and rotation; string width calculation;
+printf-style text output.
+<br><br>
+<b>Particle systems & Distortion mesh</b><br>
+Advanced 2D particle systems allowing to create effects like smoke, explosions, magic etc.;
+particle systems manager; timing and movement functions; bounding box calculation and collision detection;
+water, lenses, page wraps, twists and even real-time morphing effects.
+<br><br>
+<b>Resource manager</b><br>
+Powerful resource script; on the fly script switching; create complex
+objects with just a single function call; fully automated memory management;
+precaching and purging of specific resource groups.
+<br><br>
+<b>GUI</b><br>
+Simple and flexible controls management; default controls: text, buttons and sliders;
+support for highly interactive, animated GUIs.
+<br><br>
+<b>Vectors & Colors</b><br>
+Full set of operators and functions for handling 2D vectors;
+full set of operators for ARGB color calculations;
+hardware color conversion; color clamping.
+<br><br>
+<font color=#CCCCCC><b>Collision detection</b></font>
+&nbsp;&nbsp;<font color=#C00000><b>(coming soon)</b></font><br>
+<font color=#CCCCCC>
+Oriented bounding boxes (OBB), radius-based and pixel-perfect collision detection;
+transformed objects collision detection; sweep tests; flexible set up functions.
+</font>
+<br><br>
+<font color=#CCCCCC><b>Tile maps</b></font>
+&nbsp;&nbsp;<font color=#C00000><b>(coming soon)</b></font><br>
+<font color=#CCCCCC>
+Multilayered tile maps; map scrolling; tile properties manipulation; tile animations;
+user-defined tile brushes; coordinates conversion; map clipping.
+</font>
+</p>
+<h1>Authoring tools</h1>
+<p>
+<table width=484 cellspacing=0 cellpadding=0>
+
+<tr>
+ <td align=center>
+ <img src="tools_res.gif" width=117 height=88 alt="Resources Compiler" border=0 hspace=8>
+ </td>
+ <td valign=top>
+ <b>Resources Compiler</b><br>
+ HGE uses widespread ZIP archive format for the resource packs.
+ So you can compile HGE resource packs used in a game with
+ your favorite archiver. You even can protect them with a password.
+ </td>
+</tr>
+<tr><td colspan=2><img src="1.gif" width=1 height=10></td></tr>
+
+<tr>
+ <td align=center>
+ <img src="tools_tex.gif" width=117 height=88 alt="Texture Tools" border=0 hspace=8>
+ </td>
+ <td valign=top>
+ <b>Texture Tools</b><br>
+ PNG Optimizer and Texture Assembler automatically place your sprites onto texture
+ sheets, optimize the space they occupy, ensure no distortion when rotating or
+ scaling these sprites, and generate corresponding resource script.
+ </td>
+</tr>
+<tr><td colspan=2><img src="1.gif" width=1 height=10></td></tr>
+
+<tr>
+ <td align=center>
+ <img src="tools_ped.gif" width=117 height=88 alt="HGE Particle Systems Editor" border=0 hspace=8>
+ </td>
+ <td valign=top>
+ <b>Particle Systems Editor</b><br>
+ Allows to edit visually all the parameters of advanced 2D particle systems.
+ You can modify directions, speeds, life times, trajectories, particle colors and opacity
+ etc. looking at the resulting effect in real time.
+ </td>
+</tr>
+<tr><td colspan=2><img src="1.gif" width=1 height=10></td></tr>
+
+<tr>
+ <td align=center>
+ <img src="tools_fed.gif" width=117 height=88 alt="HGE Bitmap Font Builder" border=0 hspace=8>
+ </td>
+ <td valign=top>
+ <b>Bitmap Font Builder</b><br>
+ Allows to create a ready to use bitmap font from any font installed in the system.
+ You could then apply any additional effects to the fonts using your graphics editor.
+ </td>
+</tr>
+<tr><td colspan=2><img src="1.gif" width=1 height=10></td></tr>
+
+<tr>
+ <td align=center>
+ <img src="tools_med.gif" width=117 height=88 alt="HGE Tile Map Editor" border=0 hspace=8>
+ </td>
+ <td valign=top>
+ <font color=#CCCCCC><b>Tile Map Editor</b></font>
+ &nbsp;&nbsp;<font color=#C00000><b>(coming soon)</b></font><br>
+ <font color=#CCCCCC>
+ Allows to draw maps with tiles, animations and edit
+ tile properties. Also pattern, area and pathway brushes are supported.
+ You can use unlimited number of visible and hidden layers and define their properties.
+ </font>
+ </td>
+</tr>
+<tr><td colspan=2><img src="1.gif" width=1 height=10></td></tr>
+
+</table>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

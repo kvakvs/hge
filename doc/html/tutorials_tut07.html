@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_tutorials.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Tutorial 07 - Thousand of Hares</h1>
+<p>
+<b>T</b>his tutorial shows <b>HGE</b> rendering power and usage of various blending modes.
+<br><br>
+<img src="t07_1.gif" width=150 height=113>&nbsp;&nbsp;
+<img src="t07_2.gif" width=150 height=113>&nbsp;&nbsp;
+<img src="t07_3.gif" width=150 height=113>&nbsp;&nbsp;
+</p>
+<h2>Creation of sprites</h2>
+<p>
+We will skip all the technical stuff now and dive right into the action.
+First we should create and initialize a couple of sprites, used for "game objects"
+and background rendering. Note how the background sprite is created from a tiny 64x64
+tile and tinted at the bottom:
+</p>
+<pre>
+HTEXTURE tex, bgtex;
+hgeSprite *spr, *bgspr;
+
+tex=hge->Texture_Load("zazaka.png");
+spr=new hgeSprite(tex,0,0,64,64);
+spr->SetHotSpot(32,32);
+
+bgtex=hge->Texture_Load("bg2.png");
+bgspr=new hgeSprite(bgtex,0,0,800,600);
+bgspr->SetBlendMode(BLEND_COLORADD | BLEND_ALPHABLEND);
+bgspr->SetColor(0xFF000000,0);
+bgspr->SetColor(0xFF000000,1);
+bgspr->SetColor(0xFF000040,2);
+bgspr->SetColor(0xFF000040,3);
+</pre>
+<h2>Initializing game objects array</h2>
+<p>
+Now we should create an array, holding properties of our "game objects"
+and fill it with random values:
+</p>
+<pre>
+#define MAX_OBJECTS 2000
+
+struct sprObject
+{
+  float x,y;
+  float dx,dy;
+  float scale,rot;
+  float dscale,drot;
+  DWORD color;
+};
+
+sprObject*  pObjects;
+int         nObjects;
+
+pObjects=new sprObject[MAX_OBJECTS];
+nObjects=1000;
+
+for(i=0; i&lt;MAX_OBJECTS; i++)
+{
+  pObjects[i].x=hge->Random_Float(0,SCREEN_WIDTH);
+  pObjects[i].y=hge->Random_Float(0,SCREEN_HEIGHT);
+  pObjects[i].dx=hge->Random_Float(-200,200);
+  pObjects[i].dy=hge->Random_Float(-200,200);
+  pObjects[i].scale=hge->Random_Float(0.5f,2.0f);
+  pObjects[i].dscale=hge->Random_Float(-1.0f,1.0f);
+  pObjects[i].rot=hge->Random_Float(0,M_PI*2);
+  pObjects[i].drot=hge->Random_Float(-1.0f,1.0f);
+}
+</pre>
+<h2>Changing blending mode</h2>
+<p>
+<b>SetBlend</b> function takes an integer from range 0..4 and adjusts blending mode
+of the game object sprite and colors within game objects array:
+</p>
+<pre>
+void SetBlend(int blend)
+{
+  static int sprBlend[5]=
+  {
+    BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE,
+    BLEND_COLORADD | BLEND_ALPHABLEND | BLEND_NOZWRITE,
+    BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE,
+    BLEND_COLORMUL | BLEND_ALPHAADD   | BLEND_NOZWRITE,
+    BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE
+  };
+
+  static DWORD sprColors[5][5]=
+  {
+    {0xFFFFFFFF, 0xFFFFE080, 0xFF80A0FF, 0xFFA0FF80, 0xFFFF80A0},
+    {0xFF000000, 0xFF303000, 0xFF000060, 0xFF006000, 0xFF600000},
+    {0x80FFFFFF, 0x80FFE080, 0x8080A0FF, 0x80A0FF80, 0x80FF80A0},
+    {0x80FFFFFF, 0x80FFE080, 0x8080A0FF, 0x80A0FF80, 0x80FF80A0},
+    {0x40202020, 0x40302010, 0x40102030, 0x40203010, 0x40102030}
+  };
+
+  if(blend>4) blend=0;
+  nBlend=blend;
+
+  spr->SetBlendMode(sprBlend[blend]);
+
+  for(int i=0;i&lt;MAX_OBJECTS;i++)
+    { pObjects[i].color=sprColors[blend][hge->Random_Int(0,4)]; }
+}
+</pre>
+<h2>Updating the scene</h2>
+<p>
+In the <b>FrameFunc</b> we iterate through our game objects array
+and calculate their new positions:
+</p>
+<pre>
+  for(i=0; i&lt;nObjects; i++)
+  {
+    pObjects[i].x+=pObjects[i].dx*dt;
+    if(pObjects[i].x>SCREEN_WIDTH || pObjects[i].x<0)
+      { pObjects[i].dx=-pObjects[i].dx; }
+
+    pObjects[i].y+=pObjects[i].dy*dt;
+    if(pObjects[i].y>SCREEN_HEIGHT || pObjects[i].y<0)
+      { pObjects[i].dy=-pObjects[i].dy; }
+
+    pObjects[i].scale+=pObjects[i].dscale*dt;
+    if(pObjects[i].scale>2 || pObjects[i].scale<0.5)
+      { pObjects[i].dscale=-pObjects[i].dscale; }
+
+    pObjects[i].rot+=pObjects[i].drot*dt;
+  }
+</pre>
+<h2>Rendering the scene</h2>
+<p>
+In the <b>RenderFunc</b> we iterate through our game objects array
+and and render them to the screen:
+</p>
+<pre>
+  hge->Gfx_BeginScene();
+  bgspr->Render(0,0);
+	
+  for(i=0; i&lt;nObjects; i++)
+  {
+    spr->SetColor(pObjects[i].color); 
+    spr->RenderEx(pObjects[i].x, pObjects[i].y,
+                  pObjects[i].rot, pObjects[i].scale);
+  }
+
+  hge->Gfx_EndScene();
+</pre>
+<p>
+The complete source code with detailed comments for this tutorial you may find in the folder
+<b>tutorials\tutorial07</b>. The required media files you'll find in the folder <b>tutorials\precompiled</b>.
+</p>
+<p>
+Use <b>UP</b> and <b>DOWN</b> arrow keys to adjust number of game objects, <b>SPACE</b> to change blending mode and <b>ESC</b> to exit.
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

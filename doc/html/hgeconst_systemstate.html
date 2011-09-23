@@ -1,0 +1,366 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgeconst.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE System states</h1>
+<p>
+<b>HGE</b> has various internal system states that can be changed and received with
+<a href="hgefunc_systemgetstate.html">System_GetState</a> and <a href="hgefunc_systemsetstate.html">System_SetState</a> functions.
+The state names are defined with <b>hgeState</b> enumeration type:
+<br><br>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr class=titl><td width=32%>System state</td><td width=12%>Type</td><td width=13%>Default</td><td>Description</td></tr>
+<tr><td colspan=4>&nbsp;</td></tr>
+
+<tr>
+<td valign=top><a name=HGE_FRAMEFUNC></a><b>HGE_FRAMEFUNC</b></td>
+<td valign=top>bool*()</td><td valign=top>NULL</td>
+<td>
+Pointer to a user-defined frame function that takes no parameters and returns <b>bool</b>.
+This function will be called each frame, put your game logic here. When you want the application to terminate,
+return <b>true</b>. Otherwise return <b>false</b>.
+If this state is not set, <a href="hgefunc_systemstart.html">System_Start</a> function call will fail.
+Although it can be changed at any time later.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_RENDERFUNC></a><b>HGE_RENDERFUNC</b></td>
+<td valign=top>bool*()</td><td valign=top>NULL</td>
+<td>
+Pointer to a user-defined function that will be called when the application window needs to be
+repainted. Put your rendering code here. The function takes no parameters and should always return <b>false</b>.
+This state may be set and changed at any time you want.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><b><a name=HGE_GFXRESTOREFUNC></a>HGE_GFXRESTOREFUNC</b></td>
+<td valign=top>bool*()</td><td valign=top>NULL</td>
+<td>
+Pointer to a user-defined function that will be called when video memory contents is lost
+(eg. video mode switching). All textures are restored automatically and you only need this function
+if you use <a href="hgefunc_targetgettexture.html">render targets</a>. The function takes no parameters.
+If successful, it should return <b>true</b>, otherwise it should return <b>false</b>.
+This state may be set and changed at any time you want.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_FOCUSLOSTFUNC></a><b>HGE_FOCUSLOSTFUNC</b></td>
+<td valign=top>bool*()</td><td valign=top>NULL</td>
+<td>
+Pointer to a user-defined function that will be called when the application loses focus
+(only when user switches to another application, not when the main window is destroyed)
+or before video mode change. The function takes no parameters and should always return
+<b>false</b>. This state may be set and changed at any time you want.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><b><a name=HGE_FOCUSGAINFUNC></a>HGE_FOCUSGAINFUNC</b></td>
+<td valign=top>bool*()</td><td valign=top>NULL</td>
+<td>
+Pointer to a user-defined function that will be called when the application gains focus
+(only when user switches back from another application, not when the main window is created).
+The function takes no parameters and should always return <b>false</b>.
+This state may be set and changed at any time you want.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><b><a name=HGE_EXITFUNC></a>HGE_EXITFUNC</b></td>
+<td valign=top>bool*()</td><td valign=top>NULL</td>
+<td>
+Pointer to a user-defined function that will be called when user attempts to close the application.
+If you want to allow termination, this function should return <b>true</b>.
+If it returns <b>false</b> the application will continue to run.
+This state may be set and changed at any time you want.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr><td colspan=4><br><br></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_ICON></a><b>HGE_ICON</b></td>
+<td valign=top>char*</td><td valign=top>NULL</td>
+<td>
+A string or a value returned by <b>MAKEINTRESOURCE</b> Win32 API macro, identifying the application
+icon resource to be set for the main window. If this state isn't set, the application window
+will have a default Windows icon. This state may be set and changed at any time you want.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_TITLE></a><b>HGE_TITLE</b></td>
+<td valign=top>char*</td><td valign=top>"HGE"</td>
+<td>
+A string for the application window title.
+This state may be set and changed at any time you want.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_SCREENWIDTH></a><b>HGE_SCREENWIDTH</b></td>
+<td valign=top>int</td><td valign=top>800</td>
+<td>
+The desired application screen width. In fullscreen mode the value is restricted by available video modes.
+This state must be set before call to <a href="hgefunc_systeminitiate.html">System_Initiate</a>.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_SCREENHEIGHT></a><b>HGE_SCREENHEIGHT</b></td>
+<td valign=top>int</td><td valign=top>600</td>
+<td>
+The desired application screen height. In fullscreen mode the value is restricted by available video modes.
+This state must be set before call to <a href="hgefunc_systeminitiate.html">System_Initiate</a>.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_SCREENBPP></a><b>HGE_SCREENBPP</b></td>
+<td valign=top>int</td><td valign=top>32</td>
+<td>
+The desired application screen bitdepth. Can be 16 or 32.
+In windowed mode this state is ignored and the desktop bitdepth is used.
+When reading, the actual bitdepth is returned, not the requested one.
+This state must be set before call to <a href="hgefunc_systeminitiate.html">System_Initiate</a>.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_WINDOWED></a><b>HGE_WINDOWED</b></td>
+<td valign=top>bool</td><td valign=top>false</td>
+<td>
+Whether to run the application in fullscreen or windowed.
+This state may be set and changed at any time you want, except from inside of
+<a href="hgefunc_gfxbeginscene.html">Gfx_BeginScene</a>/<a href="hgefunc_gfxendscene.html">Gfx_EndScene</a>
+calls pair.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_ZBUFFER></a><b>HGE_ZBUFFER</b></td>
+<td valign=top>bool</td><td valign=top>false</td>
+<td>
+Whether to use Z-buffer or not.
+This state must be set before call to <a href="hgefunc_systeminitiate.html">System_Initiate</a>.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_TEXTUREFILTER></a><b>HGE_TEXTUREFILTER</b></td>
+<td valign=top>bool</td><td valign=top>true</td>
+<td>
+Whether to use texture interpolation or not. Eg. it may be useful to temporarily disable texture filtering
+when rendering a tile map, as some videocard drivers have bugs resulting in incorrect tile junctions.
+This state may be set and changed at any time you want.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr><td colspan=4><br><br></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_INIFILE></a><b>HGE_INIFILE</b></td>
+<td valign=top>char*</td><td valign=top>NULL</td>
+<td>
+Initialization file name to be used by <b>HGE</b> <b>Ini_XXXXX</b> functions. 
+This state may be set and changed at any time you want.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_LOGFILE></a><b>HGE_LOGFILE</b></td>
+<td valign=top>char*</td><td valign=top>NULL</td>
+<td>
+The log file name. If set, the log file is created and all further occuring
+<b>HGE</b> errors and statistics will be written to it.
+You may also write your own messages to the log using <a href="hgefunc_systemlog.html">System_Log</a>
+function. This state may be set and changed at any time you want.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr><td colspan=4><br><br></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_USESOUND></a><b>HGE_USESOUND</b></td>
+<td valign=top>bool</td><td valign=top>true</td>
+<td>
+Whether to use <b>HGE</b> sound features or not.
+Set this to <b>false</b> if you don't want to use <b>BASS</b> and have your own sound routines
+or if you want your application to become silent. This state may be set and changed at any time
+you want. Note that turning sound off will delete all previously loaded audio resources.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_SAMPLERATE></a><b>HGE_SAMPLERATE</b></td>
+<td valign=top>int</td><td valign=top>44100</td>
+<td>
+The desired sample rate for playing sound.
+The value is restricted by the audio driver capabilities.
+This state must be set before call to <a href="hgefunc_systeminitiate.html">System_Initiate</a>.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_FXVOLUME></a><b>HGE_FXVOLUME</b></td>
+<td valign=top>int</td><td valign=top>100</td>
+<td>
+Defines the global sound effects volume within range from 0 to 100.
+This state may be set and changed at any time you want.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_MUSVOLUME></a><b>HGE_MUSVOLUME</b></td>
+<td valign=top>int</td><td valign=top>100</td>
+<td>
+Defines the global music volume within range from 0 to 100.
+This state may be set and changed at any time you want.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_STREAMVOLUME></a><b>HGE_STREAMVOLUME</b></td>
+<td valign=top>int</td><td valign=top>100</td>
+<td>
+Defines the global streams volume within range from 0 to 100.
+This state may be set and changed at any time you want.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr><td colspan=4><br><br></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_FPS></a><b>HGE_FPS</b></td>
+<td valign=top>int</td><td valign=top>0</td>
+<td>
+Defines the rate at which the frame function should be called in frames per second.
+Special values: <b>HGEFPS_UNLIMITED</b> - the frame rate is unlimited; <b>HGEFPS_VSYNC</b>
+- the frame rate is synchronized with screen refresh.
+This state may be set and changed at any time you want, except from inside of
+<a href="hgefunc_gfxbeginscene.html">Gfx_BeginScene</a>/<a href="hgefunc_gfxendscene.html">Gfx_EndScene</a>
+calls pair.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_DONTSUSPEND></a><b>HGE_DONTSUSPEND</b></td>
+<td valign=top>bool</td><td valign=top>false</td>
+<td>
+If this state is <b>true</b>, the application will not be suspended when it loses focus.
+This state may be set and changed at any time you want.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_HIDEMOUSE></a><b>HGE_HIDEMOUSE</b></td>
+<td valign=top>bool</td><td valign=top>true</td>
+<td>
+Whether to hide system mouse cursor or not.
+This state may be set and changed at any time you want.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_HWND></a><b>HGE_HWND</b></td>
+<td valign=top>HWND</td><td valign=top>n/a</td>
+<td>
+Read only. If read between <a href="hgefunc_systeminitiate.html">System_Initiate</a>
+and <a href="hgefunc_systemshutdown.html">System_Shutdown</a> calls,
+returns <b>HGE</b> window handle. Otherwise returns 0.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_HWNDPARENT></a><b>HGE_HWNDPARENT</b></td>
+<td valign=top>HWND</td><td valign=top>n/a</td>
+<td>
+Defines <b>HGE</b> parent window handle and turns on child window mode.
+This state must be set before call to <a href="hgefunc_systeminitiate.html">System_Initiate</a>.
+See details <a href="main_childwin.html">here</a>.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_SHOWSPLASH></a><b>HGE_SHOWSPLASH</b></td>
+<td valign=top>bool</td><td valign=top>true</td>
+<td>
+Specifies whether <b>HGE</b> should show it's splash screen or not. Obviously, to take effect
+this state must be set before call to <a href="hgefunc_systeminitiate.html">System_Initiate</a>.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+<tr>
+<td valign=top><a name=HGE_POWERSTATUS></a><b>HGE_POWERSTATUS</b></td>
+<td valign=top>int</td><td valign=top>n/a</td>
+<td>
+Read only. If the current power source is AC, returns <b>HGEPWR_AC</b>.
+Otherwise returns the current battery level, 0-100. If power status is unsupported,
+returns <b>HGEPWR_UNSUPPORTED</b>. See <a href="main_power.html">Power Management</a> for details.
+</td>
+</tr>
+<tr><td colspan=4><img src="1.gif" width=1 height=7></td></tr>
+
+</table>
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_systemgetstate.html">System_GetState</a>,
+<a href="hgefunc_systemsetstate.html">System_SetState</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

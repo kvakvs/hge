@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgedata.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE Input Event structure</h1>
+<p>
+Input Event structure is used with <a href="hgefunc_inputgetevent.html">Input_GetEvent</a> function to receive buffered input events:
+</p>
+<pre>
+struct hgeInputEvent
+{
+  int    <b>type</b>;
+  int    <b>key</b>;
+  int    <b>flags</b>;
+  int    <b>chr</b>;
+  int    <b>wheel</b>;
+  float  <b>x</b>;
+  float  <b>y</b>;
+};
+</pre>
+<h2>Members</h2>
+<dl>
+<dt>type
+<dd>Type of the event, could be one of these:<br>
+<b>INPUT_KEYDOWN</b> - a keyboard key was pressed down<br>
+<b>INPUT_KEYUP</b> - a keyboard key was released<br>
+<b>INPUT_MBUTTONDOWN</b> - a mouse button was pressed down<br>
+<b>INPUT_MBUTTONUP</b> - a mouse button was released<br>
+<b>INPUT_MOUSEMOVE</b> - mouse was moved<br>
+<b>INPUT_MOUSEWHEEL</b> - mouse wheel was rotated<br>
+<dt>key
+<dd>The key code. Is valid only for
+<b>INPUT_KEYDOWN</b>, <b>INPUT_KEYUP</b>, <b>INPUT_MBUTTONDOWN</b>
+and <b>INPUT_MBUTTONUP</b> events.
+<dt>flags
+<dd>Bitwise or (|) combination of the following constants, specifying the event context:
+<b>HGEINP_SHIFT</b> - one of the Shift keys is pressed down<br>
+<b>HGEINP_CTRL</b> - one of the Ctrl keys is pressed down<br>
+<b>HGEINP_ALT</b> - one of the Alt keys is pressed down<br>
+<b>HGEINP_CAPSLOCK</b> - Caps Lock is toggled on<br>
+<b>HGEINP_NUMLOCK</b> - Num Lock is toggled on<br>
+<b>HGEINP_SCROLLLOCK</b> - Scroll Lock is toggled on<br>
+<b>HGEINP_REPEAT</b> - for <b>INPUT_KEYDOWN</b>: the event is generated due to autorepeat feature;
+for <b>INPUT_MBUTTONDOWN</b>: the event is double click<br>
+<dt>chr
+<dd>The character code, cosidering the current keyboard states
+and input locale. Is valid only for <b>INPUT_KEYDOWN</b> and <b>INPUT_KEYUP</b> events. 
+<dt>wheel
+<dd>The number of notches the mouse wheel was rotated through.
+A positive value indicates that the wheel was rotated forward, away from the user;
+a negative value indicates that the wheel was rotated backward, toward the user.
+Is valid only for <b>INPUT_MOUSEWHEEL</b> event.
+<dt>x
+<dd>Mouse cursor X-position.
+<dt>y
+<dd>Mouse cursor Y-position.
+</dl>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_inputgetevent.html">Input_GetEvent</a>,
+<a href="hgeconst_keycodes.html">Key codes</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

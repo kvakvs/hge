@@ -1,0 +1,166 @@
+<html>
+
+<head>
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+</head>
+
+<body bgcolor=#699FC3 leftmargin=10 topmargin=10 marginwidth=10 marginheight=10>
+<table width=100% cellspacing=0 cellpadding=0 border=0><tr><td>
+<img src="title.gif" width=163 height=33 alt="Haaf's Game Engine - Hardware accelerated 2D games engine">
+</td></tr></table>
+<br>
+<h3><a class=mnu href="main_overview.html" target="info">Overview</a></h3>
+<h3><a class=mnu href="main_package.html" target="info">Package contents</a></h3>
+<h3><a class=mnu href="main_history.html" target="info">Version history</a></h3>
+<h3><a class=mnu href="main_upgrade.html" target="info">Upgrading from older HGE</a></h3>
+<h3><a class=mnu href="setup__main.html" target="info">Setting up a HGE project</a></h3>
+<h3><a class=mnu href="main_childwin.html" target="info">HGE in a child window</a></h3>
+<h3><a class=mnu href="main_power.html" target="info">Power Management</a></h3>
+<img src="sep3.gif" width=163 height=13 alt="">
+<h3><a class=mnu href="hgefunc__main.html" target="info">HGE Functions</a></h3>
+<h4><a class=mnu href="hgefunc_interfaceget.html" target="info">hgeCreate</a></h4>
+<h4><a class=mnu href="hgefunc_interfacerelease.html" target="info">Release</a></h4>
+<br>
+<h4><a class=mnu href="hgefunc_systeminitiate.html" target="info">System_Initiate</a></h4>
+<h4><a class=mnu href="hgefunc_systemshutdown.html" target="info">System_Shutdown</a></h4>
+<h4><a class=mnu href="hgefunc_systemstart.html" target="info">System_Start</a></h4>
+<h4><a class=mnu href="hgefunc_systemsetstate.html" target="info">System_SetState</a></h4>
+<h4><a class=mnu href="hgefunc_systemgetstate.html" target="info">System_GetState</a></h4>
+<h4><a class=mnu href="hgefunc_systemgeterror.html" target="info">System_GetErrorMessage</a></h4>
+<h4><a class=mnu href="hgefunc_systemlog.html" target="info">System_Log</a></h4>
+<h4><a class=mnu href="hgefunc_systemlaunch.html" target="info">System_Launch</a></h4>
+<h4><a class=mnu href="hgefunc_systemsnapshot.html" target="info">System_Snapshot</a></h4>
+<br>
+<h4><a class=mnu href="hgefunc_resourceload.html" target="info">Resource_Load</a></h4>
+<h4><a class=mnu href="hgefunc_resourcefree.html" target="info">Resource_Free</a></h4>
+<h4><a class=mnu href="hgefunc_resourceattachpack.html" target="info">Resource_AttachPack</a></h4>
+<h4><a class=mnu href="hgefunc_resourceremovepack.html" target="info">Resource_RemovePack</a></h4>
+<h4><a class=mnu href="hgefunc_resourceremoveallpacks.html" target="info">Resource_RemoveAllPacks</a></h4>
+<h4><a class=mnu href="hgefunc_resourcemakepath.html" target="info">Resource_MakePath</a></h4>
+<h4><a class=mnu href="hgefunc_resourceenumfiles.html" target="info">Resource_EnumFiles</a></h4>
+<h4><a class=mnu href="hgefunc_resourceenumfolders.html" target="info">Resource_EnumFolders</a></h4>
+<br>
+<h4><a class=mnu href="hgefunc_inisetint.html" target="info">Ini_SetInt</a></h4>
+<h4><a class=mnu href="hgefunc_inigetint.html" target="info">Ini_GetInt</a></h4>
+<h4><a class=mnu href="hgefunc_inisetfloat.html" target="info">Ini_SetFloat</a></h4>
+<h4><a class=mnu href="hgefunc_inigetfloat.html" target="info">Ini_GetFloat</a></h4>
+<h4><a class=mnu href="hgefunc_inisetstring.html" target="info">Ini_SetString</a></h4>
+<h4><a class=mnu href="hgefunc_inigetstring.html" target="info">Ini_GetString</a></h4>
+<br>
+<h4><a class=mnu href="hgefunc_randomseed.html" target="info">Random_Seed</a></h4>
+<h4><a class=mnu href="hgefunc_randomint.html" target="info">Random_Int</a></h4>
+<h4><a class=mnu href="hgefunc_randomfloat.html" target="info">Random_Float</a></h4>
+<br>
+<h4><a class=mnu href="hgefunc_timergettime.html" target="info">Timer_GetTime</a></h4>
+<h4><a class=mnu href="hgefunc_timergetdelta.html" target="info">Timer_GetDelta</a></h4>
+<h4><a class=mnu href="hgefunc_timergetfps.html" target="info">Timer_GetFPS</a></h4>
+<br>
+<h4><a class=mnu href="hgefunc_effectload.html" target="info">Effect_Load</a></h4>
+<h4><a class=mnu href="hgefunc_effectfree.html" target="info">Effect_Free</a></h4>
+<h4><a class=mnu href="hgefunc_effectplay.html" target="info">Effect_Play</a></h4>
+<h4><a class=mnu href="hgefunc_effectplayex.html" target="info">Effect_PlayEx</a></h4>
+<br>
+<h4><a class=mnu href="hgefunc_musicload.html" target="info">Music_Load</a></h4>
+<h4><a class=mnu href="hgefunc_musicfree.html" target="info">Music_Free</a></h4>
+<h4><a class=mnu href="hgefunc_musicplay.html" target="info">Music_Play</a></h4>
+<h4><a class=mnu href="hgefunc_musicsetamplification.html" target="info">Music_SetAmplification</a></h4>
+<h4><a class=mnu href="hgefunc_musicgetamplification.html" target="info">Music_GetAmplification</a></h4>
+<h4><a class=mnu href="hgefunc_musicgetlength.html" target="info">Music_GetLength</a></h4>
+<h4><a class=mnu href="hgefunc_musicsetpos.html" target="info">Music_SetPos</a></h4>
+<h4><a class=mnu href="hgefunc_musicgetpos.html" target="info">Music_GetPos</a></h4>
+<h4><a class=mnu href="hgefunc_musicsetinstrvolume.html" target="info">Music_SetInstrVolume</a></h4>
+<h4><a class=mnu href="hgefunc_musicgetinstrvolume.html" target="info">Music_GetInstrVolume</a></h4>
+<h4><a class=mnu href="hgefunc_musicsetchannelvolume.html" target="info">Music_SetChannelVolume</a></h4>
+<h4><a class=mnu href="hgefunc_musicgetchannelvolume.html" target="info">Music_GetChannelVolume</a></h4>
+<br>
+<h4><a class=mnu href="hgefunc_streamload.html" target="info">Stream_Load</a></h4>
+<h4><a class=mnu href="hgefunc_streamfree.html" target="info">Stream_Free</a></h4>
+<h4><a class=mnu href="hgefunc_streamplay.html" target="info">Stream_Play</a></h4>
+<br>
+<h4><a class=mnu href="hgefunc_channelsetpanning.html" target="info">Channel_SetPanning</a></h4>
+<h4><a class=mnu href="hgefunc_channelsetvolume.html" target="info">Channel_SetVolume</a></h4>
+<h4><a class=mnu href="hgefunc_channelsetpitch.html" target="info">Channel_SetPitch</a></h4>
+<h4><a class=mnu href="hgefunc_channelpause.html" target="info">Channel_Pause</a></h4>
+<h4><a class=mnu href="hgefunc_channelresume.html" target="info">Channel_Resume</a></h4>
+<h4><a class=mnu href="hgefunc_channelstop.html" target="info">Channel_Stop</a></h4>
+<h4><a class=mnu href="hgefunc_channelpauseall.html" target="info">Channel_PauseAll</a></h4>
+<h4><a class=mnu href="hgefunc_channelresumeall.html" target="info">Channel_ResumeAll</a></h4>
+<h4><a class=mnu href="hgefunc_channelstopall.html" target="info">Channel_StopAll</a></h4>
+<h4><a class=mnu href="hgefunc_channelisplaying.html" target="info">Channel_IsPlaying</a></h4>
+<h4><a class=mnu href="hgefunc_channelgetlength.html" target="info">Channel_GetLength</a></h4>
+<h4><a class=mnu href="hgefunc_channelsetpos.html" target="info">Channel_SetPos</a></h4>
+<h4><a class=mnu href="hgefunc_channelgetpos.html" target="info">Channel_GetPos</a></h4>
+<h4><a class=mnu href="hgefunc_channelslideto.html" target="info">Channel_SlideTo</a></h4>
+<h4><a class=mnu href="hgefunc_channelissliding.html" target="info">Channel_IsSliding</a></h4>
+<br>
+<h4><a class=mnu href="hgefunc_inputgetmousepos.html" target="info">Input_GetMousePos</a></h4>
+<h4><a class=mnu href="hgefunc_inputsetmousepos.html" target="info">Input_SetMousePos</a></h4>
+<h4><a class=mnu href="hgefunc_inputgetmousewheel.html" target="info">Input_GetMouseWheel</a></h4>
+<h4><a class=mnu href="hgefunc_inputismouseover.html" target="info">Input_IsMouseOver</a></h4>
+<h4><a class=mnu href="hgefunc_inputkeydown.html" target="info">Input_KeyDown</a></h4>
+<h4><a class=mnu href="hgefunc_inputkeyup.html" target="info">Input_KeyUp</a></h4>
+<h4><a class=mnu href="hgefunc_inputgetkeyname.html" target="info">Input_GetKeyName</a></h4>
+<h4><a class=mnu href="hgefunc_inputgetkeystate.html" target="info">Input_GetKeyState</a></h4>
+<h4><a class=mnu href="hgefunc_inputgetkey.html" target="info">Input_GetKey</a></h4>
+<h4><a class=mnu href="hgefunc_inputgetchar.html" target="info">Input_GetChar</a></h4>
+<h4><a class=mnu href="hgefunc_inputgetevent.html" target="info">Input_GetEvent</a></h4>
+<br>
+<h4><a class=mnu href="hgefunc_gfxbeginscene.html" target="info">Gfx_BeginScene</a></h4>
+<h4><a class=mnu href="hgefunc_gfxendscene.html" target="info">Gfx_EndScene</a></h4>
+<h4><a class=mnu href="hgefunc_gfxclear.html" target="info">Gfx_Clear</a></h4>
+<h4><a class=mnu href="hgefunc_gfxrenderline.html" target="info">Gfx_RenderLine</a></h4>
+<h4><a class=mnu href="hgefunc_gfxrendertriple.html" target="info">Gfx_RenderTriple</a></h4>
+<h4><a class=mnu href="hgefunc_gfxrenderquad.html" target="info">Gfx_RenderQuad</a></h4>
+<h4><a class=mnu href="hgefunc_gfxstartbatch.html" target="info">Gfx_StartBatch</a></h4>
+<h4><a class=mnu href="hgefunc_gfxfinishbatch.html" target="info">Gfx_FinishBatch</a></h4>
+<h4><a class=mnu href="hgefunc_gfxsetclipping.html" target="info">Gfx_SetClipping</a></h4>
+<h4><a class=mnu href="hgefunc_gfxsettransform.html" target="info">Gfx_SetTransform</a></h4>
+<br>
+<h4><a class=mnu href="hgefunc_targetcreate.html" target="info">Target_Create</a></h4>
+<h4><a class=mnu href="hgefunc_targetfree.html" target="info">Target_Free</a></h4>
+<h4><a class=mnu href="hgefunc_targetgettexture.html" target="info">Target_GetTexture</a></h4>
+<br>
+<h4><a class=mnu href="hgefunc_texturecreate.html" target="info">Texture_Create</a></h4>
+<h4><a class=mnu href="hgefunc_textureload.html" target="info">Texture_Load</a></h4>
+<h4><a class=mnu href="hgefunc_texturefree.html" target="info">Texture_Free</a></h4>
+<h4><a class=mnu href="hgefunc_texturegetwidth.html" target="info">Texture_GetWidth</a></h4>
+<h4><a class=mnu href="hgefunc_texturegetheight.html" target="info">Texture_GetHeight</a></h4>
+<h4><a class=mnu href="hgefunc_texturelock.html" target="info">Texture_Lock</a></h4>
+<h4><a class=mnu href="hgefunc_textureunlock.html" target="info">Texture_Unlock</a></h4>
+<br>
+<h3><a class=mnu href="hgedata__main.html" target="info">HGE Data types</a></h3>
+<h3><a class=mnu href="hgeconst__main.html" target="info">HGE Constants</a></h3>
+<img src="sep3.gif" width=163 height=13 alt="">
+<h3><a class=mnu href="hgesprite__main.html" target="info">hgeSprite</a></h3>
+<h3><a class=mnu href="hgeanim__main.html" target="info">hgeAnimation</a></h3>
+<h3><a class=mnu href="hgefont__main.html" target="info">hgeFont</a></h3>
+<h3><a class=mnu href="hgeparticle__main.html" target="info">hgeParticleSystem</a></h3>
+<h3><a class=mnu href="hgepmanager__main.html" target="info">hgeParticleManager</a></h3>
+<h3><a class=mnu href="hgedistort__main.html" target="info">hgeDistortionMesh</a></h3>
+<h3><a class=mnu href="hgestring__main.html" target="info">hgeStringTable</a></h3>
+<h3><a class=mnu href="hgeresource__main.html" target="info">hgeResourceManager</a></h3>
+<h3><a class=mnu href="hgegui__main.html" target="info">hgeGUI</a></h3>
+<h3><a class=mnu href="hgeguio__main.html" target="info">hgeGUIObject</a></h3>
+<h3><a class=mnu href="hgerect__main.html" target="info">hgeRect</a></h3>
+<h3><a class=mnu href="hgevector__main.html" target="info">hgeVector</a></h3>
+<h3><a class=mnu href="hgecolor__main.html" target="info">hgeColor</a></h3>
+<h3><a class=mnu href="hgecolorrgb__main.html" target="info">hgeColorRGB</a></h3>
+<h3><a class=mnu href="hgecolorhsv__main.html" target="info">hgeColorHSV</a></h3>
+<img src="sep3.gif" width=163 height=13 alt="">
+<h3><a class=mnu href="peditor__main.html" target="info">Particle Systems Editor</a></h3>
+<h3><a class=mnu href="fbuilder__main.html" target="info">Bitmap Font Builder</a></h3>
+<h3><a class=mnu href="texasm__main.html" target="info">Texture Assembler</a></h3>
+<h3><a class=mnu href="pngopt__main.html" target="info">PNG Optimizer</a></h3>
+<h3><a class=mnu href="main_respack.html" target="info">Compiling resource pack</a></h3>
+<img src="sep3.gif" width=163 height=13 alt="">
+<h3><a class=mnu href="main_hints.html" target="info">Hints & Tips</a></h3>
+<h3><a class=mnu href="tutorials__main.html" target="info">Tutorials</a></h3>
+<h3><a class=mnu href="main_license.html" target="info">License</a></h3>
+<h3><a class=mnu href="main_credits.html" target="info">Credits</a></h3>
+<h3><a class=mnu href="main_support.html" target="info">Support & Contacts</a></h3>
+<br>
+
+</body>
+
+</html>

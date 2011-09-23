@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_peditor.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Using HGE Particle Systems Editor interface</h1>
+<h2>General information and controls</h2>
+<p>
+Use the left mouse button in the black area to fire the particle system.
+Hold the right mouse button down to make the particle system follow the mouse.
+<br><br>
+Use keys <b>1</b> to <b>9</b> for fast switching between presets.
+The presets are saved and loaded automatically.
+The <b>Escape</b> key quits the editor.
+Use <b>TAB</b> to hide interface and <b>SPACE</b> to run particles preset.
+<br><br>
+The most of particle system parameters are controlled with a group of sliders.
+There are two basic control schemes. A <b>min</b>/<b>max</b> sliders pair
+that define a constant range for the respective parameter. And a group of 
+<b>strt</b>/<b>end</b>/<b>var</b> sliders, defining the starting value, the ending
+value and the starting value variation within the range between the <b>strt</b> and
+<b>end</b>.
+<br><br>
+Use the lock buttons (<img src="lock.gif" width=16 height=11 alt="">) to constrain
+the <b>min</b>/<b>max</b> or <b>strt</b>/<b>end</b> parameters to the same value.
+All the rest controls are rather common and shouldn't make a challenge for you.
+</p>
+<h2>System Parameters</h2>
+<p>
+This group of parameters define the whole particle system behaviour:
+</p>
+<dl>
+<dt>System lifetime
+<dd>Defines the period of time when the particle system generates new particles.
+If the <b>continuous</b> check box is activated - the particles are generated all the time.
+</dl>
+<dl>
+<dt>Emission
+<dd>Defines how much new particles are generated per second.
+</dl>
+<dl>
+<dt>Particle lifetime
+<dd>Defines the period of time during which a specific particle is alive.
+</dl>
+<dl>
+<dt>Texture
+<dd>Specifies one of the 16 sprites to be used for the particles.
+</dl>
+<dl>
+<dt>Blend mode
+<dd>Specifies the particles' blending mode: <b>additive</b> - a particle
+color is added to the graphics already on the screen resulting in lighting effect,
+<b>blend</b> - a particle color is blended with the graphics already on the screen.
+</dl>
+<h2>Particle Movement</h2>
+<p>
+This group of parameters define the movement of a specific particle:
+</p>
+<dl>
+<dt>Direction
+<dd>This is an angle, defining particles emitting direction. If the <b>relative</b>
+check box is activated -  the angle is treated relative to the current particle
+system's movement direction.
+</dl>
+<dl>
+<dt>Spread
+<dd>This angle defines the sector within which the particles are emitted.
+For example, if it is 40, the emitted particles direction lies within
+<b>Direction</b>-20 and <b>Direction</b>+20. If the <b>Spread</b> is 360,
+the <b>Direction</b> parameter becomes meaningless as the whole circle is covered.
+</dl>
+<dl>
+<dt>Start speed
+<dd>Defines the range of starting speed for the particles.
+</dl>
+<dl>
+<dt>Gravity
+<dd>Defines the range of gravity values for the particles (basically,
+it is just an acceleration along the Y-axis).
+</dl>
+<dl>
+<dt>Radial acceleration
+<dd>Defines the range of values for the acceleration directed towards
+the particle system's center. Use this to create particle system that
+attracts the particles to it's center.
+</dl>
+<dl>
+<dt>Tangential acceleration
+<dd>Defines the range of values for the acceleration directed perpendicularly
+to the radial acceleration. Use this to make particles rotate around
+the particle system's center.
+</dl>
+<h2>Particle Appearance</h2>
+<p>
+This group of parameters define the appearance of a specific particle:
+</p>
+<dl>
+<dt>Particle size
+<dd>Defines the starting and ending size of a specific particle and it's
+starting size variation. Note that bigger particles require more time to render.
+</dl>
+<dl>
+<dt>Particle spin
+<dd>This parameter defines the speed of a specific particle rotation around it's
+anchor point. Set the starting and ending rotation speed and it's starting rotation
+speed variation.
+</dl>
+<dl>
+<dt>Particle alpha
+<dd>Defines the starting and ending opacity of a specific particle and it's
+starting opacity variation.
+</dl>
+<dl>
+<dt>Particle color
+<dd>Defines the starting and ending color of a specific particle and it's
+starting color variation.
+</dl>
+<h2>Presets & Stuff</h2>
+<p>
+Under this name various editor's information and commands are placed:
+</p>
+<dl>
+<dt>Preset No.
+<dd>Use this set of buttons to switch between the particle system presets.
+Presets are saved and loaded automatically in files named <b>particle1.psi</b> - <b>particle9.psi</b>.
+</dl>
+<dl>
+<dt>Show bounding box
+<dd>If this check box is activated, the particle system bounding box
+is displayed. So you can adjust parameters to make the whole particle system
+fit into the desired dimensions. Note that during bounding box calculation the
+particle positions only are considered, and the particle sprites' dimensions
+are ignored.
+</dl>
+<dl>
+<dt>Particles alive
+<dd>Shows how much particles are currently alive. Try to keep this value 
+as small as possible, because it affects your application performance.
+The two parameters that affect this value is <b>Emission</b> and <b>Particle lifetime</b>.
+</dl>
+<dl>
+<dt>FPS
+<dd>Shows the current frames-per-second rate.
+</dl>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgeconst.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE Blending modes</h1>
+<p>
+<b>T</b>o specify a <b>HGE</b> blending mode, unite one of the constants from each pair
+using C-language <b>bitwise or</b> operator (|):
+</p>
+<pre>
+#define	<b>BLEND_COLORADD</b>    1
+#define	<b>BLEND_COLORMUL</b>    0
+
+#define	<b>BLEND_ALPHABLEND</b>  2
+#define	<b>BLEND_ALPHAADD</b>    0
+
+#define	<b>BLEND_ZWRITE</b>      4
+#define	<b>BLEND_NOZWRITE</b>    0
+</pre>
+<dl>
+<dt>BLEND_COLORADD
+<dd>The vertex color is added to a texture's texel colors, resulting in texture lightening.
+The vertex color 0x00000000 makes no effect.
+<dt>BLEND_COLORMUL
+<dd>Texture's texel colors are multiplied by the vertex color, resulting in texture darkening.
+The vertex color 0xFFFFFFFF makes no effect.
+</dl>
+<dl>
+<dt>BLEND_ALPHABLEND
+<dd>The object's pixel colors are alpha-blended with the pixels already on the screen when rendering.
+Use this for usual objects rendering.
+<dt>BLEND_ALPHAADD
+<dd>The object's pixel colors are added to the pixels already on the screen when rendering.
+Use this to create lighting effects.
+</dl>
+<dl>
+<dt>BLEND_ZWRITE
+<dd>Write the pixels' Z-order to the Z-buffer when rendering.
+When using Z-buffer, use this for opaque objects.
+<dt>BLEND_NOZWRITE
+<dd>Don't write the pixels' Z-order to the Z-buffer when rendering.
+When using Z-buffer, first, render all opaque objects, then use this
+to render all semi-transparent objects.
+</dl>
+<p>
+Default blending constants combinations:
+</p>
+<pre>
+#define <b>BLEND_DEFAULT</b>
+	(BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE)
+#define <b>BLEND_DEFAULT_Z</b>
+	(BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_ZWRITE)
+</pre>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgedata_triple.html">Triple structure</a>,
+<a href="hgedata_quad.html">Quad structure</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

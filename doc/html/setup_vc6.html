@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_setup.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Visual C++ 6.0</h1>
+<h2>1. Set headers and libraries path</h2>
+<p>Open <b>Tools->Options->Directories</b> dialog tab, add path to <b>HGE</b> "include"
+directory and move it to the top:</p>
+<center><img src="vcsetup1.gif" width=417 heght=319 alt="Adding include path"></center>
+<br>
+<p>
+On the same tab select <b>Library files</b> from the <b>Show directories for</b> dropdown
+list, add path to <b>HGE</b> "lib\vc" directory and move it to the top:</p>
+<center><img src="vcsetup2.gif" width=417 heght=319 alt="Adding libraries path"></center>
+<br>
+<p>
+Press <b>OK</b>.
+<br><br>
+Now you can use <b>HGE</b> in your projects without specifying it's exact location. This step
+is needed only once for all your projects.
+</p>
+<h2>2. Create blank Win32 Application project</h2>
+<p>
+Open <b>File->New...->Projects</b> dialog tab, select <b>Win32 Application</b>, type in your
+<b>Project name</b> and <b>Location</b>:</p>
+<center><img src="vcsetup3.gif" width=486 heght=400 alt="Creating blank project, 1 of 2"></center>
+<br>
+<p>
+Press <b>OK</b>.
+<br><br>
+On the next screen select <b>An empty project</b> or <b>A simple Win32 application</b> if you want a simple file structure to be created for you:</p>
+<center><img src="vcsetup4.gif" width=477 heght=384 alt="Creating blank project, 2 of 2"></center>
+<br>
+<p>
+Press <b>Finish</b>. Voila! You have the project created now.
+</p>
+<h2>3. Add libraries to the project</h2>
+<p>
+Open <b>Project->Settings...->Link</b> dialog tab and add to <b>Object/library modules</b> the following libraries:
+</p>
+<ul>
+<li><b>hge.lib</b> - HGE system layer DLL import library
+<li><b>hgehelp.lib</b> - HGE helper classes library
+</ul>
+<p>
+If you don't call any <b>Windows</b> functions, these two are the only libraries required.
+</p>
+<center><img src="vcsetup5.gif" width=486 heght=372 alt="Adding import libraries to a project"></center>
+<br>
+<p>
+Then select <b>Win32 Release</b> from the <b>Settings For</b> dropdown list and repeat the operation.
+<br><br>
+Press <b>OK</b>.
+</p>
+<h2>4. Start coding!</h2>
+<p>
+Include <b>hge.h</b> to access <b>HGE</b> functions. See <a href="tutorials__main.html">Tutorials</a> section for basic code examples.<br>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

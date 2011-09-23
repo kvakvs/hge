@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_fbuilder.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Using HGE Bitmap Font Builder interface</h1>
+<h2>General information and controls</h2>
+<p>
+The current font texture dimensions are displayed in the lower left corner of the screen.
+Place mouse cursor over a character to display it's parameters in the lower right corner of the screen.
+Drag the texture with left mouse button to view it's parts that are currently out of screen.
+<br><br>
+The <b>Escape</b> key quits the editor.
+<br><br>
+Note that HGE fonts consist of two files: a description and a bitmap.
+<br><br>
+Also bear in mind that once you've generated a bitmap font, you could apply any additional
+effects to it, using your graphics editor.
+</p>
+<h2>Font Parameters</h2>
+<p>
+This group of parameters define the font attributes:
+</p>
+<dl>
+<dt>Typeface
+<dd>The list of fonts installed in the system. Choose one that you'd like to use in your game.
+To scroll the list you can use the slider, mouse wheel and up/down arrow keys (after clicking inside the list).
+</dl>
+<dl>
+<dt>Bold
+<dd>Whether to use bold font style.
+</dl>
+<dl>
+<dt>Italic
+<dd>Whether to use italic font style.
+</dl>
+<dl>
+<dt>Antialiased
+<dd>Whether to antialias character outlines or not. Note that most fonts have a range of sizes in which
+antialiasing will not work even if requested. This probably will be fixed in later revisions. For now
+you could choose another font or make it's size a bit smaller/larger (you may scale it back when using
+in HGE) to get antialiased bitmap.
+</dl>
+<dl>
+<dt>Size
+<dd>Specifies the desired font height in pixels.
+</dl>
+<dl>
+<dt>Characters range
+<dd>Specifies the range of characters to be included in the font. Click and drag over the characters you need.
+</dl>
+<h2>Commands & Info</h2>
+<p>
+Under this name various editor's information and commands are placed:
+</p>
+<dl>
+<dt>Show grid
+<dd>If this check box is activated, each character's bounding box
+is displayed. Having this option turned on you may see 1-pixel
+gaps between characters. These are to allow defect free scaling of
+the font in HGE.
+</dl>
+<dl>
+<dt>Save
+<dd>Opens standard Windows <b>Save As...</b> dialog window. Choose a path and filename to save the font to.
+Note that two files are saved: font description and font bitmap.
+</dl>
+<dl>
+<dt>Help
+<dd>Display quick help.
+</dl>
+<dl>
+<dt>Exit
+<dd>Quit the editor.
+</dl>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

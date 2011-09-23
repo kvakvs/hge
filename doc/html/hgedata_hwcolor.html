@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgedata.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE Hardware color format</h1>
+<p>
+<b>S</b>everal <b>HGE</b> functions use color as a parameter or return value.
+It is just a <b>DWORD</b>, containing four 8-bit values for Red, Green, Blue and Alpha
+color components in the following way: <b>0xAARRGGBB</b>.
+<br><br>
+I.e. the highest <b>BYTE</b> of <b>DWORD</b> contains the Alpha value.
+The next <b>BYTE</b> contains the Red value. Then goes Green value.
+And the lowest <b>BYTE</b> contains Blue value.
+</p>
+<h2>Macros</h2>
+<p>
+You could use these macros to manipulate <b>DWORD</b> color values:
+</p>
+<pre>
+ARGB(a,r,g,b)
+  ((DWORD(a)<<24) + (DWORD(r)<<16) + (DWORD(g)<<8) + DWORD(b))
+</pre>
+<p>
+<b>ARGB</b> macro builds a <b>DWORD</b> color value from it's components.
+</p>
+<pre>
+GETA(col)      ((col)>>24)
+GETR(col)      (((col)>>16) & 0xFF)
+GETG(col)      (((col)>>8) & 0xFF)
+GETB(col)      ((col) & 0xFF)
+</pre>
+<p>
+<b>GETA</b>, <b>GETR</b>, <b>GETG</b> and <b>GETB</b> macros return the specified component of the composite <b>DWORD</b>.
+</p>
+<pre>
+SETA(col,a)    (((col) & 0x00FFFFFF) + (DWORD(a)<<24))
+SETR(col,r)    (((col) & 0xFF00FFFF) + (DWORD(r)<<16))
+SETG(col,g)    (((col) & 0xFFFF00FF) + (DWORD(g)<<8))
+SETB(col,b)    (((col) & 0xFFFFFF00) + DWORD(b))
+</pre>
+<p>
+<b>SETA</b>, <b>SETR</b>, <b>SETG</b> and <b>SETB</b> macros change the specified component of the composite <b>DWORD</b>.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgecolor__main.html">hgeColor helper class</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>
