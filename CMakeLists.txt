@@ -1,15 +1,23 @@
-#----------------------------------------------------
-# HGE CMake script including HGEHELP and examples
-#----------------------------------------------------
-
+## HGE CMake script including HGEHELP and examples
+##
 project( HGE )
 cmake_minimum_required( VERSION 2.8 )
 
+##----------------------------------------
+## Edit this to match your configuration
+##----------------------------------------
 
-#----------------------------------------
-# Edit this to match your configuration
-#----------------------------------------
 SET( DIRECTX_SDK_DIR "C:/DXSDK" )
+SET( HGE_DIRECTX_VER "8" )
+## SET( HGE_DIRECTX_VER "9" )
+
+##----------------------------------------
+## End of manual configuration section
+## try to minimize tampering with code below unless you know how CMake works
+##----------------------------------------
+
+
+
 
 
 # disable warnings on STD non conformance and security issues
@@ -27,8 +35,8 @@ add_subdirectory( src/zlib-1.2.5 )
 add_subdirectory( src/libPNG )
 
 #--- HGE core library and helpers ---
-add_subdirectory( src/helpers )
-add_subdirectory( src/core )
+add_subdirectory( src/helpers_directx${HGE_DIRECTX_VER} )
+add_subdirectory( src/core_directx${HGE_DIRECTX_VER} )
 
 #--- HGE TOOLS - comment out of not needed ---
 add_subdirectory( src/fontconv )
