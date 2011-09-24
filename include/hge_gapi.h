@@ -14,7 +14,7 @@
         #include <d3d9.h>
         #include <d3dx9.h>
     #else
-        #error Please change your C++ preprocessor defs settings or edit HGE.H and define HGE_DIRECTX_VER to be 8 or 9
+        #error Please change your CMakeLists.txt; set HGE_DIRECTX_VER to be 8 or 9, or edit C++ preprocessor definitions settings
     #endif
 #endif
 
@@ -23,8 +23,8 @@
     typedef IDirect3DDevice8        hgeGAPIDevice;
     typedef IDirect3DVertexBuffer8  hgeGAPIVertexBuffer;
     typedef IDirect3DIndexBuffer8   hgeGAPIIndexBuffer;
-    typedef IDirect3DTexture8		hgeGAPITexture;
-    typedef IDirect3DSurface8		hgeGAPISurface;
+    typedef IDirect3DTexture8       hgeGAPITexture;
+    typedef IDirect3DSurface8       hgeGAPISurface;
     typedef D3DVIEWPORT8            hgeGAPIViewport;
     typedef D3DADAPTER_IDENTIFIER8  hgeGAPIAdapterIdentifier;
 #endif
@@ -34,8 +34,8 @@
     typedef IDirect3DDevice9        hgeGAPIDevice;
     typedef IDirect3DVertexBuffer9  hgeGAPIVertexBuffer;
     typedef IDirect3DIndexBuffer9   hgeGAPIIndexBuffer;
-    typedef IDirect3DTexture9		hgeGAPITexture;
-    typedef IDirect3DSurface9		hgeGAPISurface;
+    typedef IDirect3DTexture9       hgeGAPITexture;
+    typedef IDirect3DSurface9       hgeGAPISurface;
     typedef D3DVIEWPORT9            hgeGAPIViewport;
     typedef D3DADAPTER_IDENTIFIER9  hgeGAPIAdapterIdentifier;
 #endif
