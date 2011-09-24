@@ -30,7 +30,7 @@ BOOL APIENTRY DllMain(HANDLE, uint32_t, LPVOID)
 }
 
 
-HGE* CALL hgeCreate(int ver)
+HGE* HGE_CALL hgeCreate(int ver)
 {
     if(ver==HGE_VERSION)
         return (HGE*)HGE_Impl::_Interface_Get();
@@ -49,7 +49,7 @@ HGE_Impl* HGE_Impl::_Interface_Get()
 }
 
 
-void CALL HGE_Impl::Release()
+void HGE_CALL HGE_Impl::Release()
 {
     nRef--;
 
@@ -63,7 +63,7 @@ void CALL HGE_Impl::Release()
 }
 
 
-bool CALL HGE_Impl::System_Initiate()
+bool HGE_CALL HGE_Impl::System_Initiate()
 {
     OSVERSIONINFO   os_ver;
     SYSTEMTIME      tm;
@@ -197,7 +197,7 @@ bool CALL HGE_Impl::System_Initiate()
     return true;
 }
 
-void CALL HGE_Impl::System_Shutdown()
+void HGE_CALL HGE_Impl::System_Shutdown()
 {
     System_Log("\nFinishing..");
 
@@ -223,7 +223,7 @@ void CALL HGE_Impl::System_Shutdown()
 }
 
 
-bool CALL HGE_Impl::System_Start()
+bool HGE_CALL HGE_Impl::System_Start()
 {
     MSG     msg;
 
@@ -347,7 +347,7 @@ bool CALL HGE_Impl::System_Start()
     return true;
 }
 
-void CALL HGE_Impl::System_SetStateBool(hgeBoolState state, bool value)
+void HGE_CALL HGE_Impl::System_SetStateBool(hgeBoolState state, bool value)
 {
     switch(state)
     {
@@ -417,7 +417,7 @@ void CALL HGE_Impl::System_SetStateBool(hgeBoolState state, bool value)
     }
 }
 
-void CALL HGE_Impl::System_SetStateFunc(hgeFuncState state, hgeCallback value)
+void HGE_CALL HGE_Impl::System_SetStateFunc(hgeFuncState state, hgeCallback value)
 {
     switch(state)
     {
@@ -430,7 +430,7 @@ void CALL HGE_Impl::System_SetStateFunc(hgeFuncState state, hgeCallback value)
     }
 }
 
-void CALL HGE_Impl::System_SetStateHwnd(hgeHwndState state, HWND value)
+void HGE_CALL HGE_Impl::System_SetStateHwnd(hgeHwndState state, HWND value)
 {
     switch(state)
     {
@@ -438,7 +438,7 @@ void CALL HGE_Impl::System_SetStateHwnd(hgeHwndState state, HWND value)
     }
 }
 
-void CALL HGE_Impl::System_SetStateInt(hgeIntState state, int value)
+void HGE_CALL HGE_Impl::System_SetStateInt(hgeIntState state, int value)
 {
     switch(state)
     {
@@ -503,7 +503,7 @@ void CALL HGE_Impl::System_SetStateInt(hgeIntState state, int value)
     }
 }
 
-void CALL HGE_Impl::System_SetStateString(hgeStringState state, const char *value)
+void HGE_CALL HGE_Impl::System_SetStateString(hgeStringState state, const char *value)
 {
     FILE *hf;
     
@@ -530,7 +530,7 @@ void CALL HGE_Impl::System_SetStateString(hgeStringState state, const char *valu
     }
 }
 
-bool CALL HGE_Impl::System_GetStateBool(hgeBoolState state)
+bool HGE_CALL HGE_Impl::System_GetStateBool(hgeBoolState state)
 {
     switch(state)
     {
@@ -549,7 +549,7 @@ bool CALL HGE_Impl::System_GetStateBool(hgeBoolState state)
     return false;
 }
 
-hgeCallback CALL HGE_Impl::System_GetStateFunc(hgeFuncState state)
+hgeCallback HGE_CALL HGE_Impl::System_GetStateFunc(hgeFuncState state)
 {
     switch(state)
     {
@@ -563,7 +563,7 @@ hgeCallback CALL HGE_Impl::System_GetStateFunc(hgeFuncState state)
     return NULL;
 }
 
-HWND CALL HGE_Impl::System_GetStateHwnd(hgeHwndState state)
+HWND HGE_CALL HGE_Impl::System_GetStateHwnd(hgeHwndState state)
 {
     switch(state)
     {
@@ -574,7 +574,7 @@ HWND CALL HGE_Impl::System_GetStateHwnd(hgeHwndState state)
     return 0;
 }
 
-int CALL HGE_Impl::System_GetStateInt(hgeIntState state)
+int HGE_CALL HGE_Impl::System_GetStateInt(hgeIntState state)
 {
     switch(state)
     {
@@ -592,7 +592,7 @@ int CALL HGE_Impl::System_GetStateInt(hgeIntState state)
     return 0;
 }
 
-const char* CALL HGE_Impl::System_GetStateString(hgeStringState state) {
+const char* HGE_CALL HGE_Impl::System_GetStateString(hgeStringState state) {
     switch(state) {
         case HGE_ICON:          return szIcon;
         case HGE_TITLE:         return szWinTitle;
@@ -605,12 +605,12 @@ const char* CALL HGE_Impl::System_GetStateString(hgeStringState state) {
     return NULL;
 }
 
-char* CALL HGE_Impl::System_GetErrorMessage()
+char* HGE_CALL HGE_Impl::System_GetErrorMessage()
 {
     return szError;
 }
 
-void CALL HGE_Impl::System_Log(const char *szFormat, ...)
+void HGE_CALL HGE_Impl::System_Log(const char *szFormat, ...)
 {
     FILE *hf = NULL;
     va_list ap;
@@ -629,13 +629,13 @@ void CALL HGE_Impl::System_Log(const char *szFormat, ...)
     fclose(hf);
 }
 
-bool CALL HGE_Impl::System_Launch(const char *url)
+bool HGE_CALL HGE_Impl::System_Launch(const char *url)
 {
     if((uint32_t)ShellExecute(pHGE->hwnd, NULL, url, NULL, NULL, SW_SHOWMAXIMIZED)>32) return true;
     else return false;
 }
 
-void CALL HGE_Impl::System_Snapshot(const char *filename)
+void HGE_CALL HGE_Impl::System_Snapshot(const char *filename)
 {
     hgeGAPISurface * pSurf;
     char *shotname, tempname[_MAX_PATH];

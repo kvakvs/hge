@@ -47,7 +47,7 @@ public:
 	void		SetTracking(float tracking) {fTracking=tracking;}
 	void		SetSpacing(float spacing) {fSpacing=spacing;}
 
-	uint32_t		GetColor() const {return dwCol;}
+	uint32_t	GetColor() const {return dwCol;}
 	float		GetZ() const {return fZ;}
 	int			GetBlendMode() const {return nBlend;}
 	float		GetScale() const {return fScale;}

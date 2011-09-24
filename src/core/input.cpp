@@ -48,7 +48,7 @@ char *KeyNames[] =
 };
 
 
-bool CALL HGE_Impl::Input_GetEvent(hgeInputEvent *event)
+bool HGE_CALL HGE_Impl::Input_GetEvent(hgeInputEvent *event)
 {
 	CInputEventList *eptr;
 
@@ -64,13 +64,13 @@ bool CALL HGE_Impl::Input_GetEvent(hgeInputEvent *event)
 	return false;
 }
 
-void CALL HGE_Impl::Input_GetMousePos(float *x, float *y)
+void HGE_CALL HGE_Impl::Input_GetMousePos(float *x, float *y)
 {
 	*x=Xpos; *y=Ypos;
 }
 
 
-void CALL HGE_Impl::Input_SetMousePos(float x, float y)
+void HGE_CALL HGE_Impl::Input_SetMousePos(float x, float y)
 {
 	POINT pt;
 	pt.x=(long)x; pt.y=(long)y;
@@ -78,42 +78,42 @@ void CALL HGE_Impl::Input_SetMousePos(float x, float y)
 	SetCursorPos(pt.x,pt.y);
 }
 
-int CALL HGE_Impl::Input_GetMouseWheel()
+int HGE_CALL HGE_Impl::Input_GetMouseWheel()
 {
 	return Zpos;
 }
 
-bool CALL HGE_Impl::Input_IsMouseOver()
+bool HGE_CALL HGE_Impl::Input_IsMouseOver()
 {
 	return bMouseOver;
 }
 
-bool CALL HGE_Impl::Input_GetKeyState(int key)
+bool HGE_CALL HGE_Impl::Input_GetKeyState(int key)
 {
 	return ((GetKeyState(key) & 0x8000) != 0);
 }
 
-bool CALL HGE_Impl::Input_KeyDown(int key)
+bool HGE_CALL HGE_Impl::Input_KeyDown(int key)
 {
 	return (keyz[key] & 1) != 0;
 }
 
-bool CALL HGE_Impl::Input_KeyUp(int key)
+bool HGE_CALL HGE_Impl::Input_KeyUp(int key)
 {
 	return (keyz[key] & 2) != 0;
 }
 
-char* CALL HGE_Impl::Input_GetKeyName(int key)
+char* HGE_CALL HGE_Impl::Input_GetKeyName(int key)
 {
 	return KeyNames[key];
 }
 
-int CALL HGE_Impl::Input_GetKey()
+int HGE_CALL HGE_Impl::Input_GetKey()
 {
 	return VKey;
 }
 
-int CALL HGE_Impl::Input_GetChar()
+int HGE_CALL HGE_Impl::Input_GetChar()
 {
 	return Char;
 }

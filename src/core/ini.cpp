@@ -10,7 +10,7 @@
 #include "hge_impl.h"
 
 
-void CALL HGE_Impl::Ini_SetInt(const char *section, const char *name, int value)
+void HGE_CALL HGE_Impl::Ini_SetInt(const char *section, const char *name, int value)
 {
 	char buf[256];
 
@@ -21,7 +21,7 @@ void CALL HGE_Impl::Ini_SetInt(const char *section, const char *name, int value)
 }
 
 
-int CALL HGE_Impl::Ini_GetInt(const char *section, const char *name, int def_val)
+int HGE_CALL HGE_Impl::Ini_GetInt(const char *section, const char *name, int def_val)
 {
 	char buf[256];
 
@@ -34,7 +34,7 @@ int CALL HGE_Impl::Ini_GetInt(const char *section, const char *name, int def_val
 }
 
 
-void CALL HGE_Impl::Ini_SetFloat(const char *section, const char *name, float value)
+void HGE_CALL HGE_Impl::Ini_SetFloat(const char *section, const char *name, float value)
 {
 	char buf[256];
 
@@ -45,7 +45,7 @@ void CALL HGE_Impl::Ini_SetFloat(const char *section, const char *name, float va
 }
 
 
-float CALL HGE_Impl::Ini_GetFloat(const char *section, const char *name, float def_val)
+float HGE_CALL HGE_Impl::Ini_GetFloat(const char *section, const char *name, float def_val)
 {
 	char buf[256];
 
@@ -58,13 +58,13 @@ float CALL HGE_Impl::Ini_GetFloat(const char *section, const char *name, float d
 }
 
 
-void CALL HGE_Impl::Ini_SetString(const char *section, const char *name, const char *value)
+void HGE_CALL HGE_Impl::Ini_SetString(const char *section, const char *name, const char *value)
 {
 	if(szIniFile[0]) WritePrivateProfileString(section, name, value, szIniFile);
 }
 
 
-char* CALL HGE_Impl::Ini_GetString(const char *section, const char *name, const char *def_val)
+char* HGE_CALL HGE_Impl::Ini_GetString(const char *section, const char *name, const char *def_val)
 {
 	if(szIniFile[0]) GetPrivateProfileString(section, name, def_val, szIniString, sizeof(szIniString), szIniFile);
 	else strcpy(szIniString, def_val);

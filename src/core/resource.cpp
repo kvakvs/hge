@@ -14,7 +14,7 @@
 #include <unzip.h>
 
 
-bool CALL HGE_Impl::Resource_AttachPack(const char *filename, const char *password)
+bool HGE_CALL HGE_Impl::Resource_AttachPack(const char *filename, const char *password)
 {
 	char *szName;
 	CResourceList *resItem=res;
@@ -43,7 +43,7 @@ bool CALL HGE_Impl::Resource_AttachPack(const char *filename, const char *passwo
 	return true;
 }
 
-void CALL HGE_Impl::Resource_RemovePack(const char *filename)
+void HGE_CALL HGE_Impl::Resource_RemovePack(const char *filename)
 {
 	char *szName;
 	CResourceList *resItem=res, *resPrev=0;
@@ -66,7 +66,7 @@ void CALL HGE_Impl::Resource_RemovePack(const char *filename)
 	}
 }
 
-void CALL HGE_Impl::Resource_RemoveAllPacks()
+void HGE_CALL HGE_Impl::Resource_RemoveAllPacks()
 {
 	CResourceList *resItem=res, *resNextItem;
 
@@ -80,7 +80,7 @@ void CALL HGE_Impl::Resource_RemoveAllPacks()
 	res=0;
 }
 
-void* CALL HGE_Impl::Resource_Load(const char *filename, uint32_t *size)
+void* HGE_CALL HGE_Impl::Resource_Load(const char *filename, uint32_t *size)
 {
 	static char *res_err="Can't load resource: %s";
 
@@ -186,13 +186,13 @@ _fromfile:
 }
 
 
-void CALL HGE_Impl::Resource_Free(void *res)
+void HGE_CALL HGE_Impl::Resource_Free(void *res)
 {
 	if(res) free(res);
 }
 
 
-char* CALL HGE_Impl::Resource_MakePath(const char *filename)
+char* HGE_CALL HGE_Impl::Resource_MakePath(const char *filename)
 {
 	int i;
 
@@ -210,7 +210,7 @@ char* CALL HGE_Impl::Resource_MakePath(const char *filename)
 	return szTmpFilename;
 }
 
-char* CALL HGE_Impl::Resource_EnumFiles(const char *wildcard)
+char* HGE_CALL HGE_Impl::Resource_EnumFiles(const char *wildcard)
 {
 	if(wildcard)
 	{
@@ -232,7 +232,7 @@ char* CALL HGE_Impl::Resource_EnumFiles(const char *wildcard)
 	}
 }
 
-char* CALL HGE_Impl::Resource_EnumFolders(const char *wildcard)
+char* HGE_CALL HGE_Impl::Resource_EnumFolders(const char *wildcard)
 {
 	if(wildcard)
 	{

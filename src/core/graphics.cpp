@@ -13,7 +13,7 @@
 #include "hge_gapi.h"
 
 
-void CALL HGE_Impl::Gfx_Clear(uint32_t color)
+void HGE_CALL HGE_Impl::Gfx_Clear(uint32_t color)
 {
     if(pCurTarget)
     {
@@ -31,7 +31,7 @@ void CALL HGE_Impl::Gfx_Clear(uint32_t color)
     }
 }
 
-void CALL HGE_Impl::Gfx_SetClipping(int x, int y, int w, int h)
+void HGE_CALL HGE_Impl::Gfx_SetClipping(int x, int y, int w, int h)
 {
     hgeGAPIViewport vp;
     int scr_width, scr_height;
@@ -80,7 +80,7 @@ void CALL HGE_Impl::Gfx_SetClipping(int x, int y, int w, int h)
     pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
 }
 
-void CALL HGE_Impl::Gfx_SetTransform(float x, float y, float dx, float dy, float rot, float hscale, float vscale)
+void HGE_CALL HGE_Impl::Gfx_SetTransform(float x, float y, float dx, float dy, float rot, float hscale, float vscale)
 {
     D3DXMATRIX tmp;
 
@@ -100,7 +100,7 @@ void CALL HGE_Impl::Gfx_SetTransform(float x, float y, float dx, float dy, float
     pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
 }
 
-bool CALL HGE_Impl::Gfx_BeginScene(HTARGET targ)
+bool HGE_CALL HGE_Impl::Gfx_BeginScene(HTARGET targ)
 {
     hgeGAPISurface * pSurf = 0, * pDepth = 0;
 
@@ -187,14 +187,14 @@ bool CALL HGE_Impl::Gfx_BeginScene(HTARGET targ)
     return true;
 }
 
-void CALL HGE_Impl::Gfx_EndScene()
+void HGE_CALL HGE_Impl::Gfx_EndScene()
 {
     _render_batch(true);
     pD3DDevice->EndScene();
     if(!pCurTarget) pD3DDevice->Present( NULL, NULL, NULL, NULL );
 }
 
-void CALL HGE_Impl::Gfx_RenderLine(float x1, float y1, float x2, float y2, uint32_t color, float z)
+void HGE_CALL HGE_Impl::Gfx_RenderLine(float x1, float y1, float x2, float y2, uint32_t color, float z)
 {
     if(VertArray)
     {
@@ -219,7 +219,7 @@ void CALL HGE_Impl::Gfx_RenderLine(float x1, float y1, float x2, float y2, uint3
     }
 }
 
-void CALL HGE_Impl::Gfx_RenderTriple(const hgeTriple *triple)
+void HGE_CALL HGE_Impl::Gfx_RenderTriple(const hgeTriple *triple)
 {
     if(VertArray)
     {
@@ -240,7 +240,7 @@ void CALL HGE_Impl::Gfx_RenderTriple(const hgeTriple *triple)
     }
 }
 
-void CALL HGE_Impl::Gfx_RenderQuad(const hgeQuad *quad)
+void HGE_CALL HGE_Impl::Gfx_RenderQuad(const hgeQuad *quad)
 {
     if(VertArray)
     {
@@ -262,7 +262,7 @@ void CALL HGE_Impl::Gfx_RenderQuad(const hgeQuad *quad)
     }
 }
 
-hgeVertex* CALL HGE_Impl::Gfx_StartBatch(int prim_type, HTEXTURE tex, int blend, int *max_prim)
+hgeVertex* HGE_CALL HGE_Impl::Gfx_StartBatch(int prim_type, HTEXTURE tex, int blend, int *max_prim)
 {
     if(VertArray)
     {
@@ -282,12 +282,12 @@ hgeVertex* CALL HGE_Impl::Gfx_StartBatch(int prim_type, HTEXTURE tex, int blend,
     else return 0;
 }
 
-void CALL HGE_Impl::Gfx_FinishBatch(int nprim)
+void HGE_CALL HGE_Impl::Gfx_FinishBatch(int nprim)
 {
     nPrim=nprim;
 }
 
-HTARGET CALL HGE_Impl::Target_Create(int width, int height, bool zbuffer)
+HTARGET HGE_CALL HGE_Impl::Target_Create(int width, int height, bool zbuffer)
 {
     CRenderTargetList *pTarget;
     D3DSURFACE_DESC TDesc;
@@ -332,7 +332,7 @@ HTARGET CALL HGE_Impl::Target_Create(int width, int height, bool zbuffer)
     return (HTARGET)pTarget;
 }
 
-void CALL HGE_Impl::Target_Free(HTARGET target)
+void HGE_CALL HGE_Impl::Target_Free(HTARGET target)
 {
     CRenderTargetList *pTarget=pTargets, *pPrevTarget=NULL;
 
@@ -357,14 +357,14 @@ void CALL HGE_Impl::Target_Free(HTARGET target)
     }
 }
 
-HTEXTURE CALL HGE_Impl::Target_GetTexture(HTARGET target)
+HTEXTURE HGE_CALL HGE_Impl::Target_GetTexture(HTARGET target)
 {
     CRenderTargetList *targ=(CRenderTargetList *)target;
     if(target) return (HTEXTURE)targ->pTex;
     else return 0;
 }
 
-HTEXTURE CALL HGE_Impl::Texture_Create(int width, int height)
+HTEXTURE HGE_CALL HGE_Impl::Texture_Create(int width, int height)
 {
     hgeGAPITexture * pTex;
 
@@ -382,7 +382,7 @@ HTEXTURE CALL HGE_Impl::Texture_Create(int width, int height)
     return (HTEXTURE)pTex;
 }
 
-HTEXTURE CALL HGE_Impl::Texture_Load(const char *filename, uint32_t size, bool bMipmap)
+HTEXTURE HGE_CALL HGE_Impl::Texture_Load(const char *filename, uint32_t size, bool bMipmap)
 {
     void *data;
     uint32_t _size;
@@ -452,7 +452,7 @@ HTEXTURE CALL HGE_Impl::Texture_Load(const char *filename, uint32_t size, bool b
     return (HTEXTURE)pTex;
 }
 
-void CALL HGE_Impl::Texture_Free(HTEXTURE tex)
+void HGE_CALL HGE_Impl::Texture_Free(HTEXTURE tex)
 {
     hgeGAPITexture * pTex = (hgeGAPITexture *)tex;
     CTextureList *texItem=textures, *texPrev=0;
@@ -472,7 +472,7 @@ void CALL HGE_Impl::Texture_Free(HTEXTURE tex)
     if(pTex != NULL) pTex->Release();
 }
 
-int CALL HGE_Impl::Texture_GetWidth(HTEXTURE tex, bool bOriginal)
+int HGE_CALL HGE_Impl::Texture_GetWidth(HTEXTURE tex, bool bOriginal)
 {
     D3DSURFACE_DESC TDesc;
     hgeGAPITexture * pTex = (hgeGAPITexture *)tex;
@@ -495,7 +495,7 @@ int CALL HGE_Impl::Texture_GetWidth(HTEXTURE tex, bool bOriginal)
 }
 
 
-int CALL HGE_Impl::Texture_GetHeight(HTEXTURE tex, bool bOriginal)
+int HGE_CALL HGE_Impl::Texture_GetHeight(HTEXTURE tex, bool bOriginal)
 {
     D3DSURFACE_DESC TDesc;
     hgeGAPITexture * pTex = (hgeGAPITexture *)tex;
@@ -518,7 +518,7 @@ int CALL HGE_Impl::Texture_GetHeight(HTEXTURE tex, bool bOriginal)
 }
 
 
-uint32_t * CALL HGE_Impl::Texture_Lock(HTEXTURE tex, bool bReadOnly, int left, int top, int width, int height)
+uint32_t * HGE_CALL HGE_Impl::Texture_Lock(HTEXTURE tex, bool bReadOnly, int left, int top, int width, int height)
 {
     hgeGAPITexture * pTex = (hgeGAPITexture *)tex;
     D3DSURFACE_DESC TDesc;
@@ -552,7 +552,7 @@ uint32_t * CALL HGE_Impl::Texture_Lock(HTEXTURE tex, bool bReadOnly, int left, i
 }
 
 
-void CALL HGE_Impl::Texture_Unlock(HTEXTURE tex)
+void HGE_CALL HGE_Impl::Texture_Unlock(HTEXTURE tex)
 {
     hgeGAPITexture * pTex = (hgeGAPITexture *)tex;
     pTex->UnlockRect(0);
@@ -1120,7 +1120,7 @@ bool HGE_Impl::_init_lost()
 }
 
 #if HGE_DIRECTX_VER >= 9
-HSHADER CALL HGE_Impl::Shader_Create(const char *filename)
+HSHADER HGE_CALL HGE_Impl::Shader_Create(const char *filename)
 {
 	LPD3DXBUFFER					code			= NULL;
 	LPDIRECT3DPIXELSHADER9          pixelShader    = NULL;
@@ -1145,7 +1145,7 @@ HSHADER CALL HGE_Impl::Shader_Create(const char *filename)
 #endif
 
 #if HGE_DIRECTX_VER >= 9
-void CALL HGE_Impl::Gfx_SetShader(HSHADER shader)
+void HGE_CALL HGE_Impl::Gfx_SetShader(HSHADER shader)
 {
 	if (CurShader != shader) {
 		_render_batch();
@@ -1156,7 +1156,7 @@ void CALL HGE_Impl::Gfx_SetShader(HSHADER shader)
 #endif
 
 #if HGE_DIRECTX_VER >= 9
-void CALL HGE_Impl::Shader_Free(HSHADER shader)
+void HGE_CALL HGE_Impl::Shader_Free(HSHADER shader)
 {
 	((LPDIRECT3DPIXELSHADER9)shader)->Release();
 }
