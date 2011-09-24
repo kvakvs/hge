@@ -1,6 +1,7 @@
 This is README for HGE library source reconfigured with CMake
 For original readme file refer to Original_README.txt
 =============================================================
+https://github.com/kvakvs/hge
 
 INSTALLING
 ----------

@@ -42,7 +42,13 @@ include_directories( ${DIRECTX_SDK_DIR}/include )
 #------ link directories listed ------
 link_directories( ${HGE_SOURCE_DIR}/linklib )
 link_directories( ${DIRECTX_SDK_DIR}/lib ${DIRECTX_SDK_DIR}/lib/x64 ${DIRECTX_SDK_DIR}/lib/x86 )
-link_libraries( d3d9 d3dx9 d3dx winmm )
+if( ${HGE_DIRECTX_VER} MATCHES "8" )
+    link_libraries( d3d8 d3dx8 )
+endif()
+if( ${HGE_DIRECTX_VER} MATCHES "9" )
+    link_libraries( d3d9 d3dx9 )
+endif()
+link_libraries( winmm )
 link_libraries( zlib hgehelpers )
 
 #------ precompiled headers support (not done for now) ------

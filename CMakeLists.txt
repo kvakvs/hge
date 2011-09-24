@@ -8,8 +8,8 @@ cmake_minimum_required( VERSION 2.8 )
 ##----------------------------------------
 
 SET( DIRECTX_SDK_DIR "C:/DXSDK" )
-SET( HGE_DIRECTX_VER "8" )
-## SET( HGE_DIRECTX_VER "9" )
+##--- set this to 8 or 9 ---
+SET( HGE_DIRECTX_VER "9" )
 
 ##----------------------------------------
 ## End of manual configuration section
@@ -19,9 +19,9 @@ SET( HGE_DIRECTX_VER "8" )
 
 
 
-
+add_definitions( "-DHGE_DIRECTX_VER=${HGE_DIRECTX_VER}" )
 # disable warnings on STD non conformance and security issues
-add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS -D_WIN32_WINNT=0x0501 /MP )
+add_definitions( "-D_CRT_SECURE_NO_WARNINGS" "-D_CRT_NONSTDC_NO_WARNINGS" "-D_SCL_SECURE_NO_WARNINGS" "-D_WIN32_WINNT=0x0501" "/MP" )
 ## add_definitions( /MDd )
 
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${HGE_SOURCE_DIR}/bin CACHE PATH "Single Directory for all executables." )
@@ -35,8 +35,8 @@ add_subdirectory( src/zlib-1.2.5 )
 add_subdirectory( src/libPNG )
 
 #--- HGE core library and helpers ---
-add_subdirectory( src/helpers_directx${HGE_DIRECTX_VER} )
-add_subdirectory( src/core_directx${HGE_DIRECTX_VER} )
+add_subdirectory( src/helpers )
+add_subdirectory( src/core )
 
 #--- HGE TOOLS - comment out of not needed ---
 add_subdirectory( src/fontconv )

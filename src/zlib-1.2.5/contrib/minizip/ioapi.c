@@ -10,9 +10,10 @@
 
 */
 
-#if (defined(_WIN32))
-        #define _CRT_SECURE_NO_WARNINGS
-#endif
+// this is set in CMake project
+// #if (defined(_WIN32))
+//         #define _CRT_SECURE_NO_WARNINGS
+// #endif
 
 #include "ioapi.h"
 

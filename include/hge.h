@@ -5,13 +5,12 @@
 **
 ** System layer API
 */
-
-
 #ifndef HGE_H
 #define HGE_H
 
 
 #include <windows.h>
+
 
 #define HGE_VERSION 0x180
 
@@ -69,6 +68,7 @@ typedef unsigned char       BYTE;
 /*
 ** HGE Handle types
 */
+// FIXME: Won't compile in 64-bit mode due to handles (4 bytes) holding a pointer (8 bytes)
 typedef DWORD HTEXTURE;
 typedef DWORD HTARGET;
 typedef DWORD HEFFECT;
