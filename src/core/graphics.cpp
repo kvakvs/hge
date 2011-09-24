@@ -2,6 +2,7 @@
 ** Haaf's Game Engine 1.8
 ** Copyright (C) 2003-2007, Relish Games
 ** hge.relishgames.com
+** edited by kvakvs@yandex.ru, see https://github.com/kvakvs/hge
 **
 ** Core functions implementation: graphics
 */
@@ -1108,9 +1109,55 @@ bool HGE_Impl::_init_lost()
     CurPrimType=HGEPRIM_QUADS;
     CurBlendMode = BLEND_DEFAULT;
     CurTexture = NULL;
+#if HGE_DIRECTX_VER >= 9
+	CurShader = NULL;
+#endif
 
     pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
     pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
 
     return true;
 }
+
+#if HGE_DIRECTX_VER >= 9
+HSHADER CALL HGE_Impl::Shader_Create(const char *filename)
+{
+	LPD3DXBUFFER					code			= NULL;
+	LPDIRECT3DPIXELSHADER9          pixelShader    = NULL;
+	HRESULT result = D3DXCompileShaderFromFile( filename,   //filepath
+												NULL,          //macro's            
+												NULL,          //includes           
+												"ps_main",     //main function      
+												"ps_2_0",      //shader profile     
+												0,             //flags              
+												&code,         //compiled operations
+												NULL,          //errors
+												NULL);         //constants
+	if(FAILED(result)) {
+		_PostError("Can't create shader");
+		return NULL;
+	}
+
+	pD3DDevice->CreatePixelShader((DWORD*)code->GetBufferPointer(), &pixelShader);
+	code->Release();
+	return (HSHADER)pixelShader;
+}
+#endif
+
+#if HGE_DIRECTX_VER >= 9
+void CALL HGE_Impl::Gfx_SetShader(HSHADER shader)
+{
+	if (CurShader != shader) {
+		_render_batch();
+		CurShader = shader;
+		pD3DDevice->SetPixelShader((LPDIRECT3DPIXELSHADER9)shader);
+	}
+}
+#endif
+
+#if HGE_DIRECTX_VER >= 9
+void CALL HGE_Impl::Shader_Free(HSHADER shader)
+{
+	((LPDIRECT3DPIXELSHADER9)shader)->Release();
+}
+#endif

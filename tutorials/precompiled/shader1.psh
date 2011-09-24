@@ -1,0 +1,21 @@
+sampler2D g_samSrcColor;
+
+float4 ps_main( float2 Tex : TEXCOORD0 ) : COLOR0
+{
+    float4 Color;
+    
+   Color = tex2D( g_samSrcColor, Tex.xy);
+   Color += tex2D( g_samSrcColor, Tex.xy+0.001);
+   Color += tex2D( g_samSrcColor, Tex.xy+0.002);
+   Color += tex2D( g_samSrcColor, Tex.xy+0.003);
+   Color += tex2D( g_samSrcColor, Tex.xy+0.004);
+   Color += tex2D( g_samSrcColor, Tex.xy+0.005);
+   Color += tex2D( g_samSrcColor, Tex.xy+0.006);
+   Color += tex2D( g_samSrcColor, Tex.xy+0.007);
+   Color += tex2D( g_samSrcColor, Tex.xy+0.008);
+   Color += tex2D( g_samSrcColor, Tex.xy+0.009);
+   Color += tex2D( g_samSrcColor, Tex.xy+0.010);
+   Color = Color / 10;
+
+    return Color;
+}

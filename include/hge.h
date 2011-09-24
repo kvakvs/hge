@@ -75,6 +75,9 @@ typedef DWORD HEFFECT;
 typedef DWORD HMUSIC;
 typedef DWORD HSTREAM;
 typedef DWORD HCHANNEL;
+#if HGE_DIRECTX_VER >= 9
+	typedef DWORD HSHADER;
+#endif
 
 
 /*
@@ -397,6 +400,12 @@ public:
     virtual void        CALL    Gfx_FinishBatch(int nprim) = 0;
     virtual void        CALL    Gfx_SetClipping(int x=0, int y=0, int w=0, int h=0) = 0;
     virtual void        CALL    Gfx_SetTransform(float x=0, float y=0, float dx=0, float dy=0, float rot=0, float hscale=0, float vscale=0) = 0; 
+
+#if HGE_DIRECTX_VER >= 9
+	virtual HSHADER		CALL	Shader_Create(const char *filename) = 0;
+	virtual void		CALL	Shader_Free(HSHADER shader) = 0;
+	virtual void		CALL	Gfx_SetShader(HSHADER shader) = 0;
+#endif
 
     virtual HTARGET     CALL    Target_Create(int width, int height, bool zbuffer) = 0;
     virtual void        CALL    Target_Free(HTARGET target) = 0;

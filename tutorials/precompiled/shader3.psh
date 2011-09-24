@@ -1,0 +1,14 @@
+sampler2D g_samSrcColor;
+
+float4 ps_main( float2 Tex : TEXCOORD0 ) : COLOR0
+{
+    float4 Color;
+    
+   Color.a = 1.0f;
+   Color.rgb = 0.5f;
+   Color -= tex2D( g_samSrcColor, Tex.xy-0.001)*2.0f;
+   Color += tex2D( g_samSrcColor, Tex.xy+0.001)*2.0f;
+   Color.rgb = (Color.r+Color.g+Color.b)/3.0f;
+
+    return Color;
+}

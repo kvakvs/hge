@@ -178,6 +178,12 @@ public:
     virtual void        CALL    Gfx_SetClipping(int x=0, int y=0, int w=0, int h=0);
     virtual void        CALL    Gfx_SetTransform(float x=0, float y=0, float dx=0, float dy=0, float rot=0, float hscale=0, float vscale=0); 
 
+#if HGE_DIRECTX_VER >= 9
+	virtual HSHADER		CALL	Shader_Create(const char *filename);
+	virtual void		CALL	Shader_Free(HSHADER shader);
+	virtual void		CALL	Gfx_SetShader(HSHADER shader);
+#endif
+
     virtual HTARGET     CALL    Target_Create(int width, int height, bool zbuffer);
     virtual void        CALL    Target_Free(HTARGET target);
     virtual HTEXTURE    CALL    Target_GetTexture(HTARGET target);
@@ -279,6 +285,9 @@ public:
     int                 CurPrimType;
     int                 CurBlendMode;
     HTEXTURE            CurTexture;
+#if HGE_DIRECTX_VER >= 9
+	HSHADER				CurShader;
+#endif
 
     bool                _GfxInit();
     void                _GfxDone();
