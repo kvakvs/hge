@@ -5,13 +5,12 @@
 **
 ** hgeVector helper class
 */
-
-
+#pragma once
 #ifndef HGEVECTOR_H
 #define HGEVECTOR_H
 
 
-#include "hge.h"
+#include <hge.h>
 #include <math.h>
 
 

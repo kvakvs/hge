@@ -5,12 +5,14 @@
 **
 ** System layer API
 */
+#pragma once
 #ifndef HGE_H
 #define HGE_H
 
-
 #include <windows.h>
 #include <stdint.h>
+
+#include <hgeunicode.h>
 
 #define HGE_VERSION 0x180
 
@@ -29,14 +31,14 @@
 #define HGE_CALL  __stdcall
 
 #ifdef __BORLANDC__
- #define floorf (float)floor
- #define sqrtf (float)sqrt
- #define acosf (float)acos
- #define atan2f (float)atan2
- #define cosf (float)cos
- #define sinf (float)sin
- #define powf (float)pow
- #define fabsf (float)fabs
+ #define floorf		(float)floor
+ #define sqrtf		(float)sqrt
+ #define acosf		(float)acos
+ #define atan2f		(float)atan2
+ #define cosf		(float)cos
+ #define sinf		(float)sin
+ #define powf		(float)pow
+ #define fabsf		(float)fabs
 
  #define min(x,y) ((x) < (y)) ? (x) : (y)
  #define max(x,y) ((x) > (y)) ? (x) : (y)
@@ -293,50 +295,50 @@ public:
     virtual bool        HGE_CALL    System_Initiate() = 0;
     virtual void        HGE_CALL    System_Shutdown() = 0;
     virtual bool        HGE_CALL    System_Start() = 0;
-    virtual char*       HGE_CALL    System_GetErrorMessage() = 0;
-    virtual void        HGE_CALL    System_Log(const char *format, ...) = 0;
-    virtual bool        HGE_CALL    System_Launch(const char *url) = 0;
-    virtual void        HGE_CALL    System_Snapshot(const char *filename=0) = 0;
+    virtual hgeString   HGE_CALL    System_GetErrorMessage() = 0;
+    virtual void        HGE_CALL    System_Log( hgeString format, ... ) = 0;
+    virtual bool        HGE_CALL    System_Launch( hgeString url ) = 0;
+    virtual void        HGE_CALL    System_Snapshot( hgeString filename=NULL ) = 0;
 
 private:
     virtual void        HGE_CALL    System_SetStateBool  (hgeBoolState   state, bool        value) = 0;
     virtual void        HGE_CALL    System_SetStateFunc  (hgeFuncState   state, hgeCallback value) = 0;
     virtual void        HGE_CALL    System_SetStateHwnd  (hgeHwndState   state, HWND        value) = 0;
     virtual void        HGE_CALL    System_SetStateInt   (hgeIntState    state, int         value) = 0;
-    virtual void        HGE_CALL    System_SetStateString(hgeStringState state, const char *value) = 0;
+    virtual void        HGE_CALL    System_SetStateString(hgeStringState state, const hgeString value) = 0;
     virtual bool        HGE_CALL    System_GetStateBool  (hgeBoolState   state) = 0;
     virtual hgeCallback HGE_CALL    System_GetStateFunc  (hgeFuncState   state) = 0;
     virtual HWND        HGE_CALL    System_GetStateHwnd  (hgeHwndState   state) = 0;
     virtual int         HGE_CALL    System_GetStateInt   (hgeIntState    state) = 0;
-    virtual const char* HGE_CALL    System_GetStateString(hgeStringState state) = 0;
+    virtual const hgeString HGE_CALL System_GetStateString(hgeStringState state) = 0;
 
 public:
     inline void                 System_SetState(hgeBoolState   state, bool        value) { System_SetStateBool  (state, value); }
     inline void                 System_SetState(hgeFuncState   state, hgeCallback value) { System_SetStateFunc  (state, value); }
     inline void                 System_SetState(hgeHwndState   state, HWND        value) { System_SetStateHwnd  (state, value); }
     inline void                 System_SetState(hgeIntState    state, int         value) { System_SetStateInt   (state, value); }
-    inline void                 System_SetState(hgeStringState state, const char *value) { System_SetStateString(state, value); }
+    inline void                 System_SetState(hgeStringState state, const hgeString value) { System_SetStateString(state, value); }
     inline bool                 System_GetState(hgeBoolState   state) { return System_GetStateBool  (state); }
     inline hgeCallback          System_GetState(hgeFuncState   state) { return System_GetStateFunc  (state); }
     inline HWND                 System_GetState(hgeHwndState   state) { return System_GetStateHwnd  (state); }
     inline int                  System_GetState(hgeIntState    state) { return System_GetStateInt   (state); }
-    inline const char*          System_GetState(hgeStringState state) { return System_GetStateString(state); }
+    inline const hgeString      System_GetState(hgeStringState state) { return System_GetStateString(state); }
     
-    virtual void*       HGE_CALL    Resource_Load(const char *filename, uint32_t *size=0) = 0;
+    virtual void*       HGE_CALL    Resource_Load(const hgeString filename, uint32_t *size=0) = 0;
     virtual void        HGE_CALL    Resource_Free(void *res) = 0;
-    virtual bool        HGE_CALL    Resource_AttachPack(const char *filename, const char *password=0) = 0;
-    virtual void        HGE_CALL    Resource_RemovePack(const char *filename) = 0;
+    virtual bool        HGE_CALL    Resource_AttachPack(const hgeString filename, const char *password=0) = 0;
+    virtual void        HGE_CALL    Resource_RemovePack(const hgeString filename) = 0;
     virtual void        HGE_CALL    Resource_RemoveAllPacks() = 0;
-    virtual char*       HGE_CALL    Resource_MakePath(const char *filename=0) = 0;
-    virtual char*       HGE_CALL    Resource_EnumFiles(const char *wildcard=0) = 0;
-    virtual char*       HGE_CALL    Resource_EnumFolders(const char *wildcard=0) = 0;
+    virtual hgeString   HGE_CALL    Resource_MakePath(const hgeString filename=0) = 0;
+    virtual hgeString   HGE_CALL    Resource_EnumFiles(const hgeString wildcard=0) = 0;
+    virtual hgeString   HGE_CALL    Resource_EnumFolders(const hgeString wildcard=0) = 0;
 
-    virtual void        HGE_CALL    Ini_SetInt(const char *section, const char *name, int value) = 0;
-    virtual int         HGE_CALL    Ini_GetInt(const char *section, const char *name, int def_val) = 0;
-    virtual void        HGE_CALL    Ini_SetFloat(const char *section, const char *name, float value) = 0;
-    virtual float       HGE_CALL    Ini_GetFloat(const char *section, const char *name, float def_val) = 0;
-    virtual void        HGE_CALL    Ini_SetString(const char *section, const char *name, const char *value) = 0;
-    virtual char*       HGE_CALL    Ini_GetString(const char *section, const char *name, const char *def_val) = 0;
+    virtual void        HGE_CALL    Ini_SetInt(const hgeString section, const hgeString name, int value) = 0;
+    virtual int         HGE_CALL    Ini_GetInt(const hgeString section, const hgeString name, int def_val) = 0;
+    virtual void        HGE_CALL    Ini_SetFloat(const hgeString section, const hgeString name, float value) = 0;
+    virtual float       HGE_CALL    Ini_GetFloat(const hgeString section, const hgeString name, float def_val) = 0;
+    virtual void        HGE_CALL    Ini_SetString(const hgeString section, const hgeString name, const hgeString value) = 0;
+    virtual hgeString   HGE_CALL    Ini_GetString(const hgeString section, const hgeString name, const hgeString def_val) = 0;
 
     virtual void        HGE_CALL    Random_Seed(int seed=0) = 0;
     virtual int         HGE_CALL    Random_Int(int min, int max) = 0;
@@ -346,12 +348,12 @@ public:
     virtual float       HGE_CALL    Timer_GetDelta() = 0;
     virtual int         HGE_CALL    Timer_GetFPS() = 0;
 
-    virtual HEFFECT     HGE_CALL    Effect_Load(const char *filename, uint32_t size=0) = 0;
+    virtual HEFFECT     HGE_CALL    Effect_Load(const hgeString filename, uint32_t size=0) = 0;
     virtual void        HGE_CALL    Effect_Free(HEFFECT eff) = 0;
     virtual HCHANNEL    HGE_CALL    Effect_Play(HEFFECT eff) = 0;
     virtual HCHANNEL    HGE_CALL    Effect_PlayEx(HEFFECT eff, int volume=100, int pan=0, float pitch=1.0f, bool loop=false) = 0;
 
-    virtual HMUSIC      HGE_CALL    Music_Load(const char *filename, uint32_t size=0) = 0;
+    virtual HMUSIC      HGE_CALL    Music_Load(const hgeString filename, uint32_t size=0) = 0;
     virtual void        HGE_CALL    Music_Free(HMUSIC mus) = 0;
     virtual HCHANNEL    HGE_CALL    Music_Play(HMUSIC mus, bool loop, int volume = 100, int order = -1, int row = -1) = 0;
     virtual void        HGE_CALL    Music_SetAmplification(HMUSIC music, int ampl) = 0;
@@ -364,7 +366,7 @@ public:
     virtual void        HGE_CALL    Music_SetChannelVolume(HMUSIC music, int channel, int volume) = 0;
     virtual int         HGE_CALL    Music_GetChannelVolume(HMUSIC music, int channel) = 0;
 
-    virtual HSTREAM     HGE_CALL    Stream_Load(const char *filename, uint32_t size=0) = 0;
+    virtual HSTREAM     HGE_CALL    Stream_Load(const hgeString filename, uint32_t size=0) = 0;
     virtual void        HGE_CALL    Stream_Free(HSTREAM stream) = 0;
     virtual HCHANNEL    HGE_CALL    Stream_Play(HSTREAM stream, bool loop, int volume = 100) = 0;
 
@@ -408,7 +410,7 @@ public:
     virtual void        HGE_CALL    Gfx_SetTransform(float x=0, float y=0, float dx=0, float dy=0, float rot=0, float hscale=0, float vscale=0) = 0; 
 
 #if HGE_DIRECTX_VER >= 9
-	virtual HSHADER		HGE_CALL	Shader_Create(const char *filename) = 0;
+	virtual HSHADER		HGE_CALL	Shader_Create(const hgeString filename) = 0;
 	virtual void		HGE_CALL	Shader_Free(HSHADER shader) = 0;
 	virtual void		HGE_CALL	Gfx_SetShader(HSHADER shader) = 0;
 #endif
@@ -418,7 +420,7 @@ public:
     virtual HTEXTURE    HGE_CALL    Target_GetTexture(HTARGET target) = 0;
 
     virtual HTEXTURE    HGE_CALL    Texture_Create(int width, int height) = 0;
-    virtual HTEXTURE    HGE_CALL    Texture_Load(const char *filename, uint32_t size=0, bool bMipmap=false) = 0;
+    virtual HTEXTURE    HGE_CALL    Texture_Load(const hgeString filename, uint32_t size=0, bool bMipmap=false) = 0;
     virtual void        HGE_CALL    Texture_Free(HTEXTURE tex) = 0;
     virtual int			HGE_CALL    Texture_GetWidth(HTEXTURE tex, bool bOriginal=false) = 0;
     virtual int			HGE_CALL    Texture_GetHeight(HTEXTURE tex, bool bOriginal=false) = 0;

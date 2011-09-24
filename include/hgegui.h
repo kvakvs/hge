@@ -5,15 +5,14 @@
 **
 ** hgeGUI helper classes header
 */
-
-
+#pragma once
 #ifndef HGEGUI_H
 #define HGEGUI_H
 
 
-#include "hge.h"
-#include "hgesprite.h"
-#include "hgerect.h"
+#include <hge.h>
+#include <hgesprite.h>
+#include <hgerect.h>
 
 
 #define HGEGUI_NONAVKEYS		0

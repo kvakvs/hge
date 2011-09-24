@@ -3,17 +3,9 @@ cmake_minimum_required( VERSION 2.8 )
 
 #------ sources ------
 set( HGECORE_SRC
-    demo.cpp
-    graphics.cpp
-    ini.cpp
-    input.cpp
-    power.cpp
-    random.cpp
-    resource.cpp
-    sound.cpp
-    system.cpp
-    timer.cpp
-    hge_impl.h
+    demo.cpp graphics.cpp ini.cpp input.cpp power.cpp
+    random.cpp resource.cpp sound.cpp system.cpp
+    timer.cpp hge_impl.h hge_gapi.h hgeunicode.cpp
     BASS/bass.h
     ${HGE_SOURCE_DIR}/include/hge.h
     ${HGE_SOURCE_DIR}/include/hgeanim.h
@@ -28,6 +20,7 @@ set( HGECORE_SRC
     ${HGE_SOURCE_DIR}/include/hgesprite.h
     ${HGE_SOURCE_DIR}/include/hgestrings.h
     ${HGE_SOURCE_DIR}/include/hgevector.h
+    ${HGE_SOURCE_DIR}/include/hgeunicode.h
     )
 
 #------ additional includes ------

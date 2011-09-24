@@ -5,13 +5,12 @@
 **
 ** hgeAnimation helper class header
 */
-
-
+#pragma once
 #ifndef HGEANIM_H
 #define HGEANIM_H
 
 
-#include "hgesprite.h"
+#include <hgesprite.h>
 
 
 #define HGEANIM_FWD			0

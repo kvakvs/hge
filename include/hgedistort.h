@@ -5,13 +5,12 @@
 **
 ** hgeDistortionMesh helper class header
 */
-
-
+#pragma once
 #ifndef HGEDISTORT_H
 #define HGEDISTORT_H
 
 
-#include "hge.h"
+#include <hge.h>
 
 
 #define HGEDISP_NODE		0

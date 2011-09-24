@@ -5,17 +5,16 @@
 **
 ** hgeParticleSystem helper class header
 */
-
-
+#pragma once
 #ifndef HGEPARTICLE_H
 #define HGEPARTICLE_H
 
 
-#include "hge.h"
-#include "hgesprite.h"
-#include "hgevector.h"
-#include "hgecolor.h"
-#include "hgerect.h"
+#include <hge.h>
+#include <hgesprite.h>
+#include <hgevector.h>
+#include <hgecolor.h>
+#include <hgerect.h>
 
 
 #define MAX_PARTICLES	500

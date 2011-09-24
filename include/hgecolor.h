@@ -5,13 +5,12 @@
 **
 ** hgeColor*** helper classes
 */
-
-
+#pragma once
 #ifndef HGECOLOR_H
 #define HGECOLOR_H
 
 
-#include "hge.h"
+#include <hge.h>
 
 
 #define hgeColor hgeColorRGB

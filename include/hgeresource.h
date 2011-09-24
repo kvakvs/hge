@@ -5,19 +5,18 @@
 **
 ** hgeResourceManager helper class header
 */
-
-
+#pragma once
 #ifndef HGERESOURCE_H
 #define HGERESOURCE_H
 
 
-#include "hge.h"
-#include "hgesprite.h"
-#include "hgeanim.h"
-#include "hgefont.h"
-#include "hgeparticle.h"
-#include "hgedistort.h"
-#include "hgestrings.h"
+#include <hge.h>
+#include <hgesprite.h>
+#include <hgeanim.h>
+#include <hgefont.h>
+#include <hgeparticle.h>
+#include <hgedistort.h>
+#include <hgestrings.h>
 
 
 #define RESTYPES 13

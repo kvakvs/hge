@@ -6,7 +6,6 @@
 ** Core functions implementation: HGE splash screen
 */
 
-
 #include "hge_impl.h"
 
 #ifdef DEMO

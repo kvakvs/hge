@@ -11,10 +11,10 @@
 #define FONTED_H
 
 
-#include "..\..\include\hge.h"
-#include "..\..\include\hgefont.h"
-#include "..\..\include\hgegui.h"
-#include "..\..\include\hgeguictrls.h"
+#include <hge.h>
+#include <hgefont.h>
+#include <hgegui.h>
+#include <hgeguictrls.h>
 
 #include "fontlist.h"
 #include "hgeguirange.h"

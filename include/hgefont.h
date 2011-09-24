@@ -11,8 +11,8 @@
 #define HGEFONT_H
 
 
-#include "hge.h"
-#include "hgesprite.h"
+#include <hge.h>
+#include <hgesprite.h>
 
 
 #define HGETEXT_LEFT		0
@@ -31,12 +31,12 @@
 class hgeFont
 {
 public:
-	hgeFont(const char *filename, bool bMipmap=false);
+	hgeFont(const hgeString filename, bool bMipmap=false);
 	~hgeFont();
 
-	void		Render(float x, float y, int align, const char *string);
-	void		printf(float x, float y, int align, const char *format, ...);
-	void		printfb(float x, float y, float w, float h, int align, const char *format, ...);
+	void		Render(float x, float y, int align, const hgeString string);
+	void		printf(float x, float y, int align, const hgeString format, ...);
+	void		printfb(float x, float y, float w, float h, int align, const hgeString format, ...);
 
 	void		SetColor(uint32_t col);
 	void		SetZ(float z);
@@ -56,22 +56,22 @@ public:
 	float		GetTracking() const {return fTracking;}
 	float		GetSpacing() const {return fSpacing;}
 
-	hgeSprite*	GetSprite(char chr) const { return letters[(unsigned char)chr]; }
-	float		GetPreWidth(char chr) const { return pre[(unsigned char)chr]; }
-	float		GetPostWidth(char chr) const { return post[(unsigned char)chr]; }
+	hgeSprite*	GetSprite(hgeChar chr) const { return letters[(hgeChar)chr]; }
+	float		GetPreWidth(hgeChar chr) const { return pre[(hgeChar)chr]; }
+	float		GetPostWidth(hgeChar chr) const { return post[(hgeChar)chr]; }
 	float		GetHeight() const { return fHeight; }
-	float		GetStringWidth(const char *string, bool bMultiline=true) const;
+	float		GetStringWidth(const hgeString string, bool bMultiline=true) const;
 
 private:
 	hgeFont();
 	hgeFont(const hgeFont &fnt);
 	hgeFont&	operator= (const hgeFont &fnt);
 
-	char*		_get_line(char *file, char *line);
+	hgeString _get_line( hgeString file, hgeString line );
 
 	static HGE	*hge;
 
-	static char	buffer[1024];
+	static hgeChar buffer[1024];
 
 	HTEXTURE	hTexture;
 	hgeSprite*	letters[256];

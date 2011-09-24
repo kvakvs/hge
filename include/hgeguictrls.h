@@ -5,17 +5,16 @@
 **
 ** hgeGUI default controls header
 */
-
-
+#pragma once
 #ifndef HGEGUICTRLS_H
 #define HGEGUICTRLS_H
 
 
-#include "hge.h"
-#include "hgesprite.h"
-#include "hgefont.h"
-#include "hgerect.h"
-#include "hgegui.h"
+#include <hge.h>
+#include <hgesprite.h>
+#include <hgefont.h>
+#include <hgerect.h>
+#include <hgegui.h>
 
 
 #define hgeButtonGetState(gui,id)		((hgeGUIButton*)gui->GetCtrl(id))->GetState()

@@ -5,14 +5,13 @@
 **
 ** hgeSprite helper class header
 */
-
-
+#pragma once
 #ifndef HGESPRITE_H
 #define HGESPRITE_H
 
 
-#include "hge.h"
-#include "hgerect.h"
+#include <hge.h>
+#include <hgerect.h>
 
 
 /*

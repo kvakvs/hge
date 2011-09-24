@@ -5,13 +5,12 @@
 **
 ** hgeStringTable helper class header
 */
-
-
+#pragma once
 #ifndef HGESTRINGS_H
 #define HGESTRINGS_H
 
 
-#include "hge.h"
+#include <hge.h>
 
 
 #define MAXSTRNAMELENGTH 64
