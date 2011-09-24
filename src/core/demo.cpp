@@ -162,7 +162,7 @@ void DInit() {
 	int x=pHGE->System_GetState(HGE_SCREENWIDTH)/2;
 	int y=pHGE->System_GetState(HGE_SCREENHEIGHT)/2;
 	
-	dquad.tex=pHGE->Texture_Load((char *)hgelogo, sizeof(hgelogo));
+	dquad.tex=pHGE->Texture_Load((hgeString)hgelogo, sizeof(hgelogo));
 	dquad.blend=BLEND_DEFAULT;
 
 	for(int i=0; i<4; i++) {

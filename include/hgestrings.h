@@ -13,14 +13,14 @@
 #include <hge.h>
 
 
-#define MAXSTRNAMELENGTH 64
+#define HGE_MAX_STRINGNAME_LENGTH 64
 
 
 struct NamedString
 {
-	char			name[MAXSTRNAMELENGTH];
-	char			*string;
-	NamedString		*next;
+	hgeChar		name[HGE_MAX_STRINGNAME_LENGTH];
+	hgeString	string;
+	NamedString	* next;
 };
 
 /*
@@ -29,18 +29,18 @@ struct NamedString
 class hgeStringTable
 {
 public:
-	hgeStringTable(const char *filename);
+	hgeStringTable(const hgeString filename);
 	~hgeStringTable();
 
-	char			*GetString(const char *name);
+	hgeString GetString(const hgeString name);
 
 private:
 	hgeStringTable(const hgeStringTable &);
-	hgeStringTable&	operator= (const hgeStringTable &);
+	hgeStringTable & operator= (const hgeStringTable &);
 
-	NamedString		*strings;
+	NamedString		* strings;
 
-	static HGE		*hge;
+	static HGE		* hge;
 };
 
 

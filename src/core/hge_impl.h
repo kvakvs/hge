@@ -43,8 +43,8 @@ struct CTextureList
 
 struct CResourceList
 {
-    char                filename[_MAX_PATH];
-    char                password[64];
+    hgeChar				filename[_MAX_PATH];
+    hgeChar				password[64];
     CResourceList*      next;
 };
 
@@ -89,9 +89,9 @@ public:
     virtual int         HGE_CALL    System_GetStateInt   (hgeIntState   );
     virtual const hgeString  HGE_CALL    System_GetStateString(hgeStringState);
     virtual hgeString   HGE_CALL    System_GetErrorMessage();
-    virtual void        HGE_CALL    System_Log(const  hgeString format, ...);
-    virtual bool        HGE_CALL    System_Launch(const  hgeString url);
-    virtual void        HGE_CALL    System_Snapshot(const  hgeString filename=0);
+    virtual void        HGE_CALL    System_Log(const hgeString format, ...);
+    virtual bool        HGE_CALL    System_Launch(const hgeString url);
+    virtual void        HGE_CALL    System_Snapshot(const hgeString filename=0);
 
     virtual void*       HGE_CALL    Resource_Load(const hgeString filename, uint32_t *size=0);
     virtual void        HGE_CALL    Resource_Free(void *res);
@@ -207,9 +207,9 @@ public:
     HWND                hwnd;
 
     bool                bActive;
-    char                szError[256];
-    char                szAppPath[_MAX_PATH];
-    char                szIniString[256];
+    hgeChar				szError[256];
+    hgeChar				szAppPath[_MAX_PATH];
+    hgeChar				szIniString[256];
 
 
     // System States
@@ -220,15 +220,15 @@ public:
     bool                (*procGfxRestoreFunc)();
     bool                (*procExitFunc)();
     const hgeString     szIcon;
-    char                szWinTitle[256];
+    hgeChar				szWinTitle[256];
     int                 nScreenWidth;
     int                 nScreenHeight;
     int                 nScreenBPP;
     bool                bWindowed;
     bool                bZBuffer;
     bool                bTextureFilter;
-    char                szIniFile[_MAX_PATH];
-    char                szLogFile[_MAX_PATH];
+    hgeChar				szIniFile[_MAX_PATH];
+    hgeChar				szLogFile[_MAX_PATH];
     bool                bUseSound;
     int                 nSampleRate;
     int                 nFXVolume;
@@ -329,10 +329,10 @@ public:
 
 
     // Resources
-    char                szTmpFilename[_MAX_PATH];
-    CResourceList*      res;
-    HANDLE              hSearch;
-    WIN32_FIND_DATA     SearchData;
+    hgeChar				szTmpFilename[_MAX_PATH];
+    CResourceList*		res;
+    HANDLE				hSearch;
+    WIN32_FIND_DATA		SearchData;
 
 
     // Timer

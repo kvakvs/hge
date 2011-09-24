@@ -14,78 +14,78 @@ HGE *RScriptParser::hge=0;
 
 struct keyword
 {
-	char*	word;
-	int		code;
+	const hgeString		word;
+	int					code;
 };
 
 keyword keytable[]=
 {
-	{ "=",			TTEQUALS		},
-	{ ":",			TTBASED			},
-	{ ",",			TTSEPARATOR		},
-	{ "{",			TTOPENBLOCK		},
-	{ "}",			TTCLOSEBLOCK	},
-	{ "true",		TTBOOL			},
-	{ "false",		TTBOOL			},
+	{ TXT("="),			TTEQUALS		},
+	{ TXT(":"),			TTBASED			},
+	{ TXT(","),			TTSEPARATOR		},
+	{ TXT("{"),			TTOPENBLOCK		},
+	{ TXT("}"),			TTCLOSEBLOCK	},
+	{ TXT("true"),		TTBOOL			},
+	{ TXT("false"),		TTBOOL			},
 
-	{ "Include",	TTRES_INCLUDE	},
-	{ "Resource",	TTRES_RESOURCE	},
-	{ "Texture",	TTRES_TEXTURE	},
-	{ "Sound",		TTRES_SOUND		},
-	{ "Music",		TTRES_MUSIC		},
-	{ "Stream",		TTRES_STREAM	},
-	{ "Target",		TTRES_TARGET	},
-	{ "Sprite",		TTRES_SPRITE	},
-	{ "Animation",	TTRES_ANIMATION	},
-	{ "Font",		TTRES_FONT		},
-	{ "Particle",	TTRES_PARTICLE	},
-	{ "Distortion",	TTRES_DISTORT	},
-	{ "StringTable",TTRES_STRTABLE	},
+	{ TXT("Include"),	TTRES_INCLUDE	},
+	{ TXT("Resource"),	TTRES_RESOURCE	},
+	{ TXT("Texture"),	TTRES_TEXTURE	},
+	{ TXT("Sound"),		TTRES_SOUND		},
+	{ TXT("Music"),		TTRES_MUSIC		},
+	{ TXT("Stream"),	TTRES_STREAM	},
+	{ TXT("Target"),	TTRES_TARGET	},
+	{ TXT("Sprite"),	TTRES_SPRITE	},
+	{ TXT("Animation"),	TTRES_ANIMATION	},
+	{ TXT("Font"),		TTRES_FONT		},
+	{ TXT("Particle"),	TTRES_PARTICLE	},
+	{ TXT("Distortion"),TTRES_DISTORT	},
+	{ TXT("StringTable"),TTRES_STRTABLE	},
 
-	{ "filename",	TTPAR_FILENAME	},
-	{ "resgroup",	TTPAR_RESGROUP	},
-	{ "mipmap",		TTPAR_MIPMAP	},
-	{ "amplify",	TTPAR_AMPLIFY	},
-	{ "size",		TTPAR_SIZE		},
-	{ "zbuffer",	TTPAR_ZBUFFER	},
-	{ "texture",	TTPAR_TEXTURE	},
-	{ "rect",		TTPAR_RECT		},
-	{ "hotspot",	TTPAR_HOTSPOT	},
-	{ "blendmode",	TTPAR_BLENDMODE	},
-	{ "color",		TTPAR_COLOR		},
-	{ "zorder",		TTPAR_ZORDER	},
-	{ "flip",		TTPAR_FLIP		},
-	{ "scale",		TTPAR_SCALE		},
-	{ "proportion",	TTPAR_PROPORTION},
-	{ "rotation",	TTPAR_ROTATION	},
-	{ "frames",		TTPAR_FRAMES	},
-	{ "fps",		TTPAR_FPS		},
-	{ "mode",		TTPAR_MODE		},
-	{ "tracking",	TTPAR_TRACKING	},
-	{ "spacing",	TTPAR_SPACING	},
-	{ "sprite",		TTPAR_SPRITE	},
-	{ "mesh",		TTPAR_MESH		},
+	{ TXT("filename"),	TTPAR_FILENAME	},
+	{ TXT("resgroup"),	TTPAR_RESGROUP	},
+	{ TXT("mipmap"),	TTPAR_MIPMAP	},
+	{ TXT("amplify"),	TTPAR_AMPLIFY	},
+	{ TXT("size"),		TTPAR_SIZE		},
+	{ TXT("zbuffer"),	TTPAR_ZBUFFER	},
+	{ TXT("texture"),	TTPAR_TEXTURE	},
+	{ TXT("rect"),		TTPAR_RECT		},
+	{ TXT("hotspot"),	TTPAR_HOTSPOT	},
+	{ TXT("blendmode"),	TTPAR_BLENDMODE	},
+	{ TXT("color"),		TTPAR_COLOR		},
+	{ TXT("zorder"),	TTPAR_ZORDER	},
+	{ TXT("flip"),		TTPAR_FLIP		},
+	{ TXT("scale"),		TTPAR_SCALE		},
+	{ TXT("proportion"),TTPAR_PROPORTION},
+	{ TXT("rotation"),	TTPAR_ROTATION	},
+	{ TXT("frames"),	TTPAR_FRAMES	},
+	{ TXT("fps"),		TTPAR_FPS		},
+	{ TXT("mode"),		TTPAR_MODE		},
+	{ TXT("tracking"),	TTPAR_TRACKING	},
+	{ TXT("spacing"),	TTPAR_SPACING	},
+	{ TXT("sprite"),	TTPAR_SPRITE	},
+	{ TXT("mesh"),		TTPAR_MESH		},
 
-	{ "COLORMUL",	TTCON_COLORMUL	},
-	{ "COLORADD",	TTCON_COLORADD	},
-	{ "ALPHABLEND",	TTCON_ALPHABLND	},
-	{ "ALPHAADD",	TTCON_ALPHAADD	},
-	{ "ZWRITE",		TTCON_ZWRITE	},
-	{ "NOZWRITE",	TTCON_NOZWRITE	},
-	{ "FORWARD",	TTCON_FORWARD	},
-	{ "REVERSE",	TTCON_REVERSE	},
-	{ "PINGPONG",	TTCON_PINGPONG	},
-	{ "NOPINGPONG",	TTCON_NOPINGPONG},
-	{ "LOOP",		TTCON_LOOP		},
-	{ "NOLOOP",		TTCON_NOLOOP	},
-	{ "CIRCLE",		TTCON_CIRCLE	},
-	{ "RECT",		TTCON_RECT		},
-	{ "ALPHA",		TTCON_ALPHA		},
+	{ TXT("COLORMUL"),	TTCON_COLORMUL	},
+	{ TXT("COLORADD"),	TTCON_COLORADD	},
+	{ TXT("ALPHABLEND"),TTCON_ALPHABLND	},
+	{ TXT("ALPHAADD"),	TTCON_ALPHAADD	},
+	{ TXT("ZWRITE"),	TTCON_ZWRITE	},
+	{ TXT("NOZWRITE"),	TTCON_NOZWRITE	},
+	{ TXT("FORWARD"),	TTCON_FORWARD	},
+	{ TXT("REVERSE"),	TTCON_REVERSE	},
+	{ TXT("PINGPONG"),	TTCON_PINGPONG	},
+	{ TXT("NOPINGPONG"),TTCON_NOPINGPONG},
+	{ TXT("LOOP"),		TTCON_LOOP		},
+	{ TXT("NOLOOP"),	TTCON_NOLOOP	},
+	{ TXT("CIRCLE"),	TTCON_CIRCLE	},
+	{ TXT("RECT"),		TTCON_RECT		},
+	{ TXT("ALPHA"),		TTCON_ALPHA		},
 
 	{ NULL,			TTNONE			}
 };
 
-RScriptParser::RScriptParser(char *name, char *scr)
+RScriptParser::RScriptParser(hgeString name, hgeString scr)
 {
 	hge=hgeCreate(HGE_VERSION);
 
@@ -157,8 +157,8 @@ int RScriptParser::get_token()
 		if(!strtkcmp(keytable[i].word, script))
 		{
 			tokentype = keytable[i].code;
-			strcpy(tokenvalue,keytable[i].word);
-			script+=strlen(keytable[i].word);
+			hge_strcpy(tokenvalue,keytable[i].word);
+			script += hge_strlen(keytable[i].word);
 			return tokentype;
 		}
 
@@ -174,9 +174,9 @@ int RScriptParser::get_token()
 	return tokentype;
 }
 
-bool RScriptParser::strtkcmp(char *str, char *mem)
+bool RScriptParser::strtkcmp(hgeString str, hgeString mem)
 {
-	int i,len=strlen(str);
+	int i,len = hge_strlen(str);
 	for(i=0;i<len;i++)
 	{
 		if(!mem[i]) return true;
@@ -189,21 +189,25 @@ uint32_t RScriptParser::tkn_hex()
 {
 	int i;
 	uint32_t dw=0;
-	char chr;
+	hgeChar chr;
 	for(i=0; tokenvalue[i]; i++)
 	{
 		chr=tokenvalue[i];
-		if(chr >= 'a') chr-='a'-':';
-		if(chr >= 'A') chr-='A'-':';
-		chr-='0';
+		if(chr >= TXT('a')) chr-=TXT('a')-TXT(':');
+		if(chr >= TXT('A')) chr-=TXT('A')-TXT(':');
+		chr-=TXT('0');
 		if(chr>0xF) chr=0xF;
 		dw=(dw << 4) | chr;
 	}
 	return dw;
 }
 
-void RScriptParser::ScriptPostError(char *msg1, char *msg2)
+void RScriptParser::ScriptPostError(hgeString msg1, hgeString msg2)
 {
-	hge->System_Log("%s, line %d: %s'%s'%s",
-		get_name(), get_line(), msg1, tokenvalue[0] ? tkn_string():"<EOF>", msg2);
+	hge->System_Log( TXT("%s, line %d: %s'%s'%s"),
+		get_name(),
+		get_line(),
+		msg1,
+		tokenvalue[0] ? tkn_string() : TXT("<EOF>"),
+		msg2);
 }

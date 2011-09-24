@@ -21,6 +21,7 @@
 	#define hge_vsnprintf	_vsnwprintf
 	#define hge_vsprintf	vswprintf
 	#define hge_fprintf		fwprintf
+	#define HGE_WINAPI_UNICODE_SUFFIX(Func) Func##W
 
 	FILE * hge_fopen_w( hgeString s );
 	FILE * hge_fopen_wb( hgeString s );
@@ -44,6 +45,7 @@
 	#define hge_vsnprintf	_vsnprintf
 	#define hge_vsprintf	vsprintf
 	#define hge_fprintf		fprintf
+	#define HGE_WINAPI_UNICODE_SUFFIX(Func) Func##A
 
 	FILE * hge_fopen_w( hgeString s );
 	FILE * hge_fopen_wb( hgeString s );
@@ -51,5 +53,5 @@
 	FILE * hge_fopen_rb( hgeString s );
 #endif
 
-void hgeWideToUtf8( const wchar_t * s, char * buf, size_t * cnt);
-void hgeUtf8ToWide( const char * s, wchar_t buf, size_t * cnt);
+void hgeWideToUtf8( const wchar_t * s, char * buf, size_t cnt);
+void hgeUtf8ToWide( const char * s, wchar_t * buf, size_t cnt);

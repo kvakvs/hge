@@ -5,15 +5,13 @@
 **
 ** hgeParticleSystem helper class implementation
 */
-
-
-#include "..\..\include\hgeparticle.h"
+#include <hgeparticle.h>
 
 
 HGE	*hgeParticleSystem::hge=0;
 
 
-hgeParticleSystem::hgeParticleSystem(const char *filename, hgeSprite *sprite)
+hgeParticleSystem::hgeParticleSystem(const hgeString filename, hgeSprite *sprite)
 {
 	void *psi;
 

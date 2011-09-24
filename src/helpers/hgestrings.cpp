@@ -5,27 +5,25 @@
 **
 ** hgeStringTable helper class implementation
 */
-
-
-#include "..\..\include\hgestrings.h"
+#include <hgestrings.h>
 #include <ctype.h>
 
-const char STRHEADERTAG[]="[HGESTRINGTABLE]";
-const char STRFORMATERROR[]="String table %s has incorrect format.";
+const hgeString STRHEADERTAG	= TXT("[HGESTRINGTABLE]");
+const hgeString STRFORMATERROR	= TXT("String table %s has incorrect format.");
 
 
 HGE *hgeStringTable::hge=0;
 
 
-hgeStringTable::hgeStringTable(const char *filename)
+hgeStringTable::hgeStringTable(const hgeString filename)
 {
 	int i;
 	void *data;
 	uint32_t size;
-	char *desc, *pdesc;
+	hgeChar *desc, *pdesc;
 	NamedString *str;
-	char str_name[MAXSTRNAMELENGTH];
-	char *str_value, *pvalue;
+	hgeChar str_name[HGE_MAX_STRINGNAME_LENGTH];
+	hgeChar *str_value, *pvalue;
 	
 	hge=hgeCreate(HGE_VERSION);
 	strings=0;
@@ -34,8 +32,8 @@ hgeStringTable::hgeStringTable(const char *filename)
 	data=hge->Resource_Load(filename, &size);
 	if(!data) return;
 
-	desc = new char[size+1];
-	memcpy(desc,data,size);
+	desc = new hgeChar[size+1];
+	memcpy(desc,data,size * sizeof(hgeChar));
 	desc[size]=0;
 	hge->Resource_Free(data);
 
@@ -48,7 +46,7 @@ hgeStringTable::hgeStringTable(const char *filename)
 	}
 
 	pdesc=desc+sizeof(STRHEADERTAG);
-	str_value=new char[8192];
+	str_value=new hgeChar[8192];
 
 	for(;;)
 	{
@@ -66,7 +64,7 @@ hgeStringTable::hgeStringTable(const char *filename)
 
 		// get string name -> str_name
 		i=0;
-		while(pdesc[i] && pdesc[i]!='=' && !isspace(pdesc[i]) && i<MAXSTRNAMELENGTH)
+		while(pdesc[i] && pdesc[i]!='=' && !isspace(pdesc[i]) && i<HGE_MAX_STRINGNAME_LENGTH)
 		{
 			str_name[i]=pdesc[i];
 			i++;
@@ -124,9 +122,9 @@ hgeStringTable::hgeStringTable(const char *filename)
 
 		// add the parsed string to the list
 		str=new NamedString;
-		strcpy(str->name, str_name);
-		str->string=new char[strlen(str_value)+1];
-		strcpy(str->string, str_value);
+		hge_strcpy( str->name, str_name );
+		str->string = new hgeChar[hge_strlen(str_value)+1];
+		hge_strcpy( str->string, str_value );
 		str->next=strings;
 		strings=str;
 
@@ -154,13 +152,13 @@ hgeStringTable::~hgeStringTable()
 	hge->Release();
 }
 
-char *hgeStringTable::GetString(const char *name)
+hgeString hgeStringTable::GetString(const hgeString name)
 {
 	NamedString *str=strings;
 
 	while(str)
 	{
-		if(!strcmp(name, str->name)) return str->string;
+		if(!hge_strcmp(name, str->name)) return str->string;
 		str=str->next;
 	}
 

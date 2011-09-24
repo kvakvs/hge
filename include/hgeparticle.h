@@ -86,7 +86,7 @@ class hgeParticleSystem
 public:
 	hgeParticleSystemInfo info;
 	
-	hgeParticleSystem(const char *filename, hgeSprite *sprite);
+	hgeParticleSystem(const hgeString filename, hgeSprite *sprite);
 	hgeParticleSystem(hgeParticleSystemInfo *psi);
 	hgeParticleSystem(const hgeParticleSystem &ps);
 	~hgeParticleSystem() { hge->Release(); }

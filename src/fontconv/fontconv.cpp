@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 		if(!hge->System_Initiate())
 		{
 			hge->Release();
-			printf("\nCan't initiate HGE.\n\n",nfiles);
+			printf( "\nCan't initiate HGE.\n\n" );
 			return 0;
 		}
 

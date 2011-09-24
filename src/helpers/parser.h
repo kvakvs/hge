@@ -5,12 +5,12 @@
 **
 ** Resource script parser header
 */
-
+#pragma once
 #ifndef HGEPARSER_H
 #define HGEPARSER_H
 
 
-#include "..\..\include\hge.h"
+#include <hge.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -45,30 +45,30 @@ enum
 class RScriptParser
 {
 public:
-	RScriptParser(char *name, char *scr);
+	RScriptParser(hgeString name, hgeString scr);
 	~RScriptParser() { hge->Release(); }
 
 	int		get_token();
-	void	put_back()	 { script-=strlen(tokenvalue); }
+	void	put_back()	 { script -= hge_strlen(tokenvalue); }
 	int		get_line()	 { return line;}
-	char*	get_name()	 { return scriptname;}
+	hgeString get_name() { return scriptname;}
 
-	char*	tkn_string() { return tokenvalue; }
-	int		tkn_int()    { return atoi(tokenvalue); }
-	float	tkn_float()  { return (float)atof(tokenvalue); }
+	hgeString tkn_string() { return tokenvalue; }
+	int		tkn_int()    { return hge_strtoi(tokenvalue); }
+	float	tkn_float()  { return (float)hge_strtof(tokenvalue); }
 	bool	tkn_bool()   { return (tokenvalue[0]=='t' || tokenvalue[0]=='T') ? true : false; }
-	uint32_t	tkn_hex();
+	uint32_t tkn_hex();
 
-	void	ScriptPostError(char *msg1, char *msg2);
+	void	ScriptPostError(hgeString msg1, hgeString msg2);
 
 	int		tokentype;
-	char	tokenvalue[128];
-	char*	script;
-	char*	scriptname;
+	hgeChar	tokenvalue[128];
+	hgeString script;
+	hgeString scriptname;
 	int		line;
 
 private:
-	bool	strtkcmp(char *str, char *mem);
+	bool	strtkcmp(hgeString str, hgeString mem);
 
 	static HGE *hge;
 };

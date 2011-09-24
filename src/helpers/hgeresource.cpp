@@ -15,7 +15,7 @@
 HGE *hgeResourceManager::hge=0;
 
 
-hgeResourceManager::hgeResourceManager(const char *scriptname)
+hgeResourceManager::hgeResourceManager(const hgeString scriptname)
 {
 	hge=hgeCreate(HGE_VERSION);
 
@@ -29,7 +29,7 @@ hgeResourceManager::~hgeResourceManager()
 	hge->Release();
 }
 
-void hgeResourceManager::_parse_script(const char *scriptname)
+void hgeResourceManager::_parse_script(const hgeString scriptname)
 {
 	ResDesc *rc, *rcnext;
 
@@ -68,7 +68,7 @@ void hgeResourceManager::_remove_all()
 	}
 }
 
-void hgeResourceManager::ChangeScript(const char *scriptname)
+void hgeResourceManager::ChangeScript(const hgeString scriptname)
 {
 	_remove_all();
 	_parse_script(scriptname);
@@ -109,7 +109,7 @@ void hgeResourceManager::Purge(int groupid)
 	}
 }
 
-void* hgeResourceManager::GetResource(const char *name, int resgroup)
+void* hgeResourceManager::GetResource(const hgeString name, int resgroup)
 {
 	void *reshandle;
 	RResource *resource;
@@ -124,8 +124,8 @@ void* hgeResourceManager::GetResource(const char *name, int resgroup)
 			resource=new RResource();
 			resource->handle=(uint32_t)reshandle;
 			resource->resgroup=resgroup;
-			strcpy(resource->name, name);
-			strcpy(resource->filename, name);
+			hge_strcpy(resource->name, name);
+			hge_strcpy(resource->filename, name);
 			AddRes(this, RES_RESOURCE, resource);
 			
 			return reshandle;
@@ -135,7 +135,7 @@ void* hgeResourceManager::GetResource(const char *name, int resgroup)
 	return 0;
 }
 
-HTEXTURE hgeResourceManager::GetTexture(const char *name, int resgroup)
+HTEXTURE hgeResourceManager::GetTexture(const hgeString name, int resgroup)
 {
 	HTEXTURE reshandle;
 	RTexture *resource;
@@ -150,8 +150,8 @@ HTEXTURE hgeResourceManager::GetTexture(const char *name, int resgroup)
 			resource->handle=reshandle;
 			resource->resgroup=resgroup;
 			resource->mipmap=false;
-			strcpy(resource->name, name);
-			strcpy(resource->filename, name);
+			hge_strcpy(resource->name, name);
+			hge_strcpy(resource->filename, name);
 			AddRes(this, RES_TEXTURE, resource);
 
 			return reshandle;
@@ -161,7 +161,7 @@ HTEXTURE hgeResourceManager::GetTexture(const char *name, int resgroup)
 	return 0;
 }
 
-HEFFECT hgeResourceManager::GetEffect(const char *name, int resgroup)
+HEFFECT hgeResourceManager::GetEffect(const hgeString name, int resgroup)
 {
 	HEFFECT reshandle;
 	REffect *resource;
@@ -175,8 +175,8 @@ HEFFECT hgeResourceManager::GetEffect(const char *name, int resgroup)
 			resource=new REffect();
 			resource->handle=reshandle;
 			resource->resgroup=resgroup;
-			strcpy(resource->name, name);
-			strcpy(resource->filename, name);
+			hge_strcpy(resource->name, name);
+			hge_strcpy(resource->filename, name);
 			AddRes(this, RES_EFFECT, resource);
 
 			return reshandle;
@@ -186,7 +186,7 @@ HEFFECT hgeResourceManager::GetEffect(const char *name, int resgroup)
 	return 0;
 }
 
-HMUSIC hgeResourceManager::GetMusic(const char *name, int resgroup)
+HMUSIC hgeResourceManager::GetMusic(const hgeString name, int resgroup)
 {
 	HMUSIC reshandle;
 	RMusic *resource;
@@ -200,8 +200,8 @@ HMUSIC hgeResourceManager::GetMusic(const char *name, int resgroup)
 			resource=new RMusic();
 			resource->handle=reshandle;
 			resource->resgroup=resgroup;
-			strcpy(resource->name, name);
-			strcpy(resource->filename, name);
+			hge_strcpy(resource->name, name);
+			hge_strcpy(resource->filename, name);
 			AddRes(this, RES_MUSIC, resource);
 
 			return reshandle;
@@ -211,7 +211,7 @@ HMUSIC hgeResourceManager::GetMusic(const char *name, int resgroup)
 	return 0;
 }
 
-HSTREAM hgeResourceManager::GetStream(const char *name, int resgroup)
+HSTREAM hgeResourceManager::GetStream(const hgeString name, int resgroup)
 {
 	HSTREAM reshandle;
 	RStream *resource;
@@ -225,8 +225,8 @@ HSTREAM hgeResourceManager::GetStream(const char *name, int resgroup)
 			resource=new RStream();
 			resource->handle=reshandle;
 			resource->resgroup=resgroup;
-			strcpy(resource->name, name);
-			strcpy(resource->filename, name);
+			hge_strcpy(resource->name, name);
+			hge_strcpy(resource->filename, name);
 			AddRes(this, RES_STREAM, resource);
 
 			return reshandle;
@@ -236,49 +236,49 @@ HSTREAM hgeResourceManager::GetStream(const char *name, int resgroup)
 	return 0;
 }
 
-HTARGET hgeResourceManager::GetTarget(const char *name)
+HTARGET hgeResourceManager::GetTarget(const hgeString name)
 {
 	ResDesc *Res=FindRes(this, RES_TARGET, name);
 	if(Res) return (HTARGET)Res->Get(this);
 	else return 0;
 }
 
-hgeSprite* hgeResourceManager::GetSprite(const char *name)
+hgeSprite* hgeResourceManager::GetSprite(const hgeString name)
 {
 	ResDesc *Res=FindRes(this, RES_SPRITE, name);
 	if(Res) return (hgeSprite *)Res->Get(this);
 	else return 0;
 }
 
-hgeAnimation* hgeResourceManager::GetAnimation(const char *name)
+hgeAnimation* hgeResourceManager::GetAnimation(const hgeString name)
 {
 	ResDesc *Res=FindRes(this, RES_ANIMATION, name);
 	if(Res) return (hgeAnimation *)Res->Get(this);
 	else return 0;
 }
 
-hgeFont* hgeResourceManager::GetFont(const char *name)
+hgeFont* hgeResourceManager::GetFont(const hgeString name)
 {
 	ResDesc *Res=FindRes(this, RES_FONT, name);
 	if(Res) return (hgeFont *)Res->Get(this);
 	else return 0;
 }
 
-hgeParticleSystem* hgeResourceManager::GetParticleSystem(const char *name)
+hgeParticleSystem* hgeResourceManager::GetParticleSystem(const hgeString name)
 {
 	ResDesc *Res=FindRes(this, RES_PARTICLE, name);
 	if(Res) return (hgeParticleSystem *)Res->Get(this);
 	else return 0;
 }
 
-hgeDistortionMesh* hgeResourceManager::GetDistortionMesh(const char *name)
+hgeDistortionMesh* hgeResourceManager::GetDistortionMesh(const hgeString name)
 {
 	ResDesc *Res=FindRes(this, RES_DISTORT, name);
 	if(Res) return (hgeDistortionMesh *)Res->Get(this);
 	else return 0;
 }
 
-hgeStringTable* hgeResourceManager::GetStringTable(const char *name, int resgroup)
+hgeStringTable* hgeResourceManager::GetStringTable(const hgeString name, int resgroup)
 {
 	hgeStringTable *strtable;
 	RStringTable *resource;
@@ -292,8 +292,8 @@ hgeStringTable* hgeResourceManager::GetStringTable(const char *name, int resgrou
 			resource=new RStringTable();
 			resource->handle=(uint32_t)strtable;
 			resource->resgroup=resgroup;
-			strcpy(resource->name, name);
-			strcpy(resource->filename, name);
+			hge_strcpy(resource->name, name);
+			hge_strcpy(resource->filename, name);
 			AddRes(this, RES_STRTABLE, resource);
 
 			return strtable;

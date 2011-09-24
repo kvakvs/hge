@@ -34,16 +34,16 @@ public:
 	hgeGUIText(int id, float x, float y, float w, float h, hgeFont *fnt);
 
 	void			SetMode(int _align);
-	void			SetText(const char *_text);
-	void			printf(const char *format, ...);
+	void			SetText(const hgeString _text);
+	void			printf(const hgeString format, ...);
 
 	virtual void	Render();
 
 private:
-	hgeFont*		font;
-	float			tx, ty;
-	int				align;
-	char			text[256];
+	hgeFont*	font;
+	float		tx, ty;
+	int			align;
+	hgeChar		text[256];
 };
 
 
@@ -107,7 +107,7 @@ private:
 */
 struct hgeGUIListboxItem
 {
-	char				text[64];
+	hgeChar				text[64];
 	hgeGUIListboxItem	*next;
 };
 
@@ -124,7 +124,7 @@ public:
 	int				GetTopItem() { return nTopItem; }
 	void			SetTopItem(int n) { if(n>=0 && n<=GetNumItems()-GetNumRows()) nTopItem=n; }
 
-	char			*GetItemText(int n);
+	hgeString		GetItemText(int n);
 	int				GetNumItems() { return nItems; }
 	int				GetNumRows() { return int((rect.y2-rect.y1)/font->GetHeight()); }
 	void			Clear();

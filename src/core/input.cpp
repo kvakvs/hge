@@ -10,41 +10,41 @@
 #include "hge_impl.h"
 
 
-char *KeyNames[] =
+hgeString KeyNames[] =
 {
- "?",
- "Left Mouse Button", "Right Mouse Button", "?", "Middle Mouse Button",
- "?", "?", "?", "Backspace", "Tab", "?", "?", "?", "Enter", "?", "?",
- "Shift", "Ctrl", "Alt", "Pause", "Caps Lock", "?", "?", "?", "?", "?", "?",
- "Escape", "?", "?", "?", "?",
- "Space", "Page Up", "Page Down", "End", "Home",
- "Left Arrow", "Up Arrow", "Right Arrow", "Down Arrow",
- "?", "?", "?", "?", "Insert", "Delete", "?",
- "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
- "?", "?", "?", "?", "?", "?", "?",
- "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
- "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
- "Left Win", "Right Win", "Application", "?", "?",
- "NumPad 0", "NumPad 1", "NumPad 2", "NumPad 3", "NumPad 4",
- "NumPad 5", "NumPad 6", "NumPad 7", "NumPad 8", "NumPad 9",
- "Multiply", "Add", "?", "Subtract", "Decimal", "Divide",
- "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
- "?", "?", "?", "?", "?", "?", "?", "?", "?", "?",
- "?", "?", "?", "?", "?", "?", "?", "?", "?", "?",
- "Num Lock", "Scroll Lock",
- "?", "?", "?", "?", "?", "?", "?", "?", "?", "?",
- "?", "?", "?", "?", "?", "?", "?", "?", "?", "?",
- "?", "?", "?", "?", "?", "?", "?", "?", "?", "?",
- "?", "?", "?", "?", "?", "?", "?", "?", "?", "?",
- "Semicolon", "Equals", "Comma", "Minus", "Period", "Slash", "Grave",
- "?", "?", "?", "?", "?", "?", "?", "?", "?", "?",
- "?", "?", "?", "?", "?", "?", "?", "?", "?", "?",
- "?", "?", "?", "?", "?", "?",
- "Left bracket", "Backslash", "Right bracket", "Apostrophe",
- "?", "?", "?", "?", "?", "?", "?", "?", "?", "?",
- "?", "?", "?", "?", "?", "?", "?", "?", "?", "?",
- "?", "?", "?", "?", "?", "?", "?", "?", "?", "?",
- "?", "?", "?"
+ TXT("?"),
+ TXT("Left Mouse Button"), TXT("Right Mouse Button"), TXT("?"), TXT("Middle Mouse Button"),
+ TXT("?"), TXT("?"), TXT("?"), TXT("Backspace"), TXT("Tab"), TXT("?"), TXT("?"), TXT("?"), TXT("Enter"), TXT("?"), TXT("?"),
+ TXT("Shift"), TXT("Ctrl"), TXT("Alt"), TXT("Pause"), TXT("Caps Lock"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"),
+ TXT("Escape"), TXT("?"), TXT("?"), TXT("?"), TXT("?"),
+ TXT("Space"), TXT("Page Up"), TXT("Page Down"), TXT("End"), TXT("Home"),
+ TXT("Left Arrow"), TXT("Up Arrow"), TXT("Right Arrow"), TXT("Down Arrow"),
+ TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("Insert"), TXT("Delete"), TXT("?"),
+ TXT("0"), TXT("1"), TXT("2"), TXT("3"), TXT("4"), TXT("5"), TXT("6"), TXT("7"), TXT("8"), TXT("9"),
+ TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"),
+ TXT("A"), TXT("B"), TXT("C"), TXT("D"), TXT("E"), TXT("F"), TXT("G"), TXT("H"), TXT("I"), TXT("J"), TXT("K"), TXT("L"), TXT("M"),
+ TXT("N"), TXT("O"), TXT("P"), TXT("Q"), TXT("R"), TXT("S"), TXT("T"), TXT("U"), TXT("V"), TXT("W"), TXT("X"), TXT("Y"), TXT("Z"),
+ TXT("Left Win"), TXT("Right Win"), TXT("Application"), TXT("?"), TXT("?"),
+ TXT("NumPad 0"), TXT("NumPad 1"), TXT("NumPad 2"), TXT("NumPad 3"), TXT("NumPad 4"),
+ TXT("NumPad 5"), TXT("NumPad 6"), TXT("NumPad 7"), TXT("NumPad 8"), TXT("NumPad 9"),
+ TXT("Multiply"), TXT("Add"), TXT("?"), TXT("Subtract"), TXT("Decimal"), TXT("Divide"),
+ TXT("F1"), TXT("F2"), TXT("F3"), TXT("F4"), TXT("F5"), TXT("F6"), TXT("F7"), TXT("F8"), TXT("F9"), TXT("F10"), TXT("F11"), TXT("F12"),
+ TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"),
+ TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"),
+ TXT("Num Lock"), TXT("Scroll Lock"),
+ TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"),
+ TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"),
+ TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"),
+ TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"),
+ TXT("Semicolon"), TXT("Equals"), TXT("Comma"), TXT("Minus"), TXT("Period"), TXT("Slash"), TXT("Grave"),
+ TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"),
+ TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"),
+ TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"),
+ TXT("Left bracket"), TXT("Backslash"), TXT("Right bracket"), TXT("Apostrophe"),
+ TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"),
+ TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"),
+ TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"), TXT("?"),
+ TXT("?"), TXT("?"), TXT("?")
 };
 
 
@@ -103,7 +103,7 @@ bool HGE_CALL HGE_Impl::Input_KeyUp(int key)
 	return (keyz[key] & 2) != 0;
 }
 
-char* HGE_CALL HGE_Impl::Input_GetKeyName(int key)
+hgeString HGE_CALL HGE_Impl::Input_GetKeyName(int key)
 {
 	return KeyNames[key];
 }

@@ -14,28 +14,34 @@
 #include <unzip.h>
 
 
-bool HGE_CALL HGE_Impl::Resource_AttachPack(const char *filename, const char *password)
+bool HGE_CALL HGE_Impl::Resource_AttachPack(const hgeString filename, const hgeString password)
 {
-	char *szName;
+	hgeString szName;
 	CResourceList *resItem=res;
 	unzFile zip;
 
 	szName=Resource_MakePath(filename);
-	strupr(szName);
+	hge_strupr(szName);
 
 	while(resItem)
 	{
-		if(!strcmp(szName,resItem->filename)) return false;
+		if( ! hge_strcmp(szName,resItem->filename) ) return false;
 		resItem=resItem->next;
 	}
 	
+#if HGE_UNICODE
+	char utf8_fn[_MAX_PATH*2];
+	hgeWideToUtf8( szName, utf8_fn, sizeof(utf8_fn) );
+	zip=unzOpen(utf8_fn);
+#else
 	zip=unzOpen(szName);
+#endif
 	if(!zip) return false;
 	unzClose(zip);
 
 	resItem=new CResourceList;
-	strcpy(resItem->filename, szName);
-	if(password) strcpy(resItem->password, password);
+	hge_strcpy(resItem->filename, szName);
+	if(password) hge_strcpy(resItem->password, password);
 	else resItem->password[0]=0;
 	resItem->next=res;
 	res=resItem;
@@ -43,17 +49,17 @@ bool HGE_CALL HGE_Impl::Resource_AttachPack(const char *filename, const char *pa
 	return true;
 }
 
-void HGE_CALL HGE_Impl::Resource_RemovePack(const char *filename)
+void HGE_CALL HGE_Impl::Resource_RemovePack(const hgeString filename)
 {
-	char *szName;
+	hgeString szName;
 	CResourceList *resItem=res, *resPrev=0;
 
 	szName=Resource_MakePath(filename);
-	strupr(szName);
+	hge_strupr(szName);
 
 	while(resItem)
 	{
-		if(!strcmp(szName,resItem->filename))
+		if( ! hge_strcmp(szName,resItem->filename) )
 		{
 			if(resPrev) resPrev->next=resItem->next;
 			else res=resItem->next;
@@ -80,13 +86,13 @@ void HGE_CALL HGE_Impl::Resource_RemoveAllPacks()
 	res=0;
 }
 
-void* HGE_CALL HGE_Impl::Resource_Load(const char *filename, uint32_t *size)
+void* HGE_CALL HGE_Impl::Resource_Load(const hgeString filename, uint32_t *size)
 {
-	static char *res_err="Can't load resource: %s";
+	static const hgeString res_err = TXT("Can't load resource: %s");
 
 	CResourceList *resItem=res;
-	char szName[_MAX_PATH];
-	char szZipName[_MAX_PATH];
+	hgeChar szName[_MAX_PATH];
+	hgeChar szZipName[_MAX_PATH];
 	unzFile zip;
 	unz_file_info file_info;
 	int done, i;
@@ -97,25 +103,38 @@ void* HGE_CALL HGE_Impl::Resource_Load(const char *filename, uint32_t *size)
 
 	// Load from pack
  
-	strcpy(szName,filename);
-	strupr(szName);
+	hge_strcpy(szName,filename);
+	hge_strupr(szName);
 	for(i=0; szName[i]; i++) { if(szName[i]=='/') szName[i]='\\'; }
 
 	while(resItem)
 	{
+#if HGE_UNICODE
+		char utf8_fn[_MAX_PATH*2];
+		hgeWideToUtf8( resItem->filename, utf8_fn, sizeof(utf8_fn) );
+		zip=unzOpen(utf8_fn);
+#else
 		zip=unzOpen(resItem->filename);
+#endif
+
 		done=unzGoToFirstFile(zip);
 		while(done==UNZ_OK)
 		{
+#if HGE_UNICODE
+			char szZipName_utf8[_MAX_PATH*2];
+			hgeWideToUtf8( szZipName, szZipName_utf8, sizeof(utf8_fn) );
+			unzGetCurrentFileInfo(zip, &file_info, szZipName_utf8, sizeof(szZipName), NULL, 0, NULL, 0);
+#else
 			unzGetCurrentFileInfo(zip, &file_info, szZipName, sizeof(szZipName), NULL, 0, NULL, 0);
-			strupr(szZipName);
+#endif
+			hge_strupr(szZipName);
 			for(i=0; szZipName[i]; i++)	{ if(szZipName[i]=='/') szZipName[i]='\\'; }
-			if(!strcmp(szName,szZipName))
+			if( ! hge_strcmp(szName,szZipName) )
 			{
 				if(unzOpenCurrentFilePassword(zip, resItem->password[0] ? resItem->password : 0) != UNZ_OK)
 				{
 					unzClose(zip);
-					sprintf(szName, res_err, filename);
+					hge_sprintf(szName, res_err, filename);
 					_PostError(szName);
 					return 0;
 				}
@@ -125,7 +144,7 @@ void* HGE_CALL HGE_Impl::Resource_Load(const char *filename, uint32_t *size)
 				{
 					unzCloseCurrentFile(zip);
 					unzClose(zip);
-					sprintf(szName, res_err, filename);
+					hge_sprintf(szName, res_err, filename);
 					_PostError(szName);
 					return 0;
 				}
@@ -135,7 +154,7 @@ void* HGE_CALL HGE_Impl::Resource_Load(const char *filename, uint32_t *size)
 					unzCloseCurrentFile(zip);
 					unzClose(zip);
 					free(ptr);
-					sprintf(szName, res_err, filename);
+					hge_sprintf(szName, res_err, filename);
 					_PostError(szName);
 					return 0;
 				}

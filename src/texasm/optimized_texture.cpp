@@ -106,7 +106,7 @@ bool COptimizedTexture::CopyData()
 	CColor *source_data;
 	int source_pitch;
 
-	for(it = obj_list.begin(); it != obj_list.end(); it++)
+	for(it = obj_list.begin(); it != obj_list.end(); ++it)
 	{
 		obj = *it;
 
@@ -123,7 +123,7 @@ bool COptimizedTexture::CopyData()
 		obj->GetSourcePos(&src_x, &src_y);
 		obj->GetTargetPos(&tgt_x, &tgt_y);
 
-		for(i = 0; i < obj->GetHeight(); i++)
+		for(i = 0; i < obj->GetHeight(); ++i)
 		{
 			memcpy(&tex_data[tgt_y * pitch + tgt_x],
 				   &source_data[src_y * source_pitch + src_x],
@@ -155,15 +155,15 @@ bool COptimizedTexture::OptimizeAlpha()
 
 	buf = tex_data;
 
-	for(i=0; i<texh; i++)
-		for(j=0; j<texw; j++)
+	for(i=0; i<texh; ++i)
+		for(j=0; j<texw; ++j)
 			if(!buf[i*pitch+j].a)
 			{
 				count = 0;
 				r=g=b = 0;
 
-				for(k=-1; k<=1; k++)
-					for(l=-1; l<=1; l++)
+				for(k=-1; k<=1; ++k)
+					for(l=-1; l<=1; ++l)
 						if(i+k >= 0 && i+k < texh &&
 						   j+l >= 0 && j+l < texw &&
 						   buf[(i+k)*pitch + (j+l)].a)
@@ -244,7 +244,7 @@ bool COptimizedTexture::SaveDescriptions(char *resfile, char *texfile, char *tex
 	}
 
 	// save object descriptions
-	for(it = obj_list.begin(); it != obj_list.end(); it++)
+	for(it = obj_list.begin(); it != obj_list.end(); ++it)
 	{
 		if(!(*it)->SaveDescription(fp, texname))
 		{

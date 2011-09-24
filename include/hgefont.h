@@ -71,7 +71,8 @@ private:
 
 	static HGE	*hge;
 
-	static hgeChar buffer[1024];
+	const static size_t HGEFONT_BUFFER_SZ = 1024;
+	static hgeChar m_buffer[HGEFONT_BUFFER_SZ];
 
 	HTEXTURE	hTexture;
 	hgeSprite*	letters[256];

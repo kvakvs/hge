@@ -1,5 +1,8 @@
 #include <hgeunicode.h>
 
+#include <Windows.h>
+#include <Winnls.h>
+
 #if HGE_UNICODE
 FILE * hge_fopen_w( hgeString s )
 {
@@ -49,13 +52,13 @@ FILE * hge_fopen_rb( hgeString s )
 #endif
 
 
-void hgeWideToUtf8( const wchar_t * s, char * buf, size_t * cnt)
+void hgeWideToUtf8( const wchar_t * s, char * buf, size_t cnt)
 {
 	WideCharToMultiByte(CP_ACP, 0, s, wcslen(s)+1, buf, cnt, NULL, NULL);
 }
 
 
-void hgeUtf8ToWide( const char * s, wchar_t buf, size_t * cnt)
+void hgeUtf8ToWide( const char * s, wchar_t * buf, size_t cnt)
 {
 	MultiByteToWideChar(CP_ACP, 0, s, strlen(s)+1, buf, cnt);
 }

@@ -5,12 +5,13 @@
 **
 ** hgeGUI default controls implementation
 */
-
-
-#include "..\..\include\hgeguictrls.h"
+#include <hgeguictrls.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#undef min
+#include <algorithm>
 
 
 /*
@@ -40,14 +41,14 @@ void hgeGUIText::SetMode(int _align)
 	else tx=rect.x1;
 }
 
-void hgeGUIText::SetText(const char *_text)
+void hgeGUIText::SetText(const hgeString _text)
 {
-	strcpy(text, _text);
+	hge_strcpy(text, _text);
 }
 
-void hgeGUIText::printf(const char *format, ...)
+void hgeGUIText::printf(const hgeString format, ...)
 {
-	vsprintf(text, format, (char *)&format+sizeof(format));
+	hge_vsprintf(text, format, (va_list)&format+sizeof(format));
 }
 
 void hgeGUIText::Render()
@@ -226,7 +227,7 @@ int hgeGUIListbox::AddItem(char *item)
 	hgeGUIListboxItem *pItem=pItems, *pPrev=0, *pNew;
 
 	pNew = new hgeGUIListboxItem;
-	memcpy(pNew->text, item, min(sizeof(pNew->text), strlen(item)+1));
+	memcpy(pNew->text, item, std::min(sizeof(pNew->text), strlen(item)+1) * sizeof(hgeChar));
 	pNew->text[sizeof(pNew->text)-1]='\0';
 	pNew->next=0;
 
@@ -255,7 +256,7 @@ void hgeGUIListbox::DeleteItem(int n)
 	nItems--;
 }
 
-char *hgeGUIListbox::GetItemText(int n)
+hgeString hgeGUIListbox::GetItemText(int n)
 {
 	int i;
 	hgeGUIListboxItem *pItem=pItems;

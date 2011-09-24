@@ -296,9 +296,9 @@ public:
     virtual void        HGE_CALL    System_Shutdown() = 0;
     virtual bool        HGE_CALL    System_Start() = 0;
     virtual hgeString   HGE_CALL    System_GetErrorMessage() = 0;
-    virtual void        HGE_CALL    System_Log( hgeString format, ... ) = 0;
-    virtual bool        HGE_CALL    System_Launch( hgeString url ) = 0;
-    virtual void        HGE_CALL    System_Snapshot( hgeString filename=NULL ) = 0;
+    virtual void        HGE_CALL    System_Log( const hgeString format, ... ) = 0;
+    virtual bool        HGE_CALL    System_Launch( const hgeString url ) = 0;
+    virtual void        HGE_CALL    System_Snapshot( const hgeString filename=NULL ) = 0;
 
 private:
     virtual void        HGE_CALL    System_SetStateBool  (hgeBoolState   state, bool        value) = 0;
@@ -393,7 +393,7 @@ public:
     virtual bool        HGE_CALL    Input_KeyDown(int key) = 0;
     virtual bool        HGE_CALL    Input_KeyUp(int key) = 0;
     virtual bool        HGE_CALL    Input_GetKeyState(int key) = 0;
-    virtual char*       HGE_CALL    Input_GetKeyName(int key) = 0;
+    virtual hgeString   HGE_CALL    Input_GetKeyName(int key) = 0;
     virtual int         HGE_CALL    Input_GetKey() = 0;
     virtual int         HGE_CALL    Input_GetChar() = 0;
     virtual bool        HGE_CALL    Input_GetEvent(hgeInputEvent *event) = 0;

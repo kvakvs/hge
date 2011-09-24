@@ -115,7 +115,7 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(HTARGET targ)
         {
             if(FAILED(pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode)) || Mode.Format==D3DFMT_UNKNOWN) 
             {
-                _PostError("Can't determine desktop video mode");
+                _PostError( TXT("Can't determine desktop video mode") );
                 return false;
             }
 
@@ -129,7 +129,7 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(HTARGET targ)
     
     if(VertArray)
     {
-        _PostError("Gfx_BeginScene: Scene is already being rendered");
+        _PostError( TXT("Gfx_BeginScene: Scene is already being rendered") );
         return false;
     }
     
@@ -153,7 +153,7 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(HTARGET targ)
 #endif
         {
             if(target) pSurf->Release();
-            _PostError("Gfx_BeginScene: Can't set render target");
+            _PostError( TXT("Gfx_BeginScene: Can't set render target") );
             return false;
         }
         if(target)
@@ -299,7 +299,7 @@ HTARGET HGE_CALL HGE_Impl::Target_Create(int width, int height, bool zbuffer)
     if(FAILED(D3DXCreateTexture(pD3DDevice, width, height, 1, D3DUSAGE_RENDERTARGET,
                         d3dpp->BackBufferFormat, D3DPOOL_DEFAULT, &pTarget->pTex)))
     {
-        _PostError("Can't create render target texture");
+        _PostError( TXT("Can't create render target texture") );
         delete pTarget;
         return 0;
     }
@@ -320,7 +320,7 @@ HTARGET HGE_CALL HGE_Impl::Target_Create(int width, int height, bool zbuffer)
 #endif
         {   
             pTarget->pTex->Release();
-            _PostError("Can't create render target depth buffer");
+            _PostError( TXT("Can't create render target depth buffer") );
             delete pTarget;
             return 0;
         }
@@ -375,14 +375,14 @@ HTEXTURE HGE_CALL HGE_Impl::Texture_Create(int width, int height)
                                         D3DPOOL_MANAGED,    // Memory pool
                                         &pTex ) ) )
     {   
-        _PostError("Can't create texture");
+        _PostError( TXT("Can't create texture") );
         return NULL;
     }
 
     return (HTEXTURE)pTex;
 }
 
-HTEXTURE HGE_CALL HGE_Impl::Texture_Load(const char *filename, uint32_t size, bool bMipmap)
+HTEXTURE HGE_CALL HGE_Impl::Texture_Load(const hgeString filename, uint32_t size, bool bMipmap)
 {
     void *data;
     uint32_t _size;
@@ -391,9 +391,10 @@ HTEXTURE HGE_CALL HGE_Impl::Texture_Load(const char *filename, uint32_t size, bo
     D3DXIMAGE_INFO info;
     CTextureList *texItem;
 
-    if(size) { data=(void *)filename; _size=size; }
-    else
-    {
+    if(size) {
+		data=(void *)filename;
+		_size=size;
+	} else {
         data=pHGE->Resource_Load(filename, &_size);
         if(!data) return NULL;
     }
@@ -435,7 +436,7 @@ HTEXTURE HGE_CALL HGE_Impl::Texture_Load(const char *filename, uint32_t size, bo
                                         &pTex ) ) )
 
     {   
-        _PostError("Can't create texture");
+        _PostError( TXT("Can't create texture") );
         if(!size) Resource_Free(data);
         return NULL;
     }
@@ -544,7 +545,7 @@ uint32_t * HGE_CALL HGE_Impl::Texture_Lock(HTEXTURE tex, bool bReadOnly, int lef
 
     if(FAILED(pTex->LockRect(0, &TRect, prec, flags)))
     {
-        _PostError("Can't lock texture");
+        _PostError( TXT("Can't lock texture") );
         return 0;
     }
 
@@ -651,7 +652,7 @@ bool HGE_Impl::_GfxInit()
 #endif
     if(pD3D==NULL)
     {
-        _PostError("Can't create D3D interface");
+        _PostError( TXT("Can't create D3D interface") );
         return false;
     }
 
@@ -663,9 +664,9 @@ bool HGE_Impl::_GfxInit()
 #if HGE_DIRECTX_VER == 9
     pD3D->GetAdapterIdentifier(D3DADAPTER_DEFAULT, 0, &AdID);
 #endif
-    System_Log("D3D Driver: %s",AdID.Driver);
-    System_Log("Description: %s",AdID.Description);
-    System_Log("Version: %d.%d.%d.%d",
+    System_Log( TXT("D3D Driver: %s"), AdID.Driver);
+    System_Log( TXT("Description: %s"), AdID.Description);
+    System_Log( TXT("Version: %d.%d.%d.%d"),
             HIWORD(AdID.DriverVersion.HighPart),
             LOWORD(AdID.DriverVersion.HighPart),
             HIWORD(AdID.DriverVersion.LowPart),
@@ -675,7 +676,7 @@ bool HGE_Impl::_GfxInit()
     
     if(FAILED(pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode)) || Mode.Format==D3DFMT_UNKNOWN) 
     {
-        _PostError("Can't determine desktop video mode");
+        _PostError( TXT("Can't determine desktop video mode") );
         if(bWindowed) return false;
     }
     
@@ -734,7 +735,7 @@ bool HGE_Impl::_GfxInit()
 
     if(Format == D3DFMT_UNKNOWN)
     {
-        _PostError("Can't find appropriate full screen video mode");
+        _PostError( TXT("Can't find appropriate full screen video mode") );
         if(!bWindowed) return false;
     }
 
@@ -776,13 +777,13 @@ bool HGE_Impl::_GfxInit()
                                   D3DCREATE_SOFTWARE_VERTEXPROCESSING,
                                   d3dpp, &pD3DDevice ) ) )
     {
-        _PostError("Can't create D3D device");
+        _PostError( TXT("Can't create D3D device") );
         return false;
     }
 
     _AdjustWindow();
 
-    System_Log("Mode: %d x %d x %s\n",nScreenWidth,nScreenHeight,szFormats[_format_id(Format)]);
+    System_Log( TXT("Mode: %d x %d x %s\n"), nScreenWidth, nScreenHeight, szFormats[_format_id(Format)]);
 
 // Create vertex batch buffer
 
@@ -998,7 +999,7 @@ bool HGE_Impl::_init_lost()
                                                 NULL)))
 #endif
     {
-        _PostError("Can't create D3D vertex buffer");
+        _PostError( TXT("Can't create D3D vertex buffer") );
         return false;
     }
 
@@ -1029,7 +1030,7 @@ bool HGE_Impl::_init_lost()
                                                 NULL) ) )
 #endif
     {
-        _PostError("Can't create D3D index buffer");
+        _PostError( TXT("Can't create D3D index buffer") );
         return false;
     }
 
@@ -1041,7 +1042,7 @@ bool HGE_Impl::_init_lost()
     if( FAILED( pIB->Lock( 0, 0, (VOID**)&pIndices, 0 ) ) )
 #endif
     {
-        _PostError("Can't lock D3D index buffer");
+        _PostError( TXT("Can't lock D3D index buffer") );
         return false;
     }
 
@@ -1120,21 +1121,22 @@ bool HGE_Impl::_init_lost()
 }
 
 #if HGE_DIRECTX_VER >= 9
-HSHADER HGE_CALL HGE_Impl::Shader_Create(const char *filename)
+HSHADER HGE_CALL HGE_Impl::Shader_Create(const hgeString filename)
 {
 	LPD3DXBUFFER					code			= NULL;
 	LPDIRECT3DPIXELSHADER9          pixelShader    = NULL;
-	HRESULT result = D3DXCompileShaderFromFile( filename,   //filepath
-												NULL,          //macro's            
-												NULL,          //includes           
-												"ps_main",     //main function      
-												"ps_2_0",      //shader profile     
-												0,             //flags              
-												&code,         //compiled operations
-												NULL,          //errors
-												NULL);         //constants
+	HRESULT result = HGE_WINAPI_UNICODE_SUFFIX(D3DXCompileShaderFromFile)(
+							filename,   //filepath
+							NULL,          //macro's            
+							NULL,          //includes           
+							"ps_main",     //main function      
+							"ps_2_0",      //shader profile     
+							0,             //flags              
+							&code,         //compiled operations
+							NULL,          //errors
+							NULL);         //constants
 	if(FAILED(result)) {
-		_PostError("Can't create shader");
+		_PostError( TXT("Can't create shader") );
 		return NULL;
 	}
 
