@@ -10,8 +10,10 @@ CMake generates project files for one of known IDE's for Windows (as well as
 Linux/Unix/MacOSX but this version of HGE only builds on Windows).
 
 1. Edit CMakeLists.txt in root folder, set "DIRECTX_SDK_DIR" to where you have
-    "DirectX SDK Summer 2004" installed. If you don't have it yet - visit Microsoft
-    website or search google for "DirectX SDK Summer 2004" (~230 MB download).
+    "DirectX SDK Summer 2004" installed (for DirectX8 build) and some other DirectX SDK for
+    DirectX9 build. If you don't have it yet - visit Microsoft website or search google
+    for "DirectX SDK Summer 2004" (~230 MB download) or some fresh DirectX 9 SDK (~year 2010,
+    size ~550 MB).
 
 2. Run cmake_msvs10_x86.bat for Visual Studio 2010 32bit build (or other bat file,
     depending what's your IDE).
