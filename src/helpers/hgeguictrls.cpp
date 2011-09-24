@@ -194,7 +194,7 @@ bool hgeGUISlider::MouseMove(float x, float y)
 ** hgeGUIListbox
 */
 
-hgeGUIListbox::hgeGUIListbox(int _id, float x, float y, float w, float h, hgeFont *fnt, DWORD tColor, DWORD thColor, DWORD hColor)
+hgeGUIListbox::hgeGUIListbox(int _id, float x, float y, float w, float h, hgeFont *fnt, uint32_t tColor, uint32_t thColor, uint32_t hColor)
 {
 	id=_id;
 	bStatic=false;

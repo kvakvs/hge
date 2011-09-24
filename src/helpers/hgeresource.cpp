@@ -122,7 +122,7 @@ void* hgeResourceManager::GetResource(const char *name, int resgroup)
 		if(reshandle)
 		{
 			resource=new RResource();
-			resource->handle=(DWORD)reshandle;
+			resource->handle=(uint32_t)reshandle;
 			resource->resgroup=resgroup;
 			strcpy(resource->name, name);
 			strcpy(resource->filename, name);
@@ -290,7 +290,7 @@ hgeStringTable* hgeResourceManager::GetStringTable(const char *name, int resgrou
 		if(strtable)
 		{
 			resource=new RStringTable();
-			resource->handle=(DWORD)strtable;
+			resource->handle=(uint32_t)strtable;
 			resource->resgroup=resgroup;
 			strcpy(resource->name, name);
 			strcpy(resource->filename, name);

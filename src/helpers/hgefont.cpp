@@ -23,7 +23,7 @@ char hgeFont::buffer[1024];
 hgeFont::hgeFont(const char *szFont, bool bMipmap)
 {
 	void	*data;
-	DWORD	size;
+	uint32_t	size;
 	char	*desc, *pdesc;
 	char	linebuf[256];
 	char	buf[MAX_PATH], *pbuf;
@@ -287,7 +287,7 @@ float hgeFont::GetStringWidth(const char *string, bool bMultiline) const
 	return w*fScale*fProportion;
 }
 
-void hgeFont::SetColor(DWORD col)
+void hgeFont::SetColor(uint32_t col)
 {
 	dwCol = col;
 

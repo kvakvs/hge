@@ -10,7 +10,7 @@
 
 
 #include <windows.h>
-
+#include <stdint.h>
 
 #define HGE_VERSION 0x180
 
@@ -46,11 +46,17 @@
 /*
 ** Common data types
 */
-#ifndef DWORD
-typedef unsigned long       DWORD;
-typedef unsigned short      WORD;
-typedef unsigned char       BYTE;
+/*
+#ifdef __BORLANDC__
+	typedef signed char int8_t;
+	typedef short int16_t;
+	typedef int int32_t;
+
+	typedef unsigned char uint8_t;
+	typedef unsigned short uint16_t;
+	typedef unsigned int uint32_t;
 #endif
+*/
 
 
 /*
@@ -69,29 +75,29 @@ typedef unsigned char       BYTE;
 ** HGE Handle types
 */
 // FIXME: Won't compile in 64-bit mode due to handles (4 bytes) holding a pointer (8 bytes)
-typedef DWORD HTEXTURE;
-typedef DWORD HTARGET;
-typedef DWORD HEFFECT;
-typedef DWORD HMUSIC;
-typedef DWORD HSTREAM;
-typedef DWORD HCHANNEL;
+typedef uint32_t HTEXTURE;
+typedef uint32_t HTARGET;
+typedef uint32_t HEFFECT;
+typedef uint32_t HMUSIC;
+typedef uint32_t HSTREAM;
+typedef uint32_t HCHANNEL;
 #if HGE_DIRECTX_VER >= 9
-	typedef DWORD HSHADER;
+	typedef uint32_t HSHADER;
 #endif
 
 
 /*
 ** Hardware color macros
 */
-#define ARGB(a,r,g,b)   ((DWORD(a)<<24) + (DWORD(r)<<16) + (DWORD(g)<<8) + DWORD(b))
+#define ARGB(a,r,g,b)   ((uint32_t(a)<<24) + (uint32_t(r)<<16) + (uint32_t(g)<<8) + uint32_t(b))
 #define GETA(col)       ((col)>>24)
 #define GETR(col)       (((col)>>16) & 0xFF)
 #define GETG(col)       (((col)>>8) & 0xFF)
 #define GETB(col)       ((col) & 0xFF)
-#define SETA(col,a)     (((col) & 0x00FFFFFF) + (DWORD(a)<<24))
-#define SETR(col,r)     (((col) & 0xFF00FFFF) + (DWORD(r)<<16))
-#define SETG(col,g)     (((col) & 0xFFFF00FF) + (DWORD(g)<<8))
-#define SETB(col,b)     (((col) & 0xFFFFFF00) + DWORD(b))
+#define SETA(col,a)     (((col) & 0x00FFFFFF) + (uint32_t(a)<<24))
+#define SETR(col,r)     (((col) & 0xFF00FFFF) + (uint32_t(r)<<16))
+#define SETG(col,g)     (((col) & 0xFFFF00FF) + (uint32_t(g)<<8))
+#define SETB(col,b)     (((col) & 0xFFFFFF00) + uint32_t(b))
 
 
 /*
@@ -209,10 +215,10 @@ typedef bool (*hgeCallback)();
 */
 struct hgeVertex
 {
-    float           x, y;       // screen position    
-    float           z;          // Z-buffer depth 0..1
-    DWORD           col;        // color
-    float           tx, ty;     // texture coordinates
+    float			x, y;       // screen position    
+    float			z;          // Z-buffer depth 0..1
+    uint32_t		col;        // color
+    float			tx, ty;     // texture coordinates
 };
 
 
@@ -221,9 +227,9 @@ struct hgeVertex
 */
 struct hgeTriple
 {
-    hgeVertex       v[3];
-    HTEXTURE        tex;
-    int             blend;
+    hgeVertex		v[3];
+    HTEXTURE		tex;
+    int				blend;
 };
 
 
@@ -232,9 +238,9 @@ struct hgeTriple
 */
 struct hgeQuad
 {
-    hgeVertex       v[4];
-    HTEXTURE        tex;
-    int             blend;
+    hgeVertex		v[4];
+    HTEXTURE		tex;
+    int				blend;
 };
 
 
@@ -316,7 +322,7 @@ public:
     inline int                  System_GetState(hgeIntState    state) { return System_GetStateInt   (state); }
     inline const char*          System_GetState(hgeStringState state) { return System_GetStateString(state); }
     
-    virtual void*       CALL    Resource_Load(const char *filename, DWORD *size=0) = 0;
+    virtual void*       CALL    Resource_Load(const char *filename, uint32_t *size=0) = 0;
     virtual void        CALL    Resource_Free(void *res) = 0;
     virtual bool        CALL    Resource_AttachPack(const char *filename, const char *password=0) = 0;
     virtual void        CALL    Resource_RemovePack(const char *filename) = 0;
@@ -340,12 +346,12 @@ public:
     virtual float       CALL    Timer_GetDelta() = 0;
     virtual int         CALL    Timer_GetFPS() = 0;
 
-    virtual HEFFECT     CALL    Effect_Load(const char *filename, DWORD size=0) = 0;
+    virtual HEFFECT     CALL    Effect_Load(const char *filename, uint32_t size=0) = 0;
     virtual void        CALL    Effect_Free(HEFFECT eff) = 0;
     virtual HCHANNEL    CALL    Effect_Play(HEFFECT eff) = 0;
     virtual HCHANNEL    CALL    Effect_PlayEx(HEFFECT eff, int volume=100, int pan=0, float pitch=1.0f, bool loop=false) = 0;
 
-    virtual HMUSIC      CALL    Music_Load(const char *filename, DWORD size=0) = 0;
+    virtual HMUSIC      CALL    Music_Load(const char *filename, uint32_t size=0) = 0;
     virtual void        CALL    Music_Free(HMUSIC mus) = 0;
     virtual HCHANNEL    CALL    Music_Play(HMUSIC mus, bool loop, int volume = 100, int order = -1, int row = -1) = 0;
     virtual void        CALL    Music_SetAmplification(HMUSIC music, int ampl) = 0;
@@ -358,7 +364,7 @@ public:
     virtual void        CALL    Music_SetChannelVolume(HMUSIC music, int channel, int volume) = 0;
     virtual int         CALL    Music_GetChannelVolume(HMUSIC music, int channel) = 0;
 
-    virtual HSTREAM     CALL    Stream_Load(const char *filename, DWORD size=0) = 0;
+    virtual HSTREAM     CALL    Stream_Load(const char *filename, uint32_t size=0) = 0;
     virtual void        CALL    Stream_Free(HSTREAM stream) = 0;
     virtual HCHANNEL    CALL    Stream_Play(HSTREAM stream, bool loop, int volume = 100) = 0;
 
@@ -392,8 +398,8 @@ public:
 
     virtual bool        CALL    Gfx_BeginScene(HTARGET target=0) = 0;
     virtual void        CALL    Gfx_EndScene() = 0;
-    virtual void        CALL    Gfx_Clear(DWORD color) = 0;
-    virtual void        CALL    Gfx_RenderLine(float x1, float y1, float x2, float y2, DWORD color=0xFFFFFFFF, float z=0.5f) = 0;
+    virtual void        CALL    Gfx_Clear(uint32_t color) = 0;
+    virtual void        CALL    Gfx_RenderLine(float x1, float y1, float x2, float y2, uint32_t color=0xFFFFFFFF, float z=0.5f) = 0;
     virtual void        CALL    Gfx_RenderTriple(const hgeTriple *triple) = 0;
     virtual void        CALL    Gfx_RenderQuad(const hgeQuad *quad) = 0;
     virtual hgeVertex*  CALL    Gfx_StartBatch(int prim_type, HTEXTURE tex, int blend, int *max_prim) = 0;
@@ -412,11 +418,11 @@ public:
     virtual HTEXTURE    CALL    Target_GetTexture(HTARGET target) = 0;
 
     virtual HTEXTURE    CALL    Texture_Create(int width, int height) = 0;
-    virtual HTEXTURE    CALL    Texture_Load(const char *filename, DWORD size=0, bool bMipmap=false) = 0;
+    virtual HTEXTURE    CALL    Texture_Load(const char *filename, uint32_t size=0, bool bMipmap=false) = 0;
     virtual void        CALL    Texture_Free(HTEXTURE tex) = 0;
     virtual int         CALL    Texture_GetWidth(HTEXTURE tex, bool bOriginal=false) = 0;
     virtual int         CALL    Texture_GetHeight(HTEXTURE tex, bool bOriginal=false) = 0;
-    virtual DWORD*      CALL    Texture_Lock(HTEXTURE tex, bool bReadOnly=true, int left=0, int top=0, int width=0, int height=0) = 0;
+    virtual uint32_t*      CALL    Texture_Lock(HTEXTURE tex, bool bReadOnly=true, int left=0, int top=0, int width=0, int height=0) = 0;
     virtual void        CALL    Texture_Unlock(HTEXTURE tex) = 0;
 };
 

@@ -21,7 +21,7 @@ hgeStringTable::hgeStringTable(const char *filename)
 {
 	int i;
 	void *data;
-	DWORD size;
+	uint32_t size;
 	char *desc, *pdesc;
 	NamedString *str;
 	char str_name[MAXSTRNAMELENGTH];

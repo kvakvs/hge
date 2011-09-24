@@ -33,7 +33,7 @@ public:
 
 	void		SetTexture(HTEXTURE tex);
 	void		SetTextureRect(float x, float y, float w, float h, bool adjSize = true);
-	void		SetColor(DWORD col, int i=-1);
+	void		SetColor(uint32_t col, int i=-1);
 	void		SetZ(float z, int i=-1);
 	void		SetBlendMode(int blend) { quad.blend=blend; }
 	void		SetHotSpot(float x, float y) { hotX=x; hotY=y; }
@@ -41,7 +41,7 @@ public:
 
 	HTEXTURE	GetTexture() const { return quad.tex; }
 	void		GetTextureRect(float *x, float *y, float *w, float *h) const { *x=tx; *y=ty; *w=width; *h=height; }
-	DWORD		GetColor(int i=0) const { return quad.v[i].col; }
+	uint32_t		GetColor(int i=0) const { return quad.v[i].col; }
 	float		GetZ(int i=0) const { return quad.v[i].z; }
 	int			GetBlendMode() const { return quad.blend; }
 	void		GetHotSpot(float *x, float *y) const { *x=hotX; *y=hotY; }

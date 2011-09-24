@@ -93,7 +93,7 @@ public:
     virtual bool        CALL    System_Launch(const char *url);
     virtual void        CALL    System_Snapshot(const char *filename=0);
 
-    virtual void*       CALL    Resource_Load(const char *filename, DWORD *size=0);
+    virtual void*       CALL    Resource_Load(const char *filename, uint32_t *size=0);
     virtual void        CALL    Resource_Free(void *res);
     virtual bool        CALL    Resource_AttachPack(const char *filename, const char *password=0);
     virtual void        CALL    Resource_RemovePack(const char *filename);
@@ -117,12 +117,12 @@ public:
     virtual float       CALL    Timer_GetDelta();
     virtual int         CALL    Timer_GetFPS();
 
-    virtual HEFFECT     CALL    Effect_Load(const char *filename, DWORD size=0);
+    virtual HEFFECT     CALL    Effect_Load(const char *filename, uint32_t size=0);
     virtual void        CALL    Effect_Free(HEFFECT eff);
     virtual HCHANNEL    CALL    Effect_Play(HEFFECT eff);
     virtual HCHANNEL    CALL    Effect_PlayEx(HEFFECT eff, int volume=100, int pan=0, float pitch=1.0f, bool loop=false);
 
-    virtual HMUSIC      CALL    Music_Load(const char *filename, DWORD size=0);
+    virtual HMUSIC      CALL    Music_Load(const char *filename, uint32_t size=0);
     virtual void        CALL    Music_Free(HMUSIC mus);
     virtual HCHANNEL    CALL    Music_Play(HMUSIC mus, bool loop, int volume = 100, int order = 0, int row = 0);
     virtual void        CALL    Music_SetAmplification(HMUSIC music, int ampl);
@@ -135,7 +135,7 @@ public:
     virtual void        CALL    Music_SetChannelVolume(HMUSIC music, int channel, int volume);
     virtual int         CALL    Music_GetChannelVolume(HMUSIC music, int channel);
 
-    virtual HSTREAM     CALL    Stream_Load(const char *filename, DWORD size=0);
+    virtual HSTREAM     CALL    Stream_Load(const char *filename, uint32_t size=0);
     virtual void        CALL    Stream_Free(HSTREAM stream);
     virtual HCHANNEL    CALL    Stream_Play(HSTREAM stream, bool loop, int volume = 100);
 
@@ -169,8 +169,8 @@ public:
 
     virtual bool        CALL    Gfx_BeginScene(HTARGET target=0);
     virtual void        CALL    Gfx_EndScene();
-    virtual void        CALL    Gfx_Clear(DWORD color);
-    virtual void        CALL    Gfx_RenderLine(float x1, float y1, float x2, float y2, DWORD color=0xFFFFFFFF, float z=0.5f);
+    virtual void        CALL    Gfx_Clear(uint32_t color);
+    virtual void        CALL    Gfx_RenderLine(float x1, float y1, float x2, float y2, uint32_t color=0xFFFFFFFF, float z=0.5f);
     virtual void        CALL    Gfx_RenderTriple(const hgeTriple *triple);
     virtual void        CALL    Gfx_RenderQuad(const hgeQuad *quad);
     virtual hgeVertex*  CALL    Gfx_StartBatch(int prim_type, HTEXTURE tex, int blend, int *max_prim);
@@ -189,11 +189,11 @@ public:
     virtual HTEXTURE    CALL    Target_GetTexture(HTARGET target);
 
     virtual HTEXTURE    CALL    Texture_Create(int width, int height);
-    virtual HTEXTURE    CALL    Texture_Load(const char *filename, DWORD size=0, bool bMipmap=false);
+    virtual HTEXTURE    CALL    Texture_Load(const char *filename, uint32_t size=0, bool bMipmap=false);
     virtual void        CALL    Texture_Free(HTEXTURE tex);
     virtual int         CALL    Texture_GetWidth(HTEXTURE tex, bool bOriginal=false);
     virtual int         CALL    Texture_GetHeight(HTEXTURE tex, bool bOriginal=false);
-    virtual DWORD*      CALL    Texture_Lock(HTEXTURE tex, bool bReadOnly=true, int left=0, int top=0, int width=0, int height=0);
+    virtual uint32_t*      CALL    Texture_Lock(HTEXTURE tex, bool bReadOnly=true, int left=0, int top=0, int width=0, int height=0);
     virtual void        CALL    Texture_Unlock(HTEXTURE tex);
 
     //////// Implementation ////////
@@ -338,9 +338,9 @@ public:
     // Timer
     float               fTime;
     float               fDeltaTime;
-    DWORD               nFixedDelta;
+    uint32_t               nFixedDelta;
     int                 nFPS;
-    DWORD               t0, t0fps, dt;
+    uint32_t               t0, t0fps, dt;
     int                 cfps;
 
 

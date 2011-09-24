@@ -29,7 +29,7 @@ struct sprObject
 	float dx,dy;
 	float scale,rot;
 	float dscale,drot;
-	DWORD color;
+	uint32_t color;
 };
 
 sprObject*	pObjects;
@@ -59,12 +59,12 @@ void SetBlend(int blend)
 		BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE
 	};
 
-	static DWORD fntColor[5]=
+	static uint32_t fntColor[5]=
 	{
 		0xFFFFFFFF, 0xFF000000, 0xFFFFFFFF, 0xFF000000, 0xFFFFFFFF
 	};
 
-	static DWORD sprColors[5][5]=
+	static uint32_t sprColors[5][5]=
 	{
 		{ 0xFFFFFFFF, 0xFFFFE080, 0xFF80A0FF, 0xFFA0FF80, 0xFFFF80A0 },
 		{ 0xFF000000, 0xFF303000, 0xFF000060, 0xFF006000, 0xFF600000 },

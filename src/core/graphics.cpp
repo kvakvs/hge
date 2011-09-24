@@ -13,7 +13,7 @@
 #include "hge_gapi.h"
 
 
-void CALL HGE_Impl::Gfx_Clear(DWORD color)
+void CALL HGE_Impl::Gfx_Clear(uint32_t color)
 {
     if(pCurTarget)
     {
@@ -179,7 +179,7 @@ bool CALL HGE_Impl::Gfx_BeginScene(HTARGET targ)
 
     pD3DDevice->BeginScene();
 #if HGE_DIRECTX_VER == 8
-    pVB->Lock( 0, 0, (BYTE**)&VertArray, 0 );
+    pVB->Lock( 0, 0, (uint8_t**)&VertArray, 0 );
 #endif
 #if HGE_DIRECTX_VER == 9
     pVB->Lock( 0, 0, (VOID**)&VertArray, 0 );
@@ -194,7 +194,7 @@ void CALL HGE_Impl::Gfx_EndScene()
     if(!pCurTarget) pD3DDevice->Present( NULL, NULL, NULL, NULL );
 }
 
-void CALL HGE_Impl::Gfx_RenderLine(float x1, float y1, float x2, float y2, DWORD color, float z)
+void CALL HGE_Impl::Gfx_RenderLine(float x1, float y1, float x2, float y2, uint32_t color, float z)
 {
     if(VertArray)
     {
@@ -382,10 +382,10 @@ HTEXTURE CALL HGE_Impl::Texture_Create(int width, int height)
     return (HTEXTURE)pTex;
 }
 
-HTEXTURE CALL HGE_Impl::Texture_Load(const char *filename, DWORD size, bool bMipmap)
+HTEXTURE CALL HGE_Impl::Texture_Load(const char *filename, uint32_t size, bool bMipmap)
 {
     void *data;
-    DWORD _size;
+    uint32_t _size;
     D3DFORMAT fmt1, fmt2;
     hgeGAPITexture * pTex;
     D3DXIMAGE_INFO info;
@@ -398,7 +398,7 @@ HTEXTURE CALL HGE_Impl::Texture_Load(const char *filename, DWORD size, bool bMip
         if(!data) return NULL;
     }
 
-    if(*(DWORD*)data == 0x20534444) // Compressed DDS format magic number
+    if(*(uint32_t*)data == 0x20534444) // Compressed DDS format magic number
     {
         fmt1=D3DFMT_UNKNOWN;
         fmt2=D3DFMT_A8R8G8B8;
@@ -518,7 +518,7 @@ int CALL HGE_Impl::Texture_GetHeight(HTEXTURE tex, bool bOriginal)
 }
 
 
-DWORD * CALL HGE_Impl::Texture_Lock(HTEXTURE tex, bool bReadOnly, int left, int top, int width, int height)
+uint32_t * CALL HGE_Impl::Texture_Lock(HTEXTURE tex, bool bReadOnly, int left, int top, int width, int height)
 {
     hgeGAPITexture * pTex = (hgeGAPITexture *)tex;
     D3DSURFACE_DESC TDesc;
@@ -548,7 +548,7 @@ DWORD * CALL HGE_Impl::Texture_Lock(HTEXTURE tex, bool bReadOnly, int left, int 
         return 0;
     }
 
-    return (DWORD *)TRect.pBits;
+    return (uint32_t *)TRect.pBits;
 }
 
 
@@ -593,7 +593,7 @@ void HGE_Impl::_render_batch(bool bEndScene)
 
         if(bEndScene) VertArray = 0;
 #if HGE_DIRECTX_VER == 8
-        else pVB->Lock( 0, 0, (BYTE**)&VertArray, 0 );
+        else pVB->Lock( 0, 0, (uint8_t**)&VertArray, 0 );
 #endif
 #if HGE_DIRECTX_VER == 9
         else pVB->Lock( 0, 0, (VOID**)&VertArray, 0 );
@@ -1015,13 +1015,13 @@ bool HGE_Impl::_init_lost()
 // Create and setup Index buffer
 
 #if HGE_DIRECTX_VER == 8
-    if( FAILED( pD3DDevice->CreateIndexBuffer(VERTEX_BUFFER_SIZE*6/4*sizeof(WORD),
+    if( FAILED( pD3DDevice->CreateIndexBuffer(VERTEX_BUFFER_SIZE*6/4*sizeof(uint16_t),
                                               D3DUSAGE_WRITEONLY,
                                               D3DFMT_INDEX16,
                                               D3DPOOL_DEFAULT, &pIB ) ) )
 #endif
 #if HGE_DIRECTX_VER == 9
-    if( FAILED( pD3DDevice->CreateIndexBuffer(VERTEX_BUFFER_SIZE*6/4*sizeof(WORD),
+    if( FAILED( pD3DDevice->CreateIndexBuffer(VERTEX_BUFFER_SIZE*6/4*sizeof(uint16_t),
                                                 D3DUSAGE_WRITEONLY,
                                                 D3DFMT_INDEX16,
                                                 D3DPOOL_DEFAULT, 
@@ -1033,9 +1033,9 @@ bool HGE_Impl::_init_lost()
         return false;
     }
 
-    WORD *pIndices, n=0;
+    uint16_t *pIndices, n=0;
 #if HGE_DIRECTX_VER == 8
-    if( FAILED( pIB->Lock( 0, 0, (BYTE**)&pIndices, 0 ) ) )
+    if( FAILED( pIB->Lock( 0, 0, (uint8_t**)&pIndices, 0 ) ) )
 #endif
 #if HGE_DIRECTX_VER == 9
     if( FAILED( pIB->Lock( 0, 0, (VOID**)&pIndices, 0 ) ) )
@@ -1138,7 +1138,7 @@ HSHADER CALL HGE_Impl::Shader_Create(const char *filename)
 		return NULL;
 	}
 
-	pD3DDevice->CreatePixelShader((DWORD*)code->GetBufferPointer(), &pixelShader);
+	pD3DDevice->CreatePixelShader((DWORD *)code->GetBufferPointer(), &pixelShader);
 	code->Release();
 	return (HSHADER)pixelShader;
 }

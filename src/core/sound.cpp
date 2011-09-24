@@ -16,9 +16,9 @@
 #define LOADBASSFUNCTION(f) *((void**)&f)=(void*)GetProcAddress(hBass,#f)
 
 
-HEFFECT CALL HGE_Impl::Effect_Load(const char *filename, DWORD size)
+HEFFECT CALL HGE_Impl::Effect_Load(const char *filename, uint32_t size)
 {
-	DWORD _size, length, samples;
+	uint32_t _size, length, samples;
 	HSAMPLE hs;
 	HSTREAM hstrm;
 	BASS_CHANNELINFO info;
@@ -39,7 +39,7 @@ HEFFECT CALL HGE_Impl::Effect_Load(const char *filename, DWORD size)
 		if(!hs) {
 			hstrm=BASS_StreamCreateFile(TRUE, data, 0, _size, BASS_STREAM_DECODE);
 			if(hstrm) {
-				length=(DWORD)BASS_ChannelGetLength(hstrm);
+				length=(uint32_t)BASS_ChannelGetLength(hstrm);
 				BASS_ChannelGetInfo(hstrm, &info);
 				samples=length;
 				if(info.chans < 2) samples>>=1;
@@ -105,10 +105,10 @@ void CALL HGE_Impl::Effect_Free(HEFFECT eff)
 }
 
 
-HMUSIC CALL HGE_Impl::Music_Load(const char *filename, DWORD size)
+HMUSIC CALL HGE_Impl::Music_Load(const char *filename, uint32_t size)
 {
 	void *data;
-	DWORD _size;
+	uint32_t _size;
 	HMUSIC hm;
 
 	if(hBass)
@@ -136,7 +136,7 @@ HCHANNEL CALL HGE_Impl::Music_Play(HMUSIC mus, bool loop, int volume, int order,
 {
 	if(hBass)
 	{
-		DWORD pos = BASS_MusicGetOrderPosition(mus);
+		uint32_t pos = BASS_MusicGetOrderPosition(mus);
 		if(order == -1) order = LOWORD(pos);
 		if(row == -1) row = HIWORD(pos);
 		BASS_ChannelSetPosition(mus, MAKEMUSICPOS(order, row));
@@ -193,7 +193,7 @@ bool CALL HGE_Impl::Music_GetPos(HMUSIC music, int *order, int *row)
 {
 	if(hBass)
 	{
-		DWORD pos;
+		uint32_t pos;
 		pos = BASS_MusicGetOrderPosition(music);
 		if(pos == -1) return false;
 		*order = LOWORD(pos);
@@ -237,10 +237,10 @@ int CALL HGE_Impl::Music_GetChannelVolume(HMUSIC music, int channel)
 	else return -1;
 }
 
-HSTREAM CALL HGE_Impl::Stream_Load(const char *filename, DWORD size)
+HSTREAM CALL HGE_Impl::Stream_Load(const char *filename, uint32_t size)
 {
 	void *data;
-	DWORD _size;
+	uint32_t _size;
 	HSTREAM hs;
 	CStreamList *stmItem;
 
@@ -412,7 +412,7 @@ void CALL HGE_Impl::Channel_SlideTo(HCHANNEL channel, float time, int volume, in
 		if(pitch == -1) freq = -1;
 		else freq = (int)(pitch*info.freq);
 
-		BASS_ChannelSlideAttributes(channel, freq, volume, pan, DWORD(time*1000));
+		BASS_ChannelSlideAttributes(channel, freq, volume, pan, uint32_t(time*1000));
 	}
 }
 

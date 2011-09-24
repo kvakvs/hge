@@ -127,7 +127,7 @@ void hgeGUI::SetCursor(hgeSprite *spr)
 }
 
 
-void hgeGUI::SetColor(DWORD color)
+void hgeGUI::SetColor(uint32_t color)
 {
 	hgeGUIObject *ctrl=ctrls;
 

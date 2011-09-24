@@ -50,7 +50,7 @@ HTEXTURE FontGenerate(char *szFontName,
 	TEXTMETRIC	tTextMetrics;
 
 	HTEXTURE	tex;
-	DWORD		*pPixels, *pTexData, dwPixel;
+	uint32_t		*pPixels, *pTexData, dwPixel;
 
 	// create font
 	hFont = CreateFont(-nSize, 0, 0, 0, (bBold) ? FW_BOLD : FW_NORMAL,

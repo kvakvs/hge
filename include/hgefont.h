@@ -38,7 +38,7 @@ public:
 	void		printf(float x, float y, int align, const char *format, ...);
 	void		printfb(float x, float y, float w, float h, int align, const char *format, ...);
 
-	void		SetColor(DWORD col);
+	void		SetColor(uint32_t col);
 	void		SetZ(float z);
 	void		SetBlendMode(int blend);
 	void		SetScale(float scale) {fScale=scale;}
@@ -47,7 +47,7 @@ public:
 	void		SetTracking(float tracking) {fTracking=tracking;}
 	void		SetSpacing(float spacing) {fSpacing=spacing;}
 
-	DWORD		GetColor() const {return dwCol;}
+	uint32_t		GetColor() const {return dwCol;}
 	float		GetZ() const {return fZ;}
 	int			GetBlendMode() const {return nBlend;}
 	float		GetScale() const {return fScale;}
@@ -84,7 +84,7 @@ private:
 	float		fTracking;
 	float		fSpacing;
 
-	DWORD		dwCol;
+	uint32_t		dwCol;
 	float		fZ;
 	int			nBlend;
 };

@@ -12,6 +12,7 @@
 
 
 #include <windows.h>
+#include <stdint.h>
 
 
 struct CFontListItem
@@ -22,7 +23,7 @@ struct CFontListItem
 
 class CFontList
 {
-	friend int CALLBACK EnumFontFamExProc(ENUMLOGFONTEX *lpelfe, NEWTEXTMETRICEX *lpntme, DWORD FontType, LPARAM lParam);
+	friend int CALLBACK EnumFontFamExProc(ENUMLOGFONTEX *lpelfe, NEWTEXTMETRICEX *lpntme, uint32_t FontType, LPARAM lParam);
 
 public:
 	CFontList();
