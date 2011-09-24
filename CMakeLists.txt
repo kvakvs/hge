@@ -10,6 +10,7 @@ cmake_minimum_required( VERSION 2.8 )
 SET( DIRECTX_SDK_DIR "C:/DXSDK" )
 ##--- set this to 8 or 9 ---
 SET( HGE_DIRECTX_VER "9" )
+SET( HGE_UNICODE "1" )
 
 ##----------------------------------------
 ## End of manual configuration section
@@ -19,7 +20,7 @@ SET( HGE_DIRECTX_VER "9" )
 
 
 
-add_definitions( "-DHGE_DIRECTX_VER=${HGE_DIRECTX_VER}" )
+add_definitions( "-DHGE_DIRECTX_VER=${HGE_DIRECTX_VER}" "-DHGE_UNICODE=${HGE_UNICODE}" )
 # disable warnings on STD non conformance and security issues
 add_definitions( "-D_CRT_SECURE_NO_WARNINGS" "-D_CRT_NONSTDC_NO_WARNINGS" "-D_SCL_SECURE_NO_WARNINGS" "-D_WIN32_WINNT=0x0501" "/MP" )
 ## add_definitions( /MDd )

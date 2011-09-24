@@ -133,7 +133,7 @@ bool RenderFunc()
     hge->Gfx_SetShader(currShader);
     dis->Render(meshx, meshy);
     hge->Gfx_SetShader(NULL);
-    fnt->printf(5, 5, HGETEXT_LEFT, "dt:%.3f\nFPS:%d\n\nUse your\nSPACE!", hge->Timer_GetDelta(), hge->Timer_GetFPS());
+    fnt->printf(5, 5, HGETEXT_LEFT, "dt:%.3f\nFPS:%d\n\nPress SPACE,1,2,3,4!", hge->Timer_GetDelta(), hge->Timer_GetFPS());
     hge->Gfx_EndScene();
 
     return false;

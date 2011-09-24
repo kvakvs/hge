@@ -420,10 +420,10 @@ public:
     virtual HTEXTURE    CALL    Texture_Create(int width, int height) = 0;
     virtual HTEXTURE    CALL    Texture_Load(const char *filename, uint32_t size=0, bool bMipmap=false) = 0;
     virtual void        CALL    Texture_Free(HTEXTURE tex) = 0;
-    virtual int         CALL    Texture_GetWidth(HTEXTURE tex, bool bOriginal=false) = 0;
-    virtual int         CALL    Texture_GetHeight(HTEXTURE tex, bool bOriginal=false) = 0;
-    virtual uint32_t*      CALL    Texture_Lock(HTEXTURE tex, bool bReadOnly=true, int left=0, int top=0, int width=0, int height=0) = 0;
-    virtual void        CALL    Texture_Unlock(HTEXTURE tex) = 0;
+    virtual int			CALL    Texture_GetWidth(HTEXTURE tex, bool bOriginal=false) = 0;
+    virtual int			CALL    Texture_GetHeight(HTEXTURE tex, bool bOriginal=false) = 0;
+    virtual uint32_t *	CALL    Texture_Lock(HTEXTURE tex, bool bReadOnly=true, int left=0, int top=0, int width=0, int height=0) = 0;
+    virtual void		CALL    Texture_Unlock(HTEXTURE tex) = 0;
 };
 
 extern "C" { EXPORT HGE * CALL hgeCreate(int ver); }
