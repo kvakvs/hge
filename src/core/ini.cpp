@@ -15,8 +15,8 @@ void HGE_CALL HGE_Impl::Ini_SetInt(hgeConstString section, hgeConstString name, 
 	hgeChar buf[256];
 
 	if(szIniFile[0]) {
-		hge_sprintf(buf, TXT("%d"), value);
-		WritePrivateProfileStringW( section, name, buf, szIniFile );
+		hge_sprintf( buf, sizeof buf, TXT("%d"), value );
+		HGE_WINAPI_UNICODE_SUFFIX(WritePrivateProfileString)( section, name, buf, szIniFile );
 	}
 }
 
@@ -26,7 +26,10 @@ int HGE_CALL HGE_Impl::Ini_GetInt(hgeConstString section, hgeConstString name, i
 	hgeChar buf[256];
 
 	if(szIniFile[0]) {
-		if(GetPrivateProfileStringW(section, name, TXT(""), buf, sizeof(buf), szIniFile)) {
+		if( HGE_WINAPI_UNICODE_SUFFIX(GetPrivateProfileString)(
+			section, name, TXT(""), buf, sizeof(buf), szIniFile)
+			)
+		{
 			return hge_strtoi(buf);
 		} else {
 			return def_val;
@@ -41,8 +44,8 @@ void HGE_CALL HGE_Impl::Ini_SetFloat(hgeConstString section, hgeConstString name
 	hgeChar buf[256];
 
 	if(szIniFile[0]) {
-		hge_sprintf(buf, TXT("%f"), value);
-		WritePrivateProfileStringW( section, name, buf, szIniFile );
+		hge_sprintf(buf, sizeof buf, TXT("%f"), value);
+		HGE_WINAPI_UNICODE_SUFFIX(WritePrivateProfileString)( section, name, buf, szIniFile );
 	}
 }
 
@@ -52,7 +55,9 @@ float HGE_CALL HGE_Impl::Ini_GetFloat(hgeConstString section, hgeConstString nam
 	hgeChar buf[256];
 
 	if(szIniFile[0]) {
-		if(GetPrivateProfileStringW(section, name, TXT(""), buf, sizeof(buf), szIniFile)) {
+		if( HGE_WINAPI_UNICODE_SUFFIX(GetPrivateProfileString)(
+				section, name, TXT(""), buf, sizeof(buf), szIniFile ))
+		{
 			return (float)hge_strtof(buf);
 		} else { 
 			return def_val;
@@ -65,7 +70,7 @@ float HGE_CALL HGE_Impl::Ini_GetFloat(hgeConstString section, hgeConstString nam
 void HGE_CALL HGE_Impl::Ini_SetString(hgeConstString section, hgeConstString name, hgeConstString value)
 {
 	if(szIniFile[0]) {
-		WritePrivateProfileStringW(section, name, value, szIniFile);
+		HGE_WINAPI_UNICODE_SUFFIX(WritePrivateProfileString)(section, name, value, szIniFile);
 	}
 }
 
@@ -73,7 +78,9 @@ void HGE_CALL HGE_Impl::Ini_SetString(hgeConstString section, hgeConstString nam
 hgeString HGE_CALL HGE_Impl::Ini_GetString(hgeConstString section, hgeConstString name, hgeConstString def_val)
 {
 	if(szIniFile[0]) {
-		GetPrivateProfileStringW(section, name, def_val, szIniString, sizeof(szIniString), szIniFile);
+		HGE_WINAPI_UNICODE_SUFFIX(GetPrivateProfileString)(
+			section, name, def_val, szIniString, sizeof(szIniString), szIniFile
+			);
 	} else {
 		hge_strcpy(szIniString, def_val);
 	}

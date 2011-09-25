@@ -141,7 +141,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		hge->System_Start();
 		DoneEditor();
 	}
-	else MessageBoxW(NULL, hge->System_GetErrorMessage(), L"Error", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+	else HGE_WINAPI_UNICODE_SUFFIX(MessageBox)(
+		NULL, hge->System_GetErrorMessage(), TXT("Error"), MB_OK | MB_ICONERROR | MB_SYSTEMMODAL
+		);
 
 	hge->System_Shutdown();
 	hge->Release();

@@ -9,7 +9,7 @@ void CTextureAssembler::ClearResources()
 {
 	GfxObjIterator it;
 
-	for(it = obj_list.begin( ); it != obj_list.end( ); it++)
+	for(it = obj_list.begin( ); it != obj_list.end( ); ++it)
 		delete *it;
 
 	obj_list.clear();
@@ -47,7 +47,7 @@ CGfxObject *CTextureAssembler::FindObj(GfxObjList objlist, hgeConstString name)
 {
 	GfxObjIterator it;
 
-	for(it = obj_list.begin( ); it != obj_list.end( ); it++)
+	for(it = obj_list.begin( ); it != obj_list.end( ); ++it)
 		if( ! hge_strcmp((*it)->GetName(), name)) return *it;
 
 	return 0;
@@ -197,7 +197,7 @@ bool CTextureAssembler::GenerateTextures(hgeConstString wildcard)
 
 	texture.Reset();
 
-	for(it = obj_list.begin(); it != obj_list.end(); it++)
+	for(it = obj_list.begin(); it != obj_list.end(); ++it)
 		if(!(*it)->GetTexture())
 			texture.AddNoTextureObject(*it);
 
@@ -220,7 +220,7 @@ bool CTextureAssembler::GenerateTextures(hgeConstString wildcard)
 	{
 		texture.Reset();
 
-		for(it = obj_list.begin(); it != obj_list.end(); it++)
+		for(it = obj_list.begin(); it != obj_list.end(); ++it)
 			if(!(*it)->IsPlaced())
 				texture.PlaceObject(*it);
 
@@ -228,9 +228,9 @@ bool CTextureAssembler::GenerateTextures(hgeConstString wildcard)
 
 		SysLog( TXT("Texture %d ... "), nTexture);
 
-		hge_sprintf(texfile, TXT("%s%d.png"), wildcard, nTexture);
-		hge_sprintf(resfile, TXT("%s%d.res"), wildcard, nTexture);
-		hge_sprintf(texname, TXT("%s%d"), name, nTexture);
+		hge_sprintf(texfile, sizeof texfile, TXT("%s%d.png"), wildcard, nTexture);
+		hge_sprintf(resfile, sizeof resfile, TXT("%s%d.res"), wildcard, nTexture);
+		hge_sprintf(texname, sizeof texname, TXT("%s%d"), name, nTexture);
 
 		if(!texture.Create() ||
 		   !texture.CopyData() ||

@@ -21,6 +21,7 @@
 	#define hge_strcmp		wcscmp
 	#define hge_strncmp		wcsncmp
 	#define hge_strlen		wcslen
+	#define hge_strchr		wcschr
 	#define hge_strrchr		wcsrchr
 	#define hge_sprintf		swprintf
 	#define hge_printf		wprintf
@@ -47,8 +48,9 @@
 	#define hge_strcmp		strcmp
 	#define hge_strncmp		strncmp
 	#define hge_strlen		strlen
+	#define hge_strchr		strchr
 	#define hge_strrchr		strrchr
-	#define hge_sprintf		sprintf
+	#define hge_sprintf		_snprintf
 	#define hge_printf		printf
 	#define hge_vsnprintf	_vsnprintf
 	#define hge_vsprintf	vsprintf
@@ -65,6 +67,12 @@ extern "C" {
 	HGE_EXPORT FILE *	HGE_CALL hge_fopen_wb( hgeConstString s );
 	HGE_EXPORT FILE *	HGE_CALL hge_fopen_ab( hgeConstString s );
 	HGE_EXPORT FILE *	HGE_CALL hge_fopen_rb( hgeConstString s );
-	HGE_EXPORT void		HGE_CALL hgeWideToUtf8( const wchar_t * s, char * buf, size_t cnt);
-	HGE_EXPORT void		HGE_CALL hgeUtf8ToWide( const char * s, wchar_t * buf, size_t cnt);
+	
+	HGE_EXPORT void		HGE_CALL hgeStrFromUtf8( const char * src, hgeString dst, size_t cnt );
+	HGE_EXPORT void		HGE_CALL hgeStrFromWide( const wchar_t * src, hgeString dst, size_t cnt );
+	HGE_EXPORT void		HGE_CALL hgeStrToUtf8( hgeConstString src, char * dst, size_t cnt );
+	HGE_EXPORT void		HGE_CALL hgeStrToWide( hgeConstString src, wchar_t * dst, size_t cnt );
+
+	HGE_EXPORT void		HGE_CALL hgeWideToUtf8( const wchar_t * s, char * buf, size_t cnt );
+	HGE_EXPORT void		HGE_CALL hgeUtf8ToWide( const char * s, wchar_t * buf, size_t cnt );
 }

@@ -57,7 +57,8 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		hge_sprintf( p, sizeof p, TXT("%S"), argv[1] );
+		//hge_sprintf( p, sizeof p, TXT("%S"), argv[1] );
+		hgeStrFromUtf8( argv[1], p, sizeof p );
 		hSearch = HGE_WINAPI_UNICODE_SUFFIX(FindFirstFile)(p, &SearchData);
 		nextFile=0;
 
@@ -71,7 +72,8 @@ int main(int argc, char* argv[])
 
 			if(!(SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{
-				hge_sprintf( p, sizeof p, TXT("%S"), argv[1] );
+				//hge_sprintf( p, sizeof p, TXT("%S"), argv[1] );
+				hgeStrFromUtf8( argv[1], p, sizeof p );
 				hge_strcpy(filename, p);
 
 				buf=hge_strrchr(filename, '\\');
@@ -98,7 +100,7 @@ int main(int argc, char* argv[])
 		if(!hge->System_Initiate())
 		{
 			hge->Release();
-			printf("\nCan't initiate HGE.\n\n",nfiles);
+			printf("\nCan't initiate HGE [%d].\n\n",nfiles);
 			return 0;
 		}
 

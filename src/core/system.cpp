@@ -101,7 +101,7 @@ bool HGE_CALL HGE_Impl::System_Initiate()
     winclass.lpszMenuName   = NULL; 
     winclass.lpszClassName  = WINDOW_CLASS_NAME;
     
-	if(szIcon) winclass.hIcon = LoadIconW(hInstance, szIcon);
+	if(szIcon) winclass.hIcon = HGE_WINAPI_UNICODE_SUFFIX(LoadIcon)(hInstance, szIcon);
     else winclass.hIcon = LoadIconA(NULL, IDI_APPLICATION);
     
     if (! HGE_WINAPI_UNICODE_SUFFIX(RegisterClass)( &winclass )) {
@@ -665,7 +665,7 @@ void HGE_CALL HGE_Impl::System_Snapshot( hgeConstString filename )
             i++;
             shotname=Resource_EnumFiles();
         }
-        hge_sprintf(tempname, TXT("shot%03d.bmp"), i);
+        hge_sprintf(tempname, sizeof tempname, TXT("shot%03d.bmp"), i);
         filename=Resource_MakePath(tempname);
     }
 

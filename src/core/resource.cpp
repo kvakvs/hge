@@ -122,7 +122,7 @@ void* HGE_CALL HGE_Impl::Resource_Load(hgeConstString filename, uint32_t *size)
 		{
 #if HGE_UNICODE
 			char szZipName_utf8[_MAX_PATH*2];
-			hgeWideToUtf8( szZipName, szZipName_utf8, sizeof(utf8_fn) );
+			hgeStrToUtf8( szZipName, szZipName_utf8, sizeof(szZipName_utf8) );
 			unzGetCurrentFileInfo(zip, &file_info, szZipName_utf8, sizeof(szZipName), NULL, 0, NULL, 0);
 #else
 			unzGetCurrentFileInfo(zip, &file_info, szZipName, sizeof(szZipName), NULL, 0, NULL, 0);
@@ -140,17 +140,20 @@ void* HGE_CALL HGE_Impl::Resource_Load(hgeConstString filename, uint32_t *size)
 // #endif
 				{
 					unzClose(zip);
-					hge_sprintf(szName, res_err, filename);
+					hge_sprintf(szName, sizeof szName, res_err, filename);
 					_PostError(szName);
 					return 0;
 				}
 
-				ptr = malloc(file_info.uncompressed_size);
+				// add extra 1 byte for trailing zero, incase we load and use string from resource
+				ptr = malloc(file_info.uncompressed_size + 1);
+				((char *)ptr)[file_info.uncompressed_size] = 0;
+
 				if(!ptr)
 				{
 					unzCloseCurrentFile(zip);
 					unzClose(zip);
-					hge_sprintf(szName, res_err, filename);
+					hge_sprintf(szName, sizeof szName, res_err, filename);
 					_PostError(szName);
 					return 0;
 				}
@@ -160,7 +163,7 @@ void* HGE_CALL HGE_Impl::Resource_Load(hgeConstString filename, uint32_t *size)
 					unzCloseCurrentFile(zip);
 					unzClose(zip);
 					free(ptr);
-					hge_sprintf(szName, res_err, filename);
+					hge_sprintf(szName, sizeof szName, res_err, filename);
 					_PostError(szName);
 					return 0;
 				}
@@ -188,7 +191,7 @@ _fromfile:
 				);
 	if(hF == INVALID_HANDLE_VALUE)
 	{
-		hge_sprintf(szName, res_err, filename);
+		hge_sprintf(szName, sizeof szName, res_err, filename);
 		_PostError(szName);
 		return 0;
 	}
@@ -197,7 +200,7 @@ _fromfile:
 	if(!ptr)
 	{
 		CloseHandle(hF);
-		hge_sprintf(szName, res_err, filename);
+		hge_sprintf(szName, sizeof szName, res_err, filename);
 		_PostError(szName);
 		return 0;
 	}
@@ -205,7 +208,7 @@ _fromfile:
 	{
 		CloseHandle(hF);
 		free(ptr);
-		hge_sprintf(szName, res_err, filename);
+		hge_sprintf(szName, sizeof szName, res_err, filename);
 		_PostError(szName);
 		return 0;
 	}

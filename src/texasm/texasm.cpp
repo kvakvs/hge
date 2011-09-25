@@ -95,7 +95,8 @@ int main(int argc, char * argv[])
 	bool bScript;
 	hgeChar p[256];
 
-	hge_sprintf(p, sizeof p, TXT("%S"), argv[1]);
+	//hge_sprintf(p, sizeof p, TXT("%S"), argv[1]);
+	hgeStrFromUtf8( argv[1], p, sizeof p );
 	void *script = hge->Resource_Load(p);
 	if(script)
 		bScript = true;
@@ -112,10 +113,11 @@ int main(int argc, char * argv[])
 
 	if(argc == 4)
 	{
-		hge_sprintf(p, sizeof p, TXT("%S"), argv[3]);
+		//hge_sprintf(p, sizeof p, TXT("%S"), argv[3]);
+		hgeStrFromUtf8( argv[3], p, sizeof p );
 		if(!ParseTask(p, &resgroup, mask, &inclusive))
 		{
-			SysLog(TXT("Invalid task: %s\n"), argv[3]);
+			SysLog(TXT("Invalid task: %s\n"), p);
 			hge->System_Shutdown();
 			hge->Release();
 			return 1;		
@@ -143,11 +145,13 @@ int main(int argc, char * argv[])
 	// call to AccumulateRMResources() and/or AccumulateFileResources().
 
 	if(bScript) {
-		hge_sprintf(p, sizeof p, TXT("%S"), argv[1]);
+		//hge_sprintf(p, sizeof p, TXT("%S"), argv[1]);
+		hgeStrFromUtf8( argv[1], p, sizeof p );
 		rm->ChangeScript(p);
 		ta->AccumulateRMResources(rm, resgroup, mask, inclusive);
 	} else {
-		hge_sprintf(p, sizeof p, TXT("%S"), argv[1]);
+		//hge_sprintf(p, sizeof p, TXT("%S"), argv[1]);
+		hgeStrFromUtf8( argv[1], p, sizeof p );
 		ta->AccumulateFileResources(p, resgroup, mask, inclusive);
 	}
 
@@ -158,7 +162,8 @@ int main(int argc, char * argv[])
 	//   b) texture data is corrected along the alpha channel border
 	// - all extra info is removed from the saved PNGs
 
-	hge_sprintf(p, sizeof p, TXT("%S"), argv[2]);
+	//hge_sprintf(p, sizeof p, TXT("%S"), argv[2]);
+	hgeStrFromUtf8( argv[2], p, sizeof p );
 	bool success = ta->GenerateTextures(p);
 
 	// restore current working directory

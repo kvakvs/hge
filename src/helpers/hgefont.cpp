@@ -8,7 +8,9 @@
 #include "..\..\include\hgefont.h"
 #include <stdlib.h>
 #include <stdio.h>
+
 #include <crtdbg.h> // for _ASSERTE
+#include <memory> // for unique_ptr
 
 hgeConstString FNTHEADERTAG = TXT("[HGEFONT]");
 hgeConstString FNTBITMAPTAG = TXT("Bitmap");
@@ -21,10 +23,10 @@ hgeChar hgeFont::m_buffer[1024];
 
 hgeFont::hgeFont(hgeConstString szFont, bool bMipmap)
 {
-	/*
 	void		* data;
 	uint32_t	size;
-	hgeChar		* desc, * pdesc;
+	//hgeChar		* desc;
+	hgeChar		* pdesc;
 	hgeChar		linebuf[256];
 	hgeChar		buf[MAX_PATH], *pbuf;
 	hgeChar		chr;
@@ -55,16 +57,18 @@ hgeFont::hgeFont(hgeConstString szFont, bool bMipmap)
 	data=hge->Resource_Load(szFont, &size);
 	if(!data) return;
 
-	desc = new hgeChar[size+1];
-	memcpy(desc,data,size);
-	desc[size]=0;
+	std::unique_ptr <hgeChar> desc( new hgeChar[size+1] );
+	//memcpy(desc,data,size);
+	hgeStrFromUtf8( (const char *)data, desc.get(), size+1 );
+	//desc[size]=0;
+
 	hge->Resource_Free(data);
 
-	pdesc=_get_line(desc,linebuf);
+	pdesc=_get_line( desc.get(), linebuf );
 	if( hge_strcmp( linebuf, FNTHEADERTAG ))
 	{
 		hge->System_Log( TXT("Font %s has incorrect format."), szFont );
-		delete[] desc;	
+		//delete[] desc;	
 		return;
 	}
 
@@ -79,12 +83,12 @@ hgeFont::hgeFont(hgeConstString szFont, bool bMipmap)
 			if(!pbuf) pbuf=hge_strrchr(buf, TXT('/'));
 			if(!pbuf) pbuf=buf;
 			else pbuf++;
-			if(!sscanf(linebuf, "Bitmap = %s", pbuf)) continue;
+			if(! hge_sscanf(linebuf, TXT("Bitmap = %s"), pbuf)) continue;
 
 			hTexture=hge->Texture_Load(buf, 0, bMipmap);
 			if(!hTexture)
 			{
-				delete[] desc;	
+				//delete[] desc;	
 				return;
 			}
 		}
@@ -116,7 +120,7 @@ hgeFont::hgeFont(hgeConstString szFont, bool bMipmap)
 				}
 				if(i<0 || i>255) continue;
 			}
-			sscanf(pbuf, " , %d , %d , %d , %d , %d , %d", &x, &y, &w, &h, &a, &c);
+			hge_sscanf(pbuf, TXT(" , %d , %d , %d , %d , %d , %d"), &x, &y, &w, &h, &a, &c);
 
 			letters[i] = new hgeSprite(hTexture, (float)x, (float)y, (float)w, (float)h);
 			pre[i]=(float)a;
@@ -125,9 +129,8 @@ hgeFont::hgeFont(hgeConstString szFont, bool bMipmap)
 		}
 	}
 
-	delete[] desc;	
-	*/
-	_ASSERTE(false); // todo copy here BMFONT loader code
+	//delete[] desc;	
+	//_ASSERTE(false); // todo copy here BMFONT loader code
 }
 
 

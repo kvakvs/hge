@@ -40,7 +40,7 @@ add_subdirectory( src/helpers )
 add_subdirectory( src/core )
 
 #--- HGE TOOLS - comment out of not needed ---
-add_subdirectory( src/fontconv )
+##-- fontconv removed - use bmfont instead --- add_subdirectory( src/fontconv )
 add_subdirectory( src/particleed )
 add_subdirectory( src/pngopt )
 add_subdirectory( src/texasm )
