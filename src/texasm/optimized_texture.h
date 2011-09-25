@@ -36,8 +36,8 @@ public:
 	bool		Create();
 	bool		CopyData();
 	bool		OptimizeAlpha();
-	bool		Save(char *filename);
-	bool		SaveDescriptions(char *resfile, char *texfile, char *texname);
+	bool		Save(hgeConstString filename);
+	bool		SaveDescriptions(hgeConstString resfile, hgeConstString texfile, hgeConstString texname);
 
 private:
 	int maxw;

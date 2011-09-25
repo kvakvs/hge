@@ -1,7 +1,7 @@
 
 #include "sprite_object.h"
 
-CSpriteObject::CSpriteObject(hgeSprite *_spr, char *_name, int _resgroup, bool _owned)
+CSpriteObject::CSpriteObject(hgeSprite *_spr, hgeString _name, int _resgroup, bool _owned)
 	: CGfxObject(_name, _resgroup)
 {
 	owned	 = _owned;
@@ -30,52 +30,55 @@ void CSpriteObject::GetSourcePos(int *_x, int *_y)
 }
 
 
-bool CSpriteObject::SaveDescription(FILE *fp, char *texname)
+bool CSpriteObject::SaveDescription(FILE *fp, hgeConstString texname)
 {
-	fprintf(fp, "Sprite %s\n", name);
-	fprintf(fp, "{\n");
+	hge_fprintf(fp, TXT("Sprite %s\n"), name);
+	hge_fprintf(fp, TXT("{\n"));
 
 	if(GetTexture() && texname)
-		fprintf(fp, " texture = %s\n", texname);
+		hge_fprintf(fp, TXT(" texture = %s\n"), texname);
 
-	fprintf(fp, " rect = %d,%d,%d,%d\n", x, y, GetWidth(), GetHeight());
+	hge_fprintf(fp, TXT(" rect = %d,%d,%d,%d\n"), x, y, GetWidth(), GetHeight());
 
 	float HotX, HotY;
 	spr->GetHotSpot(&HotX, &HotY);
 	if(HotX || HotY)
-		fprintf(fp, " hotspot = %d,%d\n", int(HotX), int(HotY));
+		hge_fprintf(fp, TXT(" hotspot = %d,%d\n"), int(HotX), int(HotY));
 
 	int BlendMode = spr->GetBlendMode();
 	if(BlendMode != BLEND_DEFAULT)
 	{
-		fprintf(fp, " blendmode = ");
+		hge_fprintf(fp, TXT(" blendmode = "));
 
-		if(BlendMode & BLEND_COLORADD) fprintf(fp,"COLORADD,");
-		else fprintf(fp,"COLORMUL,");
+		if(BlendMode & BLEND_COLORADD) hge_fprintf(fp,TXT("COLORADD,"));
+		else hge_fprintf(fp,TXT("COLORMUL,"));
 
-		if(BlendMode & BLEND_ALPHABLEND) fprintf(fp,"ALPHABLEND,");
-		else fprintf(fp,"ALPHAADD,");
+		if(BlendMode & BLEND_ALPHABLEND) hge_fprintf(fp,TXT("ALPHABLEND,"));
+		else hge_fprintf(fp,TXT("ALPHAADD,"));
 
-		if(BlendMode & BLEND_ZWRITE) fprintf(fp,"ZWRITE\n");
-		else fprintf(fp,"NOZWRITE\n");
+		if(BlendMode & BLEND_ZWRITE) hge_fprintf(fp,TXT("ZWRITE\n"));
+		else hge_fprintf(fp,TXT("NOZWRITE\n"));
 	}
 
 	uint32_t Color = spr->GetColor();
 	if(Color != 0xFFFFFFFF)
-		fprintf(fp, " color = %08X\n", Color);
+		hge_fprintf(fp, TXT(" color = %08X\n"), Color);
 
 	float ZOrder = spr->GetZ();
 	if(ZOrder != 0.5f)
-		fprintf(fp, " zorder = %03f\n", ZOrder);
+		hge_fprintf(fp, TXT(" zorder = %03f\n"), ZOrder);
 
 	bool FlipX, FlipY;
 	spr->GetFlip(&FlipX, &FlipY);
 	if(FlipX || FlipY)
-		fprintf(fp, " flip = %s,%s\n", FlipX ? "true" : "false", FlipY ? "true" : "false");
+		hge_fprintf(fp, TXT(" flip = %s,%s\n"),
+			FlipX ? TXT("true") : TXT("false"),
+			FlipY ? TXT("true") : TXT("false")
+			);
 
-	fprintf(fp, " resgroup = %d\n", resgroup);
+	hge_fprintf(fp, TXT(" resgroup = %d\n"), resgroup);
 	
-	fprintf(fp, "}\n");
+	hge_fprintf(fp, TXT("}\n"));
 
 	return true;
 }

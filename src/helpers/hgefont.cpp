@@ -10,16 +10,16 @@
 #include <stdio.h>
 #include <crtdbg.h> // for _ASSERTE
 
-const hgeString FNTHEADERTAG = TXT("[HGEFONT]");
-const hgeString FNTBITMAPTAG = TXT("Bitmap");
-const hgeString FNTCHARTAG   = TXT("Char");
+hgeConstString FNTHEADERTAG = TXT("[HGEFONT]");
+hgeConstString FNTBITMAPTAG = TXT("Bitmap");
+hgeConstString FNTCHARTAG   = TXT("Char");
 
 
 HGE *hgeFont::hge=0;
 hgeChar hgeFont::m_buffer[1024];
 
 
-hgeFont::hgeFont(const hgeString szFont, bool bMipmap)
+hgeFont::hgeFont(hgeConstString szFont, bool bMipmap)
 {
 	/*
 	void		* data;
@@ -139,7 +139,7 @@ hgeFont::~hgeFont()
 	hge->Release();
 }
 
-void hgeFont::Render(float x, float y, int align, const hgeString _str)
+void hgeFont::Render(float x, float y, int align, hgeConstString _str)
 {
 	const hgeChar * str = _str;
 	int i;
@@ -173,7 +173,7 @@ void hgeFont::Render(float x, float y, int align, const hgeString _str)
 	}
 }
 
-void hgeFont::printf(float x, float y, int align, const hgeString format, ...)
+void hgeFont::printf(float x, float y, int align, hgeConstString format, ...)
 {
 	va_list pArg = (va_list) &format+sizeof(format);
 
@@ -184,7 +184,7 @@ void hgeFont::printf(float x, float y, int align, const hgeString format, ...)
 	Render(x,y,align,m_buffer);
 }
 
-void hgeFont::printfb(float x, float y, float w, float h, int align, const hgeString format, ...)
+void hgeFont::printfb(float x, float y, float w, float h, int align, hgeConstString format, ...)
 {
 	hgeChar chr, *pbuf, *prevword, *linestart;
 	int		i,lines=0;
@@ -261,7 +261,7 @@ void hgeFont::printfb(float x, float y, float w, float h, int align, const hgeSt
 	Render(tx,ty,align,m_buffer);
 }
 
-float hgeFont::GetStringWidth(const hgeString _str, bool bMultiline) const
+float hgeFont::GetStringWidth(hgeConstString _str, bool bMultiline) const
 {
 	int i;
 	float linew, w = 0;

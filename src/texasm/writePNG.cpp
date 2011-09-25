@@ -5,16 +5,14 @@
 
 class PNGError {};
 
-void WarningCallback(png_structp png_ptr,
-					 png_const_charp msg)
+void WarningCallback(png_structp png_ptr, png_const_charp msg)
 {
-	SysLog("LIBPNG Warning: %s\n", msg);
+	SysLog(TXT("LIBPNG Warning: %s\n"), msg);
 }
 
-void ErrorCallback(png_structp png_ptr,
-				   png_const_charp msg)
+void ErrorCallback(png_structp png_ptr, png_const_charp msg)
 {
-	SysLog("LIBPNG Error: %s\n", msg);
+	SysLog(TXT("LIBPNG Error: %s\n"), msg);
 	throw PNGError();
 }
 

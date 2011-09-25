@@ -41,10 +41,10 @@ add_subdirectory( src/core )
 
 #--- HGE TOOLS - comment out of not needed ---
 add_subdirectory( src/fontconv )
-add_subdirectory( src/fonted )
 add_subdirectory( src/particleed )
 add_subdirectory( src/pngopt )
 add_subdirectory( src/texasm )
+##-- fonted removed - use bmfont instead --- add_subdirectory( src/fonted )
 
 #--- HGE examples ---
 add_subdirectory( tutorials/tutorial01 )

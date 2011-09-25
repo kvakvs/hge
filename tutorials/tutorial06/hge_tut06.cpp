@@ -89,7 +89,9 @@ bool RenderFunc()
 	hge->Gfx_RenderQuad(&quad);
 	gui->Render();
 	fnt->SetColor(0xFFFFFFFF);
-	fnt->printf(5, 5, HGETEXT_LEFT, "dt:%.3f\nFPS:%d", hge->Timer_GetDelta(), hge->Timer_GetFPS());
+	fnt->printf(5, 5, HGETEXT_LEFT, TXT("dt:%.3f\nFPS:%d"),
+		hge->Timer_GetDelta(), hge->Timer_GetFPS()
+		);
 	hge->Gfx_EndScene();
 
 	return false;
@@ -100,10 +102,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	hge = hgeCreate(HGE_VERSION);
 
-	hge->System_SetState(HGE_LOGFILE, "hge_tut06.log");
+	hge->System_SetState(HGE_LOGFILE, TXT("hge_tut06.log") );
 	hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
 	hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
-	hge->System_SetState(HGE_TITLE, "HGE Tutorial 06 - Creating menus");
+	hge->System_SetState(HGE_TITLE, TXT("HGE Tutorial 06 - Creating menus") );
 	hge->System_SetState(HGE_WINDOWED, true);
 	hge->System_SetState(HGE_SCREENWIDTH, 800);
 	hge->System_SetState(HGE_SCREENHEIGHT, 600);
@@ -113,14 +115,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	{
 
 		// Load sound and textures
-		quad.tex=hge->Texture_Load("bg.png");
-		tex=hge->Texture_Load("cursor.png");
-		snd=hge->Effect_Load("menu.wav");
+		quad.tex=hge->Texture_Load( TXT("bg.png") );
+		tex=hge->Texture_Load( TXT("cursor.png") );
+		snd=hge->Effect_Load( TXT("menu.wav") );
 		if(!quad.tex || !tex || !snd)
 		{
 			// If one of the data files is not found, display
 			// an error message and shutdown.
-			MessageBox(NULL, "Can't load BG.PNG, CURSOR.PNG or MENU.WAV", "Error", MB_OK | MB_ICONERROR | MB_APPLMODAL);
+			MessageBoxW(NULL, L"Can't load BG.PNG, CURSOR.PNG or MENU.WAV", L"Error",
+				MB_OK | MB_ICONERROR | MB_APPLMODAL
+				);
 			hge->System_Shutdown();
 			hge->Release();
 			return 0;
@@ -144,17 +148,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 		// Load the font, create the cursor sprite
-		fnt=new hgeFont("font1.fnt");
+		fnt=new hgeFont(TXT("font1.fnt"));
 		spr=new hgeSprite(tex,0,0,32,32);
 
 		// Create and initialize the GUI
 		gui=new hgeGUI();
 
-		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,400,200,0.0f,"Play"));
-		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,400,240,0.1f,"Options"));
-		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,400,280,0.2f,"Instructions"));
-		gui->AddCtrl(new hgeGUIMenuItem(4,fnt,snd,400,320,0.3f,"Credits"));
-		gui->AddCtrl(new hgeGUIMenuItem(5,fnt,snd,400,360,0.4f,"Exit"));
+		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,400,200,0.0f, TXT("Play") ));
+		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,400,240,0.1f, TXT("Options") ));
+		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,400,280,0.2f, TXT("Instructions") ));
+		gui->AddCtrl(new hgeGUIMenuItem(4,fnt,snd,400,320,0.3f, TXT("Credits") ));
+		gui->AddCtrl(new hgeGUIMenuItem(5,fnt,snd,400,360,0.4f, TXT("Exit") ));
 
 		gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
 		gui->SetCursor(spr);

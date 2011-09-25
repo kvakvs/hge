@@ -8,14 +8,14 @@
 #include <hgestrings.h>
 #include <ctype.h>
 
-const hgeString STRHEADERTAG	= TXT("[HGESTRINGTABLE]");
-const hgeString STRFORMATERROR	= TXT("String table %s has incorrect format.");
+hgeConstString STRHEADERTAG	= TXT("[HGESTRINGTABLE]");
+hgeConstString STRFORMATERROR	= TXT("String table %s has incorrect format.");
 
 
 HGE *hgeStringTable::hge=0;
 
 
-hgeStringTable::hgeStringTable(const hgeString filename)
+hgeStringTable::hgeStringTable(hgeConstString filename)
 {
 	int i;
 	void *data;
@@ -152,7 +152,7 @@ hgeStringTable::~hgeStringTable()
 	hge->Release();
 }
 
-hgeString hgeStringTable::GetString(const hgeString name)
+hgeString hgeStringTable::GetString(hgeConstString name)
 {
 	NamedString *str=strings;
 

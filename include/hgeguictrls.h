@@ -34,8 +34,8 @@ public:
 	hgeGUIText(int id, float x, float y, float w, float h, hgeFont *fnt);
 
 	void			SetMode(int _align);
-	void			SetText(const hgeString _text);
-	void			printf(const hgeString format, ...);
+	void			SetText(hgeConstString _text);
+	void			printf(hgeConstString format, ...);
 
 	virtual void	Render();
 

@@ -133,7 +133,8 @@ bool RenderFunc()
     hge->Gfx_SetShader(currShader);
     dis->Render(meshx, meshy);
     hge->Gfx_SetShader(NULL);
-    fnt->printf(5, 5, HGETEXT_LEFT, "dt:%.3f\nFPS:%d\n\nPress SPACE,1,2,3,4!", hge->Timer_GetDelta(), hge->Timer_GetFPS());
+    fnt->printf(5, 5, HGETEXT_LEFT, TXT("dt:%.3f\nFPS:%d\n\nPress SPACE\nor 1,2,3,4"),
+		hge->Timer_GetDelta(), hge->Timer_GetFPS());
     hge->Gfx_EndScene();
 
     return false;
@@ -144,10 +145,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
     hge = hgeCreate(HGE_VERSION);
 
-    hge->System_SetState(HGE_LOGFILE, "hge_tut05.log");
+    hge->System_SetState(HGE_LOGFILE, TXT("hge_tut05_shaders.log"));
     hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
     hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
-    hge->System_SetState(HGE_TITLE, "HGE Tutorial 05 - Using distortion mesh");
+    hge->System_SetState(HGE_TITLE, TXT("HGE Tutorial 05 - Using distortion mesh/with Shaders") );
     hge->System_SetState(HGE_WINDOWED, true);
     hge->System_SetState(HGE_SCREENWIDTH, 800);
     hge->System_SetState(HGE_SCREENHEIGHT, 600);
@@ -157,20 +158,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     if(hge->System_Initiate()) {
 
         // Load sound and texture
-        tex=hge->Texture_Load("texture.jpg");
+        tex=hge->Texture_Load( TXT("texture.jpg") );
         if(!tex)
         {
             // If one of the data files is not found, display
             // an error message and shutdown.
-            MessageBox(NULL, "Can't load TEXTURE.JPG", "Error", MB_OK | MB_ICONERROR | MB_APPLMODAL);
+            MessageBoxW(NULL, L"Can't load TEXTURE.JPG", L"Error", MB_OK | MB_ICONERROR | MB_APPLMODAL);
             hge->System_Shutdown();
             hge->Release();
             return 0;
         }
        
-        shad1 = hge->Shader_Create("shader1.psh");
-        shad2 = hge->Shader_Create("shader2.psh");
-        shad3 = hge->Shader_Create("shader3.psh");
+        shad1 = hge->Shader_Create(TXT("shader1.psh"));
+        shad2 = hge->Shader_Create(TXT("shader2.psh"));
+        shad3 = hge->Shader_Create(TXT("shader3.psh"));
 
         // Create a distortion mesh
         dis=new hgeDistortionMesh(nCols, nRows);
@@ -180,7 +181,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         dis->Clear(0xFF000000);
 
         // Load a font
-        fnt=new hgeFont("font1.fnt");
+        fnt=new hgeFont(TXT("font1.fnt"));
 
         // Let's rock now!
         hge->System_Start();

@@ -5,15 +5,16 @@
 #include "texasm.h"
 #include <stdio.h>
 #include <list>
+#include <hgeunicode.h>
 
-using namespace std;
+//using namespace std;
 
 class CGfxObject
 {
 public:
-	CGfxObject(char *_name, int _resgroup) { name=_name; placed = false; resgroup = _resgroup; }
+	CGfxObject(hgeString _name, int _resgroup) { name=_name; placed = false; resgroup = _resgroup; }
 
-	char	*GetName()						{ return name; }
+	hgeConstString GetName()				{ return name; }
 	void	Place(int _x, int _y)			{ x = _x; y = _y; placed = true; }
 	bool	IsPlaced()						{ return placed; }
 	int		GetResGroup()					{ return resgroup; }
@@ -23,10 +24,10 @@ public:
 	virtual int			GetHeight() const = 0;
 	virtual HTEXTURE	GetTexture() = 0;
 	virtual void		GetSourcePos(int *_x, int *_y) = 0;
-	virtual bool		SaveDescription(FILE *fp, char *texname) = 0;
+	virtual bool		SaveDescription(FILE *fp, hgeConstString texname) = 0;
 
 protected:
-	char		*name;
+	hgeString	name;
 	int			resgroup;
 	bool		placed;
 	int			x;
@@ -54,7 +55,7 @@ struct std::greater<CGfxObject*>  : public binary_function<CGfxObject*, CGfxObje
 
 // END WORKAROUND
 
-struct ByLargestDimensionDescending : public greater<CGfxObject *>
+struct ByLargestDimensionDescending : public std::greater<CGfxObject *>
 {
 	bool operator()(CGfxObject* &a, CGfxObject* &b) const
 	{ 
@@ -66,8 +67,8 @@ struct ByLargestDimensionDescending : public greater<CGfxObject *>
 
 // list and iterator
 
-typedef list<CGfxObject *> GfxObjList;
-typedef list<CGfxObject *>::iterator GfxObjIterator;
+typedef std::list<CGfxObject *> GfxObjList;
+typedef std::list<CGfxObject *>::iterator GfxObjIterator;
 
 
 #endif

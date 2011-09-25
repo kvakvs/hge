@@ -15,7 +15,7 @@
 HGE *hgeResourceManager::hge=0;
 
 
-hgeResourceManager::hgeResourceManager(const hgeString scriptname)
+hgeResourceManager::hgeResourceManager(hgeConstString scriptname)
 {
 	hge=hgeCreate(HGE_VERSION);
 
@@ -29,7 +29,7 @@ hgeResourceManager::~hgeResourceManager()
 	hge->Release();
 }
 
-void hgeResourceManager::_parse_script(const hgeString scriptname)
+void hgeResourceManager::_parse_script(hgeConstString scriptname)
 {
 	ResDesc *rc, *rcnext;
 
@@ -68,7 +68,7 @@ void hgeResourceManager::_remove_all()
 	}
 }
 
-void hgeResourceManager::ChangeScript(const hgeString scriptname)
+void hgeResourceManager::ChangeScript(hgeConstString scriptname)
 {
 	_remove_all();
 	_parse_script(scriptname);
@@ -109,7 +109,7 @@ void hgeResourceManager::Purge(int groupid)
 	}
 }
 
-void* hgeResourceManager::GetResource(const hgeString name, int resgroup)
+void* hgeResourceManager::GetResource(hgeConstString name, int resgroup)
 {
 	void *reshandle;
 	RResource *resource;
@@ -135,7 +135,7 @@ void* hgeResourceManager::GetResource(const hgeString name, int resgroup)
 	return 0;
 }
 
-HTEXTURE hgeResourceManager::GetTexture(const hgeString name, int resgroup)
+HTEXTURE hgeResourceManager::GetTexture(hgeConstString name, int resgroup)
 {
 	HTEXTURE reshandle;
 	RTexture *resource;
@@ -161,7 +161,7 @@ HTEXTURE hgeResourceManager::GetTexture(const hgeString name, int resgroup)
 	return 0;
 }
 
-HEFFECT hgeResourceManager::GetEffect(const hgeString name, int resgroup)
+HEFFECT hgeResourceManager::GetEffect(hgeConstString name, int resgroup)
 {
 	HEFFECT reshandle;
 	REffect *resource;
@@ -186,7 +186,7 @@ HEFFECT hgeResourceManager::GetEffect(const hgeString name, int resgroup)
 	return 0;
 }
 
-HMUSIC hgeResourceManager::GetMusic(const hgeString name, int resgroup)
+HMUSIC hgeResourceManager::GetMusic(hgeConstString name, int resgroup)
 {
 	HMUSIC reshandle;
 	RMusic *resource;
@@ -211,7 +211,7 @@ HMUSIC hgeResourceManager::GetMusic(const hgeString name, int resgroup)
 	return 0;
 }
 
-HSTREAM hgeResourceManager::GetStream(const hgeString name, int resgroup)
+HSTREAM hgeResourceManager::GetStream(hgeConstString name, int resgroup)
 {
 	HSTREAM reshandle;
 	RStream *resource;
@@ -236,49 +236,49 @@ HSTREAM hgeResourceManager::GetStream(const hgeString name, int resgroup)
 	return 0;
 }
 
-HTARGET hgeResourceManager::GetTarget(const hgeString name)
+HTARGET hgeResourceManager::GetTarget(hgeConstString name)
 {
 	ResDesc *Res=FindRes(this, RES_TARGET, name);
 	if(Res) return (HTARGET)Res->Get(this);
 	else return 0;
 }
 
-hgeSprite* hgeResourceManager::GetSprite(const hgeString name)
+hgeSprite* hgeResourceManager::GetSprite(hgeConstString name)
 {
 	ResDesc *Res=FindRes(this, RES_SPRITE, name);
 	if(Res) return (hgeSprite *)Res->Get(this);
 	else return 0;
 }
 
-hgeAnimation* hgeResourceManager::GetAnimation(const hgeString name)
+hgeAnimation* hgeResourceManager::GetAnimation(hgeConstString name)
 {
 	ResDesc *Res=FindRes(this, RES_ANIMATION, name);
 	if(Res) return (hgeAnimation *)Res->Get(this);
 	else return 0;
 }
 
-hgeFont* hgeResourceManager::GetFont(const hgeString name)
+hgeFont* hgeResourceManager::GetFont(hgeConstString name)
 {
 	ResDesc *Res=FindRes(this, RES_FONT, name);
 	if(Res) return (hgeFont *)Res->Get(this);
 	else return 0;
 }
 
-hgeParticleSystem* hgeResourceManager::GetParticleSystem(const hgeString name)
+hgeParticleSystem* hgeResourceManager::GetParticleSystem(hgeConstString name)
 {
 	ResDesc *Res=FindRes(this, RES_PARTICLE, name);
 	if(Res) return (hgeParticleSystem *)Res->Get(this);
 	else return 0;
 }
 
-hgeDistortionMesh* hgeResourceManager::GetDistortionMesh(const hgeString name)
+hgeDistortionMesh* hgeResourceManager::GetDistortionMesh(hgeConstString name)
 {
 	ResDesc *Res=FindRes(this, RES_DISTORT, name);
 	if(Res) return (hgeDistortionMesh *)Res->Get(this);
 	else return 0;
 }
 
-hgeStringTable* hgeResourceManager::GetStringTable(const hgeString name, int resgroup)
+hgeStringTable* hgeResourceManager::GetStringTable(hgeConstString name, int resgroup)
 {
 	hgeStringTable *strtable;
 	RStringTable *resource;

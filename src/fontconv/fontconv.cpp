@@ -5,37 +5,36 @@
 **
 ** HGE Font Description files 1.XX -> 1.6 converter
 */
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
 
-#include "..\..\include\hge.h"
+#include <hge.h>
 HGE *hge = 0;
 
 
 struct filelist
 {
-	char		filename[256];
+	hgeChar	filename[256];
 	filelist*	next;
 };
 
 filelist *files=0;
 
 
-bool convert(char *filename);
-char *_skip_token(char *szStr);
+bool convert( hgeConstString filename);
+hgeString _skip_token(hgeString szStr);
 
 
 int main(int argc, char* argv[])
 {
 	HANDLE				hSearch;
-	WIN32_FIND_DATA		SearchData;
+	HGE_WINAPI_UNICODE_SUFFIX(WIN32_FIND_DATA)	SearchData;
 	int					nfiles=0;
 	bool				done=false;
-	char				*buf, filename[256];
+	hgeChar				*buf, filename[256];
 	filelist			*newFile, *nextFile;
+	hgeChar				p[256];
 
 	printf("\nHGE Font 1.XX -> 1.6 converter\nCopyright (C) 2003-2006, Relish Games\n\n");
 	
@@ -49,7 +48,8 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		hSearch=FindFirstFile(argv[1], &SearchData);
+		hge_sprintf( p, sizeof p, TXT("%S"), argv[1] );
+		hSearch=HGE_WINAPI_UNICODE_SUFFIX(FindFirstFile)(p, &SearchData);
 		nextFile=0;
 
 		for(;;)
@@ -62,19 +62,19 @@ int main(int argc, char* argv[])
 
 			if(!(SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{
-				strcpy(filename, argv[1]);
-				buf=strrchr(filename, '\\');
+				hge_sprintf( filename, sizeof p, TXT("%S"), argv[1] );
+				buf=hge_strrchr(filename, TXT('\\'));
 				if(!buf) buf=filename; else buf++;
-				strcpy(buf,SearchData.cFileName);
+				hge_strcpy(buf,SearchData.cFileName);
 				newFile=new filelist;
-				strcpy(newFile->filename,filename);
+				hge_strcpy(newFile->filename,filename);
 				newFile->next=0;
 				if(nextFile) nextFile->next=newFile;
 				else files=newFile;
 				nextFile=newFile;
 			}
 
-			done=!FindNextFile(hSearch, &SearchData);
+			done = ! HGE_WINAPI_UNICODE_SUFFIX(FindNextFile)(hSearch, &SearchData);
 		}
 
 		hge=hgeCreate(HGE_VERSION);
@@ -106,70 +106,84 @@ int main(int argc, char* argv[])
 	}
 }
 
-bool convert(char *filename)
+bool convert(hgeConstString filename)
 {
-	static char signature1[]="[HGEFONT]";
-	static char signature2[]="[hgefont]";
-	static char tempfile[]="tmpfont.tmp";
+	static hgeChar signature1[] = TXT("[HGEFONT]");
+	static hgeChar signature2[] = TXT("[hgefont]");
+	static hgeChar tempfile[] = TXT("tmpfont.tmp");
 	
 	FILE *hf;
-	char *desc, *pdesc, strbuf[256], texname[256], *pbuf;
+	hgeChar *desc, *pdesc, strbuf[256], texname[256], *pbuf;
 	int intbuf, i, height, texx, texy, tex_width;
 	long size;
 	HTEXTURE htex;
 
-	printf("%s - ",filename);
-	hf=fopen(filename, "r");
-	if(hf==NULL) { printf("Can't open file\n"); return false; }
+	printf("%S - ",filename);
+	hf=hge_fopen_rb(filename);
+	if(hf==NULL) {
+		printf("Can't open file\n"); return false;
+	}
 	fseek(hf, 0, SEEK_END);
 	size=ftell(hf);
 	rewind(hf);
-	desc=(char *)malloc(size);
-	if(desc==NULL) { printf("Can't allocate buffer\n"); fclose(hf); return false; }
+	desc=(hgeChar *)malloc(size*sizeof(hgeChar));
+	if(desc==NULL) {
+		printf("Can't allocate buffer\n"); fclose(hf); return false;
+	}
 	fread(desc, 1, size, hf);
 	fclose(hf);
-	if(!strncmp(desc,signature1,strlen(signature1)) ||
-	   !strncmp(desc,signature2,strlen(signature2)) )
-	{ printf("Already converted\n"); return false; }
+	if(!hge_strncmp(desc,signature1,hge_strlen(signature1)) ||
+	   !hge_strncmp(desc,signature2,hge_strlen(signature2)) )
+	{
+		printf("Already converted\n"); return false;
+	}
 
 	pdesc=desc;
-	hf=fopen(tempfile, "w");
-	if(hf==NULL) { printf("Can't create temporary file\n"); free(desc); return false; }
+	hf=hge_fopen_w(tempfile);
+	if(hf==NULL) {
+		printf("Can't create temporary file\n"); free(desc); return false;
+	}
 
-	fprintf(hf,"[HGEFONT]\n\n");
+	hge_fprintf(hf, TXT("[HGEFONT]\n\n"));
 
-	sscanf(pdesc, " %s", strbuf);
-	fprintf(hf,"Bitmap=%s\n\n",strbuf);
+	hge_sscanf(pdesc, TXT(" %s"), strbuf);
+	hge_fprintf(hf, TXT("Bitmap=%s\n\n"), strbuf);
 	pdesc=_skip_token(pdesc);
 
-	strcpy(texname,filename);
-	pbuf=strrchr(texname,'\\');
+	hge_strcpy(texname,filename);
+	pbuf=hge_strrchr(texname,TXT('\\'));
 	if(!pbuf) pbuf=texname;	else pbuf++;
-	strcpy(pbuf, strbuf);
+	hge_strcpy(pbuf, strbuf);
 
 	htex=hge->Texture_Load(texname);
-	if(!htex) { printf("Can't load bitmap\n"); fclose(hf); free(desc); return false; }
+	if(!htex) { 
+		hge_printf( TXT("Can't load bitmap\n")); fclose(hf); free(desc); return false;
+	}
 	tex_width=hge->Texture_GetWidth(htex);
-	printf("%s %dx%d - ",texname, tex_width, hge->Texture_GetWidth(htex));
+	hge_printf( TXT("%s %dx%d - "),texname, tex_width, hge->Texture_GetWidth(htex));
 	hge->Texture_Free(htex);
 	texx=texy=0;
 
-	sscanf(pdesc, " %d", &height);
+	hge_sscanf(pdesc, TXT(" %d"), &height);
 	//fprintf(hf,"Height=%d\n",height);
 	pdesc=_skip_token(pdesc);
 
 	for(i=0; i<256; i++)
 	{
 		intbuf=0;
-		sscanf(pdesc, " %d", &intbuf);
+		hge_sscanf(pdesc, TXT(" %d"), &intbuf);
 		if(!intbuf) break;
 		pdesc=_skip_token(pdesc);
 		if(intbuf<0) i+=abs(intbuf)-1;
 		else
 		{
 			if(texx+intbuf > tex_width) {texy+=height;texx=0;}
-			if(i>=32 && i<=126) fprintf(hf,"Char=\"%c\",%d,%d,%d,%d,0,0\n", (char)i, texx, texy, intbuf, height);
-			else fprintf(hf,"Char=%2X,%d,%d,%d,%d\n", i, texx, texy, intbuf, height);
+			if(i>=32 && i<=126) {
+				hge_fprintf(hf, TXT("Char=\"%c\",%d,%d,%d,%d,0,0\n"), (char)i, texx, texy, intbuf, height);
+			}
+			else {
+				hge_fprintf(hf, TXT("Char=%2X,%d,%d,%d,%d\n"), i, texx, texy, intbuf, height);
+			}
 			texx+=intbuf;
 		}
 	}
@@ -177,15 +191,19 @@ bool convert(char *filename)
 	fclose(hf);
 	free(desc);
 
-	if(!DeleteFile(filename)) { printf("Can't replace file\n"); return false; }
-	if(!MoveFile(tempfile, filename)) { printf("Sorry! Due to system failure the file seems lost\n"); return false; }
+	if(! HGE_WINAPI_UNICODE_SUFFIX(DeleteFile)(filename)) {
+		hge_printf( TXT("Can't replace file\n") ); return false;
+	}
+	if(! HGE_WINAPI_UNICODE_SUFFIX(MoveFile)(tempfile, filename)) {
+		hge_printf( TXT("Sorry! Due to system failure the file seems lost\n") ); return false;
+	}
 	printf("Ok\n");
 
 	return true;
 }
 
 
-char *_skip_token(char *szStr)
+hgeString _skip_token(hgeString szStr)
 {
 	while(*szStr && (*szStr==' ' || *szStr=='\t' || *szStr=='\n' || *szStr=='\r')) szStr++;
 	while(*szStr && (*szStr!=' ' && *szStr!='\t' && *szStr!='\n' && *szStr!='\r')) szStr++;

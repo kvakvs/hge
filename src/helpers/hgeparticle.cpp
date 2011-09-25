@@ -11,7 +11,7 @@
 HGE	*hgeParticleSystem::hge=0;
 
 
-hgeParticleSystem::hgeParticleSystem(const hgeString filename, hgeSprite *sprite)
+hgeParticleSystem::hgeParticleSystem(hgeConstString filename, hgeSprite *sprite)
 {
 	void *psi;
 

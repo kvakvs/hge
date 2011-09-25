@@ -14,7 +14,7 @@
 #define HIWORDINT(n) ((int)((signed short)(HIWORD(n))))
 
 
-const char *WINDOW_CLASS_NAME = "HGE__WNDCLASS";
+hgeConstString WINDOW_CLASS_NAME = TXT("HGE__WNDCLASS");
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
@@ -68,24 +68,25 @@ bool HGE_CALL HGE_Impl::System_Initiate()
     OSVERSIONINFO   os_ver;
     SYSTEMTIME      tm;
     MEMORYSTATUS    mem_st;
-    WNDCLASS        winclass;
+    HGE_WINAPI_UNICODE_SUFFIX(WNDCLASS) winclass;
     int             width, height;
 
     // Log system info
 
-    System_Log("HGE Started..\n");
+    System_Log( TXT("HGE Started..\n")) ;
 
-    System_Log("HGE version: %X.%X", HGE_VERSION>>8, HGE_VERSION & 0xFF);
+    System_Log( TXT("HGE version: %X.%X"), HGE_VERSION>>8, HGE_VERSION & 0xFF);
     GetLocalTime(&tm);
-    System_Log("Date: %02d.%02d.%d, %02d:%02d:%02d\n", tm.wDay, tm.wMonth, tm.wYear, tm.wHour, tm.wMinute, tm.wSecond);
+    System_Log( TXT("Date: %02d.%02d.%d, %02d:%02d:%02d\n"),
+		tm.wDay, tm.wMonth, tm.wYear, tm.wHour, tm.wMinute, tm.wSecond);
 
-    System_Log("Application: %s",szWinTitle);
+    System_Log( TXT("Application: %s"),szWinTitle);
     os_ver.dwOSVersionInfoSize=sizeof(os_ver);
     GetVersionEx(&os_ver);
-    System_Log("OS: Windows %ld.%ld.%ld",os_ver.dwMajorVersion,os_ver.dwMinorVersion,os_ver.dwBuildNumber);
+    System_Log( TXT("OS: Windows %ld.%ld.%ld"),os_ver.dwMajorVersion,os_ver.dwMinorVersion,os_ver.dwBuildNumber);
 
     GlobalMemoryStatus(&mem_st);
-    System_Log("Memory: %ldK total, %ldK free\n",mem_st.dwTotalPhys/1024L,mem_st.dwAvailPhys/1024L);
+    System_Log( TXT("Memory: %ldK total, %ldK free\n"),mem_st.dwTotalPhys/1024L,mem_st.dwAvailPhys/1024L);
 
 
     // Register window class
@@ -99,11 +100,12 @@ bool HGE_CALL HGE_Impl::System_Initiate()
     winclass.hbrBackground  = (HBRUSH)GetStockObject(BLACK_BRUSH);
     winclass.lpszMenuName   = NULL; 
     winclass.lpszClassName  = WINDOW_CLASS_NAME;
-    if(szIcon) winclass.hIcon = LoadIcon(hInstance, szIcon);
-    else winclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     
-    if (!RegisterClass(&winclass)) {
-        _PostError("Can't register window class");
+	if(szIcon) winclass.hIcon = LoadIconW(hInstance, szIcon);
+    else winclass.hIcon = LoadIconA(NULL, IDI_APPLICATION);
+    
+    if (! HGE_WINAPI_UNICODE_SUFFIX(RegisterClass)( &winclass )) {
+        _PostError( TXT("Can't register window class") );
         return false;
     }
 
@@ -135,16 +137,18 @@ bool HGE_CALL HGE_Impl::System_Initiate()
     }
 
     if(bWindowed)
-        hwnd = CreateWindowEx(0, WINDOW_CLASS_NAME, szWinTitle, styleW,
+        hwnd = HGE_WINAPI_UNICODE_SUFFIX(CreateWindowEx)(
+				0, WINDOW_CLASS_NAME, szWinTitle, styleW,
                 rectW.left, rectW.top, rectW.right-rectW.left, rectW.bottom-rectW.top,
                 hwndParent, NULL, hInstance, NULL);
     else
-        hwnd = CreateWindowEx(WS_EX_TOPMOST, WINDOW_CLASS_NAME, szWinTitle, styleFS,
+        hwnd = HGE_WINAPI_UNICODE_SUFFIX(CreateWindowEx)(
+				WS_EX_TOPMOST, WINDOW_CLASS_NAME, szWinTitle, styleFS,
                 0, 0, 0, 0,
                 NULL, NULL, hInstance, NULL);
     if (!hwnd)
     {
-        _PostError("Can't create window");
+        _PostError( TXT("Can't create window") );
         return false;
     }
 
@@ -159,7 +163,7 @@ bool HGE_CALL HGE_Impl::System_Initiate()
     if(!_GfxInit()) { System_Shutdown(); return false; }
     if(!_SoundInit()) { System_Shutdown(); return false; }
 
-    System_Log("Init done.\n");
+    System_Log( TXT("Init done.\n") );
 
     fTime=0.0f;
     t0=t0fps=timeGetTime();
@@ -199,7 +203,7 @@ bool HGE_CALL HGE_Impl::System_Initiate()
 
 void HGE_CALL HGE_Impl::System_Shutdown()
 {
-    System_Log("\nFinishing..");
+    System_Log( TXT("\nFinishing..") );
 
     timeEndPeriod(1);
     if(hSearch) { FindClose(hSearch); hSearch=0; }
@@ -217,9 +221,9 @@ void HGE_CALL HGE_Impl::System_Shutdown()
         hwnd=0;
     }
 
-    if(hInstance) UnregisterClass(WINDOW_CLASS_NAME, hInstance);
+    if(hInstance) HGE_WINAPI_UNICODE_SUFFIX(UnregisterClass)(WINDOW_CLASS_NAME, hInstance);
 
-    System_Log("The End.");
+    System_Log( TXT("The End.") );
 }
 
 
@@ -229,12 +233,12 @@ bool HGE_CALL HGE_Impl::System_Start()
 
     if(!hwnd)
     {
-        _PostError("System_Start: System_Initiate wasn't called");
+        _PostError( TXT("System_Start: System_Initiate wasn't called") );
         return false;
     }
 
     if(!procFrameFunc) {
-        _PostError("System_Start: No frame function defined");
+        _PostError( TXT("System_Start: No frame function defined") );
         return false;
     }
 
@@ -503,25 +507,34 @@ void HGE_CALL HGE_Impl::System_SetStateInt(hgeIntState state, int value)
     }
 }
 
-void HGE_CALL HGE_Impl::System_SetStateString(hgeStringState state, const char *value)
+void HGE_CALL HGE_Impl::System_SetStateString(hgeStringState state, hgeConstString value)
 {
     FILE *hf;
     
     switch(state)
     {
         case HGE_ICON:          szIcon=value;
-                                if(pHGE->hwnd) SetClassLong(pHGE->hwnd, GCL_HICON, (LONG)LoadIcon(pHGE->hInstance, szIcon));
+                                if(pHGE->hwnd) {
+									HGE_WINAPI_UNICODE_SUFFIX(SetClassLong)(
+										pHGE->hwnd, GCL_HICON,
+										(LONG)HGE_WINAPI_UNICODE_SUFFIX(LoadIcon)(pHGE->hInstance, szIcon)
+										);
+								}
                                 break;
-        case HGE_TITLE:         strcpy(szWinTitle,value);
-                                if(pHGE->hwnd) SetWindowText(pHGE->hwnd, szWinTitle);
+
+        case HGE_TITLE:         hge_strcpy(szWinTitle,value);
+                                if(pHGE->hwnd) {
+									HGE_WINAPI_UNICODE_SUFFIX(SetWindowText)(pHGE->hwnd, szWinTitle);
+								}
                                 break;
-        case HGE_INIFILE:       if(value) strcpy(szIniFile,Resource_MakePath(value));
+
+        case HGE_INIFILE:       if(value) hge_strcpy(szIniFile,Resource_MakePath(value));
                                 else szIniFile[0]=0;
                                 break;
-        case HGE_LOGFILE:       if(value)
-                                {
-                                    strcpy(szLogFile,Resource_MakePath(value));
-                                    hf=fopen(szLogFile, "w");
+
+        case HGE_LOGFILE:       if(value) {
+                                    hge_strcpy(szLogFile, Resource_MakePath(value));
+                                    hf = hge_fopen_w(szLogFile);
                                     if(!hf) szLogFile[0]=0;
                                     else fclose(hf);
                                 }
@@ -592,9 +605,9 @@ int HGE_CALL HGE_Impl::System_GetStateInt(hgeIntState state)
     return 0;
 }
 
-const char* HGE_CALL HGE_Impl::System_GetStateString(hgeStringState state) {
+hgeConstString HGE_CALL HGE_Impl::System_GetStateString(hgeStringState state) {
     switch(state) {
-        case HGE_ICON:          return szIcon;
+        case HGE_ICON:          return (hgeConstString)szIcon;
         case HGE_TITLE:         return szWinTitle;
         case HGE_INIFILE:       if(szIniFile[0]) return szIniFile;
                                 else return 0;
@@ -605,52 +618,54 @@ const char* HGE_CALL HGE_Impl::System_GetStateString(hgeStringState state) {
     return NULL;
 }
 
-char* HGE_CALL HGE_Impl::System_GetErrorMessage()
+hgeConstString HGE_CALL HGE_Impl::System_GetErrorMessage()
 {
     return szError;
 }
 
-void HGE_CALL HGE_Impl::System_Log(const char *szFormat, ...)
+void HGE_CALL HGE_Impl::System_Log( hgeConstString szFormat, ...)
 {
     FILE *hf = NULL;
     va_list ap;
     
     if(!szLogFile[0]) return;
 
-    hf = fopen(szLogFile, "a");
+    hf = hge_fopen_ab( szLogFile );
     if(!hf) return;
 
     va_start(ap, szFormat);
-    vfprintf(hf, szFormat, ap);
+    hge_vfprintf(hf, szFormat, ap);
     va_end(ap);
 
-    fprintf(hf, "\n");
+    hge_fprintf(hf, TXT("\n") );
 
     fclose(hf);
 }
 
-bool HGE_CALL HGE_Impl::System_Launch(const char *url)
+bool HGE_CALL HGE_Impl::System_Launch( hgeConstString url)
 {
-    if((uint32_t)ShellExecute(pHGE->hwnd, NULL, url, NULL, NULL, SW_SHOWMAXIMIZED)>32) return true;
-    else return false;
+    if((uint32_t)HGE_WINAPI_UNICODE_SUFFIX(ShellExecute)(
+						pHGE->hwnd, NULL, url, NULL, NULL, SW_SHOWMAXIMIZED ) > 32)
+	{
+		return true;
+	}
+    return false;
 }
 
-void HGE_CALL HGE_Impl::System_Snapshot(const char *filename)
+void HGE_CALL HGE_Impl::System_Snapshot( hgeConstString filename )
 {
     hgeGAPISurface * pSurf;
-    char *shotname, tempname[_MAX_PATH];
+    hgeChar * shotname, tempname[_MAX_PATH];
     int i;
 
-    if(!filename)
-    {
+    if(!filename) {
         i=0;
-        shotname=Resource_EnumFiles("shot???.bmp");
-        while(shotname)
-        {
+        shotname=Resource_EnumFiles( TXT("shot???.bmp") );
+        while(shotname) {
             i++;
             shotname=Resource_EnumFiles();
         }
-        sprintf(tempname, "shot%03d.bmp", i);
+        hge_sprintf(tempname, TXT("shot%03d.bmp"), i);
         filename=Resource_MakePath(tempname);
     }
 
@@ -662,7 +677,7 @@ void HGE_CALL HGE_Impl::System_Snapshot(const char *filename)
 #if HGE_DIRECTX_VER == 9
         pD3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pSurf);
 #endif
-        D3DXSaveSurfaceToFile(filename, D3DXIFF_BMP, pSurf, NULL, NULL);
+        HGE_WINAPI_UNICODE_SUFFIX(D3DXSaveSurfaceToFile)(filename, D3DXIFF_BMP, pSurf, NULL, NULL);
         pSurf->Release();
     }
 }
@@ -714,7 +729,7 @@ HGE_Impl::HGE_Impl()
     procGfxRestoreFunc=0;
     procExitFunc=0;
     szIcon=0;
-    strcpy(szWinTitle,"HGE");
+    hge_strcpy(szWinTitle, TXT("HGE") );
     nScreenWidth=800;
     nScreenHeight=600;
     nScreenBPP=32;
@@ -741,29 +756,24 @@ HGE_Impl::HGE_Impl()
     bDMO=true;
 #endif
 
-
-    GetModuleFileName(GetModuleHandle(NULL), szAppPath, sizeof(szAppPath));
+    HGE_WINAPI_UNICODE_SUFFIX(GetModuleFileName)(GetModuleHandle(NULL), szAppPath, sizeof(szAppPath));
     int i;
-    for(i=strlen(szAppPath)-1; i>0; i--) if(szAppPath[i]=='\\') break;
+    for(i=hge_strlen(szAppPath)-1; i>0; i--) if(szAppPath[i]=='\\') break;
     szAppPath[i+1]=0;
 }
 
-void HGE_Impl::_PostError(char *error)
+void HGE_Impl::_PostError( hgeConstString error )
 {
     System_Log(error);
-    strcpy(szError,error);
+    hge_strcpy(szError,error);
 }
 
 void HGE_Impl::_FocusChange(bool bAct)
 {
     bActive=bAct;
-
-    if(bActive)
-    {
+    if(bActive) {
         if(procFocusGainFunc) procFocusGainFunc();
-    }
-    else
-    {
+    } else {
         if(procFocusLostFunc) procFocusLostFunc();
     }
 }

@@ -128,7 +128,10 @@ bool RenderFunc()
 		spr->RenderEx(pObjects[i].x, pObjects[i].y, pObjects[i].rot, pObjects[i].scale);
 	}
 
-	fnt->printf(7, 7, HGETEXT_LEFT, "UP and DOWN to adjust number of hares: %d\nSPACE to change blending mode: %d\nFPS: %d", nObjects, nBlend, hge->Timer_GetFPS());
+	fnt->printf( 7, 7, HGETEXT_LEFT, 
+		TXT("UP and DOWN to adjust number of hares: %d\nSPACE to change blending mode: %d\nFPS: %d"),
+		nObjects, nBlend, hge->Timer_GetFPS()
+		);
 	hge->Gfx_EndScene();
 
 	return false;
@@ -142,10 +145,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	// Set desired system states and initialize HGE
 
-	hge->System_SetState(HGE_LOGFILE, "hge_tut07.log");
+	hge->System_SetState(HGE_LOGFILE, TXT("hge_tut07.log"));
 	hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
 	hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
-	hge->System_SetState(HGE_TITLE, "HGE Tutorial 07 - Thousand of Hares");
+	hge->System_SetState(HGE_TITLE, TXT("HGE Tutorial 07 - Thousand of Hares"));
 	hge->System_SetState(HGE_USESOUND, false);
 	hge->System_SetState(HGE_WINDOWED, true);
 	hge->System_SetState(HGE_SCREENWIDTH, SCREEN_WIDTH);
@@ -157,13 +160,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		// Load textures
 
-		bgtex=hge->Texture_Load("bg2.png");
-		tex=hge->Texture_Load("zazaka.png");
+		bgtex=hge->Texture_Load( TXT("bg2.png") );
+		tex=hge->Texture_Load( TXT("zazaka.png") );
 		if(!bgtex || !tex)
 		{
 			// If one of the data files is not found,
 			// display an error message and shutdown
-			MessageBox(NULL, "Can't load BG2.PNG or ZAZAKA.PNG", "Error", MB_OK | MB_ICONERROR | MB_APPLMODAL);
+			MessageBoxW(NULL, L"Can't load BG2.PNG or ZAZAKA.PNG", L"Error", MB_OK | MB_ICONERROR | MB_APPLMODAL);
 			hge->System_Shutdown();
 			hge->Release();
 			return 0;
@@ -171,7 +174,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		// Load font, create sprites
 
-		fnt=new hgeFont("font2.fnt");
+		fnt=new hgeFont( TXT("font2.fnt") );
 		spr=new hgeSprite(tex,0,0,64,64);
 		spr->SetHotSpot(32,32);
 

@@ -10,7 +10,7 @@
 #include "hge_impl.h"
 
 
-void HGE_CALL HGE_Impl::Ini_SetInt(const hgeString section, const hgeString name, int value)
+void HGE_CALL HGE_Impl::Ini_SetInt(hgeConstString section, hgeConstString name, int value)
 {
 	hgeChar buf[256];
 
@@ -21,7 +21,7 @@ void HGE_CALL HGE_Impl::Ini_SetInt(const hgeString section, const hgeString name
 }
 
 
-int HGE_CALL HGE_Impl::Ini_GetInt(const hgeString section, const hgeString name, int def_val)
+int HGE_CALL HGE_Impl::Ini_GetInt(hgeConstString section, hgeConstString name, int def_val)
 {
 	hgeChar buf[256];
 
@@ -36,7 +36,7 @@ int HGE_CALL HGE_Impl::Ini_GetInt(const hgeString section, const hgeString name,
 }
 
 
-void HGE_CALL HGE_Impl::Ini_SetFloat(const hgeString section, const hgeString name, float value)
+void HGE_CALL HGE_Impl::Ini_SetFloat(hgeConstString section, hgeConstString name, float value)
 {
 	hgeChar buf[256];
 
@@ -47,7 +47,7 @@ void HGE_CALL HGE_Impl::Ini_SetFloat(const hgeString section, const hgeString na
 }
 
 
-float HGE_CALL HGE_Impl::Ini_GetFloat(const hgeString section, const hgeString name, float def_val)
+float HGE_CALL HGE_Impl::Ini_GetFloat(hgeConstString section, hgeConstString name, float def_val)
 {
 	hgeChar buf[256];
 
@@ -62,7 +62,7 @@ float HGE_CALL HGE_Impl::Ini_GetFloat(const hgeString section, const hgeString n
 }
 
 
-void HGE_CALL HGE_Impl::Ini_SetString(const hgeString section, const hgeString name, const hgeString value)
+void HGE_CALL HGE_Impl::Ini_SetString(hgeConstString section, hgeConstString name, hgeConstString value)
 {
 	if(szIniFile[0]) {
 		WritePrivateProfileStringW(section, name, value, szIniFile);
@@ -70,7 +70,7 @@ void HGE_CALL HGE_Impl::Ini_SetString(const hgeString section, const hgeString n
 }
 
 
-hgeString HGE_CALL HGE_Impl::Ini_GetString(const hgeString section, const hgeString name, const hgeString def_val)
+hgeString HGE_CALL HGE_Impl::Ini_GetString(hgeConstString section, hgeConstString name, hgeConstString def_val)
 {
 	if(szIniFile[0]) {
 		GetPrivateProfileStringW(section, name, def_val, szIniString, sizeof(szIniString), szIniFile);

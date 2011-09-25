@@ -147,8 +147,10 @@ bool RenderFunc()
 	
 	hge->Gfx_BeginScene();
 	RenderSimulation();	
-	fnt->printf(7, 7, HGETEXT_LEFT, "Keys 1-9 to adjust simulation speed, 0 - real time\nFPS: %d", hge->Timer_GetFPS());
-	fnt->printf(SCREEN_WIDTH-50, 7, HGETEXT_LEFT, "%02d:%02d:%02d", hrs, mins, secs);
+	fnt->printf(7, 7, HGETEXT_LEFT, TXT("Keys 1-9 to adjust simulation speed, 0 - real time\nFPS: %d"),
+		hge->Timer_GetFPS()
+		);
+	fnt->printf(SCREEN_WIDTH-50, 7, HGETEXT_LEFT, TXT("%02d:%02d:%02d"), hrs, mins, secs);
 	hge->Gfx_EndScene();
 
 	return false;
@@ -161,10 +163,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	// Set desired system states and initialize HGE
 
-	hge->System_SetState(HGE_LOGFILE, "hge_tut08.log");
+	hge->System_SetState(HGE_LOGFILE, TXT("hge_tut08.log") );
 	hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
 	hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
-	hge->System_SetState(HGE_TITLE, "HGE Tutorial 08 - The Big Calm");
+	hge->System_SetState(HGE_TITLE, TXT("HGE Tutorial 08 - The Big Calm") );
 	hge->System_SetState(HGE_USESOUND, false);
 	hge->System_SetState(HGE_WINDOWED, true);
 	hge->System_SetState(HGE_SCREENWIDTH, SCREEN_WIDTH);
@@ -173,7 +175,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	if(hge->System_Initiate())
 	{
-		fnt=new hgeFont("font2.fnt");
+		fnt=new hgeFont( TXT("font2.fnt") );
 		
 		if(!InitSimulation())
 		{
@@ -214,7 +216,7 @@ bool InitSimulation()
 {
 	// Load texture
 	
-	texObjects=hge->Texture_Load("objects.png");
+	texObjects=hge->Texture_Load( TXT("objects.png") );
 	if(!texObjects) return false;
 
 	// Create sprites

@@ -29,10 +29,10 @@ struct NamedString
 class hgeStringTable
 {
 public:
-	hgeStringTable(const hgeString filename);
+	hgeStringTable(hgeConstString filename);
 	~hgeStringTable();
 
-	hgeString GetString(const hgeString name);
+	hgeString GetString(hgeConstString name);
 
 private:
 	hgeStringTable(const hgeStringTable &);

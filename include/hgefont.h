@@ -31,12 +31,12 @@
 class hgeFont
 {
 public:
-	hgeFont(const hgeString filename, bool bMipmap=false);
+	hgeFont(hgeConstString filename, bool bMipmap=false);
 	~hgeFont();
 
-	void		Render(float x, float y, int align, const hgeString string);
-	void		printf(float x, float y, int align, const hgeString format, ...);
-	void		printfb(float x, float y, float w, float h, int align, const hgeString format, ...);
+	void		Render(float x, float y, int align, hgeConstString string);
+	void		printf(float x, float y, int align, hgeConstString format, ...);
+	void		printfb(float x, float y, float w, float h, int align, hgeConstString format, ...);
 
 	void		SetColor(uint32_t col);
 	void		SetZ(float z);
@@ -60,7 +60,7 @@ public:
 	float		GetPreWidth(hgeChar chr) const { return pre[(hgeChar)chr]; }
 	float		GetPostWidth(hgeChar chr) const { return post[(hgeChar)chr]; }
 	float		GetHeight() const { return fHeight; }
-	float		GetStringWidth(const hgeString string, bool bMultiline=true) const;
+	float		GetStringWidth(hgeConstString string, bool bMultiline=true) const;
 
 private:
 	hgeFont();

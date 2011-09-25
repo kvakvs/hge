@@ -72,7 +72,7 @@ bool COptimizedTexture::Create()
 	tex = hge->Texture_Create(texw, texh);
 	if(!tex)
 	{
-		SysLog("Can't create target texture.\n");
+		SysLog( TXT("Can't create target texture.\n") );
 		return false;
 	}
 
@@ -83,7 +83,7 @@ bool COptimizedTexture::Create()
 	tex_data = (CColor *)hge->Texture_Lock(tex);
 	if(!tex_data)
 	{
-		SysLog("Can't lock target texture.\n");
+		SysLog( TXT("Can't lock target texture.\n") );
 		return false;
 	}
 
@@ -116,7 +116,7 @@ bool COptimizedTexture::CopyData()
 
 		if(!source_data)
 		{
-			SysLog("Can't lock source texture for \"%s\"\n", obj->GetName());
+			SysLog( TXT("Can't lock source texture for \"%s\"\n"), obj->GetName());
 			return false;
 		}
 
@@ -149,7 +149,7 @@ bool COptimizedTexture::OptimizeAlpha()
 
 	if(!tex_data || !pitch)
 	{
-		SysLog("No texture generated to optimize alpha.\n");
+		SysLog( TXT("No texture generated to optimize alpha.\n") );
 		return false;
 	}
 
@@ -185,27 +185,27 @@ bool COptimizedTexture::OptimizeAlpha()
 	return true;
 }
 
-bool COptimizedTexture::Save(char *filename)
+bool COptimizedTexture::Save(hgeConstString filename)
 {
 	FILE *fp;
 
 	if(!tex_data || !pitch)
 	{
-		SysLog("No texture generated to save: %s\n", filename);
+		SysLog( TXT("No texture generated to save: %s\n"), filename);
 		return false;
 	}
 
-	fp=fopen(filename,"wb");
+	fp=hge_fopen_wb(filename);
 	if(!fp)
 	{
-		SysLog("Can't create texture file: %s\n", filename);
+		SysLog( TXT("Can't create texture file: %s\n"), filename);
 		return false;
 	}
 
 	if(!Write32BitPNGWithPitch(fp, tex_data, true, texw, texh, pitch))
 	{
 		fclose(fp);
-		SysLog("Error writing data: %s\n", filename);
+		SysLog( TXT("Error writing data: %s\n"), filename);
 		return false;
 	}
 
@@ -213,7 +213,7 @@ bool COptimizedTexture::Save(char *filename)
 	return true;
 }
 
-bool COptimizedTexture::SaveDescriptions(char *resfile, char *texfile, char *texname)
+bool COptimizedTexture::SaveDescriptions(hgeConstString resfile, hgeConstString texfile, hgeConstString texname)
 {
 	GfxObjIterator it;
 	FILE *fp;
@@ -221,26 +221,26 @@ bool COptimizedTexture::SaveDescriptions(char *resfile, char *texfile, char *tex
 	// check for data to be available
 	if(!GetNumPlaced())
 	{
-		SysLog("No descriptions to save: %s\n", resfile);
+		SysLog( TXT("No descriptions to save: %s\n"), resfile);
 		return false;
 	}
 
 	// create resource file
-	fp=fopen(resfile,"w");
+	fp=hge_fopen_w(resfile);
 	if(!fp)
 	{
-		SysLog("Can't create description file: %s\n", resfile);
+		SysLog( TXT("Can't create description file: %s\n"), resfile);
 		return false;
 	}
 
 	// save texture description
 	if(texfile && texname)
 	{
-		fprintf(fp, "Texture %s\n", texname);
-		fprintf(fp, "{\n");
-		fprintf(fp, " filename = \"%s\"\n", texfile);
-		fprintf(fp, " resgroup = %d\n", (*obj_list.begin())->GetResGroup());
-		fprintf(fp, "}\n\n");
+		hge_fprintf(fp, TXT("Texture %s\n"), texname);
+		hge_fprintf(fp, TXT("{\n"));
+		hge_fprintf(fp, TXT(" filename = \"%s\"\n"), texfile);
+		hge_fprintf(fp, TXT(" resgroup = %d\n"), (*obj_list.begin())->GetResGroup());
+		hge_fprintf(fp, TXT("}\n\n"));
 	}
 
 	// save object descriptions
@@ -249,11 +249,11 @@ bool COptimizedTexture::SaveDescriptions(char *resfile, char *texfile, char *tex
 		if(!(*it)->SaveDescription(fp, texname))
 		{
 			fclose(fp);
-			SysLog("Error writing description: %s\n", (*it)->GetName());
+			SysLog( TXT("Error writing description: %s\n"), (*it)->GetName());
 			return false;
 		}
 
-		fprintf(fp,"\n");
+		hge_fprintf(fp, TXT("\n"));
 	}
 
 	fclose(fp);

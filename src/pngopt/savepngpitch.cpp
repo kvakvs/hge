@@ -8,13 +8,13 @@ class PNGError {};
 void WarningCallback(png_structp png_ptr,
 					 png_const_charp msg)
 {
-	hge->System_Log("LIBPNG Warning: %s", msg);
+	hge->System_Log( TXT("LIBPNG Warning: %s"), msg);
 }
 
 void ErrorCallback(png_structp png_ptr,
 				   png_const_charp msg)
 {
-	hge->System_Log("LIBPNG Error: %s", msg);
+	hge->System_Log( TXT("LIBPNG Error: %s"), msg);
 	throw PNGError();
 }
 

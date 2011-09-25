@@ -58,8 +58,8 @@ bool FrameFunc()
 		if(DoCommands(gui->Update(dt))) return true;
 	}
 
-	GetTextCtrl(CMD_NPARTICLES)->printf("%d", state.ps->GetParticlesAlive());
-	GetTextCtrl(CMD_FPS)->printf("%d", hge->Timer_GetFPS());
+	GetTextCtrl(CMD_NPARTICLES)->printf( TXT("%d"), state.ps->GetParticlesAlive());
+	GetTextCtrl(CMD_FPS)->printf( TXT("%d"), hge->Timer_GetFPS());
 
 	return false;
 }
@@ -99,12 +99,13 @@ bool RenderFunc()
 	if(state.bHelp)
 	{
 		fnt->SetColor(0xFFFFFFFF);
-		fnt->Render(189, 18, HGETEXT_LEFT, "Left mouse button - fire particle system\n"
-			"Right mouse button - move the system with mouse\n\n"
-			"Keys 1 to 9 - select preset\nPresets are saved and loaded automatically\n\n"
-			"TAB - Hide editor panels\n"
-			"Esc - Exit\n\n"
-			"Edit PARTICLEED.INI file to change backdrop or fullscreen/windowed mode");
+		fnt->Render(189, 18, HGETEXT_LEFT, TXT("Left mouse button - fire particle system\n")
+			TXT("Right mouse button - move the system with mouse\n\n")
+			TXT("Keys 1 to 9 - select preset\nPresets are saved and loaded automatically\n\n")
+			TXT("TAB - Hide editor panels\n")
+			TXT("Esc - Exit\n\n")
+			TXT("Edit PARTICLEED.INI file to change backdrop or fullscreen/windowed mode")
+			);
 	}
 
 	if(hge->Input_IsMouseOver() && !hge->Input_GetKeyState(HGEK_RBUTTON)) sprCursor->Render(state.mx, state.my);
@@ -119,18 +120,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	hge = hgeCreate(HGE_VERSION);
 
-	hge->System_SetState(HGE_INIFILE, "particleed.ini");
-	hge->System_SetState(HGE_LOGFILE, "particleed.log");
+	hge->System_SetState(HGE_INIFILE, TXT("particleed.ini"));
+	hge->System_SetState(HGE_LOGFILE, TXT("particleed.log"));
 	hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
 	hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
-	hge->System_SetState(HGE_TITLE, "HGE Particle Systems Editor");
+	hge->System_SetState(HGE_TITLE, TXT("HGE Particle Systems Editor"));
 	hge->System_SetState(HGE_SCREENWIDTH, 800);
 	hge->System_SetState(HGE_SCREENHEIGHT, 600);
 	hge->System_SetState(HGE_SCREENBPP, 32);
 	hge->System_SetState(HGE_USESOUND, false);
 
-	if(hge->Ini_GetInt("HGE", "FullScreen",0))	hge->System_SetState(HGE_WINDOWED, false);
-	else hge->System_SetState(HGE_WINDOWED, true);
+	if(hge->Ini_GetInt(TXT("HGE"), TXT("FullScreen"),0))
+		hge->System_SetState(HGE_WINDOWED, false);
+	else
+		hge->System_SetState(HGE_WINDOWED, true);
 
 	if(hge->System_Initiate())
 	{
@@ -138,7 +141,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		hge->System_Start();
 		DoneEditor();
 	}
-	else MessageBox(NULL, hge->System_GetErrorMessage(), "Error", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+	else MessageBoxW(NULL, hge->System_GetErrorMessage(), L"Error", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 
 	hge->System_Shutdown();
 	hge->Release();
@@ -148,13 +151,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 void InitEditor()
 {
 	hgeParticleSystemInfo psi;
-	char *bgName;
+	hgeString bgName;
 	int bgw, bgh;
 
 	state.texBG = 0;
 	state.sprBG = 0;
 
-	bgName = hge->Ini_GetString("HGE", "Background", 0);
+	bgName = hge->Ini_GetString(TXT("HGE"), TXT("Background"), 0);
 	if(bgName)
 	{
 		state.texBG = hge->Texture_Load(bgName);
@@ -164,14 +167,14 @@ void InitEditor()
 		state.sprBG->SetHotSpot((float)bgw/2, (float)bgh/2);
 	}
 
-	hge->Resource_AttachPack("particleed.paq");
+	hge->Resource_AttachPack(TXT("particleed.paq"));
 	
 	state.bIFace=true;
 	state.bHelp=false;
 	state.bBBox=false;
 	state.nPreset=0;
 
-	texParticles=hge->Texture_Load("particles.png");
+	texParticles=hge->Texture_Load(TXT("particles.png"));
 	sprParticles=new hgeAnimation(texParticles, 16, 1.0f, 0, 0, 32, 32);
 	sprParticles->SetHotSpot(16,16);
 	memset(&psi, 0, sizeof(hgeParticleSystemInfo));
@@ -180,8 +183,8 @@ void InitEditor()
 	state.ps->TrackBoundingBox(true);
 	state.ps->MoveTo(psx, psy);
 
-	fnt=new hgeFont("font3.fnt");
-	texGui=hge->Texture_Load("pgui.png");
+	fnt=new hgeFont(TXT("font3.fnt"));
+	texGui=hge->Texture_Load(TXT("pgui.png"));
 
 	sprCursor=new hgeSprite(texGui, 487, 181, 19, 26);
 	sprColor=new hgeSprite(texGui, 466, 208, 14, 80);
@@ -286,7 +289,7 @@ void CreateGUI()
 	gui->AddCtrl(slider);
 	text=new hgeGUIText(CMD_SYS_TLIFETIME, 113, 30, 28, 12, fnt);
 	text->SetMode(HGETEXT_RIGHT);
-	text->SetText("0");
+	text->SetText( TXT("0") );
 	gui->AddCtrl(text);
 	button=new hgeGUIButton(CMD_SYS_LIFECONT, 9, 55, 8, 8, texGui, 368, 176);
 	button->SetMode(true);
@@ -298,7 +301,7 @@ void CreateGUI()
 	gui->AddCtrl(slider);
 	text=new hgeGUIText(CMD_SYS_TEMISSION, 103, 77, 28, 12, fnt);
 	text->SetMode(HGETEXT_RIGHT);
-	text->SetText("0");
+	text->SetText( TXT("0") );
 	gui->AddCtrl(text);
 
 	button=new hgeGUIButton(CMD_SYS_PARLIFETIMELOCK, 144, 111, 16, 11, texGui, 336, 176);
@@ -332,7 +335,7 @@ void CreateGUI()
 	gui->AddCtrl(slider);
 	text=new hgeGUIText(CMD_PM_TDIRECTION, 112, 253, 28, 12, fnt);
 	text->SetMode(HGETEXT_RIGHT);
-	text->SetText("0");
+	text->SetText( TXT("0") );
 	gui->AddCtrl(text);
 	button=new hgeGUIButton(CMD_PM_RELATIVE, 8, 278, 8, 8, texGui, 368, 176);
 	button->SetMode(true);
@@ -344,7 +347,7 @@ void CreateGUI()
 	gui->AddCtrl(slider);
 	text=new hgeGUIText(CMD_PM_TSPREAD, 112, 300, 28, 12, fnt);
 	text->SetMode(HGETEXT_RIGHT);
-	text->SetText("0");
+	text->SetText( TXT("0") );
 	gui->AddCtrl(text);
 
 	button=new hgeGUIButton(CMD_PM_STARTSPEEDLOCK, 143, 334, 16, 11, texGui, 336, 176);

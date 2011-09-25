@@ -382,7 +382,7 @@ HTEXTURE HGE_CALL HGE_Impl::Texture_Create(int width, int height)
     return (HTEXTURE)pTex;
 }
 
-HTEXTURE HGE_CALL HGE_Impl::Texture_Load(const hgeString filename, uint32_t size, bool bMipmap)
+HTEXTURE HGE_CALL HGE_Impl::Texture_Load(hgeConstString filename, uint32_t size, bool bMipmap)
 {
     void *data;
     uint32_t _size;
@@ -1121,7 +1121,7 @@ bool HGE_Impl::_init_lost()
 }
 
 #if HGE_DIRECTX_VER >= 9
-HSHADER HGE_CALL HGE_Impl::Shader_Create(const hgeString filename)
+HSHADER HGE_CALL HGE_Impl::Shader_Create(hgeConstString filename)
 {
 	LPD3DXBUFFER					code			= NULL;
 	LPDIRECT3DPIXELSHADER9          pixelShader    = NULL;

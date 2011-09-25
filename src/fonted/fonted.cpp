@@ -65,7 +65,7 @@ bool FrameFunc()
 bool RenderFunc()
 {
 	int i;
-	char		szTemp[128];
+	hgeChar		szTemp[128];
 
 	// Render
 	
@@ -92,7 +92,7 @@ bool RenderFunc()
 			hge->Gfx_RenderLine(u0+0.5f, v1,      u0+0.5f, v0+0.5f, 0xFF95883F);
 		}
 
-	sprintf(szTemp,"Texture size: %dx%d",(int)sprFont->GetWidth(),(int)sprFont->GetHeight());
+	hge_sprintf(szTemp, TXT("Texture size: %dx%d"),(int)sprFont->GetWidth(),(int)sprFont->GetHeight());
 	fnt->SetColor(0xFF808080);
 	fnt->Render(176, 580, HGETEXT_LEFT, szTemp);
 

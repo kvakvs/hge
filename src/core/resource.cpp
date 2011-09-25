@@ -14,7 +14,7 @@
 #include <unzip.h>
 
 
-bool HGE_CALL HGE_Impl::Resource_AttachPack(const hgeString filename, const hgeString password)
+bool HGE_CALL HGE_Impl::Resource_AttachPack(hgeConstString filename, const char * password)
 {
 	hgeString szName;
 	CResourceList *resItem=res;
@@ -41,7 +41,7 @@ bool HGE_CALL HGE_Impl::Resource_AttachPack(const hgeString filename, const hgeS
 
 	resItem=new CResourceList;
 	hge_strcpy(resItem->filename, szName);
-	if(password) hge_strcpy(resItem->password, password);
+	if(password) strcpy(resItem->password, password);
 	else resItem->password[0]=0;
 	resItem->next=res;
 	res=resItem;
@@ -49,7 +49,7 @@ bool HGE_CALL HGE_Impl::Resource_AttachPack(const hgeString filename, const hgeS
 	return true;
 }
 
-void HGE_CALL HGE_Impl::Resource_RemovePack(const hgeString filename)
+void HGE_CALL HGE_Impl::Resource_RemovePack(hgeConstString filename)
 {
 	hgeString szName;
 	CResourceList *resItem=res, *resPrev=0;
@@ -86,9 +86,9 @@ void HGE_CALL HGE_Impl::Resource_RemoveAllPacks()
 	res=0;
 }
 
-void* HGE_CALL HGE_Impl::Resource_Load(const hgeString filename, uint32_t *size)
+void* HGE_CALL HGE_Impl::Resource_Load(hgeConstString filename, uint32_t *size)
 {
-	static const hgeString res_err = TXT("Can't load resource: %s");
+	static hgeConstString res_err = TXT("Can't load resource: %s");
 
 	CResourceList *resItem=res;
 	hgeChar szName[_MAX_PATH];
@@ -131,7 +131,13 @@ void* HGE_CALL HGE_Impl::Resource_Load(const hgeString filename, uint32_t *size)
 			for(i=0; szZipName[i]; i++)	{ if(szZipName[i]=='/') szZipName[i]='\\'; }
 			if( ! hge_strcmp(szName,szZipName) )
 			{
+// #if HGE_UNICODE
+// 				char pass_utf8[64];
+// 				hgeWideToUtf8( resItem->password, pass_utf8, sizeof(utf8_fn) );
+// 				if(unzOpenCurrentFilePassword(zip, pass_utf8[0] ? pass_utf8 : 0) != UNZ_OK)
+// #else
 				if(unzOpenCurrentFilePassword(zip, resItem->password[0] ? resItem->password : 0) != UNZ_OK)
+// #endif
 				{
 					unzClose(zip);
 					hge_sprintf(szName, res_err, filename);
@@ -174,10 +180,15 @@ void* HGE_CALL HGE_Impl::Resource_Load(const hgeString filename, uint32_t *size)
 	// Load from file
 _fromfile:
 
-	hF = CreateFile(Resource_MakePath(filename), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
+	hF = HGE_WINAPI_UNICODE_SUFFIX(CreateFile)(
+				Resource_MakePath(filename),
+				GENERIC_READ, FILE_SHARE_READ,
+				NULL, OPEN_EXISTING,
+				FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL
+				);
 	if(hF == INVALID_HANDLE_VALUE)
 	{
-		sprintf(szName, res_err, filename);
+		hge_sprintf(szName, res_err, filename);
 		_PostError(szName);
 		return 0;
 	}
@@ -186,7 +197,7 @@ _fromfile:
 	if(!ptr)
 	{
 		CloseHandle(hF);
-		sprintf(szName, res_err, filename);
+		hge_sprintf(szName, res_err, filename);
 		_PostError(szName);
 		return 0;
 	}
@@ -194,7 +205,7 @@ _fromfile:
 	{
 		CloseHandle(hF);
 		free(ptr);
-		sprintf(szName, res_err, filename);
+		hge_sprintf(szName, res_err, filename);
 		_PostError(szName);
 		return 0;
 	}
@@ -211,30 +222,32 @@ void HGE_CALL HGE_Impl::Resource_Free(void *res)
 }
 
 
-char* HGE_CALL HGE_Impl::Resource_MakePath(const char *filename)
+hgeString HGE_CALL HGE_Impl::Resource_MakePath(hgeConstString filename)
 {
 	int i;
 
 	if(!filename)
-		strcpy(szTmpFilename, szAppPath);
+		hge_strcpy(szTmpFilename, szAppPath);
 	else if(filename[0]=='\\' || filename[0]=='/' || filename[1]==':')
-		strcpy(szTmpFilename, filename);
+		hge_strcpy(szTmpFilename, filename);
 	else
 	{
-		strcpy(szTmpFilename, szAppPath);
-		if(filename) strcat(szTmpFilename, filename);
+		hge_strcpy(szTmpFilename, szAppPath);
+		if(filename) hge_strcat(szTmpFilename, filename);
 	}
 
 	for(i=0; szTmpFilename[i]; i++) { if(szTmpFilename[i]=='/') szTmpFilename[i]='\\'; }
 	return szTmpFilename;
 }
 
-char* HGE_CALL HGE_Impl::Resource_EnumFiles(const char *wildcard)
+hgeString HGE_CALL HGE_Impl::Resource_EnumFiles(hgeConstString wildcard)
 {
 	if(wildcard)
 	{
 		if(hSearch) { FindClose(hSearch); hSearch=0; }
-		hSearch=FindFirstFile(Resource_MakePath(wildcard), &SearchData);
+		hSearch=HGE_WINAPI_UNICODE_SUFFIX(FindFirstFile)(
+						Resource_MakePath(wildcard), &SearchData
+						);
 		if(hSearch==INVALID_HANDLE_VALUE) { hSearch=0; return 0; }
 
 		if(!(SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) return SearchData.cFileName;
@@ -245,23 +258,33 @@ char* HGE_CALL HGE_Impl::Resource_EnumFiles(const char *wildcard)
 		if(!hSearch) return 0;
 		for(;;)
 		{
-			if(!FindNextFile(hSearch, &SearchData))	{ FindClose(hSearch); hSearch=0; return 0; }
-			if(!(SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) return SearchData.cFileName;
+			if(! HGE_WINAPI_UNICODE_SUFFIX(FindNextFile)(hSearch, &SearchData))	{
+				FindClose(hSearch);
+				hSearch=0;
+				return 0;
+			}
+			if(!(SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+				return SearchData.cFileName;
 		}
 	}
 }
 
-char* HGE_CALL HGE_Impl::Resource_EnumFolders(const char *wildcard)
+hgeString HGE_CALL HGE_Impl::Resource_EnumFolders(hgeConstString wildcard)
 {
 	if(wildcard)
 	{
 		if(hSearch) { FindClose(hSearch); hSearch=0; }
-		hSearch=FindFirstFile(Resource_MakePath(wildcard), &SearchData);
+		hSearch = HGE_WINAPI_UNICODE_SUFFIX(FindFirstFile)(
+							Resource_MakePath(wildcard), &SearchData
+							);
 		if(hSearch==INVALID_HANDLE_VALUE) { hSearch=0; return 0; }
 
-		if((SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-		   strcmp(SearchData.cFileName,".") && strcmp(SearchData.cFileName,".."))
-				return SearchData.cFileName;
+		if((SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) 
+			&& hge_strcmp(SearchData.cFileName, TXT(".") )
+			&& hge_strcmp(SearchData.cFileName, TXT("..") ))
+		{
+			return SearchData.cFileName;
+		}
 		else return Resource_EnumFolders();
 	}
 	else
@@ -269,10 +292,17 @@ char* HGE_CALL HGE_Impl::Resource_EnumFolders(const char *wildcard)
 		if(!hSearch) return 0;
 		for(;;)
 		{
-			if(!FindNextFile(hSearch, &SearchData))	{ FindClose(hSearch); hSearch=0; return 0; }
-			if((SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-			   strcmp(SearchData.cFileName,".") && strcmp(SearchData.cFileName,".."))
-					return SearchData.cFileName;
+			if( ! HGE_WINAPI_UNICODE_SUFFIX(FindNextFile)( hSearch, &SearchData )) { 
+				FindClose(hSearch);
+				hSearch=0;
+				return 0; 
+			}
+			if((SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) 
+				&& hge_strcmp(SearchData.cFileName, TXT(".") )
+				&& hge_strcmp(SearchData.cFileName, TXT("..") ))
+			{
+				return SearchData.cFileName;
+			}
 		}
 	}
 }

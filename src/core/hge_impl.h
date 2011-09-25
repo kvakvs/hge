@@ -5,8 +5,7 @@
 **
 ** Common core implementation header
 */
-
-
+#pragma once
 #ifndef HGE_IMPL_H
 #define HGE_IMPL_H
 
@@ -44,7 +43,7 @@ struct CTextureList
 struct CResourceList
 {
     hgeChar				filename[_MAX_PATH];
-    hgeChar				password[64];
+    char 				password[64];
     CResourceList*      next;
 };
 
@@ -82,32 +81,32 @@ public:
     virtual void        HGE_CALL    System_SetStateFunc  (hgeFuncState   state, hgeCallback value);
     virtual void        HGE_CALL    System_SetStateHwnd  (hgeHwndState   state, HWND        value);
     virtual void        HGE_CALL    System_SetStateInt   (hgeIntState    state, int         value);
-    virtual void        HGE_CALL    System_SetStateString(hgeStringState state, const hgeString alue);
+    virtual void        HGE_CALL    System_SetStateString(hgeStringState state, hgeConstString alue);
     virtual bool        HGE_CALL    System_GetStateBool  (hgeBoolState  );
     virtual hgeCallback HGE_CALL    System_GetStateFunc  (hgeFuncState  );
     virtual HWND        HGE_CALL    System_GetStateHwnd  (hgeHwndState  );
     virtual int         HGE_CALL    System_GetStateInt   (hgeIntState   );
-    virtual const hgeString  HGE_CALL    System_GetStateString(hgeStringState);
-    virtual hgeString   HGE_CALL    System_GetErrorMessage();
-    virtual void        HGE_CALL    System_Log(const hgeString format, ...);
-    virtual bool        HGE_CALL    System_Launch(const hgeString url);
-    virtual void        HGE_CALL    System_Snapshot(const hgeString filename=0);
+    virtual hgeConstString HGE_CALL System_GetStateString(hgeStringState);
+    virtual hgeConstString HGE_CALL System_GetErrorMessage();
+    virtual void        HGE_CALL    System_Log(hgeConstString format, ...);
+    virtual bool        HGE_CALL    System_Launch(hgeConstString url);
+    virtual void        HGE_CALL    System_Snapshot(hgeConstString filename=0);
 
-    virtual void*       HGE_CALL    Resource_Load(const hgeString filename, uint32_t *size=0);
+    virtual void*       HGE_CALL    Resource_Load(hgeConstString filename, uint32_t *size=0);
     virtual void        HGE_CALL    Resource_Free(void *res);
-    virtual bool        HGE_CALL    Resource_AttachPack(const hgeString filename, const hgeString password=0);
-    virtual void        HGE_CALL    Resource_RemovePack(const hgeString filename);
+    virtual bool        HGE_CALL    Resource_AttachPack(hgeConstString filename, const char * password=0);
+    virtual void        HGE_CALL    Resource_RemovePack(hgeConstString filename);
     virtual void        HGE_CALL    Resource_RemoveAllPacks();
-    virtual hgeString   HGE_CALL    Resource_MakePath(const hgeString filename=0);
-    virtual hgeString   HGE_CALL    Resource_EnumFiles(const hgeString wildcard=0);
-    virtual hgeString   HGE_CALL    Resource_EnumFolders(const hgeString wildcard=0);
+    virtual hgeString   HGE_CALL    Resource_MakePath(hgeConstString filename=0);
+    virtual hgeString   HGE_CALL    Resource_EnumFiles(hgeConstString wildcard=0);
+    virtual hgeString   HGE_CALL    Resource_EnumFolders(hgeConstString wildcard=0);
 
-    virtual void        HGE_CALL    Ini_SetInt(const hgeString section, const hgeString name, int value);
-    virtual int         HGE_CALL    Ini_GetInt(const hgeString section, const hgeString name, int def_val);
-    virtual void        HGE_CALL    Ini_SetFloat(const hgeString section, const hgeString name, float value);
-    virtual float       HGE_CALL    Ini_GetFloat(const hgeString section, const hgeString name, float def_val);
-    virtual void        HGE_CALL    Ini_SetString(const hgeString section, const hgeString name, const hgeString value);
-    virtual hgeString        HGE_CALL    Ini_GetString(const hgeString section, const hgeString name, const hgeString def_val);
+    virtual void        HGE_CALL    Ini_SetInt(hgeConstString section, hgeConstString name, int value);
+    virtual int         HGE_CALL    Ini_GetInt(hgeConstString section, hgeConstString name, int def_val);
+    virtual void        HGE_CALL    Ini_SetFloat(hgeConstString section, hgeConstString name, float value);
+    virtual float       HGE_CALL    Ini_GetFloat(hgeConstString section, hgeConstString name, float def_val);
+    virtual void        HGE_CALL    Ini_SetString(hgeConstString section, hgeConstString name, hgeConstString value);
+    virtual hgeString        HGE_CALL    Ini_GetString(hgeConstString section, hgeConstString name, hgeConstString def_val);
 
     virtual void        HGE_CALL    Random_Seed(int seed=0);
     virtual int         HGE_CALL    Random_Int(int min, int max);
@@ -117,12 +116,12 @@ public:
     virtual float       HGE_CALL    Timer_GetDelta();
     virtual int         HGE_CALL    Timer_GetFPS();
 
-    virtual HEFFECT     HGE_CALL    Effect_Load(const hgeString filename, uint32_t size=0);
+    virtual HEFFECT     HGE_CALL    Effect_Load(hgeConstString filename, uint32_t size=0);
     virtual void        HGE_CALL    Effect_Free(HEFFECT eff);
     virtual HCHANNEL    HGE_CALL    Effect_Play(HEFFECT eff);
     virtual HCHANNEL    HGE_CALL    Effect_PlayEx(HEFFECT eff, int volume=100, int pan=0, float pitch=1.0f, bool loop=false);
 
-    virtual HMUSIC      HGE_CALL    Music_Load(const hgeString filename, uint32_t size=0);
+    virtual HMUSIC      HGE_CALL    Music_Load(hgeConstString filename, uint32_t size=0);
     virtual void        HGE_CALL    Music_Free(HMUSIC mus);
     virtual HCHANNEL    HGE_CALL    Music_Play(HMUSIC mus, bool loop, int volume = 100, int order = 0, int row = 0);
     virtual void        HGE_CALL    Music_SetAmplification(HMUSIC music, int ampl);
@@ -135,7 +134,7 @@ public:
     virtual void        HGE_CALL    Music_SetChannelVolume(HMUSIC music, int channel, int volume);
     virtual int         HGE_CALL    Music_GetChannelVolume(HMUSIC music, int channel);
 
-    virtual HSTREAM     HGE_CALL    Stream_Load(const hgeString filename, uint32_t size=0);
+    virtual HSTREAM     HGE_CALL    Stream_Load(hgeConstString filename, uint32_t size=0);
     virtual void        HGE_CALL    Stream_Free(HSTREAM stream);
     virtual HCHANNEL    HGE_CALL    Stream_Play(HSTREAM stream, bool loop, int volume = 100);
 
@@ -179,7 +178,7 @@ public:
     virtual void        HGE_CALL    Gfx_SetTransform(float x=0, float y=0, float dx=0, float dy=0, float rot=0, float hscale=0, float vscale=0); 
 
 #if HGE_DIRECTX_VER >= 9
-	virtual HSHADER		HGE_CALL	Shader_Create(const hgeString filename);
+	virtual HSHADER		HGE_CALL	Shader_Create(hgeConstString filename);
 	virtual void		HGE_CALL	Shader_Free(HSHADER shader);
 	virtual void		HGE_CALL	Gfx_SetShader(HSHADER shader);
 #endif
@@ -189,7 +188,7 @@ public:
     virtual HTEXTURE    HGE_CALL    Target_GetTexture(HTARGET target);
 
     virtual HTEXTURE    HGE_CALL    Texture_Create(int width, int height);
-    virtual HTEXTURE    HGE_CALL    Texture_Load(const hgeString filename, uint32_t size=0, bool bMipmap=false);
+    virtual HTEXTURE    HGE_CALL    Texture_Load(hgeConstString filename, uint32_t size=0, bool bMipmap=false);
     virtual void        HGE_CALL    Texture_Free(HTEXTURE tex);
     virtual int         HGE_CALL    Texture_GetWidth(HTEXTURE tex, bool bOriginal=false);
     virtual int         HGE_CALL    Texture_GetHeight(HTEXTURE tex, bool bOriginal=false);
@@ -200,7 +199,7 @@ public:
 
     static HGE_Impl*    _Interface_Get();
     void                _FocusChange(bool bAct);
-    void                _PostError(hgeString error);
+    void                _PostError( hgeConstString error );
 
 
     HINSTANCE           hInstance;
@@ -219,7 +218,7 @@ public:
     bool                (*procFocusGainFunc)();
     bool                (*procGfxRestoreFunc)();
     bool                (*procExitFunc)();
-    const hgeString     szIcon;
+    const hgeChar		* szIcon;
     hgeChar				szWinTitle[256];
     int                 nScreenWidth;
     int                 nScreenHeight;
@@ -332,7 +331,7 @@ public:
     hgeChar				szTmpFilename[_MAX_PATH];
     CResourceList*		res;
     HANDLE				hSearch;
-    WIN32_FIND_DATA		SearchData;
+    HGE_WINAPI_UNICODE_SUFFIX(WIN32_FIND_DATA)	SearchData;
 
 
     // Timer

@@ -68,7 +68,7 @@ public:
 	int		line;
 
 private:
-	bool	strtkcmp(hgeString str, hgeString mem);
+	bool	strtkcmp(hgeConstString str, hgeConstString mem);
 
 	static HGE *hge;
 };

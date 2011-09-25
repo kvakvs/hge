@@ -75,7 +75,7 @@ bool DoCommands(int id)
 
 		case CMD_SYS_LIFETIME:
 			state.ps->info.fLifetime=SliderGetValue(CMD_SYS_LIFETIME);
-			GetTextCtrl(CMD_SYS_TLIFETIME)->printf("%.1f",state.ps->info.fLifetime);
+			GetTextCtrl(CMD_SYS_TLIFETIME)->printf(TXT("%.1f"),state.ps->info.fLifetime);
 			ButtonSetState(CMD_SYS_LIFECONT, false);
 			state.ps->Stop();
 			break;
@@ -95,7 +95,7 @@ bool DoCommands(int id)
 
 		case CMD_SYS_EMISSION:
 			state.ps->info.nEmission=int(SliderGetValue(CMD_SYS_EMISSION));
-			GetTextCtrl(CMD_SYS_TEMISSION)->printf("%d",state.ps->info.nEmission);
+			GetTextCtrl(CMD_SYS_TEMISSION)->printf(TXT("%d"),state.ps->info.nEmission);
 			break;
 
 		case CMD_SYS_PARLIFETIMELOCK:
@@ -142,7 +142,7 @@ bool DoCommands(int id)
 
 		case CMD_PM_DIRECTION:
 			state.ps->info.fDirection=SliderGetValue(CMD_PM_DIRECTION);
-			GetTextCtrl(CMD_PM_TDIRECTION)->printf("%d",int(state.ps->info.fDirection*180/M_PI));
+			GetTextCtrl(CMD_PM_TDIRECTION)->printf(TXT("%d"),int(state.ps->info.fDirection*180/M_PI));
 			break;
 		
 		case CMD_PM_RELATIVE:
@@ -151,7 +151,7 @@ bool DoCommands(int id)
 
 		case CMD_PM_SPREAD:
 			state.ps->info.fSpread=SliderGetValue(CMD_PM_SPREAD);
-			GetTextCtrl(CMD_PM_TSPREAD)->printf("%d",int(state.ps->info.fSpread*180/M_PI));
+			GetTextCtrl(CMD_PM_TSPREAD)->printf(TXT("%d"),int(state.ps->info.fSpread*180/M_PI));
 			break;
 
 		case CMD_PM_STARTSPEEDLOCK:
@@ -427,18 +427,18 @@ void cmdLoadPreset(int n)
 	{
 		SliderSetValue(CMD_SYS_LIFETIME, 5.0f);
 		ButtonSetState(CMD_SYS_LIFECONT, true);
-		GetTextCtrl(CMD_SYS_TLIFETIME)->printf("%.1f", 5.0f);
+		GetTextCtrl(CMD_SYS_TLIFETIME)->printf(TXT("%.1f"), 5.0f);
 		state.ps->Fire();
 	}
 	else
 	{
 		SliderSetValue(CMD_SYS_LIFETIME, state.ps->info.fLifetime);
 		ButtonSetState(CMD_SYS_LIFECONT, false);
-		GetTextCtrl(CMD_SYS_TLIFETIME)->printf("%.1f", state.ps->info.fLifetime);
+		GetTextCtrl(CMD_SYS_TLIFETIME)->printf(TXT("%.1f"), state.ps->info.fLifetime);
 	}
 
 	SliderSetValue(CMD_SYS_EMISSION, (float)state.ps->info.nEmission);
-	GetTextCtrl(CMD_SYS_TEMISSION)->printf("%d", state.ps->info.nEmission);
+	GetTextCtrl(CMD_SYS_TEMISSION)->printf(TXT("%d"), state.ps->info.nEmission);
 
 	SliderSetValue(CMD_SYS_PARLIFETIMEMIN, state.ps->info.fParticleLifeMin);
 	SliderSetValue(CMD_SYS_PARLIFETIMEMAX, state.ps->info.fParticleLifeMax);
@@ -458,11 +458,11 @@ void cmdLoadPreset(int n)
 	// Particle movement
 
 	SliderSetValue(CMD_PM_DIRECTION, state.ps->info.fDirection);
-	GetTextCtrl(CMD_PM_TDIRECTION)->printf("%d",int(state.ps->info.fDirection*180/M_PI));
+	GetTextCtrl(CMD_PM_TDIRECTION)->printf(TXT("%d"),int(state.ps->info.fDirection*180/M_PI));
 	ButtonSetState(CMD_PM_RELATIVE, state.ps->info.bRelative);
 
 	SliderSetValue(CMD_PM_SPREAD, state.ps->info.fSpread);
-	GetTextCtrl(CMD_PM_TSPREAD)->printf("%d",int(state.ps->info.fSpread*180/M_PI));
+	GetTextCtrl(CMD_PM_TSPREAD)->printf(TXT("%d"),int(state.ps->info.fSpread*180/M_PI));
 
 	SliderSetValue(CMD_PM_STARTSPEEDMIN, state.ps->info.fSpeedMin);
 	SliderSetValue(CMD_PM_STARTSPEEDMAX, state.ps->info.fSpeedMax);

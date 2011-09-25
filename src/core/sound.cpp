@@ -16,7 +16,7 @@
 #define LOADBASSFUNCTION(f) *((void**)&f)=(void*)GetProcAddress(hBass,#f)
 
 
-HEFFECT HGE_CALL HGE_Impl::Effect_Load(const char *filename, uint32_t size)
+HEFFECT HGE_CALL HGE_Impl::Effect_Load(hgeConstString filename, uint32_t size)
 {
 	uint32_t _size, length, samples;
 	HSAMPLE hs;
@@ -48,14 +48,14 @@ HEFFECT HGE_CALL HGE_Impl::Effect_Load(const char *filename, uint32_t size)
 				if(!buffer)
 				{
 					BASS_StreamFree(hstrm);
-					_PostError("Can't create sound effect: Not enough memory");
+					_PostError( TXT("Can't create sound effect: Not enough memory") );
 				}
 				else
 				{
 					BASS_ChannelGetData(hstrm, buffer, length);
 					hs=BASS_SampleCreateDone();
 					BASS_StreamFree(hstrm);
-					if(!hs)	_PostError("Can't create sound effect");
+					if(!hs)	_PostError( TXT("Can't create sound effect") );
 				}
 			}
 		}
@@ -105,7 +105,7 @@ void HGE_CALL HGE_Impl::Effect_Free(HEFFECT eff)
 }
 
 
-HMUSIC HGE_CALL HGE_Impl::Music_Load(const char *filename, uint32_t size)
+HMUSIC HGE_CALL HGE_Impl::Music_Load(hgeConstString filename, uint32_t size)
 {
 	void *data;
 	uint32_t _size;
@@ -125,7 +125,7 @@ HMUSIC HGE_CALL HGE_Impl::Music_Load(const char *filename, uint32_t size)
 		}
 
 		hm=BASS_MusicLoad(TRUE, data, 0, 0, BASS_MUSIC_PRESCAN | BASS_MUSIC_POSRESETEX | BASS_MUSIC_RAMP, 0);
-		if(!hm)	_PostError("Can't load music");
+		if(!hm)	_PostError( TXT("Can't load music") );
 		if(!size) Resource_Free(data);
 		return hm;
 	}
@@ -237,7 +237,7 @@ int HGE_CALL HGE_Impl::Music_GetChannelVolume(HMUSIC music, int channel)
 	else return -1;
 }
 
-HSTREAM HGE_CALL HGE_Impl::Stream_Load(const char *filename, uint32_t size)
+HSTREAM HGE_CALL HGE_Impl::Stream_Load(hgeConstString filename, uint32_t size)
 {
 	void *data;
 	uint32_t _size;
@@ -257,7 +257,7 @@ HSTREAM HGE_CALL HGE_Impl::Stream_Load(const char *filename, uint32_t size)
 		hs=BASS_StreamCreateFile(TRUE, data, 0, _size, 0);
 		if(!hs)
 		{
-			_PostError("Can't load stream");
+			_PostError( TXT("Can't load stream") );
 			if(!size) Resource_Free(data);
 			return 0;
 		}
@@ -437,7 +437,7 @@ bool HGE_Impl::_SoundInit()
 	hBass=LoadLibrary("bass.dll");
 	if (!hBass)
 	{
-		_PostError("Can't load BASS.DLL");
+		_PostError( TXT("Can't load BASS.DLL") );
 		return false;
 	}
 
@@ -445,7 +445,7 @@ bool HGE_Impl::_SoundInit()
 
 	if (HIWORD(BASS_GetVersion()) != BASSVERSION)
 	{
-		_PostError("Incorrect BASS.DLL version");
+		_PostError( TXT("Incorrect BASS.DLL version") );
 		return false;
 	}
 
@@ -495,14 +495,14 @@ bool HGE_Impl::_SoundInit()
 	bSilent=false;
 	if (!BASS_Init(-1,nSampleRate,0,hwnd,NULL))
 	{
-		System_Log("BASS Init failed, using no sound");
+		System_Log( TXT("BASS Init failed, using no sound") );
 		BASS_Init(0,nSampleRate,0,hwnd,NULL);
 		bSilent=true;
 	}
 	else
 	{
-		System_Log("Sound Device: %s",BASS_GetDeviceDescription(1));
-		System_Log("Sample rate: %ld\n", nSampleRate);
+		System_Log( TXT("Sound Device: %s"),BASS_GetDeviceDescription(1));
+		System_Log( TXT("Sample rate: %ld\n"), nSampleRate);
 	}
 
 	//BASS_SetConfig(BASS_CONFIG_BUFFER, 5000);

@@ -13,7 +13,7 @@
 
 // This is a GUI control constructor,
 // we should initialize all the variables here
-hgeGUIMenuItem::hgeGUIMenuItem(int _id, hgeFont *_fnt, HEFFECT _snd, float _x, float _y, float _delay, char *_title)
+hgeGUIMenuItem::hgeGUIMenuItem(int _id, hgeFont *_fnt, HEFFECT _snd, float _x, float _y, float _delay, hgeConstString _title)
 {
 	float w;
 	

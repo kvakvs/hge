@@ -7,7 +7,7 @@
 */
 
 
-#include "..\..\include\hgeresource.h"
+#include <hgeresource.h>
 #include "parser.h"
 #include "resources.h"
 
@@ -23,7 +23,7 @@ void AddRes(hgeResourceManager *rm, int type, ResDesc *resource)
 	rm->res[type]=resource;
 }
 
-ResDesc *FindRes(hgeResourceManager *rm, int type, const hgeString name)
+ResDesc *FindRes(hgeResourceManager *rm, int type, hgeConstString name)
 {
 	ResDesc *rc;
 
@@ -71,8 +71,8 @@ bool ScriptSkipToNextParameter(RScriptParser *sp, bool bIgnore)
 	}
 }
 
-void ScriptParseFileResource( hgeResourceManager *rm, RScriptParser *sp, const hgeString name,
-	const hgeString basename, ResDesc *rr, int restype)
+void ScriptParseFileResource( hgeResourceManager *rm, RScriptParser *sp, hgeConstString name,
+	hgeConstString basename, ResDesc *rr, int restype)
 {
 	RResource *rc=(RResource *)rr, *base;
 
@@ -271,7 +271,7 @@ void ScriptParseSpriteAnim(RScriptParser *sp, RSprite *rc, bool anim)
 
 /////////////// RScript //
 
-void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString sname, const hgeString sbasename)
+void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString sname, hgeConstString sbasename)
 {
 	RScriptParser *np;
 	RScript *res_script;
@@ -387,7 +387,7 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString s
 
 /////////////// RResource //
 
-void RResource::Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename)
+void RResource::Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename)
 {
 	ScriptParseFileResource(rm, sp, name, basename, new RResource(), RES_RESOURCE);
 }
@@ -406,7 +406,7 @@ void RResource::Free()
 
 /////////////// RTexture //
 
-void RTexture::Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename)
+void RTexture::Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename)
 {
 	RTexture *rc, *base;
 
@@ -463,7 +463,7 @@ void RTexture::Free()
 
 /////////////// REffect //
 
-void REffect::Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename)
+void REffect::Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename)
 {
 	ScriptParseFileResource(rm, sp, name, basename, new REffect(), RES_EFFECT);
 }
@@ -482,7 +482,7 @@ void REffect::Free()
 
 /////////////// RMusic //
 
-void RMusic::Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename)
+void RMusic::Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename)
 {
 //	ScriptParseFileResource(rm, sp, name, basename, new RMusic(), RES_MUSIC);
 
@@ -549,7 +549,7 @@ void RMusic::Free()
 
 /////////////// RStream //
 
-void RStream::Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename)
+void RStream::Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename)
 {
 	ScriptParseFileResource(rm, sp, name, basename, new RStream(), RES_STREAM);
 }
@@ -568,7 +568,7 @@ void RStream::Free()
 
 /////////////// RTarget //
 
-void RTarget::Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename)
+void RTarget::Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename)
 {
 	RTarget *rc, *base;
 
@@ -630,7 +630,7 @@ void RTarget::Free()
 
 /////////////// RSprite //
 
-void RSprite::Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename)
+void RSprite::Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename)
 {
 	RSprite *rc, *base;
 
@@ -691,7 +691,7 @@ void RSprite::Free()
 
 /////////////// RAnimation //
 
-void RAnimation::Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename)
+void RAnimation::Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename)
 {
 	RAnimation *rc, *base;
 
@@ -756,7 +756,7 @@ void RAnimation::Free()
 
 /////////////// RFont //
 
-void RFont::Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename)
+void RFont::Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename)
 {
 	RFont *rc, *base;
 
@@ -875,7 +875,7 @@ void RFont::Free()
 
 /////////////// RParticle //
 
-void RParticle::Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename)
+void RParticle::Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename)
 {
 	RParticle *rc, *base;
 
@@ -939,7 +939,7 @@ void RParticle::Free()
 
 /////////////// RDistort //
 
-void RDistort::Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename)
+void RDistort::Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename)
 {
 	RDistort *rc, *base;
 
@@ -1039,7 +1039,7 @@ void RDistort::Free()
 
 /////////////// RStringTable //
 
-void RStringTable::Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename)
+void RStringTable::Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename)
 {
 	ScriptParseFileResource(rm, sp, name, basename, new RStringTable(), RES_STRTABLE);
 }

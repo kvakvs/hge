@@ -83,7 +83,7 @@ bool RenderFunc()
 	hge->Gfx_Clear(0);
 	par->Render();
 	spr->Render(x, y);
-	fnt->printf(5, 5, HGETEXT_LEFT, "dt:%.3f\nFPS:%d (constant)", hge->Timer_GetDelta(), hge->Timer_GetFPS());
+	fnt->printf(5, 5, HGETEXT_LEFT, TXT("dt:%.3f\nFPS:%d (constant)"), hge->Timer_GetDelta(), hge->Timer_GetFPS());
 	hge->Gfx_EndScene();
 
 	return false;
@@ -94,10 +94,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	hge = hgeCreate(HGE_VERSION);
 
-	hge->System_SetState(HGE_LOGFILE, "hge_tut03.log");
+	hge->System_SetState(HGE_LOGFILE, TXT("hge_tut03.log"));
 	hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
 	hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
-	hge->System_SetState(HGE_TITLE, "HGE Tutorial 03 - Using helper classes");
+	hge->System_SetState(HGE_TITLE, TXT("HGE Tutorial 03 - Using helper classes"));
 	hge->System_SetState(HGE_FPS, 100);
 	hge->System_SetState(HGE_WINDOWED, true);
 	hge->System_SetState(HGE_SCREENWIDTH, 800);
@@ -107,13 +107,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	if(hge->System_Initiate()) {
 
 		// Load sound and texture
-		snd=hge->Effect_Load("menu.wav");
-		tex=hge->Texture_Load("particles.png");
+		snd=hge->Effect_Load(TXT("menu.wav"));
+		tex=hge->Texture_Load(TXT("particles.png"));
 		if(!snd || !tex)
 		{
 			// If one of the data files is not found, display
 			// an error message and shutdown.
-			MessageBox(NULL, "Can't load one of the following files:\nMENU.WAV, PARTICLES.PNG, FONT1.FNT, FONT1.PNG, TRAIL.PSI", "Error", MB_OK | MB_ICONERROR | MB_APPLMODAL);
+			MessageBoxW(NULL,
+				L"Can't load one of the following files:\nMENU.WAV, PARTICLES.PNG, FONT1.FNT, FONT1.PNG, TRAIL.PSI",
+				L"Error", MB_OK | MB_ICONERROR | MB_APPLMODAL);
 			hge->System_Shutdown();
 			hge->Release();
 			return 0;
@@ -125,13 +127,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		spr->SetHotSpot(16,16);
 
 		// Load a font
-		fnt=new hgeFont("font1.fnt");
+		fnt=new hgeFont(TXT("font1.fnt"));
 
 		// Create and set up a particle system
 		spt=new hgeSprite(tex, 32, 32, 32, 32);
 		spt->SetBlendMode(BLEND_COLORMUL | BLEND_ALPHAADD | BLEND_NOZWRITE);
 		spt->SetHotSpot(16,16);
-		par=new hgeParticleSystem("trail.psi",spt);
+		par=new hgeParticleSystem(TXT("trail.psi"),spt);
 		par->Fire();
 
 		// Let's rock now!

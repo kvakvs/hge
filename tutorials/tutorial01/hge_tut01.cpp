@@ -37,7 +37,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
 
 	// Set the window title
-	hge->System_SetState(HGE_TITLE, "HGE Tutorial 01 - Minimal HGE application");
+	hge->System_SetState(HGE_TITLE, TXT("HGE Tutorial 01 - Minimal HGE application"));
 	
 	// Run in windowed mode
 	// Default window size is 800x600
@@ -60,7 +60,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	else
 	{	
 		// If HGE initialization failed show error message
-		MessageBox(NULL, hge->System_GetErrorMessage(), "Error", MB_OK | MB_ICONERROR | MB_APPLMODAL);
+		HGE_WINAPI_UNICODE_SUFFIX(MessageBox)(
+			NULL, hge->System_GetErrorMessage(), TXT("Error"),
+			MB_OK | MB_ICONERROR | MB_APPLMODAL
+			);
 	}
 
 	// Now ESC has been pressed or the user

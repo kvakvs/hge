@@ -103,10 +103,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	hge = hgeCreate(HGE_VERSION);
 
 	// Set up log file, frame function, render function and window title
-	hge->System_SetState(HGE_LOGFILE, "hge_tut02.log");
+	hge->System_SetState(HGE_LOGFILE, TXT("hge_tut02.log"));
 	hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
 	hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
-	hge->System_SetState(HGE_TITLE, "HGE Tutorial 02 - Using input, sound and rendering");
+	hge->System_SetState(HGE_TITLE, TXT("HGE Tutorial 02 - Using input, sound and rendering"));
 
 	// Set up video mode
 	hge->System_SetState(HGE_WINDOWED, true);
@@ -117,13 +117,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	if(hge->System_Initiate())
 	{
 		// Load sound and texture
-		snd=hge->Effect_Load("menu.wav");
-		quad.tex=hge->Texture_Load("particles.png");
+		snd=hge->Effect_Load(TXT("menu.wav"));
+		quad.tex=hge->Texture_Load(TXT("particles.png"));
 		if(!snd || !quad.tex)
 		{
 			// If one of the data files is not found, display
 			// an error message and shutdown.
-			MessageBox(NULL, "Can't load MENU.WAV or PARTICLES.PNG", "Error", MB_OK | MB_ICONERROR | MB_APPLMODAL);
+			MessageBoxW(NULL, L"Can't load MENU.WAV or PARTICLES.PNG", L"Error", MB_OK | MB_ICONERROR | MB_APPLMODAL);
 			hge->System_Shutdown();
 			hge->Release();
 			return 0;
@@ -155,7 +155,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		hge->Texture_Free(quad.tex);
 		hge->Effect_Free(snd);
 	}
-	else MessageBox(NULL, hge->System_GetErrorMessage(), "Error", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+	else HGE_WINAPI_UNICODE_SUFFIX(MessageBox)(
+				NULL, hge->System_GetErrorMessage(), TXT("Error"),
+				MB_OK | MB_ICONERROR | MB_SYSTEMMODAL
+				);
 
 	// Clean up and shutdown
 	hge->System_Shutdown();

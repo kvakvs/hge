@@ -41,12 +41,12 @@ void hgeGUIText::SetMode(int _align)
 	else tx=rect.x1;
 }
 
-void hgeGUIText::SetText(const hgeString _text)
+void hgeGUIText::SetText(hgeConstString _text)
 {
 	hge_strcpy(text, _text);
 }
 
-void hgeGUIText::printf(const hgeString format, ...)
+void hgeGUIText::printf(hgeConstString format, ...)
 {
 	hge_vsprintf(text, format, (va_list)&format+sizeof(format));
 }

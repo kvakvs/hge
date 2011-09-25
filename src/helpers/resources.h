@@ -31,12 +31,12 @@
 
 
 void		AddRes(hgeResourceManager *rm, int type, ResDesc *resource);
-ResDesc*	FindRes(hgeResourceManager *rm, int type, const hgeString name);
+ResDesc*	FindRes(hgeResourceManager *rm, int type, hgeConstString name);
 
 
 struct RScript : public ResDesc
 {
-	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename);
+	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename);
 	virtual uint32_t Get(hgeResourceManager *rm) {return 0;}
 	virtual void  Free() {}
 };
@@ -45,7 +45,7 @@ struct RResource : public ResDesc
 {
 	hgeChar filename[HGE_MAX_RESOURCE_CHARS];
 
-	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename);
+	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename);
 	virtual uint32_t Get(hgeResourceManager *rm);
 	virtual void  Free();
 };
@@ -55,7 +55,7 @@ struct RTexture : public ResDesc
 	hgeChar		  filename[HGE_MAX_RESOURCE_CHARS];
 	bool		  mipmap;
 
-	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename);
+	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename);
 	virtual uint32_t Get(hgeResourceManager *rm);
 	virtual void  Free();
 };
@@ -64,7 +64,7 @@ struct REffect : public ResDesc
 {
 	hgeChar		  filename[HGE_MAX_RESOURCE_CHARS];
 
-	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename);
+	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename);
 	virtual uint32_t Get(hgeResourceManager *rm);
 	virtual void  Free();
 };
@@ -74,7 +74,7 @@ struct RMusic : public ResDesc
 	hgeChar		  filename[HGE_MAX_RESOURCE_CHARS];
 	int			  amplify;
 
-	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename);
+	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename);
 	virtual uint32_t Get(hgeResourceManager *rm);
 	virtual void  Free();
 };
@@ -83,7 +83,7 @@ struct RStream : public ResDesc
 {
 	hgeChar		  filename[HGE_MAX_RESOURCE_CHARS];
 
-	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename);
+	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename);
 	virtual uint32_t Get(hgeResourceManager *rm);
 	virtual void  Free();
 };
@@ -94,7 +94,7 @@ struct RTarget : public ResDesc
 	int			height;
 	bool		zbuffer;
 
-	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename);
+	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename);
 	virtual uint32_t Get(hgeResourceManager *rm);
 	virtual void  Free();
 };
@@ -113,7 +113,7 @@ struct RSprite : public ResDesc
 //	float		rotation;
 //	int			collision;
 
-	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename);
+	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename);
 	virtual uint32_t Get(hgeResourceManager *rm);
 	virtual void  Free();
 };
@@ -124,7 +124,7 @@ struct RAnimation : public RSprite
 	float		fps;
 	int			mode;
 
-	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename);
+	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename);
 	virtual uint32_t Get(hgeResourceManager *rm);
 	virtual void  Free();
 };
@@ -142,7 +142,7 @@ struct RFont : public ResDesc
 	float		spacing;
 	float		rotation;
 
-	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename);
+	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename);
 	virtual uint32_t Get(hgeResourceManager *rm);
 	virtual void  Free();
 };
@@ -152,7 +152,7 @@ struct RParticle : public ResDesc
 	hgeChar		filename[HGE_MAX_RESOURCE_CHARS];
 	hgeChar		spritename[HGE_MAX_RESOURCE_CHARS];
 
-	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename);
+	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename);
 	virtual uint32_t Get(hgeResourceManager *rm);
 	virtual void  Free();
 };
@@ -166,7 +166,7 @@ struct RDistort : public ResDesc
 	uint32_t	color;
 	float		z;
 
-	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename);
+	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename);
 	virtual uint32_t Get(hgeResourceManager *rm);
 	virtual void  Free();
 };
@@ -176,7 +176,7 @@ struct RStringTable : public ResDesc
 {
 	hgeChar		  filename[HGE_MAX_RESOURCE_CHARS];
 
-	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, const hgeString name, const hgeString basename);
+	static  void  Parse(hgeResourceManager *rm, RScriptParser *sp, hgeConstString name, hgeConstString basename);
 	virtual uint32_t Get(hgeResourceManager *rm);
 	virtual void  Free();
 };

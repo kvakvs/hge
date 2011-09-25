@@ -14,7 +14,7 @@ HGE *RScriptParser::hge=0;
 
 struct keyword
 {
-	const hgeString		word;
+	hgeConstString		word;
 	int					code;
 };
 
@@ -174,7 +174,7 @@ int RScriptParser::get_token()
 	return tokentype;
 }
 
-bool RScriptParser::strtkcmp(hgeString str, hgeString mem)
+bool RScriptParser::strtkcmp(hgeConstString str, hgeConstString mem)
 {
 	int i,len = hge_strlen(str);
 	for(i=0;i<len;i++)

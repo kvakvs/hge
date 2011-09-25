@@ -23,7 +23,7 @@ struct color
 
 struct filelist
 {
-	char		filename[256];
+	hgeChar		filename[256];
 	filelist*	next;
 };
 
@@ -31,16 +31,17 @@ filelist *files=0;
 
 
 extern bool Write32BitPNGWithPitch(FILE* fp, void* pBits, bool bNeedAlpha, int nWidth, int nHeight, int nPitch);
-bool convert(char *filename);
+bool convert( hgeConstString filename );
 
 
 int main(int argc, char* argv[])
 {
 	HANDLE				hSearch;
-	WIN32_FIND_DATA		SearchData;
+	HGE_WINAPI_UNICODE_SUFFIX(WIN32_FIND_DATA)	SearchData;
 	int					nfiles=0;
 	bool				done=false;
-	char				*buf, filename[256];
+	hgeChar				*buf, filename[256];
+	hgeChar				p[256];
 	filelist			*newFile, *nextFile;
 
 	printf("\nPNG Optimizer v0.2\nCopyright (C) 2003-2008, Relish Games\n\n");
@@ -56,7 +57,8 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		hSearch=FindFirstFile(argv[1], &SearchData);
+		hge_sprintf( p, sizeof p, TXT("%S"), argv[1] );
+		hSearch = HGE_WINAPI_UNICODE_SUFFIX(FindFirstFile)(p, &SearchData);
 		nextFile=0;
 
 		for(;;)
@@ -69,19 +71,21 @@ int main(int argc, char* argv[])
 
 			if(!(SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{
-				strcpy(filename, argv[1]);
-				buf=strrchr(filename, '\\');
+				hge_sprintf( p, sizeof p, TXT("%S"), argv[1] );
+				hge_strcpy(filename, p);
+
+				buf=hge_strrchr(filename, '\\');
 				if(!buf) buf=filename; else buf++;
-				strcpy(buf,SearchData.cFileName);
+				hge_strcpy(buf,SearchData.cFileName);
 				newFile=new filelist;
-				strcpy(newFile->filename,filename);
+				hge_strcpy(newFile->filename,filename);
 				newFile->next=0;
 				if(nextFile) nextFile->next=newFile;
 				else files=newFile;
 				nextFile=newFile;
 			}
 
-			done=!FindNextFile(hSearch, &SearchData);
+			done = ! HGE_WINAPI_UNICODE_SUFFIX(FindNextFile)( hSearch, &SearchData );
 		}
 
 		hge=hgeCreate(HGE_VERSION);
@@ -114,7 +118,7 @@ int main(int argc, char* argv[])
 	}
 }
 
-bool convert(char *filename)
+bool convert( hgeConstString filename )
 {
 	HTEXTURE tex;
 	int width, height, pitch;
@@ -166,7 +170,7 @@ bool convert(char *filename)
 			}
 
 
-	fp=fopen(filename,"wb");
+	fp=hge_fopen_wb(filename);
 	if(!fp)
 	{
 		hge->Texture_Unlock(tex);
