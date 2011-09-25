@@ -7,7 +7,7 @@
 */
 
 
-#include "..\..\include\hgecolor.h"
+#include <hgecolor.h>
 #include <math.h>
 
 
@@ -17,10 +17,10 @@ void hgeColorHSV::SetHWColor(uint32_t col)
 	float minv, maxv, delta;
 	float del_R, del_G, del_B;
 
-	a = (col>>24) / 255.0f;
-	r = ((col>>16) & 0xFF) / 255.0f;
-	g = ((col>>8)  & 0xFF) / 255.0f;
-	b = (col       & 0xFF) / 255.0f;
+	a = (col >> 24) / 255.0f;
+	r = ((col >> 16) & 0xFF) / 255.0f;
+	g = ((col >> 8) & 0xFF) / 255.0f;
+	b = (col & 0xFF) / 255.0f;
 
 	minv = min(min(r, g), b);
 	maxv = max(max(r, g), b);
@@ -40,14 +40,27 @@ void hgeColorHSV::SetHWColor(uint32_t col)
 		del_G = (((maxv - g) / 6) + (delta / 2)) / delta;
 		del_B = (((maxv - b) / 6) + (delta / 2)) / delta;
 
-		if      (r == maxv) {h = del_B - del_G;}
-		else if (g == maxv) {h = (1.0f / 3.0f) + del_R - del_B;}
-		else if (b == maxv) {h = (2.0f / 3.0f) + del_G - del_R;}
-		
-		if (h < 0) h += 1;
-		if (h > 1) h -= 1;
+		if (r == maxv)
+		{
+			h = del_B - del_G;
+		}
+		else if (g == maxv)
+		{
+			h = (1.0f / 3.0f) + del_R - del_B;
+		}
+		else if (b == maxv)
+		{
+			h = (2.0f / 3.0f) + del_G - del_R;
+		}
+
+		if (h < 0)
+			h += 1;
+		if (h > 1)
+			h -= 1;
 	}
 }
+
+
 
 uint32_t hgeColorHSV::GetHWColor() const
 {
@@ -63,20 +76,52 @@ uint32_t hgeColorHSV::GetHWColor() const
 	else
 	{
 		xh = h * 6;
-		if(xh == 6) xh=0;
+		if (xh == 6)
+			xh = 0;
 		i = floorf(xh);
 		p1 = v * (1 - s);
 		p2 = v * (1 - s * (xh - i));
 		p3 = v * (1 - s * (1 - (xh - i)));
 
-		if      (i == 0) {r = v;  g = p3; b = p1;}
-		else if (i == 1) {r = p2; g = v;  b = p1;}
-		else if (i == 2) {r = p1; g = v;  b = p3;}
-		else if (i == 3) {r = p1; g = p2; b = v; }
-		else if (i == 4) {r = p3; g = p1; b = v; }
-		else			 {r = v;  g = p1; b = p2;}
+		if (i == 0)
+		{
+			r = v;
+			g = p3;
+			b = p1;
+		}
+		else if (i == 1)
+		{
+			r = p2;
+			g = v;
+			b = p1;
+		}
+		else if (i == 2)
+		{
+			r = p1;
+			g = v;
+			b = p3;
+		}
+		else if (i == 3)
+		{
+			r = p1;
+			g = p2;
+			b = v;
+		}
+		else if (i == 4)
+		{
+			r = p3;
+			g = p1;
+			b = v;
+		}
+		else
+		{
+			r = v;
+			g = p1;
+			b = p2;
+		}
 	}
 
-	return (uint32_t(a*255.0f)<<24) + (uint32_t(r*255.0f)<<16) + (uint32_t(g*255.0f)<<8) + uint32_t(b*255.0f);
+	return (uint32_t(a * 255.0f) << 24) + (uint32_t(r * 255.0f) << 16)
+			+ (uint32_t(g * 255.0f) << 8) + uint32_t(b * 255.0f);
 }
 

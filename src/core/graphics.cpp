@@ -15,615 +15,736 @@
 
 void HGE_CALL HGE_Impl::Gfx_Clear(uint32_t color)
 {
-    if(pCurTarget)
-    {
-        if(pCurTarget->pDepth)
-            pD3DDevice->Clear( 0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, color, 1.0f, 0 );
-        else
-            pD3DDevice->Clear( 0, NULL, D3DCLEAR_TARGET, color, 1.0f, 0 );
-    }
-    else
-    {
-        if(bZBuffer)
-            pD3DDevice->Clear( 0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, color, 1.0f, 0 );
-        else
-            pD3DDevice->Clear( 0, NULL, D3DCLEAR_TARGET, color, 1.0f, 0 );
-    }
+	if (pCurTarget)
+	{
+		if (pCurTarget->pDepth)
+			pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
+					color, 1.0f, 0);
+		else
+			pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET, color, 1.0f, 0);
+	}
+	else
+	{
+		if (bZBuffer)
+			pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
+					color, 1.0f, 0);
+		else
+			pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET, color, 1.0f, 0);
+	}
 }
 
 void HGE_CALL HGE_Impl::Gfx_SetClipping(int x, int y, int w, int h)
 {
-    hgeGAPIViewport vp;
-    int scr_width, scr_height;
+	hgeGAPIViewport vp;
+	int scr_width, scr_height;
 
-    if(!pCurTarget) {
-        scr_width=pHGE->System_GetStateInt(HGE_SCREENWIDTH);
-        scr_height=pHGE->System_GetStateInt(HGE_SCREENHEIGHT);
-    }
-    else {
-        scr_width=Texture_GetWidth((HTEXTURE)pCurTarget->pTex);
-        scr_height=Texture_GetHeight((HTEXTURE)pCurTarget->pTex);
-    }
+	if (!pCurTarget)
+	{
+		scr_width = pHGE->System_GetStateInt(HGE_SCREENWIDTH);
+		scr_height = pHGE->System_GetStateInt(HGE_SCREENHEIGHT);
+	}
+	else
+	{
+		scr_width = Texture_GetWidth((HTEXTURE) pCurTarget->pTex);
+		scr_height = Texture_GetHeight((HTEXTURE) pCurTarget->pTex);
+	}
 
-    if(!w) {
-        vp.X=0;
-        vp.Y=0;
-        vp.Width=scr_width;
-        vp.Height=scr_height;
-    }
-    else
-    {
-        if(x<0) { w+=x; x=0; }
-        if(y<0) { h+=y; y=0; }
+	if (!w)
+	{
+		vp.X = 0;
+		vp.Y = 0;
+		vp.Width = scr_width;
+		vp.Height = scr_height;
+	}
+	else
+	{
+		if (x < 0)
+		{
+			w += x;
+			x = 0;
+		}
+		if (y < 0)
+		{
+			h += y;
+			y = 0;
+		}
 
-        if(x+w > scr_width) w=scr_width-x;
-        if(y+h > scr_height) h=scr_height-y;
+		if (x + w > scr_width)
+			w = scr_width - x;
+		if (y + h > scr_height)
+			h = scr_height - y;
 
-        vp.X=x;
-        vp.Y=y;
-        vp.Width=w;
-        vp.Height=h;
-    }
+		vp.X = x;
+		vp.Y = y;
+		vp.Width = w;
+		vp.Height = h;
+	}
 
-    vp.MinZ=0.0f;
-    vp.MaxZ=1.0f;
+	vp.MinZ = 0.0f;
+	vp.MaxZ = 1.0f;
 
-    _render_batch();
-    pD3DDevice->SetViewport(&vp);
+	_render_batch();
+	pD3DDevice->SetViewport(&vp);
 
-    D3DXMATRIX tmp;
-    D3DXMatrixScaling(&matProj, 1.0f, -1.0f, 1.0f);
-    D3DXMatrixTranslation(&tmp, -0.5f, +0.5f, 0.0f);
-    D3DXMatrixMultiply(&matProj, &matProj, &tmp);
-    D3DXMatrixOrthoOffCenterLH(&tmp, (float)vp.X, (float)(vp.X+vp.Width), -((float)(vp.Y+vp.Height)), -((float)vp.Y), vp.MinZ, vp.MaxZ);
-    D3DXMatrixMultiply(&matProj, &matProj, &tmp);
-    pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
+	D3DXMATRIX tmp;
+	D3DXMatrixScaling(&matProj, 1.0f, -1.0f, 1.0f);
+	D3DXMatrixTranslation(&tmp, -0.5f, +0.5f, 0.0f);
+	D3DXMatrixMultiply(&matProj, &matProj, &tmp);
+	D3DXMatrixOrthoOffCenterLH(&tmp, (float) vp.X, (float) (vp.X + vp.Width),
+			-((float) (vp.Y + vp.Height)), -((float) vp.Y), vp.MinZ, vp.MaxZ);
+	D3DXMatrixMultiply(&matProj, &matProj, &tmp);
+	pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
 }
 
-void HGE_CALL HGE_Impl::Gfx_SetTransform(float x, float y, float dx, float dy, float rot, float hscale, float vscale)
+
+
+void HGE_CALL HGE_Impl::Gfx_SetTransform(float x, float y, float dx, float dy,
+		float rot, float hscale, float vscale)
 {
-    D3DXMATRIX tmp;
+	D3DXMATRIX tmp;
 
-    if(vscale==0.0f) D3DXMatrixIdentity(&matView);
-    else
-    {
-        D3DXMatrixTranslation(&matView, -x, -y, 0.0f);
-        D3DXMatrixScaling(&tmp, hscale, vscale, 1.0f);
-        D3DXMatrixMultiply(&matView, &matView, &tmp);
-        D3DXMatrixRotationZ(&tmp, -rot);
-        D3DXMatrixMultiply(&matView, &matView, &tmp);
-        D3DXMatrixTranslation(&tmp, x+dx, y+dy, 0.0f);
-        D3DXMatrixMultiply(&matView, &matView, &tmp);
-    }
+	if (vscale == 0.0f)
+		D3DXMatrixIdentity(&matView);
+	else
+	{
+		D3DXMatrixTranslation(&matView, -x, -y, 0.0f);
+		D3DXMatrixScaling(&tmp, hscale, vscale, 1.0f);
+		D3DXMatrixMultiply(&matView, &matView, &tmp);
+		D3DXMatrixRotationZ(&tmp, -rot);
+		D3DXMatrixMultiply(&matView, &matView, &tmp);
+		D3DXMatrixTranslation(&tmp, x + dx, y + dy, 0.0f);
+		D3DXMatrixMultiply(&matView, &matView, &tmp);
+	}
 
-    _render_batch();
-    pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
+	_render_batch();
+	pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
 }
+
+
 
 bool HGE_CALL HGE_Impl::Gfx_BeginScene(HTARGET targ)
 {
-    hgeGAPISurface * pSurf = 0, * pDepth = 0;
+	hgeGAPISurface * pSurf = 0, *pDepth = 0;
 
-    D3DDISPLAYMODE Mode;
-    CRenderTargetList *target=(CRenderTargetList *)targ;
+	D3DDISPLAYMODE Mode;
+	CRenderTargetList *target = (CRenderTargetList *) targ;
 
-    HRESULT hr = pD3DDevice->TestCooperativeLevel();
-    if (hr == D3DERR_DEVICELOST) return false;
-    else if (hr == D3DERR_DEVICENOTRESET)
-    {
-        if(bWindowed)
-        {
-            if(FAILED(pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode)) || Mode.Format==D3DFMT_UNKNOWN) 
-            {
-                _PostError( TXT("Can't determine desktop video mode") );
-                return false;
-            }
+	HRESULT hr = pD3DDevice->TestCooperativeLevel();
+	if (hr == D3DERR_DEVICELOST)
+		return false;
+	else if (hr == D3DERR_DEVICENOTRESET)
+	{
+		if (bWindowed)
+		{
+			if (FAILED(pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode))
+					|| Mode.Format == D3DFMT_UNKNOWN)
+			{
+				_PostError(TXT("Can't determine desktop video mode"));
+				return false;
+			}
 
-            d3dppW.BackBufferFormat = Mode.Format;
-            if(_format_id(Mode.Format) < 4) nScreenBPP=16;
-            else nScreenBPP=32;
-        }
+			d3dppW.BackBufferFormat = Mode.Format;
+			if (_format_id(Mode.Format) < 4)
+				nScreenBPP = 16;
+			else
+				nScreenBPP = 32;
+		}
 
-        if(!_GfxRestore()) return false; 
-    }
-    
-    if(VertArray)
-    {
-        _PostError( TXT("Gfx_BeginScene: Scene is already being rendered") );
-        return false;
-    }
-    
-    if(target != pCurTarget)
-    {
-        if(target)
-        {
-            target->pTex->GetSurfaceLevel(0, &pSurf);
-            pDepth=target->pDepth;
-        }
-        else
-        {
-            pSurf=pScreenSurf;
-            pDepth=pScreenDepth;
-        }
+		if (!_GfxRestore())
+			return false;
+	}
+
+	if (VertArray)
+	{
+		_PostError(TXT("Gfx_BeginScene: Scene is already being rendered"));
+		return false;
+	}
+
+	if (target != pCurTarget)
+	{
+		if (target)
+		{
+			target->pTex->GetSurfaceLevel(0, &pSurf);
+			pDepth = target->pDepth;
+		}
+		else
+		{
+			pSurf = pScreenSurf;
+			pDepth = pScreenDepth;
+		}
 #if HGE_DIRECTX_VER == 8
-        if(FAILED(pD3DDevice->SetRenderTarget(pSurf, pDepth)))
+		if(FAILED(pD3DDevice->SetRenderTarget(pSurf, pDepth)))
 #endif
 #if HGE_DIRECTX_VER == 9
-        if(FAILED(pD3DDevice->SetRenderTarget(0, pSurf)))
+		if(FAILED(pD3DDevice->SetRenderTarget(0, pSurf)))
 #endif
-        {
-            if(target) pSurf->Release();
-            _PostError( TXT("Gfx_BeginScene: Can't set render target") );
-            return false;
-        }
-        if(target)
-        {
-            pSurf->Release();
-            if(target->pDepth) pD3DDevice->SetRenderState( D3DRS_ZENABLE, D3DZB_TRUE ); 
-            else pD3DDevice->SetRenderState( D3DRS_ZENABLE, D3DZB_FALSE ); 
-            _SetProjectionMatrix(target->width, target->height);
-        }
-        else
-        {
-            if(bZBuffer) pD3DDevice->SetRenderState( D3DRS_ZENABLE, D3DZB_TRUE ); 
-            else pD3DDevice->SetRenderState( D3DRS_ZENABLE, D3DZB_FALSE );
-            _SetProjectionMatrix(nScreenWidth, nScreenHeight);
-        }
+		{
+			if (target)
+				pSurf->Release();
+			_PostError(TXT("Gfx_BeginScene: Can't set render target"));
+			return false;
+		}
+		if (target)
+		{
+			pSurf->Release();
+			if (target->pDepth)
+				pD3DDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+			else
+				pD3DDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+			_SetProjectionMatrix(target->width, target->height);
+		}
+		else
+		{
+			if (bZBuffer)
+				pD3DDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+			else
+				pD3DDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+			_SetProjectionMatrix(nScreenWidth, nScreenHeight);
+		}
 
-        pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
-        D3DXMatrixIdentity(&matView);
-        pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
+		pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
+		D3DXMatrixIdentity(&matView);
+		pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
 
-        pCurTarget=target;
-    }
+		pCurTarget = target;
+	}
 
-    pD3DDevice->BeginScene();
+	pD3DDevice->BeginScene();
 #if HGE_DIRECTX_VER == 8
-    pVB->Lock( 0, 0, (uint8_t**)&VertArray, 0 );
+	pVB->Lock( 0, 0, (uint8_t**)&VertArray, 0 );
 #endif
 #if HGE_DIRECTX_VER == 9
-    pVB->Lock( 0, 0, (VOID**)&VertArray, 0 );
+	pVB->Lock( 0, 0, (VOID**)&VertArray, 0 );
 #endif
-    return true;
+	return true;
 }
+
+
 
 void HGE_CALL HGE_Impl::Gfx_EndScene()
 {
-    _render_batch(true);
-    pD3DDevice->EndScene();
-    if(!pCurTarget) pD3DDevice->Present( NULL, NULL, NULL, NULL );
+	_render_batch(true);
+	pD3DDevice->EndScene();
+	if (!pCurTarget)
+		pD3DDevice->Present(NULL, NULL, NULL, NULL );
 }
 
-void HGE_CALL HGE_Impl::Gfx_RenderLine(float x1, float y1, float x2, float y2, uint32_t color, float z)
+
+
+void HGE_CALL HGE_Impl::Gfx_RenderLine(float x1, float y1, float x2, float y2,
+		uint32_t color, float z)
 {
-    if(VertArray)
-    {
-        if(CurPrimType!=HGEPRIM_LINES || nPrim>=VERTEX_BUFFER_SIZE/HGEPRIM_LINES || CurTexture || CurBlendMode!=BLEND_DEFAULT)
-        {
-            _render_batch();
+	if (VertArray)
+	{
+		if (CurPrimType != HGEPRIM_LINES || nPrim >= VERTEX_BUFFER_SIZE
+				/ HGEPRIM_LINES || CurTexture || CurBlendMode != BLEND_DEFAULT)
+		{
+			_render_batch();
 
-            CurPrimType=HGEPRIM_LINES;
-            if(CurBlendMode != BLEND_DEFAULT) _SetBlendMode(BLEND_DEFAULT);
-            if(CurTexture) { pD3DDevice->SetTexture(0, 0); CurTexture=0; }
-        }
+			CurPrimType = HGEPRIM_LINES;
+			if (CurBlendMode != BLEND_DEFAULT)
+				_SetBlendMode(BLEND_DEFAULT);
+			if (CurTexture)
+			{
+				pD3DDevice->SetTexture(0, 0);
+				CurTexture = 0;
+			}
+		}
 
-        int i=nPrim*HGEPRIM_LINES;
-        VertArray[i].x = x1; VertArray[i+1].x = x2;
-        VertArray[i].y = y1; VertArray[i+1].y = y2;
-        VertArray[i].z     = VertArray[i+1].z = z;
-        VertArray[i].col   = VertArray[i+1].col = color;
-        VertArray[i].tx    = VertArray[i+1].tx =
-        VertArray[i].ty    = VertArray[i+1].ty = 0.0f;
+		int i = nPrim * HGEPRIM_LINES;
+		VertArray[i].x = x1;
+		VertArray[i + 1].x = x2;
+		VertArray[i].y = y1;
+		VertArray[i + 1].y = y2;
+		VertArray[i].z = VertArray[i + 1].z = z;
+		VertArray[i].col = VertArray[i + 1].col = color;
+		VertArray[i].tx = VertArray[i + 1].tx = VertArray[i].ty = VertArray[i
+				+ 1].ty = 0.0f;
 
-        nPrim++;
-    }
+		nPrim++;
+	}
 }
+
+
 
 void HGE_CALL HGE_Impl::Gfx_RenderTriple(const hgeTriple *triple)
 {
-    if(VertArray)
-    {
-        if(CurPrimType!=HGEPRIM_TRIPLES || nPrim>=VERTEX_BUFFER_SIZE/HGEPRIM_TRIPLES || CurTexture!=triple->tex || CurBlendMode!=triple->blend)
-        {
-            _render_batch();
+	if (VertArray)
+	{
+		if (CurPrimType != HGEPRIM_TRIPLES
+				|| nPrim >= VERTEX_BUFFER_SIZE / HGEPRIM_TRIPLES
+				|| CurTexture != triple->tex
+				|| CurBlendMode != triple->blend)
+		{
+			_render_batch();
 
-            CurPrimType=HGEPRIM_TRIPLES;
-            if(CurBlendMode != triple->blend) _SetBlendMode(triple->blend);
-            if(triple->tex != CurTexture) {
-                pD3DDevice->SetTexture( 0, (hgeGAPITexture *)triple->tex );
-                CurTexture = triple->tex;
-            }
-        }
+			CurPrimType = HGEPRIM_TRIPLES;
+			if (CurBlendMode != triple->blend)
+				_SetBlendMode(triple->blend);
+			if (triple->tex != CurTexture)
+			{
+				pD3DDevice->SetTexture(0, (hgeGAPITexture *) triple->tex);
+				CurTexture = triple->tex;
+			}
+		}
 
-        memcpy(&VertArray[nPrim*HGEPRIM_TRIPLES], triple->v, sizeof(hgeVertex)*HGEPRIM_TRIPLES);
-        nPrim++;
-    }
+		memcpy(&VertArray[nPrim * HGEPRIM_TRIPLES], triple->v, sizeof(hgeVertex) * HGEPRIM_TRIPLES);
+		nPrim++;
+	}
 }
+
+
 
 void HGE_CALL HGE_Impl::Gfx_RenderQuad(const hgeQuad *quad)
 {
-    if(VertArray)
-    {
-        if(CurPrimType!=HGEPRIM_QUADS || nPrim>=VERTEX_BUFFER_SIZE/HGEPRIM_QUADS || CurTexture!=quad->tex || CurBlendMode!=quad->blend)
-        {
-            _render_batch();
+	if (VertArray)
+	{
+		if (CurPrimType != HGEPRIM_QUADS
+				|| nPrim >= VERTEX_BUFFER_SIZE / HGEPRIM_QUADS
+				|| CurTexture != quad->tex
+				|| CurBlendMode != quad->blend)
+		{
+			_render_batch();
 
-            CurPrimType=HGEPRIM_QUADS;
-            if(CurBlendMode != quad->blend) _SetBlendMode(quad->blend);
-            if(quad->tex != CurTexture)
-            {
-                pD3DDevice->SetTexture( 0, (hgeGAPITexture *)quad->tex );
-                CurTexture = quad->tex;
-            }
-        }
+			CurPrimType = HGEPRIM_QUADS;
+			if (CurBlendMode != quad->blend)
+				_SetBlendMode(quad->blend);
+			if (quad->tex != CurTexture)
+			{
+				pD3DDevice->SetTexture(0, (hgeGAPITexture *) quad->tex);
+				CurTexture = quad->tex;
+			}
+		}
 
-        memcpy(&VertArray[nPrim*HGEPRIM_QUADS], quad->v, sizeof(hgeVertex)*HGEPRIM_QUADS);
-        nPrim++;
-    }
+		memcpy(&VertArray[nPrim * HGEPRIM_QUADS], quad->v, sizeof(hgeVertex) * HGEPRIM_QUADS);
+		nPrim++;
+	}
 }
 
-hgeVertex* HGE_CALL HGE_Impl::Gfx_StartBatch(int prim_type, HTEXTURE tex, int blend, int *max_prim)
+
+
+hgeVertex* HGE_CALL HGE_Impl::Gfx_StartBatch(int prim_type, HTEXTURE tex,
+		int blend, int *max_prim)
 {
-    if(VertArray)
-    {
-        _render_batch();
+	if (VertArray)
+	{
+		_render_batch();
 
-        CurPrimType=prim_type;
-        if(CurBlendMode != blend) _SetBlendMode(blend);
-        if(tex != CurTexture)
-        {
-            pD3DDevice->SetTexture( 0, (hgeGAPITexture *)tex );
-            CurTexture = tex;
-        }
+		CurPrimType = prim_type;
+		if (CurBlendMode != blend)
+			_SetBlendMode(blend);
+		if (tex != CurTexture)
+		{
+			pD3DDevice->SetTexture(0, (hgeGAPITexture *) tex);
+			CurTexture = tex;
+		}
 
-        *max_prim=VERTEX_BUFFER_SIZE / prim_type;
-        return VertArray;
-    }
-    else return 0;
+		*max_prim = VERTEX_BUFFER_SIZE / prim_type;
+		return VertArray;
+	}
+	else
+		return 0;
 }
+
+
 
 void HGE_CALL HGE_Impl::Gfx_FinishBatch(int nprim)
 {
-    nPrim=nprim;
+	nPrim = nprim;
 }
+
+
 
 HTARGET HGE_CALL HGE_Impl::Target_Create(int width, int height, bool zbuffer)
 {
-    CRenderTargetList *pTarget;
-    D3DSURFACE_DESC TDesc;
+	CRenderTargetList *pTarget;
+	D3DSURFACE_DESC TDesc;
 
-    pTarget = new CRenderTargetList;
-    pTarget->pTex=0;
-    pTarget->pDepth=0;
+	pTarget = new CRenderTargetList;
+	pTarget->pTex = 0;
+	pTarget->pDepth = 0;
 
-    if(FAILED(D3DXCreateTexture(pD3DDevice, width, height, 1, D3DUSAGE_RENDERTARGET,
-                        d3dpp->BackBufferFormat, D3DPOOL_DEFAULT, &pTarget->pTex)))
-    {
-        _PostError( TXT("Can't create render target texture") );
-        delete pTarget;
-        return 0;
-    }
+	if (FAILED(D3DXCreateTexture(pD3DDevice, width, height, 1, D3DUSAGE_RENDERTARGET,
+					d3dpp->BackBufferFormat, D3DPOOL_DEFAULT, &pTarget->pTex)))
+	{
+		_PostError(TXT("Can't create render target texture"));
+		delete pTarget;
+		return 0;
+	}
 
-    pTarget->pTex->GetLevelDesc(0, &TDesc);
-    pTarget->width=TDesc.Width;
-    pTarget->height=TDesc.Height;
+	pTarget->pTex->GetLevelDesc(0, &TDesc);
+	pTarget->width = TDesc.Width;
+	pTarget->height = TDesc.Height;
 
-    if(zbuffer)
-    {
+	if (zbuffer)
+	{
 #if HGE_DIRECTX_VER == 8
-        if(FAILED(pD3DDevice->CreateDepthStencilSurface(pTarget->width, pTarget->height,
-                        D3DFMT_D16, D3DMULTISAMPLE_NONE, &pTarget->pDepth)))
+		if(FAILED(pD3DDevice->CreateDepthStencilSurface(pTarget->width, pTarget->height,
+								D3DFMT_D16, D3DMULTISAMPLE_NONE, &pTarget->pDepth)))
 #endif
 #if HGE_DIRECTX_VER == 9
-        if(FAILED(pD3DDevice->CreateDepthStencilSurface(width, height,
-                        D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, false, &pTarget->pDepth, NULL)))
+		if(FAILED(pD3DDevice->CreateDepthStencilSurface(width, height,
+								D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, false, &pTarget->pDepth, NULL)))
 #endif
-        {   
-            pTarget->pTex->Release();
-            _PostError( TXT("Can't create render target depth buffer") );
-            delete pTarget;
-            return 0;
-        }
-    }
+		{
+			pTarget->pTex->Release();
+			_PostError(TXT("Can't create render target depth buffer"));
+			delete pTarget;
+			return 0;
+		}
+	}
 
-    pTarget->next=pTargets;
-    pTargets=pTarget;
+	pTarget->next = pTargets;
+	pTargets = pTarget;
 
-    return (HTARGET)pTarget;
+	return (HTARGET) pTarget;
 }
+
+
 
 void HGE_CALL HGE_Impl::Target_Free(HTARGET target)
 {
-    CRenderTargetList *pTarget=pTargets, *pPrevTarget=NULL;
+	CRenderTargetList *pTarget = pTargets, *pPrevTarget = NULL;
 
-    while(pTarget)
-    {
-        if((CRenderTargetList *)target == pTarget)
-        {
-            if(pPrevTarget)
-                pPrevTarget->next = pTarget->next;
-            else
-                pTargets = pTarget->next;
+	while (pTarget)
+	{
+		if ((CRenderTargetList *) target == pTarget)
+		{
+			if (pPrevTarget)
+				pPrevTarget->next = pTarget->next;
+			else
+				pTargets = pTarget->next;
 
-            if(pTarget->pTex) pTarget->pTex->Release();
-            if(pTarget->pDepth) pTarget->pDepth->Release();
+			if (pTarget->pTex)
+				pTarget->pTex->Release();
+			if (pTarget->pDepth)
+				pTarget->pDepth->Release();
 
-            delete pTarget;
-            return;
-        }
+			delete pTarget;
+			return;
+		}
 
-        pPrevTarget = pTarget;
-        pTarget = pTarget->next;
-    }
+		pPrevTarget = pTarget;
+		pTarget = pTarget->next;
+	}
 }
+
+
 
 HTEXTURE HGE_CALL HGE_Impl::Target_GetTexture(HTARGET target)
 {
-    CRenderTargetList *targ=(CRenderTargetList *)target;
-    if(target) return (HTEXTURE)targ->pTex;
-    else return 0;
+	CRenderTargetList *targ = (CRenderTargetList *) target;
+	if (target)
+		return (HTEXTURE) targ->pTex;
+	else
+		return 0;
 }
+
+
 
 HTEXTURE HGE_CALL HGE_Impl::Texture_Create(int width, int height)
 {
-    hgeGAPITexture * pTex;
+	hgeGAPITexture * pTex;
 
-    if( FAILED( D3DXCreateTexture( pD3DDevice, width, height,
-                                        1,                  // Mip levels
-                                        0,                  // Usage
-                                        D3DFMT_A8R8G8B8,    // Format
-                                        D3DPOOL_MANAGED,    // Memory pool
-                                        &pTex ) ) )
-    {   
-        _PostError( TXT("Can't create texture") );
-        return NULL;
-    }
+	if (FAILED( D3DXCreateTexture( pD3DDevice, width, height,
+					1, // Mip levels
+					0, // Usage
+					D3DFMT_A8R8G8B8, // Format
+					D3DPOOL_MANAGED, // Memory pool
+					&pTex ) ))
+	{
+		_PostError(TXT("Can't create texture"));
+		return NULL;
+	}
 
-    return (HTEXTURE)pTex;
+	return (HTEXTURE) pTex;
 }
 
-HTEXTURE HGE_CALL HGE_Impl::Texture_Load(hgeConstString filename, uint32_t size, bool bMipmap)
+
+
+HTEXTURE HGE_CALL HGE_Impl::Texture_Load(hgeConstString filename,
+		uint32_t size, bool bMipmap)
 {
-    void *data;
-    uint32_t _size;
-    D3DFORMAT fmt1, fmt2;
-    hgeGAPITexture * pTex;
-    D3DXIMAGE_INFO info;
-    CTextureList *texItem;
+	void *data;
+	uint32_t _size;
+	D3DFORMAT fmt1, fmt2;
+	hgeGAPITexture * pTex;
+	D3DXIMAGE_INFO info;
+	CTextureList *texItem;
 
-    if(size) {
-		data=(void *)filename;
-		_size=size;
-	} else {
-        data=pHGE->Resource_Load(filename, &_size);
-        if(!data) return NULL;
-    }
+	if (size)
+	{
+		data = (void *) filename;
+		_size = size;
+	}
+	else
+	{
+		data = pHGE->Resource_Load(filename, &_size);
+		if (!data)
+			return NULL;
+	}
 
-    if(*(uint32_t*)data == 0x20534444) // Compressed DDS format magic number
-    {
-        fmt1=D3DFMT_UNKNOWN;
-        fmt2=D3DFMT_A8R8G8B8;
-    }
-    else
-    {
-        fmt1=D3DFMT_A8R8G8B8;
-        fmt2=D3DFMT_UNKNOWN;
-    }
+	if (*(uint32_t*) data == 0x20534444) // Compressed DDS format magic number
+	{
+		fmt1 = D3DFMT_UNKNOWN;
+		fmt2 = D3DFMT_A8R8G8B8;
+	}
+	else
+	{
+		fmt1 = D3DFMT_A8R8G8B8;
+		fmt2 = D3DFMT_UNKNOWN;
+	}
 
-//  if( FAILED( D3DXCreateTextureFromFileInMemory( pD3DDevice, data, _size, &pTex ) ) ) pTex=NULL;
-    if( FAILED( D3DXCreateTextureFromFileInMemoryEx( pD3DDevice, data, _size,
-                                        D3DX_DEFAULT, D3DX_DEFAULT,
-                                        bMipmap ? 0:1,      // Mip levels
-                                        0,                  // Usage
-                                        fmt1,               // Format
-                                        D3DPOOL_MANAGED,    // Memory pool
-                                        D3DX_FILTER_NONE,   // Filter
-                                        D3DX_DEFAULT,       // Mip filter
-                                        0,                  // Color key
-                                        &info, NULL,
-                                        &pTex ) ) )
+	//  if( FAILED( D3DXCreateTextureFromFileInMemory( pD3DDevice, data, _size, &pTex ) ) ) pTex=NULL;
+	if (FAILED( D3DXCreateTextureFromFileInMemoryEx( pD3DDevice, data, _size,
+					D3DX_DEFAULT, D3DX_DEFAULT,
+					bMipmap ? 0:1,     // Mip levels
+					0,                 // Usage
+					fmt1,              // Format
+					D3DPOOL_MANAGED,   // Memory pool
+					D3DX_FILTER_NONE,  // Filter
+					D3DX_DEFAULT,      // Mip filter
+					0,                 // Color key
+					&info, NULL,
+					&pTex ) ))
 
-    if( FAILED( D3DXCreateTextureFromFileInMemoryEx( pD3DDevice, data, _size,
-                                        D3DX_DEFAULT, D3DX_DEFAULT,
-                                        bMipmap ? 0:1,      // Mip levels
-                                        0,                  // Usage
-                                        fmt2,               // Format
-                                        D3DPOOL_MANAGED,    // Memory pool
-                                        D3DX_FILTER_NONE,   // Filter
-                                        D3DX_DEFAULT,       // Mip filter
-                                        0,                  // Color key
-                                        &info, NULL,
-                                        &pTex ) ) )
+		if (FAILED( D3DXCreateTextureFromFileInMemoryEx( pD3DDevice, data, _size,
+						D3DX_DEFAULT, D3DX_DEFAULT,
+						bMipmap ? 0:1,    // Mip levels
+						0,                // Usage
+						fmt2,             // Format
+						D3DPOOL_MANAGED,  // Memory pool
+						D3DX_FILTER_NONE, // Filter
+						D3DX_DEFAULT,     // Mip filter
+						0,                // Color key
+						&info, NULL,
+						&pTex ) ))
 
-    {   
-        _PostError( TXT("Can't create texture") );
-        if(!size) Resource_Free(data);
-        return NULL;
-    }
+		{
+			_PostError(TXT("Can't create texture"));
+			if (!size)
+				Resource_Free(data);
+			return NULL;
+		}
 
-    if(!size) Resource_Free(data);
-    
-    texItem=new CTextureList;
-    texItem->tex=(HTEXTURE)pTex;
-    texItem->width=info.Width;
-    texItem->height=info.Height;
-    texItem->next=textures;
-    textures=texItem;
+	if (!size)
+		Resource_Free(data);
 
-    return (HTEXTURE)pTex;
+	texItem = new CTextureList;
+	texItem->tex = (HTEXTURE) pTex;
+	texItem->width = info.Width;
+	texItem->height = info.Height;
+	texItem->next = textures;
+	textures = texItem;
+
+	return (HTEXTURE) pTex;
 }
+
+
 
 void HGE_CALL HGE_Impl::Texture_Free(HTEXTURE tex)
 {
-    hgeGAPITexture * pTex = (hgeGAPITexture *)tex;
-    CTextureList *texItem=textures, *texPrev=0;
+	hgeGAPITexture * pTex = (hgeGAPITexture *) tex;
+	CTextureList *texItem = textures, *texPrev = 0;
 
-    while(texItem)
-    {
-        if(texItem->tex==tex)
-        {
-            if(texPrev) texPrev->next=texItem->next;
-            else textures=texItem->next;
-            delete texItem;
-            break;
-        }
-        texPrev=texItem;
-        texItem=texItem->next;
-    }
-    if(pTex != NULL) pTex->Release();
+	while (texItem)
+	{
+		if (texItem->tex == tex)
+		{
+			if (texPrev)
+				texPrev->next = texItem->next;
+			else
+				textures = texItem->next;
+			delete texItem;
+			break;
+		}
+		texPrev = texItem;
+		texItem = texItem->next;
+	}
+	if (pTex != NULL)
+		pTex->Release();
 }
+
+
 
 int HGE_CALL HGE_Impl::Texture_GetWidth(HTEXTURE tex, bool bOriginal)
 {
-    D3DSURFACE_DESC TDesc;
-    hgeGAPITexture * pTex = (hgeGAPITexture *)tex;
-    CTextureList *texItem=textures;
+	D3DSURFACE_DESC TDesc;
+	hgeGAPITexture * pTex = (hgeGAPITexture *) tex;
+	CTextureList *texItem = textures;
 
-    if(bOriginal)
-    {
-        while(texItem)
-        {
-            if(texItem->tex==tex) return texItem->width;
-            texItem=texItem->next;
-        }
-        return 0;
-    }
-    else
-    {
-        if(FAILED(pTex->GetLevelDesc(0, &TDesc))) return 0;
-        else return TDesc.Width;
-    }
+	if (bOriginal)
+	{
+		while (texItem)
+		{
+			if (texItem->tex == tex)
+				return texItem->width;
+			texItem = texItem->next;
+		}
+		return 0;
+	}
+	else
+	{
+		if (FAILED(pTex->GetLevelDesc(0, &TDesc)))
+			return 0;
+		else
+			return TDesc.Width;
+	}
 }
+
 
 
 int HGE_CALL HGE_Impl::Texture_GetHeight(HTEXTURE tex, bool bOriginal)
 {
-    D3DSURFACE_DESC TDesc;
-    hgeGAPITexture * pTex = (hgeGAPITexture *)tex;
-    CTextureList *texItem=textures;
+	D3DSURFACE_DESC TDesc;
+	hgeGAPITexture * pTex = (hgeGAPITexture *) tex;
+	CTextureList *texItem = textures;
 
-    if(bOriginal)
-    {
-        while(texItem)
-        {
-            if(texItem->tex==tex) return texItem->height;
-            texItem=texItem->next;
-        }
-        return 0;
-    }
-    else
-    {
-        if(FAILED(pTex->GetLevelDesc(0, &TDesc))) return 0;
-        else return TDesc.Height;
-    }
+	if (bOriginal)
+	{
+		while (texItem)
+		{
+			if (texItem->tex == tex)
+				return texItem->height;
+			texItem = texItem->next;
+		}
+		return 0;
+	}
+	else
+	{
+		if (FAILED(pTex->GetLevelDesc(0, &TDesc)))
+			return 0;
+		else
+			return TDesc.Height;
+	}
 }
 
 
-uint32_t * HGE_CALL HGE_Impl::Texture_Lock(HTEXTURE tex, bool bReadOnly, int left, int top, int width, int height)
+
+uint32_t * HGE_CALL HGE_Impl::Texture_Lock(HTEXTURE tex, bool bReadOnly,
+		int left, int top, int width, int height)
 {
-    hgeGAPITexture * pTex = (hgeGAPITexture *)tex;
-    D3DSURFACE_DESC TDesc;
-    D3DLOCKED_RECT TRect;
-    RECT region, *prec;
-    int flags;
+	hgeGAPITexture * pTex = (hgeGAPITexture *) tex;
+	D3DSURFACE_DESC TDesc;
+	D3DLOCKED_RECT TRect;
+	RECT region, *prec;
+	int flags;
 
-    pTex->GetLevelDesc(0, &TDesc);
-    if(TDesc.Format!=D3DFMT_A8R8G8B8 && TDesc.Format!=D3DFMT_X8R8G8B8) return 0;
+	pTex->GetLevelDesc(0, &TDesc);
+	if (TDesc.Format != D3DFMT_A8R8G8B8 && TDesc.Format != D3DFMT_X8R8G8B8)
+		return 0;
 
-    if(width && height)
-    {
-        region.left=left;
-        region.top=top;
-        region.right=left+width;
-        region.bottom=top+height;
-        prec=&region;
-    }
-    else prec=0;
+	if (width && height)
+	{
+		region.left = left;
+		region.top = top;
+		region.right = left + width;
+		region.bottom = top + height;
+		prec = &region;
+	}
+	else
+		prec = 0;
 
-    if(bReadOnly) flags=D3DLOCK_READONLY;
-    else flags=0;
+	if (bReadOnly)
+		flags = D3DLOCK_READONLY;
+	else
+		flags = 0;
 
-    if(FAILED(pTex->LockRect(0, &TRect, prec, flags)))
-    {
-        _PostError( TXT("Can't lock texture") );
-        return 0;
-    }
+	if (FAILED(pTex->LockRect(0, &TRect, prec, flags)))
+	{
+		_PostError(TXT("Can't lock texture"));
+		return 0;
+	}
 
-    return (uint32_t *)TRect.pBits;
+	return (uint32_t *) TRect.pBits;
 }
+
 
 
 void HGE_CALL HGE_Impl::Texture_Unlock(HTEXTURE tex)
 {
-    hgeGAPITexture * pTex = (hgeGAPITexture *)tex;
-    pTex->UnlockRect(0);
+	hgeGAPITexture * pTex = (hgeGAPITexture *) tex;
+	pTex->UnlockRect(0);
 }
+
 
 //////// Implementation ////////
 
+
 void HGE_Impl::_render_batch(bool bEndScene)
 {
-    if(VertArray)
-    {
-        pVB->Unlock();
-        
-        if(nPrim)
-        {
-            switch(CurPrimType)
-            {
-                case HGEPRIM_QUADS:
+	if (VertArray)
+	{
+		pVB->Unlock();
+
+		if (nPrim)
+		{
+			switch (CurPrimType)
+			{
+			case HGEPRIM_QUADS:
 #if HGE_DIRECTX_VER == 8
-                    pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, nPrim<<2, 0, nPrim<<1);
+				pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, nPrim<<2, 0, nPrim<<1);
 #endif
 #if HGE_DIRECTX_VER == 9
-                    pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, nPrim<<2, 0, nPrim<<1);
+				pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, nPrim<<2, 0, nPrim<<1);
 #endif
-                    break;
+				break;
 
-                case HGEPRIM_TRIPLES:
-                    pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, nPrim);
-                    break;
+			case HGEPRIM_TRIPLES:
+				pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, nPrim);
+				break;
 
-                case HGEPRIM_LINES:
-                    pD3DDevice->DrawPrimitive(D3DPT_LINELIST, 0, nPrim);
-                    break;
-            }
+			case HGEPRIM_LINES:
+				pD3DDevice->DrawPrimitive(D3DPT_LINELIST, 0, nPrim);
+				break;
+			}
 
-            nPrim=0;
-        }
+			nPrim = 0;
+		}
 
-        if(bEndScene) VertArray = 0;
+		if (bEndScene)
+			VertArray = 0;
 #if HGE_DIRECTX_VER == 8
-        else pVB->Lock( 0, 0, (uint8_t**)&VertArray, 0 );
+		else pVB->Lock( 0, 0, (uint8_t**)&VertArray, 0 );
 #endif
 #if HGE_DIRECTX_VER == 9
-        else pVB->Lock( 0, 0, (VOID**)&VertArray, 0 );
+		else pVB->Lock( 0, 0, (VOID**)&VertArray, 0 );
 #endif
-    }
+	}
 }
+
+
 
 void HGE_Impl::_SetBlendMode(int blend)
 {
-    if((blend & BLEND_ALPHABLEND) != (CurBlendMode & BLEND_ALPHABLEND))
-    {
-        if(blend & BLEND_ALPHABLEND) pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-        else pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-    }
+	if ((blend & BLEND_ALPHABLEND) != (CurBlendMode & BLEND_ALPHABLEND))
+	{
+		if (blend & BLEND_ALPHABLEND)
+			pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+		else
+			pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+	}
 
-    if((blend & BLEND_ZWRITE) != (CurBlendMode & BLEND_ZWRITE))
-    {
-        if(blend & BLEND_ZWRITE) pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-        else pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-    }           
-    
-    if((blend & BLEND_COLORADD) != (CurBlendMode & BLEND_COLORADD))
-    {
-        if(blend & BLEND_COLORADD) pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_ADD);
-        else pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-    }
+	if ((blend & BLEND_ZWRITE) != (CurBlendMode & BLEND_ZWRITE))
+	{
+		if (blend & BLEND_ZWRITE)
+			pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+		else
+			pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	}
 
-    CurBlendMode = blend;
+	if ((blend & BLEND_COLORADD) != (CurBlendMode & BLEND_COLORADD))
+	{
+		if (blend & BLEND_COLORADD)
+			pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_ADD);
+		else
+			pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	}
+
+	CurBlendMode = blend;
 }
+
+
 
 void HGE_Impl::_SetProjectionMatrix(int width, int height)
 {
@@ -635,507 +756,580 @@ void HGE_Impl::_SetProjectionMatrix(int width, int height)
     D3DXMatrixMultiply(&matProj, &matProj, &tmp);
 }
 
+
+
 bool HGE_Impl::_GfxInit()
 {
-    static const char *szFormats[]={"UNKNOWN", "R5G6B5", "X1R5G5B5", "A1R5G5B5", "X8R8G8B8", "A8R8G8B8"};
-    hgeGAPIAdapterIdentifier AdID;
-    D3DDISPLAYMODE Mode;
-    D3DFORMAT Format=D3DFMT_UNKNOWN;
-    UINT nModes, i;
-    
-// Init D3D
+	static const char *szFormats[] =
+		{ "UNKNOWN", "R5G6B5", "X1R5G5B5", "A1R5G5B5", "X8R8G8B8", "A8R8G8B8" };
+	hgeGAPIAdapterIdentifier AdID;
+	D3DDISPLAYMODE Mode;
+	D3DFORMAT Format = D3DFMT_UNKNOWN;
+	UINT nModes, i;
+
+	// Init D3D
 #if HGE_DIRECTX_VER == 8
-    pD3D=Direct3DCreate8(120); // D3D_SDK_VERSION
+	pD3D=Direct3DCreate8(120); // D3D_SDK_VERSION
 #endif
 #if HGE_DIRECTX_VER == 9
-    pD3D=Direct3DCreate9(D3D_SDK_VERSION); // D3D_SDK_VERSION
+	pD3D=Direct3DCreate9(D3D_SDK_VERSION); // D3D_SDK_VERSION
 #endif
-    if(pD3D==NULL)
-    {
-        _PostError( TXT("Can't create D3D interface") );
-        return false;
-    }
+	if (pD3D == NULL)
+	{
+		_PostError(TXT("Can't create D3D interface"));
+		return false;
+	}
 
-// Get adapter info
+	// Get adapter info
 
 #if HGE_DIRECTX_VER == 8
-    pD3D->GetAdapterIdentifier(D3DADAPTER_DEFAULT, D3DENUM_NO_WHQL_LEVEL, &AdID);
+	pD3D->GetAdapterIdentifier(D3DADAPTER_DEFAULT, D3DENUM_NO_WHQL_LEVEL, &AdID);
 #endif
 #if HGE_DIRECTX_VER == 9
-    pD3D->GetAdapterIdentifier(D3DADAPTER_DEFAULT, 0, &AdID);
+	pD3D->GetAdapterIdentifier(D3DADAPTER_DEFAULT, 0, &AdID);
 #endif
-    System_Log( TXT("D3D Driver: %s"), AdID.Driver);
-    System_Log( TXT("Description: %s"), AdID.Description);
-    System_Log( TXT("Version: %d.%d.%d.%d"),
-            HIWORD(AdID.DriverVersion.HighPart),
-            LOWORD(AdID.DriverVersion.HighPart),
-            HIWORD(AdID.DriverVersion.LowPart),
-            LOWORD(AdID.DriverVersion.LowPart));
+	System_Log(TXT("D3D Driver: %s"), AdID.Driver);
+	System_Log(TXT("Description: %s"), AdID.Description);
+	System_Log(TXT("Version: %d.%d.%d.%d"),
+			HIWORD(AdID.DriverVersion.HighPart),
+			LOWORD(AdID.DriverVersion.HighPart),
+			HIWORD(AdID.DriverVersion.LowPart),
+			LOWORD(AdID.DriverVersion.LowPart));
 
-// Set up Windowed presentation parameters
-    
-    if(FAILED(pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode)) || Mode.Format==D3DFMT_UNKNOWN) 
-    {
-        _PostError( TXT("Can't determine desktop video mode") );
-        if(bWindowed) return false;
-    }
-    
-    ZeroMemory(&d3dppW, sizeof(d3dppW));
+	// Set up Windowed presentation parameters
 
-    d3dppW.BackBufferWidth  = nScreenWidth;
-    d3dppW.BackBufferHeight = nScreenHeight;
-    d3dppW.BackBufferFormat = Mode.Format;
-    d3dppW.BackBufferCount  = 1;
-    d3dppW.MultiSampleType  = D3DMULTISAMPLE_NONE;
-    d3dppW.hDeviceWindow    = hwnd;
-    d3dppW.Windowed         = TRUE;
+	if (FAILED(pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode))
+			|| Mode.Format == D3DFMT_UNKNOWN)
+	{
+		_PostError(TXT("Can't determine desktop video mode"));
+		if (bWindowed)
+			return false;
+	}
+
+	ZeroMemory(&d3dppW, sizeof(d3dppW));
+
+	d3dppW.BackBufferWidth = nScreenWidth;
+	d3dppW.BackBufferHeight = nScreenHeight;
+	d3dppW.BackBufferFormat = Mode.Format;
+	d3dppW.BackBufferCount = 1;
+	d3dppW.MultiSampleType = D3DMULTISAMPLE_NONE;
+	d3dppW.hDeviceWindow = hwnd;
+	d3dppW.Windowed = TRUE;
 
 #if HGE_DIRECTX_VER == 8
-    if(nHGEFPS==HGEFPS_VSYNC) d3dppW.SwapEffect = D3DSWAPEFFECT_COPY_VSYNC;
-    else                      d3dppW.SwapEffect = D3DSWAPEFFECT_COPY;
+	if(nHGEFPS==HGEFPS_VSYNC) d3dppW.SwapEffect = D3DSWAPEFFECT_COPY_VSYNC;
+	else d3dppW.SwapEffect = D3DSWAPEFFECT_COPY;
 #endif
 #if HGE_DIRECTX_VER == 9
-    if(nHGEFPS==HGEFPS_VSYNC) {
-        d3dppW.SwapEffect = D3DSWAPEFFECT_COPY;
-        d3dppW.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
-    } else {
-        d3dppW.SwapEffect = D3DSWAPEFFECT_COPY;
-        d3dppW.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-    }
+	if(nHGEFPS==HGEFPS_VSYNC)
+	{
+		d3dppW.SwapEffect = D3DSWAPEFFECT_COPY;
+		d3dppW.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+	}
+	else
+	{
+		d3dppW.SwapEffect = D3DSWAPEFFECT_COPY;
+		d3dppW.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+	}
 #endif
 
-    if(bZBuffer)
-    {
-        d3dppW.EnableAutoDepthStencil = TRUE;
-        d3dppW.AutoDepthStencilFormat = D3DFMT_D16;
-    }
+	if (bZBuffer)
+	{
+		d3dppW.EnableAutoDepthStencil = TRUE;
+		d3dppW.AutoDepthStencilFormat = D3DFMT_D16;
+	}
 
-// Set up Full Screen presentation parameters
+	// Set up Full Screen presentation parameters
 
 #if HGE_DIRECTX_VER == 8
-    nModes=pD3D->GetAdapterModeCount(D3DADAPTER_DEFAULT);
+	nModes=pD3D->GetAdapterModeCount(D3DADAPTER_DEFAULT);
 #endif
 #if HGE_DIRECTX_VER == 9
-    nModes=pD3D->GetAdapterModeCount(D3DADAPTER_DEFAULT, Mode.Format);
+	nModes=pD3D->GetAdapterModeCount(D3DADAPTER_DEFAULT, Mode.Format);
 #endif
 
-    for(i=0; i<nModes; i++)
-    {
+	for (i = 0; i < nModes; i++)
+	{
 #if HGE_DIRECTX_VER == 8
-        pD3D->EnumAdapterModes(D3DADAPTER_DEFAULT, i, &Mode);
+		pD3D->EnumAdapterModes(D3DADAPTER_DEFAULT, i, &Mode);
 #endif
 #if HGE_DIRECTX_VER == 9
-        pD3D->EnumAdapterModes(D3DADAPTER_DEFAULT, Mode.Format, i, &Mode);
+		pD3D->EnumAdapterModes(D3DADAPTER_DEFAULT, Mode.Format, i, &Mode);
 #endif
 
-        if(Mode.Width != (UINT)nScreenWidth || Mode.Height != (UINT)nScreenHeight) continue;
-        if(nScreenBPP==16 && (_format_id(Mode.Format) > _format_id(D3DFMT_A1R5G5B5))) continue;
-        if(_format_id(Mode.Format) > _format_id(Format)) Format=Mode.Format;
-    }
+		if (Mode.Width != (UINT) nScreenWidth || Mode.Height
+				!= (UINT) nScreenHeight)
+			continue;
+		if (nScreenBPP == 16 && (_format_id(Mode.Format) > _format_id(
+				D3DFMT_A1R5G5B5)))
+			continue;
+		if (_format_id(Mode.Format) > _format_id(Format))
+			Format = Mode.Format;
+	}
 
-    if(Format == D3DFMT_UNKNOWN)
-    {
-        _PostError( TXT("Can't find appropriate full screen video mode") );
-        if(!bWindowed) return false;
-    }
+	if (Format == D3DFMT_UNKNOWN)
+	{
+		_PostError(TXT("Can't find appropriate full screen video mode"));
+		if (!bWindowed)
+			return false;
+	}
 
-    ZeroMemory(&d3dppFS, sizeof(d3dppFS));
+	ZeroMemory(&d3dppFS, sizeof(d3dppFS));
 
-    d3dppFS.BackBufferWidth  = nScreenWidth;
-    d3dppFS.BackBufferHeight = nScreenHeight;
-    d3dppFS.BackBufferFormat = Format;
-    d3dppFS.BackBufferCount  = 1;
-    d3dppFS.MultiSampleType  = D3DMULTISAMPLE_NONE;
-    d3dppFS.hDeviceWindow    = hwnd;
-    d3dppFS.Windowed         = FALSE;
+	d3dppFS.BackBufferWidth = nScreenWidth;
+	d3dppFS.BackBufferHeight = nScreenHeight;
+	d3dppFS.BackBufferFormat = Format;
+	d3dppFS.BackBufferCount = 1;
+	d3dppFS.MultiSampleType = D3DMULTISAMPLE_NONE;
+	d3dppFS.hDeviceWindow = hwnd;
+	d3dppFS.Windowed = FALSE;
 
-    d3dppFS.SwapEffect       = D3DSWAPEFFECT_FLIP;
-    d3dppFS.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+	d3dppFS.SwapEffect = D3DSWAPEFFECT_FLIP;
+	d3dppFS.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
 #if HGE_DIRECTX_VER == 8
-    if(nHGEFPS==HGEFPS_VSYNC) d3dppFS.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_ONE;
-    else                      d3dppFS.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+	if(nHGEFPS==HGEFPS_VSYNC) d3dppFS.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+	else d3dppFS.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 #endif
 #if HGE_DIRECTX_VER == 9
-    if(nHGEFPS==HGEFPS_VSYNC) d3dppFS.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
-    else                      d3dppFS.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+	if(nHGEFPS==HGEFPS_VSYNC) d3dppFS.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+	else d3dppFS.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 #endif
-    if(bZBuffer)
-    {
-        d3dppFS.EnableAutoDepthStencil = TRUE;
-        d3dppFS.AutoDepthStencilFormat = D3DFMT_D16;
-    }
+	if (bZBuffer)
+	{
+		d3dppFS.EnableAutoDepthStencil = TRUE;
+		d3dppFS.AutoDepthStencilFormat = D3DFMT_D16;
+	}
 
-    d3dpp = bWindowed ? &d3dppW : &d3dppFS;
+	d3dpp = bWindowed ? &d3dppW : &d3dppFS;
 
-    if(_format_id(d3dpp->BackBufferFormat) < 4) nScreenBPP=16;
-    else nScreenBPP=32;
-    
-// Create D3D Device
+	if (_format_id(d3dpp->BackBufferFormat) < 4)
+		nScreenBPP = 16;
+	else
+		nScreenBPP = 32;
 
-    if( FAILED( pD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
-                                  D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-                                  d3dpp, &pD3DDevice ) ) )
-    {
-        _PostError( TXT("Can't create D3D device") );
-        return false;
-    }
+	// Create D3D Device
 
-    _AdjustWindow();
+	if (FAILED( pD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
+					D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+					d3dpp, &pD3DDevice ) ))
+	{
+		_PostError(TXT("Can't create D3D device"));
+		return false;
+	}
 
-    System_Log( TXT("Mode: %d x %d x %s\n"), nScreenWidth, nScreenHeight, szFormats[_format_id(Format)]);
+	_AdjustWindow();
 
-// Create vertex batch buffer
+	System_Log(TXT("Mode: %d x %d x %s\n"), nScreenWidth, nScreenHeight,
+			szFormats[_format_id(Format)]);
 
-    VertArray=0;
-    textures=0;
+	// Create vertex batch buffer
 
-// Init all stuff that can be lost
+	VertArray = 0;
+	textures = 0;
 
-    _SetProjectionMatrix(nScreenWidth, nScreenHeight);
-    D3DXMatrixIdentity(&matView);
-    
-    if(!_init_lost()) return false;
+	// Init all stuff that can be lost
 
-    Gfx_Clear(0);
+	_SetProjectionMatrix(nScreenWidth, nScreenHeight);
+	D3DXMatrixIdentity(&matView);
 
-    return true;
+	if (!_init_lost())
+		return false;
+
+	Gfx_Clear(0);
+
+	return true;
 }
+
+
 
 int HGE_Impl::_format_id(D3DFORMAT fmt)
 {
-    switch(fmt) {
-        case D3DFMT_R5G6B5:     return 1;
-        case D3DFMT_X1R5G5B5:   return 2;
-        case D3DFMT_A1R5G5B5:   return 3;
-        case D3DFMT_X8R8G8B8:   return 4;
-        case D3DFMT_A8R8G8B8:   return 5;
-        default:                return 0;
-    }
+	switch (fmt)
+	{
+	case D3DFMT_R5G6B5:
+		return 1;
+	case D3DFMT_X1R5G5B5:
+		return 2;
+	case D3DFMT_A1R5G5B5:
+		return 3;
+	case D3DFMT_X8R8G8B8:
+		return 4;
+	case D3DFMT_A8R8G8B8:
+		return 5;
+	default:
+		return 0;
+	}
 }
+
+
 
 void HGE_Impl::_AdjustWindow()
 {
-    RECT *rc;
-    LONG style;
+	RECT *rc;
+	LONG style;
 
-    if(bWindowed) {rc=&rectW; style=styleW; }
-    else  {rc=&rectFS; style=styleFS; }
-    SetWindowLong(hwnd, GWL_STYLE, style);
+	if (bWindowed)
+	{
+		rc = &rectW;
+		style = styleW;
+	}
+	else
+	{
+		rc = &rectFS;
+		style = styleFS;
+	}
+	SetWindowLong(hwnd, GWL_STYLE, style);
 
-    style=GetWindowLong(hwnd, GWL_EXSTYLE);
-    if(bWindowed)
-    {
-        SetWindowLong(hwnd, GWL_EXSTYLE, style & (~WS_EX_TOPMOST));
-        SetWindowPos(hwnd, HWND_NOTOPMOST, rc->left, rc->top, rc->right-rc->left, rc->bottom-rc->top, SWP_FRAMECHANGED);
-    }
-    else
-    {
-        SetWindowLong(hwnd, GWL_EXSTYLE, style | WS_EX_TOPMOST);
-        SetWindowPos(hwnd, HWND_TOPMOST, rc->left, rc->top, rc->right-rc->left, rc->bottom-rc->top, SWP_FRAMECHANGED);
-    }
+	style = GetWindowLong(hwnd, GWL_EXSTYLE);
+	if (bWindowed)
+	{
+		SetWindowLong(hwnd, GWL_EXSTYLE, style & (~WS_EX_TOPMOST));
+		SetWindowPos(hwnd, HWND_NOTOPMOST, rc->left, rc->top, rc->right
+				- rc->left, rc->bottom - rc->top, SWP_FRAMECHANGED);
+	}
+	else
+	{
+		SetWindowLong(hwnd, GWL_EXSTYLE, style | WS_EX_TOPMOST);
+		SetWindowPos(hwnd, HWND_TOPMOST, rc->left, rc->top, rc->right
+				- rc->left, rc->bottom - rc->top, SWP_FRAMECHANGED);
+	}
 }
+
+
 
 void HGE_Impl::_Resize(int width, int height)
 {
-    if(hwndParent)
-    {
-        //if(procFocusLostFunc) procFocusLostFunc();
+	if (hwndParent)
+	{
+		//if(procFocusLostFunc) procFocusLostFunc();
 
-        d3dppW.BackBufferWidth=width;
-        d3dppW.BackBufferHeight=height;
-        nScreenWidth=width;
-        nScreenHeight=height;
+		d3dppW.BackBufferWidth = width;
+		d3dppW.BackBufferHeight = height;
+		nScreenWidth = width;
+		nScreenHeight = height;
 
-        _SetProjectionMatrix(nScreenWidth, nScreenHeight);
-        _GfxRestore();
+		_SetProjectionMatrix(nScreenWidth, nScreenHeight);
+		_GfxRestore();
 
-        //if(procFocusGainFunc) procFocusGainFunc();
-    }
+		//if(procFocusGainFunc) procFocusGainFunc();
+	}
 }
+
+
 
 void HGE_Impl::_GfxDone()
 {
-    CRenderTargetList *target=pTargets, *next_target;
-    
-    while(textures) Texture_Free(textures->tex);
+	CRenderTargetList *target = pTargets, *next_target;
 
-    if(pScreenSurf) { pScreenSurf->Release(); pScreenSurf=0; }
-    if(pScreenDepth) { pScreenDepth->Release(); pScreenDepth=0; }
+	while (textures)
+		Texture_Free(textures->tex);
 
-    while(target)
-    {
-        if(target->pTex) target->pTex->Release();
-        if(target->pDepth) target->pDepth->Release();
-        next_target=target->next;
-        delete target;
-        target=next_target;
-    }
-    pTargets=0;
+	if (pScreenSurf)
+	{
+		pScreenSurf->Release();
+		pScreenSurf = 0;
+	}
+	if (pScreenDepth)
+	{
+		pScreenDepth->Release();
+		pScreenDepth = 0;
+	}
 
-    if(pIB)
-    {
+	while (target)
+	{
+		if (target->pTex)
+			target->pTex->Release();
+		if (target->pDepth)
+			target->pDepth->Release();
+		next_target = target->next;
+		delete target;
+		target = next_target;
+	}
+	pTargets = 0;
+
+	if (pIB)
+	{
 #if HGE_DIRECTX_VER == 8
-        pD3DDevice->SetIndices(NULL,0);
+		pD3DDevice->SetIndices(NULL,0);
 #endif
 #if HGE_DIRECTX_VER == 9
-        pD3DDevice->SetIndices(NULL);
+		pD3DDevice->SetIndices(NULL);
 #endif
-        pIB->Release();
-        pIB=0;
-    }
-    if(pVB)
-    {
-        if(VertArray) { pVB->Unlock(); VertArray=0; }
+		pIB->Release();
+		pIB = 0;
+	}
+	if (pVB)
+	{
+		if (VertArray)
+		{
+			pVB->Unlock();
+			VertArray = 0;
+		}
 #if HGE_DIRECTX_VER == 8
-        pD3DDevice->SetStreamSource( 0, NULL, sizeof(hgeVertex) );
+		pD3DDevice->SetStreamSource( 0, NULL, sizeof(hgeVertex) );
 #endif
 #if HGE_DIRECTX_VER == 9
-        pD3DDevice->SetStreamSource( 0, NULL, 0, sizeof(hgeVertex) );
+		pD3DDevice->SetStreamSource( 0, NULL, 0, sizeof(hgeVertex) );
 #endif
-        pVB->Release();
-        pVB=0;
-    }
-    if(pD3DDevice) { pD3DDevice->Release(); pD3DDevice=0; }
-    if(pD3D) { pD3D->Release(); pD3D=0; }
+		pVB->Release();
+		pVB = 0;
+	}
+	if (pD3DDevice)
+	{
+		pD3DDevice->Release();
+		pD3DDevice = 0;
+	}
+	if (pD3D)
+	{
+		pD3D->Release();
+		pD3D = 0;
+	}
 }
+
 
 
 bool HGE_Impl::_GfxRestore()
 {
-    CRenderTargetList *target=pTargets;
+	CRenderTargetList *target = pTargets;
 
-    //if(!pD3DDevice) return false;
-    //if(pD3DDevice->TestCooperativeLevel() == D3DERR_DEVICELOST) return;
+	//if(!pD3DDevice) return false;
+	//if(pD3DDevice->TestCooperativeLevel() == D3DERR_DEVICELOST) return;
 
-    if(pScreenSurf) pScreenSurf->Release();
-    if(pScreenDepth) pScreenDepth->Release();
+	if (pScreenSurf)
+		pScreenSurf->Release();
+	if (pScreenDepth)
+		pScreenDepth->Release();
 
-    while(target)
-    {
-        if(target->pTex) target->pTex->Release();
-        if(target->pDepth) target->pDepth->Release();
-        target=target->next;
-    }
+	while (target)
+	{
+		if (target->pTex)
+			target->pTex->Release();
+		if (target->pDepth)
+			target->pDepth->Release();
+		target = target->next;
+	}
 
-    if(pIB)
-    {
+	if (pIB)
+	{
 #if HGE_DIRECTX_VER == 8
-        pD3DDevice->SetIndices(NULL,0);
+		pD3DDevice->SetIndices(NULL,0);
 #endif
 #if HGE_DIRECTX_VER == 9
-        pD3DDevice->SetIndices(NULL);
+		pD3DDevice->SetIndices(NULL);
 #endif
-        pIB->Release();
-    }
-    if(pVB)
-    {
+		pIB->Release();
+	}
+	if (pVB)
+	{
 #if HGE_DIRECTX_VER == 8
-        pD3DDevice->SetStreamSource( 0, NULL, sizeof(hgeVertex) );
+		pD3DDevice->SetStreamSource( 0, NULL, sizeof(hgeVertex) );
 #endif
 #if HGE_DIRECTX_VER == 9
-        pD3DDevice->SetStreamSource( 0, NULL,0, sizeof(hgeVertex) );
+		pD3DDevice->SetStreamSource( 0, NULL,0, sizeof(hgeVertex) );
 #endif
-        pVB->Release();
-    }
+		pVB->Release();
+	}
 
-    pD3DDevice->Reset(d3dpp);
+	pD3DDevice->Reset(d3dpp);
 
-    if(!_init_lost()) return false;
+	if (!_init_lost())
+		return false;
 
-    if(procGfxRestoreFunc) return procGfxRestoreFunc();
+	if (procGfxRestoreFunc)
+		return procGfxRestoreFunc();
 
-    return true;
+	return true;
 }
+
 
 
 bool HGE_Impl::_init_lost()
 {
-    CRenderTargetList *target=pTargets;
+	CRenderTargetList *target = pTargets;
 
-// Store render target
+	// Store render target
 
-    pScreenSurf=0;
-    pScreenDepth=0;
-
-#if HGE_DIRECTX_VER == 8
-    pD3DDevice->GetRenderTarget(&pScreenSurf);
-#endif
-#if HGE_DIRECTX_VER == 9
-    pD3DDevice->GetRenderTarget(0, &pScreenSurf);
-#endif
-    pD3DDevice->GetDepthStencilSurface(&pScreenDepth);
-    
-    while(target)
-    {
-        if(target->pTex)
-            D3DXCreateTexture(pD3DDevice, target->width, target->height, 1, D3DUSAGE_RENDERTARGET,
-                              d3dpp->BackBufferFormat, D3DPOOL_DEFAULT, &target->pTex);
-        if(target->pDepth)
-#if HGE_DIRECTX_VER == 8
-            pD3DDevice->CreateDepthStencilSurface(target->width, target->height,
-                D3DFMT_D16, D3DMULTISAMPLE_NONE, &target->pDepth);
-#endif
-#if HGE_DIRECTX_VER == 9
-            pD3DDevice->CreateDepthStencilSurface(target->width, target->height,
-                D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, false, &target->pDepth, NULL);
-#endif
-        target=target->next;
-    }
-
-// Create Vertex buffer
-#if HGE_DIRECTX_VER == 8
-    if( FAILED (pD3DDevice->CreateVertexBuffer(VERTEX_BUFFER_SIZE*sizeof(hgeVertex),
-                                              D3DUSAGE_WRITEONLY,
-                                              D3DFVF_HGEVERTEX,
-                                              D3DPOOL_DEFAULT, &pVB )))
-#endif
-#if HGE_DIRECTX_VER == 9
-    if( FAILED (pD3DDevice->CreateVertexBuffer(VERTEX_BUFFER_SIZE*sizeof(hgeVertex),
-                                                D3DUSAGE_WRITEONLY,
-                                                D3DFVF_HGEVERTEX,
-                                                D3DPOOL_DEFAULT, 
-                                                &pVB, 
-                                                NULL)))
-#endif
-    {
-        _PostError( TXT("Can't create D3D vertex buffer") );
-        return false;
-    }
+	pScreenSurf = 0;
+	pScreenDepth = 0;
 
 #if HGE_DIRECTX_VER == 8
-    pD3DDevice->SetVertexShader( D3DFVF_HGEVERTEX );
-    pD3DDevice->SetStreamSource( 0, pVB, sizeof(hgeVertex) );
+	pD3DDevice->GetRenderTarget(&pScreenSurf);
 #endif
 #if HGE_DIRECTX_VER == 9
-    pD3DDevice->SetVertexShader( NULL );
-    pD3DDevice->SetFVF( D3DFVF_HGEVERTEX );
-    pD3DDevice->SetStreamSource( 0, pVB, 0, sizeof(hgeVertex) );
+	pD3DDevice->GetRenderTarget(0, &pScreenSurf);
 #endif
+	pD3DDevice->GetDepthStencilSurface(&pScreenDepth);
 
-// Create and setup Index buffer
+	while (target)
+	{
+		if (target->pTex)
+			D3DXCreateTexture(pD3DDevice, target->width, target->height, 1,
+					D3DUSAGE_RENDERTARGET, d3dpp->BackBufferFormat,
+					D3DPOOL_DEFAULT, &target->pTex);
+		if (target->pDepth)
+#if HGE_DIRECTX_VER == 8
+			pD3DDevice->CreateDepthStencilSurface(target->width, target->height,
+					D3DFMT_D16, D3DMULTISAMPLE_NONE, &target->pDepth);
+#endif
+#if HGE_DIRECTX_VER == 9
+			pD3DDevice->CreateDepthStencilSurface(target->width, target->height,
+					D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, false, &target->pDepth, NULL);
+#endif
+			target = target->next;
+	}
+
+	// Create Vertex buffer
+#if HGE_DIRECTX_VER == 8
+	if( FAILED (pD3DDevice->CreateVertexBuffer(VERTEX_BUFFER_SIZE*sizeof(hgeVertex),
+				D3DUSAGE_WRITEONLY, D3DFVF_HGEVERTEX, D3DPOOL_DEFAULT, &pVB )))
+#endif
+#if HGE_DIRECTX_VER == 9
+	if( FAILED (pD3DDevice->CreateVertexBuffer(VERTEX_BUFFER_SIZE*sizeof(hgeVertex),
+				D3DUSAGE_WRITEONLY, D3DFVF_HGEVERTEX, D3DPOOL_DEFAULT, &pVB, NULL)))
+#endif
+	{
+		_PostError(TXT("Can't create D3D vertex buffer"));
+		return false;
+	}
 
 #if HGE_DIRECTX_VER == 8
-    if( FAILED( pD3DDevice->CreateIndexBuffer(VERTEX_BUFFER_SIZE*6/4*sizeof(uint16_t),
-                                              D3DUSAGE_WRITEONLY,
-                                              D3DFMT_INDEX16,
-                                              D3DPOOL_DEFAULT, &pIB ) ) )
+	pD3DDevice->SetVertexShader( D3DFVF_HGEVERTEX );
+	pD3DDevice->SetStreamSource( 0, pVB, sizeof(hgeVertex) );
 #endif
 #if HGE_DIRECTX_VER == 9
-    if( FAILED( pD3DDevice->CreateIndexBuffer(VERTEX_BUFFER_SIZE*6/4*sizeof(uint16_t),
-                                                D3DUSAGE_WRITEONLY,
-                                                D3DFMT_INDEX16,
-                                                D3DPOOL_DEFAULT, 
-                                                &pIB,
-                                                NULL) ) )
-#endif
-    {
-        _PostError( TXT("Can't create D3D index buffer") );
-        return false;
-    }
-
-    uint16_t *pIndices, n=0;
-#if HGE_DIRECTX_VER == 8
-    if( FAILED( pIB->Lock( 0, 0, (uint8_t**)&pIndices, 0 ) ) )
-#endif
-#if HGE_DIRECTX_VER == 9
-    if( FAILED( pIB->Lock( 0, 0, (VOID**)&pIndices, 0 ) ) )
-#endif
-    {
-        _PostError( TXT("Can't lock D3D index buffer") );
-        return false;
-    }
-
-    for(int i=0; i<VERTEX_BUFFER_SIZE/4; i++) {
-        *pIndices++=n;
-        *pIndices++=n+1;
-        *pIndices++=n+2;
-        *pIndices++=n+2;
-        *pIndices++=n+3;
-        *pIndices++=n;
-        n+=4;
-    }
-
-    pIB->Unlock();
-#if HGE_DIRECTX_VER == 8
-    pD3DDevice->SetIndices(pIB,0);
-#endif
-#if HGE_DIRECTX_VER == 9
-    pD3DDevice->SetIndices(pIB);
+	pD3DDevice->SetVertexShader( NULL );
+	pD3DDevice->SetFVF( D3DFVF_HGEVERTEX );
+	pD3DDevice->SetStreamSource( 0, pVB, 0, sizeof(hgeVertex) );
 #endif
 
-// Set common render states
-
-    //pD3DDevice->SetRenderState( D3DRS_LASTPIXEL, FALSE );
-    pD3DDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
-    pD3DDevice->SetRenderState( D3DRS_LIGHTING, FALSE );
-    
-    pD3DDevice->SetRenderState( D3DRS_ALPHABLENDENABLE,   TRUE );
-    pD3DDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
-    pD3DDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-
-    pD3DDevice->SetRenderState( D3DRS_ALPHATESTENABLE, TRUE );
-    pD3DDevice->SetRenderState( D3DRS_ALPHAREF,        0x01 );
-    pD3DDevice->SetRenderState( D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL );
-
-    pD3DDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );
-    pD3DDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-    pD3DDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-
-    pD3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-    pD3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-    pD3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+	// Create and setup Index buffer
 
 #if HGE_DIRECTX_VER == 8
-    pD3DDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_POINT);
-    if(bTextureFilter) {
-        pD3DDevice->SetTextureStageState(0,D3DTSS_MAGFILTER,D3DTEXF_LINEAR);
-        pD3DDevice->SetTextureStageState(0,D3DTSS_MINFILTER,D3DTEXF_LINEAR);
-    } else {
-        pD3DDevice->SetTextureStageState(0,D3DTSS_MAGFILTER,D3DTEXF_POINT);
-        pD3DDevice->SetTextureStageState(0,D3DTSS_MINFILTER,D3DTEXF_POINT);
-    }
+	if( FAILED( pD3DDevice->CreateIndexBuffer(VERTEX_BUFFER_SIZE*6/4*sizeof(uint16_t),
+			D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &pIB ) ) )
 #endif
 #if HGE_DIRECTX_VER == 9
-    pD3DDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
-    if(bTextureFilter) {
-        pD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-        pD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-    } else {
-        pD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-        pD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-    }
+	if( FAILED( pD3DDevice->CreateIndexBuffer(VERTEX_BUFFER_SIZE*6/4*sizeof(uint16_t),
+			D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &pIB, NULL) ) )
 #endif
-    nPrim=0;
-    CurPrimType=HGEPRIM_QUADS;
-    CurBlendMode = BLEND_DEFAULT;
-    CurTexture = NULL;
+	{
+		_PostError(TXT("Can't create D3D index buffer"));
+		return false;
+	}
+
+	uint16_t *pIndices, n = 0;
+#if HGE_DIRECTX_VER == 8
+	if( FAILED( pIB->Lock( 0, 0, (uint8_t**)&pIndices, 0 ) ) )
+#endif
+#if HGE_DIRECTX_VER == 9
+	if( FAILED( pIB->Lock( 0, 0, (VOID**)&pIndices, 0 ) ) )
+#endif
+	{
+		_PostError(TXT("Can't lock D3D index buffer"));
+		return false;
+	}
+
+	for (int i = 0; i < VERTEX_BUFFER_SIZE / 4; i++)
+	{
+		*pIndices++ = n;
+		*pIndices++ = n + 1;
+		*pIndices++ = n + 2;
+		*pIndices++ = n + 2;
+		*pIndices++ = n + 3;
+		*pIndices++ = n;
+		n += 4;
+	}
+
+	pIB->Unlock();
+#if HGE_DIRECTX_VER == 8
+	pD3DDevice->SetIndices(pIB,0);
+#endif
+#if HGE_DIRECTX_VER == 9
+	pD3DDevice->SetIndices(pIB);
+#endif
+
+	// Set common render states
+
+	//pD3DDevice->SetRenderState( D3DRS_LASTPIXEL, FALSE );
+	pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	pD3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE );
+
+	pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE );
+	pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	pD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE );
+	pD3DDevice->SetRenderState(D3DRS_ALPHAREF, 0x01);
+	pD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+
+	pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	pD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	pD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+
+	pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+
+#if HGE_DIRECTX_VER == 8
+	pD3DDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_POINT);
+	if(bTextureFilter)
+	{
+		pD3DDevice->SetTextureStageState(0,D3DTSS_MAGFILTER,D3DTEXF_LINEAR);
+		pD3DDevice->SetTextureStageState(0,D3DTSS_MINFILTER,D3DTEXF_LINEAR);
+	}
+	else
+	{
+		pD3DDevice->SetTextureStageState(0,D3DTSS_MAGFILTER,D3DTEXF_POINT);
+		pD3DDevice->SetTextureStageState(0,D3DTSS_MINFILTER,D3DTEXF_POINT);
+	}
+#endif
+#if HGE_DIRECTX_VER == 9
+	pD3DDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
+	if(bTextureFilter)
+	{
+		pD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+		pD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	}
+	else
+	{
+		pD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+		pD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+	}
+#endif
+	nPrim = 0;
+	CurPrimType = HGEPRIM_QUADS;
+	CurBlendMode = BLEND_DEFAULT;
+	CurTexture = NULL;
 #if HGE_DIRECTX_VER >= 9
 	CurShader = NULL;
 #endif
 
-    pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
-    pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
+	pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
+	pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
 
-    return true;
+	return true;
 }
+
+
 
 #if HGE_DIRECTX_VER >= 9
 HSHADER HGE_CALL HGE_Impl::Shader_Create(hgeConstString filename)
 {
-	LPD3DXBUFFER					code			= NULL;
-	LPDIRECT3DPIXELSHADER9          pixelShader    = NULL;
+	LPD3DXBUFFER code = NULL;
+	LPDIRECT3DPIXELSHADER9 pixelShader = NULL;
 	HRESULT result = HGE_WINAPI_UNICODE_SUFFIX(D3DXCompileShaderFromFile)(
-							filename,   //filepath
-							NULL,          //macro's            
-							NULL,          //includes           
-							"ps_main",     //main function      
-							"ps_2_0",      //shader profile     
-							0,             //flags              
-							&code,         //compiled operations
-							NULL,          //errors
-							NULL);         //constants
-	if(FAILED(result)) {
+			filename,    //filepath
+			NULL,        //macro's
+			NULL,        //includes
+			"ps_main",   //main function
+			"ps_2_0",    //shader profile
+			0,           //flags
+			&code,       //compiled operations
+			NULL,        //errors
+			NULL);       //constants
+	if(FAILED(result))
+	{
 		_PostError( TXT("Can't create shader") );
 		return NULL;
 	}
@@ -1146,16 +1340,21 @@ HSHADER HGE_CALL HGE_Impl::Shader_Create(hgeConstString filename)
 }
 #endif
 
+
+
 #if HGE_DIRECTX_VER >= 9
 void HGE_CALL HGE_Impl::Gfx_SetShader(HSHADER shader)
 {
-	if (CurShader != shader) {
+	if (CurShader != shader)
+	{
 		_render_batch();
 		CurShader = shader;
 		pD3DDevice->SetPixelShader((LPDIRECT3DPIXELSHADER9)shader);
 	}
 }
 #endif
+
+
 
 #if HGE_DIRECTX_VER >= 9
 void HGE_CALL HGE_Impl::Shader_Free(HSHADER shader)

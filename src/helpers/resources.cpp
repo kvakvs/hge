@@ -12,7 +12,7 @@
 #include "resources.h"
 
 
-HGE *ResDesc::hge=0;
+HGE *ResDesc::hge = 0;
 
 
 /////////////// COMMON //
