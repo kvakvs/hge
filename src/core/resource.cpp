@@ -18,7 +18,7 @@ bool HGE_CALL HGE_Impl::Resource_AttachPack(hgeConstString filename,
 		const char * password)
 {
 	hgeString szName;
-	CResourceList *resItem = res;
+	CResourceList *resItem = m_res_list;
 	unzFile zip;
 
 	szName = Resource_MakePath(filename);
@@ -48,8 +48,8 @@ bool HGE_CALL HGE_Impl::Resource_AttachPack(hgeConstString filename,
 		strcpy(resItem->password, password);
 	else
 		resItem->password[0] = 0;
-	resItem->next = res;
-	res = resItem;
+	resItem->next = m_res_list;
+	m_res_list = resItem;
 
 	return true;
 }
@@ -59,7 +59,7 @@ bool HGE_CALL HGE_Impl::Resource_AttachPack(hgeConstString filename,
 void HGE_CALL HGE_Impl::Resource_RemovePack(hgeConstString filename)
 {
 	hgeString szName;
-	CResourceList *resItem = res, *resPrev = 0;
+	CResourceList *resItem = m_res_list, *resPrev = 0;
 
 	szName = Resource_MakePath(filename);
 	hge_strupr(szName);
@@ -71,7 +71,7 @@ void HGE_CALL HGE_Impl::Resource_RemovePack(hgeConstString filename)
 			if (resPrev)
 				resPrev->next = resItem->next;
 			else
-				res = resItem->next;
+				m_res_list = resItem->next;
 			delete resItem;
 			break;
 		}
@@ -85,7 +85,7 @@ void HGE_CALL HGE_Impl::Resource_RemovePack(hgeConstString filename)
 
 void HGE_CALL HGE_Impl::Resource_RemoveAllPacks()
 {
-	CResourceList *resItem = res, *resNextItem;
+	CResourceList *resItem = m_res_list, *resNextItem;
 
 	while (resItem)
 	{
@@ -94,7 +94,7 @@ void HGE_CALL HGE_Impl::Resource_RemoveAllPacks()
 		resItem = resNextItem;
 	}
 
-	res = 0;
+	m_res_list = 0;
 }
 
 
@@ -103,7 +103,7 @@ void* HGE_CALL HGE_Impl::Resource_Load(hgeConstString filename, uint32_t *size)
 {
 	static hgeConstString res_err = TXT("Can't load resource: %s");
 
-	CResourceList *resItem = res;
+	CResourceList *resItem = m_res_list;
 	hgeChar szName[_MAX_PATH];
 	hgeChar szZipName[_MAX_PATH];
 	unzFile zip;
@@ -258,22 +258,22 @@ hgeString HGE_CALL HGE_Impl::Resource_MakePath(hgeConstString filename)
 	int i;
 
 	if (!filename)
-		hge_strcpy(szTmpFilename, szAppPath);
+		hge_strcpy(m_res_temp_filename, m_app_path);
 	else if (filename[0] == '\\' || filename[0] == '/' || filename[1] == ':')
-		hge_strcpy(szTmpFilename, filename);
+		hge_strcpy(m_res_temp_filename, filename);
 	else
 	{
-		hge_strcpy(szTmpFilename, szAppPath);
+		hge_strcpy(m_res_temp_filename, m_app_path);
 		if (filename)
-			hge_strcat(szTmpFilename, filename);
+			hge_strcat(m_res_temp_filename, filename);
 	}
 
-	for (i = 0; szTmpFilename[i]; i++)
+	for (i = 0; m_res_temp_filename[i]; i++)
 	{
-		if (szTmpFilename[i] == '/')
-			szTmpFilename[i] = '\\';
+		if (m_res_temp_filename[i] == '/')
+			m_res_temp_filename[i] = '\\';
 	}
-	return szTmpFilename;
+	return m_res_temp_filename;
 }
 
 
@@ -282,38 +282,38 @@ hgeString HGE_CALL HGE_Impl::Resource_EnumFiles(hgeConstString wildcard)
 {
 	if (wildcard)
 	{
-		if (hSearch)
+		if (m_res_search_handle)
 		{
-			FindClose(hSearch);
-			hSearch = 0;
+			FindClose(m_res_search_handle);
+			m_res_search_handle = 0;
 		}
-		hSearch = HGE_WINAPI_UNICODE_SUFFIX(FindFirstFile)(Resource_MakePath(
-				wildcard), &SearchData);
-		if (hSearch == INVALID_HANDLE_VALUE)
+		m_res_search_handle = HGE_WINAPI_UNICODE_SUFFIX(FindFirstFile)(Resource_MakePath(
+				wildcard), &m_res_search_data);
+		if (m_res_search_handle == INVALID_HANDLE_VALUE)
 		{
-			hSearch = 0;
+			m_res_search_handle = 0;
 			return 0;
 		}
 
-		if (!(SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-			return SearchData.cFileName;
+		if (!(m_res_search_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+			return m_res_search_data.cFileName;
 		else
 			return Resource_EnumFiles();
 	}
 	else
 	{
-		if (!hSearch)
+		if (!m_res_search_handle)
 			return 0;
 		for (;;)
 		{
-			if (!HGE_WINAPI_UNICODE_SUFFIX(FindNextFile)(hSearch, &SearchData))
+			if (!HGE_WINAPI_UNICODE_SUFFIX(FindNextFile)(m_res_search_handle, &m_res_search_data))
 			{
-				FindClose(hSearch);
-				hSearch = 0;
+				FindClose(m_res_search_handle);
+				m_res_search_handle = 0;
 				return 0;
 			}
-			if (!(SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-				return SearchData.cFileName;
+			if (!(m_res_search_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+				return m_res_search_data.cFileName;
 		}
 	}
 }
@@ -324,45 +324,45 @@ hgeString HGE_CALL HGE_Impl::Resource_EnumFolders(hgeConstString wildcard)
 {
 	if (wildcard)
 	{
-		if (hSearch)
+		if (m_res_search_handle)
 		{
-			FindClose(hSearch);
-			hSearch = 0;
+			FindClose(m_res_search_handle);
+			m_res_search_handle = 0;
 		}
-		hSearch = HGE_WINAPI_UNICODE_SUFFIX(FindFirstFile)(Resource_MakePath(
-				wildcard), &SearchData);
-		if (hSearch == INVALID_HANDLE_VALUE)
+		m_res_search_handle = HGE_WINAPI_UNICODE_SUFFIX(FindFirstFile)(Resource_MakePath(
+				wildcard), &m_res_search_data);
+		if (m_res_search_handle == INVALID_HANDLE_VALUE)
 		{
-			hSearch = 0;
+			m_res_search_handle = 0;
 			return 0;
 		}
 
-		if ((SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-				&& hge_strcmp(SearchData.cFileName, TXT(".") ) && hge_strcmp(
-				SearchData.cFileName, TXT("..") ))
+		if ((m_res_search_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+				&& hge_strcmp(m_res_search_data.cFileName, TXT(".") ) && hge_strcmp(
+				m_res_search_data.cFileName, TXT("..") ))
 		{
-			return SearchData.cFileName;
+			return m_res_search_data.cFileName;
 		}
 		else
 			return Resource_EnumFolders();
 	}
 	else
 	{
-		if (!hSearch)
+		if (!m_res_search_handle)
 			return 0;
 		for (;;)
 		{
-			if (!HGE_WINAPI_UNICODE_SUFFIX(FindNextFile)(hSearch, &SearchData))
+			if (!HGE_WINAPI_UNICODE_SUFFIX(FindNextFile)(m_res_search_handle, &m_res_search_data))
 			{
-				FindClose(hSearch);
-				hSearch = 0;
+				FindClose(m_res_search_handle);
+				m_res_search_handle = 0;
 				return 0;
 			}
-			if ((SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-					&& hge_strcmp(SearchData.cFileName, TXT(".") )
-					&& hge_strcmp(SearchData.cFileName, TXT("..") ))
+			if ((m_res_search_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+					&& hge_strcmp(m_res_search_data.cFileName, TXT(".") )
+					&& hge_strcmp(m_res_search_data.cFileName, TXT("..") ))
 			{
-				return SearchData.cFileName;
+				return m_res_search_data.cFileName;
 			}
 		}
 	}

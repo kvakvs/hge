@@ -17,8 +17,8 @@
 #include <hgerect.h>
 
 
-#define MAX_PARTICLES	500
-#define MAX_PSYSTEMS	100
+#define HGE_MAX_PARTICLES	500
+#define HGE_MAX_PSYSTEMS	100
 
 struct hgeParticle
 {
@@ -89,46 +89,46 @@ public:
 	hgeParticleSystem(hgeConstString filename, hgeSprite *sprite);
 	hgeParticleSystem(hgeParticleSystemInfo *psi);
 	hgeParticleSystem(const hgeParticleSystem &ps);
-	~hgeParticleSystem() { hge->Release(); }
+	~hgeParticleSystem() { m_hge->Release(); }
 
 	hgeParticleSystem&	operator= (const hgeParticleSystem &ps);
 
 
-	void				Render();
-	void				FireAt(float x, float y);
-	void				Fire();
-	void				Stop(bool bKillParticles=false);
-	void				Update(float fDeltaTime);
-	void				MoveTo(float x, float y, bool bMoveParticles=false);
-	void				Transpose(float x, float y) { fTx=x; fTy=y; }
-	void				SetScale(float scale) { fScale = scale; }
-	void				TrackBoundingBox(bool bTrack) { bUpdateBoundingBox=bTrack; }
+	void		Render();
+	void		FireAt(float x, float y);
+	void		Fire();
+	void		Stop(bool bKillParticles=false);
+	void		Update(float fDeltaTime);
+	void		MoveTo(float x, float y, bool bMoveParticles=false);
+	void		Transpose(float x, float y) { m_tx=x; m_ty=y; }
+	void		SetScale(float scale) { m_scale = scale; }
+	void		TrackBoundingBox(bool bTrack) { m_update_bbox_flag=bTrack; }
 
-	int					GetParticlesAlive() const { return nParticlesAlive; }
-	float				GetAge() const { return fAge; }
-	void				GetPosition(float *x, float *y) const { *x=vecLocation.x; *y=vecLocation.y; }
-	void				GetTransposition(float *x, float *y) const { *x=fTx; *y=fTy; }
-	float				GetScale() { return fScale; }
-	hgeRect*			GetBoundingBox(hgeRect *rect) const;
+	int			GetParticlesAlive() const { return m_num_particles_alive; }
+	float		GetAge() const { return m_age; }
+	void		GetPosition(float *x, float *y) const { *x=m_location.x; *y=m_location.y; }
+	void		GetTransposition(float *x, float *y) const { *x=m_tx; *y=m_ty; }
+	float		GetScale() { return m_scale; }
+	hgeRect *	GetBoundingBox(hgeRect * rect) const;
 
 private:
 	hgeParticleSystem();
 
-	static HGE			*hge;
+	static HGE			* m_hge;
 
-	float				fAge;
-	float				fEmissionResidue;
+	float				m_age;
+	float				m_emission_residue;
 
-	hgeVector			vecPrevLocation;
-	hgeVector			vecLocation;
-	float				fTx, fTy;
-	float				fScale;
+	hgeVector			m_prev_location;
+	hgeVector			m_location;
+	float				m_tx, m_ty;
+	float				m_scale;
 
-	int					nParticlesAlive;
-	hgeRect				rectBoundingBox;
-	bool				bUpdateBoundingBox;
+	int					m_num_particles_alive;
+	hgeRect				m_bbox;
+	bool				m_update_bbox_flag;
 
-	hgeParticle			particles[MAX_PARTICLES];
+	hgeParticle			m_particles[HGE_MAX_PARTICLES];
 };
 
 class hgeParticleManager
@@ -143,7 +143,7 @@ public:
 	hgeParticleSystem*	SpawnPS(hgeParticleSystemInfo *psi, float x, float y);
 	bool				IsPSAlive(hgeParticleSystem *ps) const;
 	void				Transpose(float x, float y);
-	void				GetTransposition(float *dx, float *dy) const {*dx=tX; *dy=tY;}
+	void				GetTransposition(float *dx, float *dy) const {*dx=m_tx; *dy=m_ty;}
 	void				KillPS(hgeParticleSystem *ps);
 	void				KillAll();
 
@@ -151,10 +151,10 @@ private:
 	hgeParticleManager(const hgeParticleManager &);
 	hgeParticleManager&	operator= (const hgeParticleManager &);
 
-	int					nPS;
-	float				tX;
-	float				tY;
-	hgeParticleSystem*	psList[MAX_PSYSTEMS];
+	int					m_num_systems;
+	float				m_tx;
+	float				m_ty;
+	hgeParticleSystem *	psList[HGE_MAX_PSYSTEMS];
 };
 
 

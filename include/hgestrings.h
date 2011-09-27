@@ -16,6 +16,7 @@
 #define HGE_MAX_STRINGNAME_LENGTH 64
 
 
+// TODO: wrap this in std::map instead of handcrafted list, for faster search
 struct NamedString
 {
 	hgeChar		name[HGE_MAX_STRINGNAME_LENGTH];

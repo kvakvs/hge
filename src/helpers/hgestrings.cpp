@@ -20,10 +20,10 @@ hgeStringTable::hgeStringTable(hgeConstString filename)
 	int i;
 	void *data;
 	uint32_t size;
-	hgeChar *desc, *pdesc;
+	hgeChar *pdesc;
 	NamedString *str;
 	hgeChar str_name[HGE_MAX_STRINGNAME_LENGTH];
-	hgeChar *str_value, *pvalue;
+	hgeChar *pvalue;
 
 	hge = hgeCreate(HGE_VERSION);
 	strings = 0;
@@ -33,21 +33,24 @@ hgeStringTable::hgeStringTable(hgeConstString filename)
 	if (!data)
 		return;
 
-	desc = new hgeChar[size + 1];
-	memcpy(desc, data, size * sizeof(hgeChar));
-	desc[size] = 0;
+	hgeUniquePtr<hgeChar> desc( new hgeChar[size + 1] );
+	// copy bytes and for Unicode version also convert them to wchar_t
+	hgeStrFromUtf8((const char *) data, desc.get(), size + 1);
+	//memcpy(desc.get(), data, size * sizeof(hgeChar));
+
+	desc.get()[size] = 0;
 	hge->Resource_Free(data);
 
 	// check header
-	if (memcmp(desc, STRHEADERTAG, sizeof(STRHEADERTAG) - 1))
+	if (memcmp(desc.get(), STRHEADERTAG, (sizeof(STRHEADERTAG) - 1) * sizeof(hgeChar)))
 	{
 		hge->System_Log(STRFORMATERROR, filename);
-		delete[] desc;
+		//delete[] desc;
 		return;
 	}
 
-	pdesc = desc + sizeof(STRHEADERTAG);
-	str_value = new hgeChar[8192];
+	pdesc = desc.get() + sizeof(STRHEADERTAG);
+	hgeUniquePtr<hgeChar> str_value( new hgeChar[8192] );
 
 	for (;;)
 	{
@@ -105,7 +108,7 @@ hgeStringTable::hgeStringTable(hgeConstString filename)
 
 		// parse string value till the closing '"' -> str_value
 		// consider: \", \n, \\, LF, CR, whitespaces at line begin/end
-		pvalue = str_value;
+		pvalue = str_value.get();
 
 		while (*pdesc && *pdesc != '"')
 		{
@@ -115,7 +118,7 @@ hgeStringTable::hgeStringTable(hgeConstString filename)
 					pdesc++;
 
 				pvalue--;
-				while (pvalue >= str_value && isspace(*pvalue))
+				while (pvalue >= str_value.get() && isspace(*pvalue))
 					pvalue--;
 				pvalue++;
 				*pvalue = ' ';
@@ -148,8 +151,8 @@ hgeStringTable::hgeStringTable(hgeConstString filename)
 		// add the parsed string to the list
 		str = new NamedString;
 		hge_strcpy(str->name, str_name);
-		str->string = new hgeChar[hge_strlen(str_value) + 1];
-		hge_strcpy(str->string, str_value);
+		str->string = new hgeChar[hge_strlen(str_value.get()) + 1];
+		hge_strcpy(str->string, str_value.get());
 		str->next = strings;
 		strings = str;
 
@@ -158,8 +161,8 @@ hgeStringTable::hgeStringTable(hgeConstString filename)
 		pdesc++;
 	}
 
-	delete[] str_value;
-	delete[] desc;
+	//delete[] str_value;
+	//delete[] desc;
 }
 
 

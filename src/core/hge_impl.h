@@ -106,7 +106,7 @@ public:
     virtual void        HGE_CALL    Ini_SetFloat(hgeConstString section, hgeConstString name, float value);
     virtual float       HGE_CALL    Ini_GetFloat(hgeConstString section, hgeConstString name, float def_val);
     virtual void        HGE_CALL    Ini_SetString(hgeConstString section, hgeConstString name, hgeConstString value);
-    virtual hgeString        HGE_CALL    Ini_GetString(hgeConstString section, hgeConstString name, hgeConstString def_val);
+    virtual hgeString   HGE_CALL    Ini_GetString(hgeConstString section, hgeConstString name, hgeConstString def_val);
 
     virtual void        HGE_CALL    Random_Seed(int seed=0);
     virtual int         HGE_CALL    Random_Int(int min, int max);
@@ -201,52 +201,51 @@ public:
     void                _FocusChange(bool bAct);
     void                _PostError( hgeConstString error );
 
+    HINSTANCE           m_hinstance;
+    HWND                m_hwnd;
 
-    HINSTANCE           hInstance;
-    HWND                hwnd;
-
-    bool                bActive;
-    hgeChar				szError[256];
-    hgeChar				szAppPath[_MAX_PATH];
-    hgeChar				szIniString[256];
+    bool                m_active_flag;
+    hgeChar				m_error_str[256];
+    hgeChar				m_app_path[_MAX_PATH];
+    hgeChar				m_ini_string[256];
 
 
     // System States
-    bool                (*procFrameFunc)();
-    bool                (*procRenderFunc)();
-    bool                (*procFocusLostFunc)();
-    bool                (*procFocusGainFunc)();
-    bool                (*procGfxRestoreFunc)();
-    bool                (*procExitFunc)();
-    const hgeChar		* szIcon;
-    hgeChar				szWinTitle[256];
-    int                 nScreenWidth;
-    int                 nScreenHeight;
-    int                 nScreenBPP;
-    bool                bWindowed;
-    bool                bZBuffer;
-    bool                bTextureFilter;
-    hgeChar				szIniFile[_MAX_PATH];
-    hgeChar				szLogFile[_MAX_PATH];
-    bool                bUseSound;
-    int                 nSampleRate;
-    int                 nFXVolume;
-    int                 nMusVolume;
-    int                 nStreamVolume;
-    int                 nHGEFPS;
-    bool                bHideMouse;
-    bool                bDontSuspend;
-    HWND                hwndParent;
+    bool                (*m_frame_func)();
+    bool                (*m_render_func)();
+    bool                (*m_focus_lost_func)();
+    bool                (*m_focus_gain_func)();
+    bool                (*m_gfx_restore_func)();
+    bool                (*m_exit_func)();
+    const hgeChar		* m_window_icon;
+    hgeChar				m_window_title[256];
+    int                 m_screen_width;
+    int                 m_screen_height;
+    int                 m_screen_color_depth;
+    bool                m_windowed_flag;
+    bool                m_zbuffer_flag;
+    bool                m_texture_filter_flag;
+    hgeChar				m_ini_file_path[_MAX_PATH];
+    hgeChar				m_log_file_path[_MAX_PATH];
+    bool                m_use_sound_flag;
+    int                 m_sample_rate;
+    int                 m_fx_volume;
+    int                 m_mus_volume;
+    int                 m_stream_volume;
+    int                 m_framerate_limit;
+    bool                m_hide_mouse_flag;
+    bool                m_dont_suspend_flag;
+    HWND                m_parent_hwnd;
 
     #ifdef DEMO
-    bool                bDMO;
+    bool                m_show_splash_flag;
     #endif
 
 
     // Power
-    int                         nPowerStatus;
-    HMODULE                     hKrnl32;
-    GetSystemPowerStatusFunc    lpfnGetSystemPowerStatus;
+    int                         m_power_status;
+    HMODULE                     m_kernel32_module;
+    GetSystemPowerStatusFunc    m_GetSystemPowerStatus_func;
 
     void                _InitPowerStatus();
     void                _UpdatePowerStatus();
@@ -254,38 +253,38 @@ public:
 
 
     // Graphics
-    D3DPRESENT_PARAMETERS*  d3dpp;
+    D3DPRESENT_PARAMETERS*  m_d3d_pp;
 
-    D3DPRESENT_PARAMETERS   d3dppW;
-    RECT                    rectW;
-    LONG                    styleW;
+    D3DPRESENT_PARAMETERS   m_d3d_pp_wnd;
+    RECT                    m_rect_wnd;
+    LONG                    m_style_wnd;
 
-    D3DPRESENT_PARAMETERS   d3dppFS;
-    RECT                    rectFS;
-    LONG                    styleFS;
+    D3DPRESENT_PARAMETERS   m_d3d_pp_fullscreen;
+    RECT                    m_rect_fullscreen;
+    LONG                    m_style_fullscreen;
 
-    hgeGAPI *               pD3D;
-    hgeGAPIDevice *         pD3DDevice;
-    hgeGAPIVertexBuffer *   pVB;
-    hgeGAPIIndexBuffer *    pIB;
+    hgeGAPI *               m_d3d;
+    hgeGAPIDevice *         m_d3d_device;
+    hgeGAPIVertexBuffer *   m_vertex_buf;
+    hgeGAPIIndexBuffer *    m_index_buf;
 
-    hgeGAPISurface *    pScreenSurf;
-    hgeGAPISurface *    pScreenDepth;
-    CRenderTargetList*  pTargets;
-    CRenderTargetList*  pCurTarget;
+    hgeGAPISurface *    m_screen_surf;
+    hgeGAPISurface *    m_depth_surf;
+    CRenderTargetList*  m_targets_list;
+    CRenderTargetList*  m_current_target;
 
-    D3DXMATRIX          matView;
-    D3DXMATRIX          matProj;
+    D3DXMATRIX          m_view_matrix;
+    D3DXMATRIX          m_proj_matrix;
 
-    CTextureList*       textures;
-    hgeVertex*          VertArray;
+    CTextureList*       m_texture_list;
+    hgeVertex*          m_vert_array;
 
-    int                 nPrim;
-    int                 CurPrimType;
-    int                 CurBlendMode;
-    HTEXTURE            CurTexture;
+    int                 m_prim;
+    int                 m_current_prim_type;
+    int                 m_current_blend_mode;
+    HTEXTURE            m_current_texture;
 #if HGE_DIRECTX_VER >= 9
-	HSHADER				CurShader;
+	HSHADER				m_current_shader;
 #endif
 
     bool                _GfxInit();
@@ -301,9 +300,9 @@ public:
     
 
     // Audio
-    HINSTANCE           hBass;
-    bool                bSilent;
-    CStreamList*        streams;
+    HINSTANCE           m_bass_dll;
+    bool                m_nosound_flag;
+    CStreamList*        m_streams;
     bool                _SoundInit();
     void                _SoundDone();
     void                _SetMusVolume(int vol);
@@ -312,15 +311,15 @@ public:
 
 
     // Input
-    int                 VKey;
-    int                 Char;
-    int                 Zpos;
-    float               Xpos;
-    float               Ypos;
-    bool                bMouseOver;
-    bool                bCaptured;
-    char                keyz[256];
-    CInputEventList*    queue;
+    int                 m_input_vkey;
+    int                 m_input_char;
+    int                 m_input_zpos;
+    float               m_input_xpos;
+    float               m_input_ypos;
+    bool                m_input_mouseover_flag;
+    bool                m_input_captured_flag;
+    char                m_input_keys_table[256];
+    CInputEventList*    m_input_queue;
     void                _UpdateMouse();
     void                _InputInit();
     void                _ClearQueue();
@@ -328,19 +327,19 @@ public:
 
 
     // Resources
-    hgeChar				szTmpFilename[_MAX_PATH];
-    CResourceList*		res;
-    HANDLE				hSearch;
-    HGE_WINAPI_UNICODE_SUFFIX(WIN32_FIND_DATA)	SearchData;
+    hgeChar				m_res_temp_filename[_MAX_PATH];
+    CResourceList*		m_res_list;
+    HANDLE				m_res_search_handle;
+    HGE_WINAPI_UNICODE_SUFFIX(WIN32_FIND_DATA)	m_res_search_data;
 
 
     // Timer
-    float               fTime;
-    float               fDeltaTime;
-    uint32_t            nFixedDelta;
-    int                 nFPS;
-    uint32_t            t0, t0fps, dt;
-    int                 cfps;
+    float               m_time;
+    float               m_time_delta;
+    uint32_t            m_time_fixed_delta;
+    int                 m_time_fps;
+    uint32_t            m_time_t0, m_time_t0fps, m_time_dt;
+    int                 m_time_cfps;
 
 
 private:

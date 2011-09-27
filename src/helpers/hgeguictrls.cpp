@@ -312,8 +312,8 @@ int hgeGUIListbox::AddItem(char *item)
 	hgeGUIListboxItem *pItem = pItems, *pPrev = 0, *pNew;
 
 	pNew = new hgeGUIListboxItem;
-	memcpy(pNew->text, item, std::min(sizeof(pNew->text), strlen(item) + 1)
-			* sizeof(hgeChar));
+	memcpy(pNew->text, item, std::min(sizeof(pNew->text), strlen(item) + 1) * sizeof(hgeChar));
+
 	pNew->text[sizeof(pNew->text) - 1] = '\0';
 	pNew->next = 0;
 

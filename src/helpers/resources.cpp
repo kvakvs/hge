@@ -328,11 +328,12 @@ void ScriptParseSpriteAnim(RScriptParser *sp, RSprite *rc, bool anim)
 void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp,
 		hgeConstString sname, hgeConstString sbasename)
 {
-	RScriptParser *np;
+	hgeUniquePtr<RScriptParser> np;
 	RScript *res_script;
 	void *data;
 	uint32_t size;
-	hgeString script;
+	//hgeString script;
+	hgeUniquePtr<hgeChar> script;
 	hgeChar name[HGE_MAX_RESOURCE_CHARS];
 	hgeChar basename[HGE_MAX_RESOURCE_CHARS];
 	int restype;
@@ -354,14 +355,15 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp,
 		}
 		else
 		{
-			script = new hgeChar[size + 1];
-			memcpy(script, data, size * sizeof(hgeChar));
-			script[size] = 0;
+			script.reset( new hgeChar[size + 1] );
+			memcpy(script.get(), data, size * sizeof(hgeChar));
+			script.get()[size] = TXT('\0');
+
 			hge->Resource_Free(data);
 
 			hge_strcpy(res_script->name, sname);
 			AddRes(rm, RES_SCRIPT, res_script);
-			np = new RScriptParser(res_script->name, script);
+			np.reset( new RScriptParser(res_script->name, script.get()) );
 
 			for (;;)
 			{
@@ -372,7 +374,7 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp,
 				else if (np->tokentype == TTRES_INCLUDE)
 				{
 					np->get_token();
-					RScript::Parse(rm, np, np->tkn_string(), NULL);
+					RScript::Parse(rm, np.get(), np->tkn_string(), NULL);
 				}
 
 				else if (np->tokentype > TTRES__FIRST && np->tokentype
@@ -417,40 +419,40 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp,
 						switch (restype)
 						{
 						case RES_RESOURCE:
-							RResource::Parse(rm, np, name, basename);
+							RResource::Parse(rm, np.get(), name, basename);
 							break;
 						case RES_TEXTURE:
-							RTexture::Parse(rm, np, name, basename);
+							RTexture::Parse(rm, np.get(), name, basename);
 							break;
 						case RES_EFFECT:
-							REffect::Parse(rm, np, name, basename);
+							REffect::Parse(rm, np.get(), name, basename);
 							break;
 						case RES_MUSIC:
-							RMusic::Parse(rm, np, name, basename);
+							RMusic::Parse(rm, np.get(), name, basename);
 							break;
 						case RES_STREAM:
-							RStream::Parse(rm, np, name, basename);
+							RStream::Parse(rm, np.get(), name, basename);
 							break;
 						case RES_TARGET:
-							RTarget::Parse(rm, np, name, basename);
+							RTarget::Parse(rm, np.get(), name, basename);
 							break;
 						case RES_SPRITE:
-							RSprite::Parse(rm, np, name, basename);
+							RSprite::Parse(rm, np.get(), name, basename);
 							break;
 						case RES_ANIMATION:
-							RAnimation::Parse(rm, np, name, basename);
+							RAnimation::Parse(rm, np.get(), name, basename);
 							break;
 						case RES_FONT:
-							RFont::Parse(rm, np, name, basename);
+							RFont::Parse(rm, np.get(), name, basename);
 							break;
 						case RES_PARTICLE:
-							RParticle::Parse(rm, np, name, basename);
+							RParticle::Parse(rm, np.get(), name, basename);
 							break;
 						case RES_DISTORT:
-							RDistort::Parse(rm, np, name, basename);
+							RDistort::Parse(rm, np.get(), name, basename);
 							break;
 						case RES_STRTABLE:
-							RStringTable::Parse(rm, np, name, basename);
+							RStringTable::Parse(rm, np.get(), name, basename);
 							break;
 						}
 					}
@@ -477,8 +479,8 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp,
 				}
 			}
 
-			delete np;
-			delete[] script;
+			//delete np;
+			//delete[] script;
 		}
 	}
 	else

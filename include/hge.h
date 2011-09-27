@@ -48,6 +48,15 @@
 #endif
 */
 
+// Switch to auto_ptr if your compiler is too old to have new standartized unique_ptr
+#include <memory>
+#if defined(_HAS_CPP0X) || defined(_XSTD2)
+	// use new cool and awesome sauce unique_ptr
+	#define hgeUniquePtr std::unique_ptr
+#else
+	// use old crappy auto_ptr
+	#define hgeUniquePtr std::auto_ptr
+#endif
 
 /*
 ** Common math constants

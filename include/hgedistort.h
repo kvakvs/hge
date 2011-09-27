@@ -52,12 +52,12 @@ public:
 private:
 	hgeDistortionMesh();
 
-	static HGE	*hge;
+	static HGE	* hge;
 
-	hgeVertex	*disp_array;
+	hgeUniquePtr<hgeVertex>	disp_array;
 	int			nRows, nCols;
-	float		cellw,cellh;
-	float		tx,ty,width,height;
+	float		cellw, cellh;
+	float		tx, ty, width, height;
 	hgeQuad		quad;
 };
 
