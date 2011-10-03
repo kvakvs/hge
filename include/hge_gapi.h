@@ -27,6 +27,7 @@
     typedef IDirect3DSurface8       hgeGAPISurface;
     typedef D3DVIEWPORT8            hgeGAPIViewport;
     typedef D3DADAPTER_IDENTIFIER8  hgeGAPIAdapterIdentifier;
+	typedef D3DCAPS8				hgeGAPICaps;
 #endif
 
 #if HGE_DIRECTX_VER == 9
@@ -38,5 +39,6 @@
     typedef IDirect3DSurface9       hgeGAPISurface;
     typedef D3DVIEWPORT9            hgeGAPIViewport;
     typedef D3DADAPTER_IDENTIFIER9  hgeGAPIAdapterIdentifier;
+	typedef D3DCAPS9				hgeGAPICaps;
 #endif
 
