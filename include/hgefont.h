@@ -27,7 +27,8 @@
 
 
 /*
-** HGE Font interface (to use with Legacy font and BMFont font)
+** HGE Font interface (to use with BMFont font)
+** Supports Unicode
 */
 #if HGE_UNICODE
 class hgeFont

@@ -211,10 +211,10 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(HTARGET targ)
 
 	m_d3d_device->BeginScene();
 #if HGE_DIRECTX_VER == 8
-    pVB->Lock( 0, 0, (uint8_t**)&VertArray, D3DLOCK_DISCARD );
+    m_vertex_buf->Lock( 0, 0, (uint8_t**)&m_vert_array, D3DLOCK_DISCARD );
 #endif
 #if HGE_DIRECTX_VER == 9
-    pVB->Lock( 0, 0, (VOID**)&VertArray, D3DLOCK_DISCARD );
+    m_vertex_buf->Lock( 0, 0, (VOID**)&m_vert_array, D3DLOCK_DISCARD );
 #endif
 	return true;
 }
@@ -705,10 +705,10 @@ void HGE_Impl::_render_batch(bool bEndScene)
 		if (bEndScene)
 			m_vert_array = 0;
 #if HGE_DIRECTX_VER == 8
-        else pVB->Lock( 0, 0, (uint8_t**)&VertArray, D3DLOCK_DISCARD );
+        else m_vertex_buf->Lock( 0, 0, (uint8_t**)&m_vert_array, D3DLOCK_DISCARD );
 #endif
 #if HGE_DIRECTX_VER == 9
-        else pVB->Lock( 0, 0, (VOID**)&VertArray, D3DLOCK_DISCARD );
+        else m_vertex_buf->Lock( 0, 0, (VOID**)&m_vert_array, D3DLOCK_DISCARD );
 #endif
 	}
 }
@@ -909,8 +909,8 @@ bool HGE_Impl::_GfxInit()
 		m_screen_color_depth = 32;
 
 	// Create D3D Device
-    if(_format_id(d3dpp->BackBufferFormat) < 4) nScreenBPP=16;
-    else nScreenBPP=32;
+    if(_format_id(m_d3d_pp->BackBufferFormat) < 4) m_screen_color_depth=16;
+    else m_screen_color_depth=32;
     
 // Create D3D Device
 // #if HGE_DIRECTX_VER == 8
@@ -924,21 +924,21 @@ bool HGE_Impl::_GfxInit()
 // #endif
 // #if HGE_DIRECTX_VER == 9
 	hgeGAPICaps caps;
-	pD3D->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
+	m_d3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
 	uint32_t   vp;
 	if((caps.VertexShaderVersion < D3DVS_VERSION(1,1)) || !(caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT))
 	{
-		System_Log("Software Vertex-processing device selected");
+		System_Log( TXT("Software Vertex-processing device selected") );
 		vp = D3DCREATE_SOFTWARE_VERTEXPROCESSING;
 	}
 	else
 	{
-		System_Log("Hardware Vertex-processing device selected");
+		System_Log( TXT("Hardware Vertex-processing device selected") );
 		vp = D3DCREATE_HARDWARE_VERTEXPROCESSING;
 	}
-	if( FAILED( pD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, vp, d3dpp, &pD3DDevice ) ) ) 
+	if( FAILED( m_d3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hwnd, vp, m_d3d_pp, &m_d3d_device ) ) ) 
 	{
-		_PostError("Can't create D3D device");
+		_PostError( TXT("Can't create D3D device") );
 		return false;
 	}
 // #endif
@@ -1214,17 +1214,17 @@ bool HGE_Impl::_init_lost()
 
 	// Create Vertex buffer
 #if HGE_DIRECTX_VER == 8
-    if( FAILED (pD3DDevice->CreateVertexBuffer(VERTEX_BUFFER_SIZE*sizeof(hgeVertex),
+    if( FAILED (m_d3d_device->CreateVertexBuffer(VERTEX_BUFFER_SIZE*sizeof(hgeVertex),
                                               D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY,
                                               D3DFVF_HGEVERTEX,
-                                              D3DPOOL_DEFAULT, &pVB )))
+                                              D3DPOOL_DEFAULT, & m_vertex_buf )))
 #endif
 #if HGE_DIRECTX_VER == 9
-    if( FAILED (pD3DDevice->CreateVertexBuffer(VERTEX_BUFFER_SIZE*sizeof(hgeVertex),
+    if( FAILED (m_d3d_device->CreateVertexBuffer(VERTEX_BUFFER_SIZE*sizeof(hgeVertex),
                                                 D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY,
                                                 D3DFVF_HGEVERTEX,
                                                 D3DPOOL_DEFAULT, 
-                                                &pVB, 
+                                                & m_vertex_buf, 
                                                 NULL)))
 #endif
 	{

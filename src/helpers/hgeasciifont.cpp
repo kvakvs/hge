@@ -5,6 +5,8 @@
 **
 ** hgeFont helper class implementation
 */
+#if ! HGE_UNICODE
+
 #include <hgefont.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,11 +21,8 @@ hgeConstString FNTCHARTAG = TXT("Char");
 
 HGE *hgeFont::m_hge = 0;
 
-#if ! HGE_UNICODE
-	hgeChar hgeFont::m_buffer[1024];
-#endif // ! HGE_UNICODE
+hgeChar hgeFont::m_buffer[1024];
 
-#if ! HGE_UNICODE
 hgeFont::hgeFont(hgeConstString szFont, bool bMipmap)
 {
 	void * data;
@@ -150,10 +149,8 @@ hgeFont::hgeFont(hgeConstString szFont, bool bMipmap)
 	//delete[] desc;	
 	//_ASSERTE(false); // todo copy here BMFONT loader code
 }
-#endif
 
 
-#if ! HGE_UNICODE
 hgeFont::~hgeFont()
 {
 	for (int i = 0; i < 256; i++)
@@ -163,10 +160,8 @@ hgeFont::~hgeFont()
 		hge->Texture_Free(m_texture);
 	hge->Release();
 }
-#endif
 
 
-#if ! HGE_UNICODE
 void hgeFont::Render(float x, float y, int align, hgeConstString _str)
 {
 	const hgeChar * str = _str;
@@ -206,10 +201,8 @@ void hgeFont::Render(float x, float y, int align, hgeConstString _str)
 		str++;
 	}
 }
-#endif
 
 
-#if ! HGE_UNICODE
 void hgeFont::printf(float x, float y, int align, hgeConstString format, ...)
 {
 	va_list pArg = (va_list) &format + sizeof(format);
@@ -220,10 +213,8 @@ void hgeFont::printf(float x, float y, int align, hgeConstString format, ...)
 
 	Render(x, y, align, m_buffer);
 }
-#endif
 
 
-#if ! HGE_UNICODE
 void hgeFont::printfb(float x, float y, float w, float h, int align, hgeConstString format, ...)
 {
 	hgeChar chr, *pbuf, *prevword, *linestart;
@@ -315,10 +306,8 @@ void hgeFont::printfb(float x, float y, float w, float h, int align, hgeConstStr
 
 	Render(tx, ty, align, m_buffer);
 }
-#endif
 
 
-#if ! HGE_UNICODE
 float hgeFont::GetStringWidth(hgeConstString _str, bool bMultiline) const
 {
 	int i;
@@ -352,10 +341,8 @@ float hgeFont::GetStringWidth(hgeConstString _str, bool bMultiline) const
 
 	return w * m_scale * m_proportion;
 }
-#endif
 
 
-#if ! HGE_UNICODE
 void hgeFont::SetColor(uint32_t col)
 {
 	m_color = col;
@@ -364,10 +351,8 @@ void hgeFont::SetColor(uint32_t col)
 		if (m_letters[i])
 			m_letters[i]->SetColor(col);
 }
-#endif
 
 
-#if ! HGE_UNICODE
 void hgeFont::SetZ(float z)
 {
 	m_depth = z;
@@ -376,10 +361,8 @@ void hgeFont::SetZ(float z)
 		if (m_letters[i])
 			m_letters[i]->SetZ(z);
 }
-#endif
 
 
-#if ! HGE_UNICODE
 void hgeFont::SetBlendMode(int blend)
 {
 	m_blending = blend;
@@ -388,10 +371,8 @@ void hgeFont::SetBlendMode(int blend)
 		if (m_letters[i])
 			m_letters[i]->SetBlendMode(blend);
 }
-#endif
 
 
-#if ! HGE_UNICODE
 hgeString hgeFont::_get_line(hgeString file, hgeString line)
 {
 	int i = 0;
@@ -411,4 +392,5 @@ hgeString hgeFont::_get_line(hgeString file, hgeString line)
 
 	return file + i;
 }
-#endif
+
+#endif // HGE_UNICODE

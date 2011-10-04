@@ -6,7 +6,7 @@ set( HGEHELPERS_SRC
     hgeanim.cpp
     hgecolor.cpp
     hgedistort.cpp
-    hgefont.cpp
+    hgeasciifont.cpp    hgeunicodefont.cpp
     hgegui.cpp
     hgeguictrls.cpp
     hgeparticle.cpp
