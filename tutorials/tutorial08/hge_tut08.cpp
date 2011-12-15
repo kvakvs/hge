@@ -41,10 +41,10 @@ hgeFont		*fnt=0;
 #define STARS_HEIGHT	(SKY_HEIGHT*0.9f)
 #define ORBITS_RADIUS	(SCREEN_WIDTH*0.43f)
 
-uint32_t skyTopColors[] = {0xFF15092A, 0xFF6C6480, 0xFF89B9D0};
-uint32_t skyBtmColors[] = {0xFF303E57, 0xFFAC7963, 0xFFCAD7DB};
-uint32_t seaTopColors[] = {0xFF3D546B, 0xFF927E76, 0xFF86A2AD};
-uint32_t seaBtmColors[] = {0xFF1E394C, 0xFF2F4E64, 0xFF2F4E64};
+hgeU32 skyTopColors[] = {0xFF15092A, 0xFF6C6480, 0xFF89B9D0};
+hgeU32 skyBtmColors[] = {0xFF303E57, 0xFFAC7963, 0xFFCAD7DB};
+hgeU32 seaTopColors[] = {0xFF3D546B, 0xFF927E76, 0xFF86A2AD};
+hgeU32 seaBtmColors[] = {0xFF1E394C, 0xFF2F4E64, 0xFF2F4E64};
 
 int seq[]={0, 0, 1, 2, 2, 2, 1, 0, 0};
 
@@ -287,7 +287,7 @@ void UpdateSimulation()
 	float posX, s1, s2;
 	const float cellw=SCREEN_WIDTH/(SEA_SUBDIVISION-1);
 	hgeColor col1, col2;
-	uint32_t dwCol1, dwCol2;
+	hgeU32 dwCol1, dwCol2;
 
 	// Update time of day
 
@@ -489,7 +489,7 @@ void RenderSimulation()
 	if(seq_id>=6 || seq_id<2)
 		for(int i=0; i<NUM_STARS; i++)
 		{
-			star->SetColor((uint32_t(starA[i]*255.0f)<<24) | 0xFFFFFF);
+			star->SetColor((hgeU32(starA[i]*255.0f)<<24) | 0xFFFFFF);
 			star->RenderEx(starX[i], starY[i], 0.0f, starS[i]);
 		}
 

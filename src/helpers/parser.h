@@ -57,7 +57,7 @@ public:
 	int		tkn_int()    { return atoi(tokenvalue); }
 	float	tkn_float()  { return (float)atof(tokenvalue); }
 	bool	tkn_bool()   { return (tokenvalue[0]=='t' || tokenvalue[0]=='T') ? true : false; }
-	uint32_t	tkn_hex();
+	hgeU32	tkn_hex();
 
 	void	ScriptPostError(char *msg1, char *msg2);
 

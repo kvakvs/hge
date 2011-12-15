@@ -402,7 +402,7 @@ void cmdLoadPreset(int n)
 {
 	HANDLE hF;
 	DWORD size;
-	uint32_t col1, col2;
+	hgeU32 col1, col2;
 	char filename[_MAX_PATH];
 
 	if(!state.ps) return;
@@ -417,8 +417,8 @@ void cmdLoadPreset(int n)
 	if(hF == INVALID_HANDLE_VALUE) return;
 	ReadFile(hF, &state.ps->info, sizeof(hgeParticleSystemInfo), &size, NULL );
  	CloseHandle(hF);
-	sprParticles->SetFrame((uint32_t)state.ps->info.sprite & 0xFFFF);
-	sprParticles->SetBlendMode((uint32_t)state.ps->info.sprite >> 16);
+	sprParticles->SetFrame((hgeU32)state.ps->info.sprite & 0xFFFF);
+	sprParticles->SetBlendMode((hgeU32)state.ps->info.sprite >> 16);
 	state.ps->info.sprite=sprParticles;
 
 	// System parameters
@@ -513,7 +513,7 @@ void cmdLoadPreset(int n)
 
 void cmdChangeColor(int id)
 {
-	uint32_t col1, col2;
+	hgeU32 col1, col2;
 	float val=SliderGetValue(id);
 
 	switch(id)

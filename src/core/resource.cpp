@@ -80,7 +80,7 @@ void HGE_CALL HGE_Impl::Resource_RemoveAllPacks()
 	res=0;
 }
 
-void* HGE_CALL HGE_Impl::Resource_Load(const char *filename, uint32_t *size)
+void* HGE_CALL HGE_Impl::Resource_Load(const char *filename, hgeU32 *size)
 {
 	static char *res_err="Can't load resource: %s";
 

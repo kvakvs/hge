@@ -185,10 +185,10 @@ bool RScriptParser::strtkcmp(char *str, char *mem)
 	return false;
 }
 
-uint32_t RScriptParser::tkn_hex()
+hgeU32 RScriptParser::tkn_hex()
 {
 	int i;
-	uint32_t dw=0;
+	hgeU32 dw=0;
 	char chr;
 	for(i=0; tokenvalue[i]; i++)
 	{

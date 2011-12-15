@@ -93,7 +93,7 @@ void CFontList::FindSortAdd(char *family)
 int CALLBACK EnumFontFamExProc(
   ENUMLOGFONTEX *lpelfe,    // logical-font data
   NEWTEXTMETRICEX *lpntme,  // physical-font data
-  uint32_t FontType,           // type of font
+  unsigned int FontType,           // type of font
   LPARAM lParam             // application-defined data
 )
 {

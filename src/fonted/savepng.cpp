@@ -84,7 +84,7 @@ bool Write32BitPNG(FILE* fp, void* pBits, bool bNeedAlpha, int nWidth, int nHeig
 bool SavePNG(HTEXTURE tex, char *filename)
 {
 	FILE *fp=0;
-	uint32_t *pTexData=0;
+	hgeU32 *pTexData=0;
 	int nWidth, nHeight;
 
 	try

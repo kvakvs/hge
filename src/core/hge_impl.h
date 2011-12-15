@@ -93,7 +93,7 @@ public:
     virtual bool        HGE_CALL    System_Launch(const char *url);
     virtual void        HGE_CALL    System_Snapshot(const char *filename=0);
 
-    virtual void*       HGE_CALL    Resource_Load(const char *filename, uint32_t *size=0);
+    virtual void*       HGE_CALL    Resource_Load(const char *filename, hgeU32 *size=0);
     virtual void        HGE_CALL    Resource_Free(void *res);
     virtual bool        HGE_CALL    Resource_AttachPack(const char *filename, const char *password=0);
     virtual void        HGE_CALL    Resource_RemovePack(const char *filename);
@@ -117,12 +117,12 @@ public:
     virtual float       HGE_CALL    Timer_GetDelta();
     virtual int         HGE_CALL    Timer_GetFPS();
 
-    virtual HEFFECT     HGE_CALL    Effect_Load(const char *filename, uint32_t size=0);
+    virtual HEFFECT     HGE_CALL    Effect_Load(const char *filename, hgeU32 size=0);
     virtual void        HGE_CALL    Effect_Free(HEFFECT eff);
     virtual HCHANNEL    HGE_CALL    Effect_Play(HEFFECT eff);
     virtual HCHANNEL    HGE_CALL    Effect_PlayEx(HEFFECT eff, int volume=100, int pan=0, float pitch=1.0f, bool loop=false);
 
-    virtual HMUSIC      HGE_CALL    Music_Load(const char *filename, uint32_t size=0);
+    virtual HMUSIC      HGE_CALL    Music_Load(const char *filename, hgeU32 size=0);
     virtual void        HGE_CALL    Music_Free(HMUSIC mus);
     virtual HCHANNEL    HGE_CALL    Music_Play(HMUSIC mus, bool loop, int volume = 100, int order = 0, int row = 0);
     virtual void        HGE_CALL    Music_SetAmplification(HMUSIC music, int ampl);
@@ -135,7 +135,7 @@ public:
     virtual void        HGE_CALL    Music_SetChannelVolume(HMUSIC music, int channel, int volume);
     virtual int         HGE_CALL    Music_GetChannelVolume(HMUSIC music, int channel);
 
-    virtual HSTREAM     HGE_CALL    Stream_Load(const char *filename, uint32_t size=0);
+    virtual HSTREAM     HGE_CALL    Stream_Load(const char *filename, hgeU32 size=0);
     virtual void        HGE_CALL    Stream_Free(HSTREAM stream);
     virtual HCHANNEL    HGE_CALL    Stream_Play(HSTREAM stream, bool loop, int volume = 100);
 
@@ -169,8 +169,8 @@ public:
 
     virtual bool        HGE_CALL    Gfx_BeginScene(HTARGET target=0);
     virtual void        HGE_CALL    Gfx_EndScene();
-    virtual void        HGE_CALL    Gfx_Clear(uint32_t color);
-    virtual void        HGE_CALL    Gfx_RenderLine(float x1, float y1, float x2, float y2, uint32_t color=0xFFFFFFFF, float z=0.5f);
+    virtual void        HGE_CALL    Gfx_Clear(hgeU32 color);
+    virtual void        HGE_CALL    Gfx_RenderLine(float x1, float y1, float x2, float y2, hgeU32 color=0xFFFFFFFF, float z=0.5f);
     virtual void        HGE_CALL    Gfx_RenderTriple(const hgeTriple *triple);
     virtual void        HGE_CALL    Gfx_RenderQuad(const hgeQuad *quad);
     virtual hgeVertex*  HGE_CALL    Gfx_StartBatch(int prim_type, HTEXTURE tex, int blend, int *max_prim);
@@ -189,11 +189,11 @@ public:
     virtual HTEXTURE    HGE_CALL    Target_GetTexture(HTARGET target);
 
     virtual HTEXTURE    HGE_CALL    Texture_Create(int width, int height);
-    virtual HTEXTURE    HGE_CALL    Texture_Load(const char *filename, uint32_t size=0, bool bMipmap=false);
+    virtual HTEXTURE    HGE_CALL    Texture_Load(const char *filename, hgeU32 size=0, bool bMipmap=false);
     virtual void        HGE_CALL    Texture_Free(HTEXTURE tex);
     virtual int         HGE_CALL    Texture_GetWidth(HTEXTURE tex, bool bOriginal=false);
     virtual int         HGE_CALL    Texture_GetHeight(HTEXTURE tex, bool bOriginal=false);
-    virtual uint32_t*      HGE_CALL    Texture_Lock(HTEXTURE tex, bool bReadOnly=true, int left=0, int top=0, int width=0, int height=0);
+    virtual hgeU32*      HGE_CALL    Texture_Lock(HTEXTURE tex, bool bReadOnly=true, int left=0, int top=0, int width=0, int height=0);
     virtual void        HGE_CALL    Texture_Unlock(HTEXTURE tex);
 
     //////// Implementation ////////
@@ -338,9 +338,9 @@ public:
     // Timer
     float               fTime;
     float               fDeltaTime;
-    uint32_t               nFixedDelta;
+    hgeU32               nFixedDelta;
     int                 nFPS;
-    uint32_t               t0, t0fps, dt;
+    hgeU32               t0, t0fps, dt;
     int                 cfps;
 
 

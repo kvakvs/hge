@@ -30,13 +30,13 @@ struct ResDesc
 {
 	char		name[MAXRESCHARS];
 	int			resgroup;
-	uint32_t		handle;
+	hgeU32		handle;
 	ResDesc*	next;
 
 	ResDesc()	{ hge=hgeCreate(HGE_VERSION); }
 	~ResDesc()	{ hge->Release(); }
 
-	virtual uint32_t Get(hgeResourceManager *rm) = 0;
+	virtual hgeU32 Get(hgeResourceManager *rm) = 0;
 	virtual void  Free() = 0;
 
 protected:

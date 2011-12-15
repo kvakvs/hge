@@ -31,20 +31,20 @@ public:
 	 hgeDistortionMesh&	operator= (const hgeDistortionMesh &dm);
 
      void		Render(float x, float y);
-     void		Clear(uint32_t col=0xFFFFFFFF, float z=0.5f);
+     void		Clear(hgeU32 col=0xFFFFFFFF, float z=0.5f);
 
      void		SetTexture(HTEXTURE tex);
      void		SetTextureRect(float x, float y, float w, float h);
      void		SetBlendMode(int blend);
      void		SetZ(int col, int row, float z);
-     void		SetColor(int col, int row, uint32_t color);
+     void		SetColor(int col, int row, hgeU32 color);
      void		SetDisplacement(int col, int row, float dx, float dy, int ref);
 
      HTEXTURE	GetTexture() const {return quad.tex;}
      void		GetTextureRect(float *x, float *y, float *w, float *h) const { *x=tx; *y=ty; *w=width; *h=height; }
      int		GetBlendMode() const { return quad.blend; }
      float		GetZ(int col, int row) const;
-     uint32_t		GetColor(int col, int row) const;
+     hgeU32		GetColor(int col, int row) const;
      void		GetDisplacement(int col, int row, float *dx, float *dy, int ref) const;
 
 	 int		GetRows() { return nRows; }

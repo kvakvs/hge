@@ -20,7 +20,7 @@
 class hgeGUIRange : public hgeGUIObject
 {
 public:
-	hgeGUIRange(int id, float x, float y, float w, float h, int nrows, int ncols, uint32_t color);
+	hgeGUIRange(int id, float x, float y, float w, float h, int nrows, int ncols, hgeU32 color);
 	~hgeGUIRange();
 
 	void			SetRange(int first, int last);

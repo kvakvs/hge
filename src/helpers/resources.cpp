@@ -274,7 +274,7 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *sname
 	RScriptParser *np;
 	RScript *res_script;
 	void *data;
-	uint32_t size;
+	hgeU32 size;
 	char *script, name[MAXRESCHARS], basename[MAXRESCHARS];
 	int restype;
 
@@ -386,9 +386,9 @@ void RResource::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *nam
 	ScriptParseFileResource(rm, sp, name, basename, new RResource(), RES_RESOURCE);
 }
 
-uint32_t RResource::Get(hgeResourceManager *rm)
+hgeU32 RResource::Get(hgeResourceManager *rm)
 {
-	if(!handle) handle=(uint32_t)hge->Resource_Load(filename);
+	if(!handle) handle=(hgeU32)hge->Resource_Load(filename);
 	return handle;
 }
 
@@ -442,9 +442,9 @@ void RTexture::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name
 	AddRes(rm, RES_TEXTURE, rc);
 }
 
-uint32_t RTexture::Get(hgeResourceManager *rm)
+hgeU32 RTexture::Get(hgeResourceManager *rm)
 {
-	if(!handle) handle=(uint32_t)hge->Texture_Load(filename, 0, mipmap);
+	if(!handle) handle=(hgeU32)hge->Texture_Load(filename, 0, mipmap);
 	return handle;
 }
 
@@ -461,9 +461,9 @@ void REffect::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
 	ScriptParseFileResource(rm, sp, name, basename, new REffect(), RES_EFFECT);
 }
 
-uint32_t REffect::Get(hgeResourceManager *rm)
+hgeU32 REffect::Get(hgeResourceManager *rm)
 {
-	if(!handle) handle=(uint32_t)hge->Effect_Load(filename);
+	if(!handle) handle=(hgeU32)hge->Effect_Load(filename);
 	return handle;
 }
 
@@ -522,11 +522,11 @@ void RMusic::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name, 
 	AddRes(rm, RES_MUSIC, rc);
 }
 
-uint32_t RMusic::Get(hgeResourceManager *rm)
+hgeU32 RMusic::Get(hgeResourceManager *rm)
 {
 	if(!handle)
 	{
-		handle=(uint32_t)hge->Music_Load(filename);
+		handle=(hgeU32)hge->Music_Load(filename);
 		hge->Music_SetAmplification(handle, amplify);
 	}
 
@@ -546,9 +546,9 @@ void RStream::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
 	ScriptParseFileResource(rm, sp, name, basename, new RStream(), RES_STREAM);
 }
 
-uint32_t RStream::Get(hgeResourceManager *rm)
+hgeU32 RStream::Get(hgeResourceManager *rm)
 {
-	if(!handle) handle=(uint32_t)hge->Stream_Load(filename);
+	if(!handle) handle=(hgeU32)hge->Stream_Load(filename);
 	return handle;
 }
 
@@ -607,9 +607,9 @@ void RTarget::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
 	AddRes(rm, RES_TARGET, rc);
 }
 
-uint32_t RTarget::Get(hgeResourceManager *rm)
+hgeU32 RTarget::Get(hgeResourceManager *rm)
 {
-	if(!handle) handle=(uint32_t)hge->Target_Create(width, height, zbuffer);
+	if(!handle) handle=(hgeU32)hge->Target_Create(width, height, zbuffer);
 	return handle;
 }
 
@@ -653,7 +653,7 @@ void RSprite::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
 	AddRes(rm, RES_SPRITE, rc);
 }
 
-uint32_t RSprite::Get(hgeResourceManager *rm)
+hgeU32 RSprite::Get(hgeResourceManager *rm)
 {
 	hgeSprite *spr;
 	if(!handle)
@@ -669,7 +669,7 @@ uint32_t RSprite::Get(hgeResourceManager *rm)
 //		spr->SetRotation(rotation);
 //		spr->SetCollisionType(collision);
 
-		handle=(uint32_t)spr;
+		handle=(hgeU32)spr;
 	}
 	return handle;
 }
@@ -717,7 +717,7 @@ void RAnimation::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *na
 	AddRes(rm, RES_ANIMATION, rc);
 }
 
-uint32_t RAnimation::Get(hgeResourceManager *rm)
+hgeU32 RAnimation::Get(hgeResourceManager *rm)
 {
 	hgeAnimation *spr;
 	if(!handle)
@@ -734,7 +734,7 @@ uint32_t RAnimation::Get(hgeResourceManager *rm)
 //		spr->SetCollisionType(collision);
 		spr->SetMode(mode);
 
-		handle=(uint32_t)spr;
+		handle=(hgeU32)spr;
 	}
 	return handle;
 }
@@ -837,7 +837,7 @@ void RFont::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name, c
 	AddRes(rm, RES_FONT, rc);
 }
 
-uint32_t RFont::Get(hgeResourceManager *rm)
+hgeU32 RFont::Get(hgeResourceManager *rm)
 {
 	hgeFont *fnt;
 	if(!handle)
@@ -852,7 +852,7 @@ uint32_t RFont::Get(hgeResourceManager *rm)
 		fnt->SetSpacing(spacing);
 		fnt->SetRotation(rotation);
 
-		handle=(uint32_t)fnt;
+		handle=(hgeU32)fnt;
 	}
 	return handle;
 }
@@ -908,14 +908,14 @@ void RParticle::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *nam
 	AddRes(rm, RES_PARTICLE, rc);
 }
 
-uint32_t RParticle::Get(hgeResourceManager *rm)
+hgeU32 RParticle::Get(hgeResourceManager *rm)
 {
 	hgeParticleSystem *par;
 	if(!handle)
 	{
 		par = new hgeParticleSystem(filename, rm->GetSprite(spritename));
 
-		handle=(uint32_t)par;
+		handle=(hgeU32)par;
 	}
 	return handle;
 }
@@ -1003,7 +1003,7 @@ void RDistort::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name
 	AddRes(rm, RES_DISTORT, rc);
 }
 
-uint32_t RDistort::Get(hgeResourceManager *rm)
+hgeU32 RDistort::Get(hgeResourceManager *rm)
 {
 	hgeDistortionMesh *dis;
 	if(!handle)
@@ -1014,7 +1014,7 @@ uint32_t RDistort::Get(hgeResourceManager *rm)
 		dis->SetBlendMode(blend);
 		dis->Clear(color,z);
 
-		handle=(uint32_t)dis;
+		handle=(hgeU32)dis;
 	}
 	return handle;
 }
@@ -1032,9 +1032,9 @@ void RStringTable::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *
 	ScriptParseFileResource(rm, sp, name, basename, new RStringTable(), RES_STRTABLE);
 }
 
-uint32_t RStringTable::Get(hgeResourceManager *rm)
+hgeU32 RStringTable::Get(hgeResourceManager *rm)
 {
-	if(!handle)	handle = (uint32_t)new hgeStringTable(filename);
+	if(!handle)	handle = (hgeU32)new hgeStringTable(filename);
 	return handle;
 }
 

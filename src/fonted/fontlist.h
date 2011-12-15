@@ -23,7 +23,8 @@ struct CFontListItem
 
 class CFontList
 {
-	friend int CALLBACK EnumFontFamExProc(ENUMLOGFONTEX *lpelfe, NEWTEXTMETRICEX *lpntme, uint32_t FontType, LPARAM lParam);
+	friend int CALLBACK EnumFontFamExProc(ENUMLOGFONTEX *lpelfe, NEWTEXTMETRICEX *lpntme,
+		unsigned int FontType, LPARAM lParam);
 
 public:
 	CFontList();

@@ -62,7 +62,7 @@ bool DoCommands(int id)
 		case CMD_FAMILYLIST:
 			listbox=hgeGetListboxCtrl(gui, CMD_FAMILYLIST);
 			state.FontFamily=listbox->GetItemText(listbox->GetSelectedItem());
-			SliderSetValue(CMD_FAMILYSLIDER, listbox->GetTopItem());
+			SliderSetValue(CMD_FAMILYSLIDER, (float)listbox->GetTopItem());
 			cmdGenerateFont();
 			break;
 

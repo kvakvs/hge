@@ -230,7 +230,7 @@ void hgeParticleSystem::Stop(bool bKillParticles)
 void hgeParticleSystem::Render()
 {
 	int i;
-	uint32_t col;
+	hgeU32 col;
 	hgeParticle *par=particles;
 
 	col=info.sprite->GetColor();

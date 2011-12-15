@@ -48,14 +48,14 @@ public:
 	virtual bool	MouseWheel(int nNotches) { return false; }
 	virtual bool	KeyClick(int key, int chr) { return false; }
 
-	virtual void	SetColor(uint32_t _color) { color=_color; }
+	virtual void	SetColor(hgeU32 _color) { color=_color; }
 	
 	int				id;
 	bool			bStatic;
 	bool			bVisible;
 	bool			bEnabled;
 	hgeRect			rect;
-	uint32_t			color;
+	hgeU32			color;
 
 	hgeGUI			*gui;
 	hgeGUIObject	*next;
@@ -88,7 +88,7 @@ public:
 
 	void			SetNavMode(int mode);
 	void			SetCursor(hgeSprite *spr);
-	void			SetColor(uint32_t color);
+	void			SetColor(hgeU32 color);
 	void			SetFocus(int id);
 	int				GetFocus() const;
 	
