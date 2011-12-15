@@ -10,7 +10,7 @@
 
 
 #include <windows.h>
-#include <stdint.h>
+//#include <stdint.h>
 
 #define HGE_VERSION 0x180
 
@@ -74,6 +74,11 @@
 /*
 ** HGE Handle types
 */
+// TODO: Replace this with proper private types named after HGE or hidden in HGE namespace
+typedef unsigned int uint32_t;
+typedef unsigned short uint16_t;
+typedef unsigned char uint8_t;
+
 // FIXME: Won't compile in 64-bit mode due to handles (4 bytes) holding a pointer (8 bytes)
 typedef uint32_t HTEXTURE;
 typedef uint32_t HTARGET;
