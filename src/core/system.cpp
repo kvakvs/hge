@@ -168,7 +168,7 @@ bool HGE_CALL HGE_Impl::System_Initiate()
 
     // Show splash
 
-#ifdef DEMO
+#ifdef HGE_SPLASH_ENABLE
 
     bool            (*func)();
     bool            (*rfunc)();
@@ -411,7 +411,7 @@ void HGE_CALL HGE_Impl::System_SetStateBool(hgeBoolState state, bool value)
 
         case HGE_DONTSUSPEND:   bDontSuspend=value; break;
 
-        #ifdef DEMO
+        #ifdef HGE_SPLASH_ENABLE
         case HGE_SHOWSPLASH:    bDMO=value; break;
         #endif
     }
@@ -541,7 +541,7 @@ bool HGE_CALL HGE_Impl::System_GetStateBool(hgeBoolState state)
         case HGE_DONTSUSPEND:   return bDontSuspend;
         case HGE_HIDEMOUSE:     return bHideMouse;
 
-        #ifdef DEMO
+        #ifdef HGE_SPLASH_ENABLE
         case HGE_SHOWSPLASH:    return bDMO;
         #endif
     }
@@ -737,7 +737,7 @@ HGE_Impl::HGE_Impl()
     hKrnl32 = NULL;
     lpfnGetSystemPowerStatus = NULL;
 
-#ifdef DEMO
+#ifdef HGE_SPLASH_ENABLE
     bDMO=true;
 #endif
 

@@ -9,7 +9,7 @@
 
 #include "hge_impl.h"
 
-#ifdef DEMO
+#ifdef HGE_SPLASH_ENABLE
 
 hgeQuad dquad;
 float dtime;

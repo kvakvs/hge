@@ -1127,9 +1127,15 @@ bool HGE_Impl::_init_lost()
     }
 #endif
     nPrim=0;
-    CurPrimType=HGEPRIM_QUADS;
+	CurPrimType = HGEPRIM_QUADS;
+
     CurBlendMode = BLEND_DEFAULT;
-    CurTexture = NULL;
+	// Reset default DirectX Zbuffer write to false
+	if (false == bZBuffer) {
+		pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	}
+
+	CurTexture = NULL;
 #if HGE_DIRECTX_VER >= 9
 	CurShader = NULL;
 #endif

@@ -12,7 +12,7 @@
 #include <windows.h>
 //#include <stdint.h>
 
-#define HGE_VERSION 0x180
+#define HGE_VERSION 0x181
 
 // CMake adds PROJECTNAME_EXPORTS when compiles DLL
 #ifdef hge_EXPORTS
@@ -223,7 +223,7 @@ struct hgeVertex
 {
     float			x, y;       // screen position    
     float			z;          // Z-buffer depth 0..1
-    hgeU32		col;        // color
+    hgeU32			col;        // color
     float			tx, ty;     // texture coordinates
 };
 

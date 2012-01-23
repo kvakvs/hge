@@ -15,7 +15,7 @@
 #include <hge_gapi.h>
 
 
-#define DEMO
+#define HGE_SPLASH_ENABLE
 
 #define D3DFVF_HGEVERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1)
 #define VERTEX_BUFFER_SIZE 4000
@@ -239,7 +239,7 @@ public:
     bool                bDontSuspend;
     HWND                hwndParent;
 
-    #ifdef DEMO
+    #ifdef HGE_SPLASH_ENABLE
     bool                bDMO;
     #endif
 
