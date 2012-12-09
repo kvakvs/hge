@@ -18,8 +18,18 @@
 # because otherwise there would have to be a separate assembler source file
 # for each assembler on every architecture.
 
-IF(CMAKE_ASM${ASM_DIALECT}_COMPILER)
-  SET(CMAKE_ASM${ASM_DIALECT}_COMPILER_WORKS 1 CACHE INTERNAL "")
-ELSE(CMAKE_ASM${ASM_DIALECT}_COMPILER)
-  SET(CMAKE_ASM${ASM_DIALECT}_COMPILER_WORKS 0 CACHE INTERNAL "")
-ENDIF(CMAKE_ASM${ASM_DIALECT}_COMPILER)
+
+set(_ASM_COMPILER_WORKS 0)
+
+if(CMAKE_ASM${ASM_DIALECT}_COMPILER)
+  set(_ASM_COMPILER_WORKS 1)
+endif()
+
+# when using generic "ASM" support, we must have detected the compiler ID, fail otherwise:
+if("ASM${ASM_DIALECT}" STREQUAL "ASM")
+  if(NOT CMAKE_ASM${ASM_DIALECT}_COMPILER_ID)
+    set(_ASM_COMPILER_WORKS 0)
+  endif()
+endif()
+
+set(CMAKE_ASM${ASM_DIALECT}_COMPILER_WORKS ${_ASM_COMPILER_WORKS} CACHE INTERNAL "")

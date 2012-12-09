@@ -112,11 +112,14 @@ bool HGE_CALL HGE_Impl::System_Initiate()
     width=nScreenWidth + GetSystemMetrics(SM_CXFIXEDFRAME)*2;
     height=nScreenHeight + GetSystemMetrics(SM_CYFIXEDFRAME)*2 + GetSystemMetrics(SM_CYCAPTION);
 
-    rectW.left=(GetSystemMetrics(SM_CXSCREEN)-width)/2;
-    rectW.top=(GetSystemMetrics(SM_CYSCREEN)-height)/2;
-    rectW.right=rectW.left+width;
-    rectW.bottom=rectW.top+height;
-    styleW=WS_POPUP|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX|WS_VISIBLE; //WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX;
+    rectW.left   = (GetSystemMetrics(SM_CXSCREEN)-width)/2;
+    rectW.top    = (GetSystemMetrics(SM_CYSCREEN)-height)/2;
+    rectW.right  = rectW.left+width;
+    rectW.bottom = rectW.top+height;
+    styleW = WS_POPUP|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX|WS_VISIBLE; //WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX;
+	
+	// Fix for styled windows in Windows versions newer than XP
+	AdjustWindowRect(&rectW, styleW, false);
 
     rectFS.left=0;
     rectFS.top=0;

@@ -22,16 +22,21 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
+include("${CMAKE_CURRENT_LIST_DIR}/CMakeExpandImportedTargets.cmake")
+
+
 macro(CHECK_FORTRAN_FUNCTION_EXISTS FUNCTION VARIABLE)
   if(NOT DEFINED ${VARIABLE})
     message(STATUS "Looking for Fortran ${FUNCTION}")
     if(CMAKE_REQUIRED_LIBRARIES)
+      # this one translates potentially used imported library targets to their files on disk
+      cmake_expand_imported_targets(_ADJUSTED_CMAKE_REQUIRED_LIBRARIES  LIBRARIES  ${CMAKE_REQUIRED_LIBRARIES} CONFIGURATION "${CMAKE_TRY_COMPILE_CONFIGURATION}")
       set(CHECK_FUNCTION_EXISTS_ADD_LIBRARIES
-        "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
-    else(CMAKE_REQUIRED_LIBRARIES)
+        "-DLINK_LIBRARIES:STRING=${_ADJUSTED_CMAKE_REQUIRED_LIBRARIES}")
+    else()
       set(CHECK_FUNCTION_EXISTS_ADD_LIBRARIES)
-    endif(CMAKE_REQUIRED_LIBRARIES)
-    FILE(WRITE
+    endif()
+    file(WRITE
     ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/testFortranCompiler.f
     "
       program TESTFortran
@@ -50,15 +55,15 @@ macro(CHECK_FORTRAN_FUNCTION_EXISTS FUNCTION VARIABLE)
     if(${VARIABLE})
       set(${VARIABLE} 1 CACHE INTERNAL "Have Fortran function ${FUNCTION}")
       message(STATUS "Looking for Fortran ${FUNCTION} - found")
-      file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
+      file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
         "Determining if the Fortran ${FUNCTION} exists passed with the following output:\n"
         "${OUTPUT}\n\n")
-    else(${VARIABLE})
+    else()
       message(STATUS "Looking for Fortran ${FUNCTION} - not found")
       set(${VARIABLE} "" CACHE INTERNAL "Have Fortran function ${FUNCTION}")
-      file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log 
+      file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
         "Determining if the Fortran ${FUNCTION} exists failed with the following output:\n"
         "${OUTPUT}\n\n")
-    endif(${VARIABLE})
-  endif(NOT DEFINED ${VARIABLE})
-endmacro(CHECK_FORTRAN_FUNCTION_EXISTS)
+    endif()
+  endif()
+endmacro()

@@ -16,11 +16,11 @@
 # macro SQUISH_ADD_TEST(testName applicationUnderTest testSuite testCase)
 #
 # ---- Typical Use
-#  ENABLE_TESTING()
-#  FIND_PACKAGE(Squish)
-#  IF (SQUISH_FOUND)
+#  enable_testing()
+#  find_package(Squish)
+#  if (SQUISH_FOUND)
 #    SQUISH_ADD_TEST(myTestName myApplication testSuiteName testCaseName)
-#  ENDIF (SQUISH_FOUND)
+#  endif ()
 #
 
 #=============================================================================
@@ -36,30 +36,27 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-SET(SQUISH_INSTALL_DIR_STRING "Directory containing the bin, doc, and lib directories for Squish; this should be the root of the installation directory.")
-SET(SQUISH_SERVER_EXECUTABLE_STRING "The squishserver executable program.")
-SET(SQUISH_CLIENT_EXECUTABLE_STRING "The squishclient executable program.")
+set(SQUISH_INSTALL_DIR_STRING "Directory containing the bin, doc, and lib directories for Squish; this should be the root of the installation directory.")
+set(SQUISH_SERVER_EXECUTABLE_STRING "The squishserver executable program.")
+set(SQUISH_CLIENT_EXECUTABLE_STRING "The squishclient executable program.")
 
 # Search only if the location is not already known.
-IF(NOT SQUISH_INSTALL_DIR)
+if(NOT SQUISH_INSTALL_DIR)
   # Get the system search path as a list.
-  IF(UNIX)
-    STRING(REGEX MATCHALL "[^:]+" SQUISH_INSTALL_DIR_SEARCH1 "$ENV{PATH}")
-  ELSE(UNIX)
-    STRING(REGEX REPLACE "\\\\" "/" SQUISH_INSTALL_DIR_SEARCH1 "$ENV{PATH}")
-  ENDIF(UNIX)
-  STRING(REGEX REPLACE "/;" ";" SQUISH_INSTALL_DIR_SEARCH2 ${SQUISH_INSTALL_DIR_SEARCH1})
+  file(TO_CMAKE_PATH "$ENV{PATH}" SQUISH_INSTALL_DIR_SEARCH2)
 
   # Construct a set of paths relative to the system search path.
-  SET(SQUISH_INSTALL_DIR_SEARCH "")
-  FOREACH(dir ${SQUISH_INSTALL_DIR_SEARCH2})
-    SET(SQUISH_INSTALL_DIR_SEARCH ${SQUISH_INSTALL_DIR_SEARCH} "${dir}/../lib/fltk")
-  ENDFOREACH(dir)
+  set(SQUISH_INSTALL_DIR_SEARCH "")
+  foreach(dir ${SQUISH_INSTALL_DIR_SEARCH2})
+    set(SQUISH_INSTALL_DIR_SEARCH ${SQUISH_INSTALL_DIR_SEARCH} "${dir}/../lib/fltk")
+  endforeach()
+  string(REPLACE "//" "/" SQUISH_INSTALL_DIR_SEARCH "${SQUISH_INSTALL_DIR_SEARCH}")
 
   # Look for an installation
-  FIND_PATH(SQUISH_INSTALL_DIR bin/squishrunner
+  find_path(SQUISH_INSTALL_DIR bin/squishrunner
+    HINTS
     # Look for an environment variable SQUISH_INSTALL_DIR.
-    $ENV{SQUISH_INSTALL_DIR}
+      ENV SQUISH_INSTALL_DIR
 
     # Look in places relative to the system executable search path.
     ${SQUISH_INSTALL_DIR_SEARCH}
@@ -69,49 +66,49 @@ IF(NOT SQUISH_INSTALL_DIR)
 
     DOC "The ${SQUISH_INSTALL_DIR_STRING}"
     )
-ENDIF(NOT SQUISH_INSTALL_DIR)
+endif()
 
 # search for the executables
-IF(SQUISH_INSTALL_DIR)
-  SET(SQUISH_INSTALL_DIR_FOUND 1)
+if(SQUISH_INSTALL_DIR)
+  set(SQUISH_INSTALL_DIR_FOUND 1)
 
   # find the client program
-  IF(NOT SQUISH_CLIENT_EXECUTABLE)
-    FIND_PROGRAM(SQUISH_CLIENT_EXECUTABLE ${SQUISH_INSTALL_DIR}/bin/squishrunner DOC "The ${SQUISH_CLIENT_EXECUTABLE_STRING}")
-  ENDIF(NOT SQUISH_CLIENT_EXECUTABLE)
+  if(NOT SQUISH_CLIENT_EXECUTABLE)
+    find_program(SQUISH_CLIENT_EXECUTABLE ${SQUISH_INSTALL_DIR}/bin/squishrunner DOC "The ${SQUISH_CLIENT_EXECUTABLE_STRING}")
+  endif()
 
   # find the server program
-  IF(NOT SQUISH_SERVER_EXECUTABLE)
-    FIND_PROGRAM(SQUISH_SERVER_EXECUTABLE ${SQUISH_INSTALL_DIR}/bin/squishserver DOC "The ${SQUISH_SERVER_EXECUTABLE_STRING}")
-  ENDIF(NOT SQUISH_SERVER_EXECUTABLE)  
+  if(NOT SQUISH_SERVER_EXECUTABLE)
+    find_program(SQUISH_SERVER_EXECUTABLE ${SQUISH_INSTALL_DIR}/bin/squishserver DOC "The ${SQUISH_SERVER_EXECUTABLE_STRING}")
+  endif()
 
-ELSE(SQUISH_INSTALL_DIR)
-  SET(SQUISH_INSTALL_DIR_FOUND 0)
-ENDIF(SQUISH_INSTALL_DIR)
+else()
+  set(SQUISH_INSTALL_DIR_FOUND 0)
+endif()
 
 # record if executables are set
-IF(SQUISH_CLIENT_EXECUTABLE)
-  SET(SQUISH_CLIENT_EXECUTABLE_FOUND 1)
-ELSE(SQUISH_CLIENT_EXECUTABLE)    
-  SET(SQUISH_CLIENT_EXECUTABLE_FOUND 0)    
-ENDIF(SQUISH_CLIENT_EXECUTABLE)
+if(SQUISH_CLIENT_EXECUTABLE)
+  set(SQUISH_CLIENT_EXECUTABLE_FOUND 1)
+else()
+  set(SQUISH_CLIENT_EXECUTABLE_FOUND 0)
+endif()
 
-IF(SQUISH_SERVER_EXECUTABLE)
-  SET(SQUISH_SERVER_EXECUTABLE_FOUND 1)
-ELSE(SQUISH_SERVER_EXECUTABLE)    
-  SET(SQUISH_SERVER_EXECUTABLE_FOUND 0)    
-ENDIF(SQUISH_SERVER_EXECUTABLE)
+if(SQUISH_SERVER_EXECUTABLE)
+  set(SQUISH_SERVER_EXECUTABLE_FOUND 1)
+else()
+  set(SQUISH_SERVER_EXECUTABLE_FOUND 0)
+endif()
 
 # record if Squish was found
-SET(SQUISH_FOUND 1)
-FOREACH(var SQUISH_INSTALL_DIR_FOUND SQUISH_CLIENT_EXECUTABLE_FOUND SQUISH_SERVER_EXECUTABLE_FOUND)
-  IF(NOT ${var})
-    SET(SQUISH_FOUND 0)
-  ENDIF(NOT ${var})
-ENDFOREACH(var)
+set(SQUISH_FOUND 1)
+foreach(var SQUISH_INSTALL_DIR_FOUND SQUISH_CLIENT_EXECUTABLE_FOUND SQUISH_SERVER_EXECUTABLE_FOUND)
+  if(NOT ${var})
+    set(SQUISH_FOUND 0)
+  endif()
+endforeach()
 
-MACRO(SQUISH_ADD_TEST testName testAUT testCase envVars testWraper)
-  ADD_TEST(${testName}
+macro(SQUISH_ADD_TEST testName testAUT testCase envVars testWraper)
+  add_test(${testName}
     ${CMAKE_COMMAND} -V -VV
     "-Dsquish_aut:STRING=${testAUT}"
     "-Dsquish_server_executable:STRING=${SQUISH_SERVER_EXECUTABLE}"
@@ -122,8 +119,8 @@ MACRO(SQUISH_ADD_TEST testName testAUT testCase envVars testWraper)
     "-Dsquish_wrapper:STRING=${testWraper}"
     -P "${CMAKE_ROOT}/Modules/SquishTestScript.cmake"
     )
-  SET_TESTS_PROPERTIES(${testName}
+  set_tests_properties(${testName}
     PROPERTIES FAIL_REGULAR_EXPRESSION "FAILED;ERROR;FATAL"
     )
-ENDMACRO(SQUISH_ADD_TEST)
-  
+endmacro()
+

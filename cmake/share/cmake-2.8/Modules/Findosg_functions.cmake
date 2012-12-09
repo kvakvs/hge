@@ -1,11 +1,12 @@
 #
 # This CMake file contains two macros to assist with searching for OSG
-# libraries and nodekits.
+# libraries and nodekits.  Please see FindOpenSceneGraph.cmake for full
+# documentation.
 #
 
 #=============================================================================
 # Copyright 2009 Kitware, Inc.
-# Copyright 2009 Philip Lowman <philip@yhbt.com>
+# Copyright 2009-2012 Philip Lowman <philip@yhbt.com>
 #
 # Distributed under the OSI-approved BSD License (the "License");
 # see accompanying file Copyright.txt for details.
@@ -26,10 +27,12 @@ function(OSG_FIND_PATH module header)
    # Try the user's environment request before anything else.
    find_path(${module_uc}_INCLUDE_DIR ${header}
        HINTS
-            $ENV{${module_uc}_DIR}
-            $ENV{OSG_DIR}
-            $ENV{OSGDIR}
-            $ENV{OSG_ROOT}
+            ENV ${module_uc}_DIR
+            ENV OSG_DIR
+            ENV OSGDIR
+            ENV OSG_ROOT
+            ${${module_uc}_DIR}
+            ${OSG_DIR}
        PATH_SUFFIXES include
        PATHS
             /sw # Fink
@@ -38,7 +41,7 @@ function(OSG_FIND_PATH module header)
             /opt
             /usr/freeware
    )
-endfunction(OSG_FIND_PATH module header)
+endfunction()
 
 
 #
@@ -50,11 +53,13 @@ function(OSG_FIND_LIBRARY module library)
    find_library(${module_uc}_LIBRARY
        NAMES ${library}
        HINTS
-            $ENV{${module_uc}_DIR}
-            $ENV{OSG_DIR}
-            $ENV{OSGDIR}
-            $ENV{OSG_ROOT}
-       PATH_SUFFIXES lib64 lib
+            ENV ${module_uc}_DIR
+            ENV OSG_DIR
+            ENV OSGDIR
+            ENV OSG_ROOT
+            ${${module_uc}_DIR}
+            ${OSG_DIR}
+       PATH_SUFFIXES lib
        PATHS
             /sw # Fink
             /opt/local # DarwinPorts
@@ -66,11 +71,13 @@ function(OSG_FIND_LIBRARY module library)
    find_library(${module_uc}_LIBRARY_DEBUG
        NAMES ${library}d
        HINTS
-            $ENV{${module_uc}_DIR}
-            $ENV{OSG_DIR}
-            $ENV{OSGDIR}
-            $ENV{OSG_ROOT}
-       PATH_SUFFIXES lib64 lib
+            ENV ${module_uc}_DIR
+            ENV OSG_DIR
+            ENV OSGDIR
+            ENV OSG_ROOT
+            ${${module_uc}_DIR}
+            ${OSG_DIR}
+       PATH_SUFFIXES lib
        PATHS
             /sw # Fink
             /opt/local # DarwinPorts
@@ -85,13 +92,13 @@ function(OSG_FIND_LIBRARY module library)
       set(${module_uc}_LIBRARIES ${${module_uc}_LIBRARY} PARENT_SCOPE)
    else()
       # They really have a FOO_LIBRARY_DEBUG
-      set(${module_uc}_LIBRARIES 
+      set(${module_uc}_LIBRARIES
           optimized ${${module_uc}_LIBRARY}
           debug ${${module_uc}_LIBRARY_DEBUG}
           PARENT_SCOPE
       )
    endif()
-endfunction(OSG_FIND_LIBRARY module library)
+endfunction()
 
 #
 # OSG_MARK_AS_ADVANCED

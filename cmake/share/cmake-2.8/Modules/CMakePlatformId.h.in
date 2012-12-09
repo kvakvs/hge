@@ -37,7 +37,7 @@
 
 #elif defined(__HAIKU) || defined(__HAIKU__) || defined(_HAIKU)
 # define PLATFORM_ID "Haiku"
-/* Haiku also defines __BEOS__ so we must 
+/* Haiku also defines __BEOS__ so we must
    put it prior to the check for __BEOS__
 */
 
@@ -92,10 +92,19 @@
 #  define ARCHITECTURE_ID "IA64"
 
 # elif defined(_M_X64) || defined(_M_AMD64)
-#  define ARCHITECTURE_ID "x64" 
+#  define ARCHITECTURE_ID "x64"
 
 # elif defined(_M_IX86)
 #  define ARCHITECTURE_ID "X86"
+
+# elif defined(_M_ARM)
+#  define ARCHITECTURE_ID "ARM"
+
+# elif defined(_M_MIPS)
+#  define ARCHITECTURE_ID "MIPS"
+
+# elif defined(_M_SH)
+#  define ARCHITECTURE_ID "SHx"
 
 # else /* unknown architecture */
 #  define ARCHITECTURE_ID ""
@@ -103,6 +112,46 @@
 
 #else
 #  define ARCHITECTURE_ID ""
+#endif
+
+/* Convert integer to decimal digit literals.  */
+#define DEC(n)                   \
+  ('0' + (((n) / 10000000)%10)), \
+  ('0' + (((n) / 1000000)%10)),  \
+  ('0' + (((n) / 100000)%10)),   \
+  ('0' + (((n) / 10000)%10)),    \
+  ('0' + (((n) / 1000)%10)),     \
+  ('0' + (((n) / 100)%10)),      \
+  ('0' + (((n) / 10)%10)),       \
+  ('0' +  ((n) % 10))
+
+/* Convert integer to hex digit literals.  */
+#define HEX(n)             \
+  ('0' + ((n)>>28 & 0xF)), \
+  ('0' + ((n)>>24 & 0xF)), \
+  ('0' + ((n)>>20 & 0xF)), \
+  ('0' + ((n)>>16 & 0xF)), \
+  ('0' + ((n)>>12 & 0xF)), \
+  ('0' + ((n)>>8  & 0xF)), \
+  ('0' + ((n)>>4  & 0xF)), \
+  ('0' + ((n)     & 0xF))
+
+/* Construct a string literal encoding the version number components. */
+#ifdef COMPILER_VERSION_MAJOR
+char const info_version[] = {
+  'I', 'N', 'F', 'O', ':',
+  'c','o','m','p','i','l','e','r','_','v','e','r','s','i','o','n','[',
+  COMPILER_VERSION_MAJOR,
+# ifdef COMPILER_VERSION_MINOR
+  '.', COMPILER_VERSION_MINOR,
+#  ifdef COMPILER_VERSION_PATCH
+   '.', COMPILER_VERSION_PATCH,
+#   ifdef COMPILER_VERSION_TWEAK
+    '.', COMPILER_VERSION_TWEAK,
+#   endif
+#  endif
+# endif
+  ']','\0'};
 #endif
 
 /* Construct the string literal in pieces to prevent the source from

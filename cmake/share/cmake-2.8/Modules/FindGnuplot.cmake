@@ -4,6 +4,9 @@
 #
 #  GNUPLOT_FOUND - system has Gnuplot
 #  GNUPLOT_EXECUTABLE - the Gnuplot executable
+#  GNUPLOT_VERSION_STRING - the version of Gnuplot found (since CMake 2.8.8)
+#
+# GNUPLOT_VERSION_STRING will not work for old versions like 3.7.1.
 
 #=============================================================================
 # Copyright 2002-2009 Kitware, Inc.
@@ -18,10 +21,10 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-INCLUDE(FindCygwin)
+include(FindCygwin)
 
-FIND_PROGRAM(GNUPLOT_EXECUTABLE
-  NAMES 
+find_program(GNUPLOT_EXECUTABLE
+  NAMES
   gnuplot
   pgnuplot
   wgnupl32
@@ -29,13 +32,26 @@ FIND_PROGRAM(GNUPLOT_EXECUTABLE
   ${CYGWIN_INSTALL_PATH}/bin
 )
 
+if (GNUPLOT_EXECUTABLE)
+    execute_process(COMMAND "${GNUPLOT_EXECUTABLE}" --version
+                  OUTPUT_VARIABLE GNUPLOT_OUTPUT_VARIABLE
+                  ERROR_QUIET
+                  OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+    string(REGEX REPLACE "^gnuplot ([0-9\\.]+)( patchlevel )?" "\\1." GNUPLOT_VERSION_STRING "${GNUPLOT_OUTPUT_VARIABLE}")
+    string(REGEX REPLACE "\\.$" "" GNUPLOT_VERSION_STRING "${GNUPLOT_VERSION_STRING}")
+    unset(GNUPLOT_OUTPUT_VARIABLE)
+endif()
+
 # for compatibility
-SET(GNUPLOT ${GNUPLOT_EXECUTABLE})
+set(GNUPLOT ${GNUPLOT_EXECUTABLE})
 
-# handle the QUIETLY and REQUIRED arguments and set GNUPLOT_FOUND to TRUE if 
+# handle the QUIETLY and REQUIRED arguments and set GNUPLOT_FOUND to TRUE if
 # all listed variables are TRUE
-INCLUDE(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gnuplot DEFAULT_MSG GNUPLOT_EXECUTABLE)
+include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gnuplot
+                                  REQUIRED_VARS GNUPLOT_EXECUTABLE
+                                  VERSION_VAR GNUPLOT_VERSION_STRING)
 
-MARK_AS_ADVANCED( GNUPLOT_EXECUTABLE )
+mark_as_advanced( GNUPLOT_EXECUTABLE )
 

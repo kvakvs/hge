@@ -9,6 +9,7 @@
 #       Only used in the case both Python & Perl
 #       are detected on the system to control
 #       which CxxTest code generator is used.
+#       Valid only for CxxTest version 3.
 #
 #       NOTE: In older versions of this Find Module,
 #       this variable controlled if the Python test
@@ -48,7 +49,7 @@
 #           input_files_to_testgen  The list of header files containing the
 #                                   CxxTest::TestSuite's to be included in
 #                                   this runner
-#           
+#
 #       #==============
 #       Example Usage:
 #
@@ -66,13 +67,13 @@
 #              1. Invoke the testgen executable to autogenerate foo_test.cc in the
 #                 binary tree from "foo_test.h" in the current source directory.
 #              2. Create an executable and test called unittest_foo.
-#               
+#
 #      #=============
 #      Example foo_test.h:
 #
 #          #include <cxxtest/TestSuite.h>
-#          
-#          class MyTestSuite : public CxxTest::TestSuite 
+#
+#          class MyTestSuite : public CxxTest::TestSuite
 #          {
 #          public:
 #             void testAddition( void )
@@ -146,7 +147,7 @@ macro(CXXTEST_ADD_TEST _cxxtest_testname _cxxtest_outfname)
         add_test(${_cxxtest_testname} ${CMAKE_CURRENT_BINARY_DIR}/${_cxxtest_testname})
     endif()
 
-endmacro(CXXTEST_ADD_TEST)
+endmacro()
 
 #=============================================================
 # main()
@@ -159,7 +160,8 @@ find_package(PythonInterp QUIET)
 find_package(Perl QUIET)
 
 find_path(CXXTEST_INCLUDE_DIR cxxtest/TestSuite.h)
-find_program(CXXTEST_PYTHON_TESTGEN_EXECUTABLE cxxtestgen.py
+find_program(CXXTEST_PYTHON_TESTGEN_EXECUTABLE
+         NAMES cxxtestgen cxxtestgen.py
          PATHS ${CXXTEST_INCLUDE_DIR})
 find_program(CXXTEST_PERL_TESTGEN_EXECUTABLE cxxtestgen.pl
          PATHS ${CXXTEST_INCLUDE_DIR})
@@ -167,7 +169,7 @@ find_program(CXXTEST_PERL_TESTGEN_EXECUTABLE cxxtestgen.pl
 if(PYTHONINTERP_FOUND OR PERL_FOUND)
    include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
 
-   if(PYTHONINTERP_FOUND AND (CXXTEST_USE_PYTHON OR NOT PERL_FOUND))
+   if(PYTHONINTERP_FOUND AND (CXXTEST_USE_PYTHON OR NOT PERL_FOUND OR NOT DEFINED CXXTEST_USE_PYTHON))
       set(CXXTEST_TESTGEN_EXECUTABLE ${CXXTEST_PYTHON_TESTGEN_EXECUTABLE})
       set(CXXTEST_TESTGEN_INTERPRETER ${PYTHON_EXECUTABLE})
       FIND_PACKAGE_HANDLE_STANDARD_ARGS(CxxTest DEFAULT_MSG

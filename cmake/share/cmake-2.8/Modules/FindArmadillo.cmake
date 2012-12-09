@@ -58,24 +58,25 @@ if(ARMADILLO_INCLUDE_DIR)
   if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp")
 
     # Read and parse armdillo version header file for version number
-    file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp" _armadillo_HEADER_CONTENTS)
+    file(STRINGS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp" _armadillo_HEADER_CONTENTS REGEX "#define ARMA_VERSION_[A-Z]+ ")
     string(REGEX REPLACE ".*#define ARMA_VERSION_MAJOR ([0-9]+).*" "\\1" ARMADILLO_VERSION_MAJOR "${_armadillo_HEADER_CONTENTS}")
     string(REGEX REPLACE ".*#define ARMA_VERSION_MINOR ([0-9]+).*" "\\1" ARMADILLO_VERSION_MINOR "${_armadillo_HEADER_CONTENTS}")
     string(REGEX REPLACE ".*#define ARMA_VERSION_PATCH ([0-9]+).*" "\\1" ARMADILLO_VERSION_PATCH "${_armadillo_HEADER_CONTENTS}")
 
     # WARNING: The number of spaces before the version name is not one.
-    string(REGEX REPLACE ".*#define ARMA_VERSION_NAME\ +\"([0-9a-zA-Z\ _-]+)\".*" "\\1" ARMADILLO_VERSION_NAME "${_armadillo_HEADER_CONTENTS}")
+    string(REGEX REPLACE ".*#define ARMA_VERSION_NAME +\"([0-9a-zA-Z _-]+)\".*" "\\1" ARMADILLO_VERSION_NAME "${_armadillo_HEADER_CONTENTS}")
 
-  endif(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp")
+    unset(_armadillo_HEADER_CONTENTS)
+  endif()
 
   set(ARMADILLO_VERSION_STRING "${ARMADILLO_VERSION_MAJOR}.${ARMADILLO_VERSION_MINOR}.${ARMADILLO_VERSION_PATCH}")
-endif (ARMADILLO_INCLUDE_DIR)
+endif ()
 
 #======================
 
 
-# Checks 'RECQUIRED', 'QUIET' and versions.
-include(FindPackageHandleStandardArgs)
+# Checks 'REQUIRED', 'QUIET' and versions.
+include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
 find_package_handle_standard_args(Armadillo
   REQUIRED_VARS ARMADILLO_LIBRARY ARMADILLO_INCLUDE_DIR
   VERSION_VAR ARMADILLO_VERSION_STRING)
@@ -84,7 +85,7 @@ find_package_handle_standard_args(Armadillo
 if (ARMADILLO_FOUND)
   set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
   set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY})
-endif (ARMADILLO_FOUND)
+endif ()
 
 
 # Hide internal variables

@@ -28,9 +28,11 @@ if(NOT XIAR)
   endforeach()
   find_program(XIAR NAMES xiar HINTS ${_intel_xiar_hints})
   mark_as_advanced(XIAR)
-endif(NOT XIAR)
+endif()
 
 macro(__linux_compiler_intel lang)
+  set(CMAKE_${lang}_COMPILE_OPTIONS_PIC "-fPIC")
+  set(CMAKE_${lang}_COMPILE_OPTIONS_PIE "-fPIE")
   set(CMAKE_SHARED_LIBRARY_${lang}_FLAGS "-fPIC")
   set(CMAKE_SHARED_LIBRARY_CREATE_${lang}_FLAGS "-shared")
 

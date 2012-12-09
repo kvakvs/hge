@@ -35,16 +35,19 @@ macro(__cygwin_compiler_gnu lang)
   set(CMAKE_${lang}_LINK_EXECUTABLE
     "<CMAKE_${lang}_COMPILER> <FLAGS> <CMAKE_${lang}_LINK_FLAGS> <LINK_FLAGS> <OBJECTS>  -o <TARGET> -Wl,--out-implib,<TARGET_IMPLIB> ${CMAKE_GNULD_IMAGE_VERSION} <LINK_LIBRARIES>")
 
-  set(CMAKE_SHARED_LIBRARY_${lang}_FLAGS "") # No -fPIC on cygwin
+   # No -fPIC on cygwin
+  set(CMAKE_${lang}_COMPILE_OPTIONS_PIC "")
+  set(CMAKE_${lang}_COMPILE_OPTIONS_PIE "")
+  set(CMAKE_SHARED_LIBRARY_${lang}_FLAGS "")
 
   # Initialize C link type selection flags.  These flags are used when
   # building a shared library, shared module, or executable that links
   # to other libraries to select whether to use the static or shared
   # versions of the libraries.
-  FOREACH(type SHARED_LIBRARY SHARED_MODULE EXE)
-    SET(CMAKE_${type}_LINK_STATIC_${lang}_FLAGS "-Wl,-Bstatic")
-    SET(CMAKE_${type}_LINK_DYNAMIC_${lang}_FLAGS "-Wl,-Bdynamic")
-  ENDFOREACH(type)
+  foreach(type SHARED_LIBRARY SHARED_MODULE EXE)
+    set(CMAKE_${type}_LINK_STATIC_${lang}_FLAGS "-Wl,-Bstatic")
+    set(CMAKE_${type}_LINK_DYNAMIC_${lang}_FLAGS "-Wl,-Bdynamic")
+  endforeach()
 
   set(CMAKE_EXE_EXPORTS_${lang}_FLAG "-Wl,--export-all-symbols")
   # TODO: Is -Wl,--enable-auto-import now always default?

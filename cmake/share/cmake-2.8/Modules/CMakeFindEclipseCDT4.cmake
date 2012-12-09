@@ -15,114 +15,71 @@
 # This file is included in CMakeSystemSpecificInformation.cmake if
 # the Eclipse CDT4 extra generator has been selected.
 
-FIND_PROGRAM(CMAKE_ECLIPSE_EXECUTABLE NAMES eclipse DOC "The Eclipse executable")
+find_program(CMAKE_ECLIPSE_EXECUTABLE NAMES eclipse DOC "The Eclipse executable")
+
+function(_FIND_ECLIPSE_VERSION)
+  # This code is in a function so the variables used here have only local scope
+  if(CMAKE_ECLIPSE_EXECUTABLE)
+    # use REALPATH to resolve symlinks (http://public.kitware.com/Bug/view.php?id=13036)
+    get_filename_component(_REALPATH_CMAKE_ECLIPSE_EXECUTABLE "${CMAKE_ECLIPSE_EXECUTABLE}" REALPATH)
+    get_filename_component(_ECLIPSE_DIR "${_REALPATH_CMAKE_ECLIPSE_EXECUTABLE}" PATH)
+    file(GLOB _ECLIPSE_FEATURE_DIR "${_ECLIPSE_DIR}/features/org.eclipse.platform*")
+    if(APPLE AND NOT _ECLIPSE_FEATURE_DIR)
+      file(GLOB _ECLIPSE_FEATURE_DIR "${_ECLIPSE_DIR}/../../../features/org.eclipse.platform*")
+    endif()
+    if("${_ECLIPSE_FEATURE_DIR}" MATCHES ".+org.eclipse.platform_([0-9]+\\.[0-9]+).+")
+      set(_ECLIPSE_VERSION ${CMAKE_MATCH_1})
+    endif()
+  endif()
+
+  # Set up a map with the names of the Eclipse releases:
+  set(_ECLIPSE_VERSION_NAME_    "Unknown" )
+  set(_ECLIPSE_VERSION_NAME_3.2 "Callisto" )
+  set(_ECLIPSE_VERSION_NAME_3.3 "Europa" )
+  set(_ECLIPSE_VERSION_NAME_3.4 "Ganymede" )
+  set(_ECLIPSE_VERSION_NAME_3.5 "Galileo" )
+  set(_ECLIPSE_VERSION_NAME_3.6 "Helios" )
+  set(_ECLIPSE_VERSION_NAME_3.7 "Indigo" )
+  set(_ECLIPSE_VERSION_NAME_4.2 "Juno" )
+
+  if(_ECLIPSE_VERSION)
+    message(STATUS "Found Eclipse version ${_ECLIPSE_VERSION} (${_ECLIPSE_VERSION_NAME_${_ECLIPSE_VERSION}})")
+  else()
+    set(_ECLIPSE_VERSION "3.6" )
+    message(STATUS "Could not determine Eclipse version, assuming at least ${_ECLIPSE_VERSION} (${_ECLIPSE_VERSION_NAME_${_ECLIPSE_VERSION}}). Adjust CMAKE_ECLIPSE_VERSION if this is wrong.")
+  endif()
+
+  set(CMAKE_ECLIPSE_VERSION "${_ECLIPSE_VERSION} (${_ECLIPSE_VERSION_NAME_${_ECLIPSE_VERSION}})" CACHE STRING "The version of Eclipse. If Eclipse has not been found, 3.6 (Helios) is assumed.")
+  set_property(CACHE CMAKE_ECLIPSE_VERSION PROPERTY STRINGS "3.2 (${_ECLIPSE_VERSION_NAME_3.2})"
+                                                            "3.3 (${_ECLIPSE_VERSION_NAME_3.3})"
+                                                            "3.4 (${_ECLIPSE_VERSION_NAME_3.4})"
+                                                            "3.5 (${_ECLIPSE_VERSION_NAME_3.5})"
+                                                            "3.6 (${_ECLIPSE_VERSION_NAME_3.6})"
+                                                            "3.7 (${_ECLIPSE_VERSION_NAME_3.7})"
+                                                            "4.2 (${_ECLIPSE_VERSION_NAME_4.2})"
+              )
+endfunction()
+
+_FIND_ECLIPSE_VERSION()
+
+# Try to find out how many CPUs we have and set the -j argument for make accordingly
+set(_CMAKE_ECLIPSE_INITIAL_MAKE_ARGS "")
+
+include(ProcessorCount)
+PROCESSORCOUNT(_CMAKE_ECLIPSE_PROCESSOR_COUNT)
+
+# Only set -j if we are under UNIX and if the make-tool used actually has "make" in the name
+# (we may also get here in the future e.g. for ninja)
+if("${_CMAKE_ECLIPSE_PROCESSOR_COUNT}" GREATER 1  AND  UNIX  AND  "${CMAKE_MAKE_PROGRAM}" MATCHES make)
+  set(_CMAKE_ECLIPSE_INITIAL_MAKE_ARGS "-j${_CMAKE_ECLIPSE_PROCESSOR_COUNT}")
+endif()
 
 # This variable is used by the Eclipse generator and appended to the make invocation commands.
-SET(CMAKE_ECLIPSE_MAKE_ARGUMENTS "" CACHE STRING "Additional command line arguments when Eclipse invokes make. Enter e.g. -j<some_number> to get parallel builds")
+set(CMAKE_ECLIPSE_MAKE_ARGUMENTS "${_CMAKE_ECLIPSE_INITIAL_MAKE_ARGS}" CACHE STRING "Additional command line arguments when Eclipse invokes make. Enter e.g. -j<some_number> to get parallel builds")
 
 # This variable is used by the Eclipse generator in out-of-source builds only.
-SET(ECLIPSE_CDT4_GENERATE_SOURCE_PROJECT FALSE CACHE BOOL "If enabled, CMake will generate a source project for Eclipse in CMAKE_SOURCE_DIR")
-MARK_AS_ADVANCED(ECLIPSE_CDT4_GENERATE_SOURCE_PROJECT)
+set(CMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT FALSE CACHE BOOL "If enabled, CMake will generate a source project for Eclipse in CMAKE_SOURCE_DIR")
+mark_as_advanced(CMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT)
 
-# The Eclipse generator needs to know the standard include path
-# so that Eclipse ca find the headers at runtime and parsing etc. works better
-# This is done here by actually running gcc with the options so it prints its
-# system include directories, which are parsed then and stored in the cache.
-MACRO(_DETERMINE_GCC_SYSTEM_INCLUDE_DIRS _lang _resultIncludeDirs _resultDefines)
-  SET(${_resultIncludeDirs})
-  SET(_gccOutput)
-  FILE(WRITE "${CMAKE_BINARY_DIR}/CMakeFiles/dummy" "\n" )
-
-  IF (${_lang} STREQUAL "c++")
-    SET(_compilerExecutable "${CMAKE_CXX_COMPILER}")
-  ELSE (${_lang} STREQUAL "c++")
-    SET(_compilerExecutable "${CMAKE_C_COMPILER}")
-  ENDIF (${_lang} STREQUAL "c++")
-  EXECUTE_PROCESS(COMMAND ${_compilerExecutable} -v -E -x ${_lang} -dD dummy
-                  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/CMakeFiles
-                  ERROR_VARIABLE _gccOutput
-                  OUTPUT_VARIABLE _gccStdout )
-  FILE(REMOVE "${CMAKE_BINARY_DIR}/CMakeFiles/dummy")
-
-  # First find the system include dirs:
-  IF( "${_gccOutput}" MATCHES "> search starts here[^\n]+\n *(.+ *\n) *End of (search) list" )
-
-    # split the output into lines and then remove leading and trailing spaces from each of them:
-    STRING(REGEX MATCHALL "[^\n]+\n" _includeLines "${CMAKE_MATCH_1}")
-    FOREACH(nextLine ${_includeLines})
-      STRING(STRIP "${nextLine}" _includePath)
-      LIST(APPEND ${_resultIncludeDirs} "${_includePath}")
-    ENDFOREACH(nextLine)
-
-  ENDIF( "${_gccOutput}" MATCHES "> search starts here[^\n]+\n *(.+ *\n) *End of (search) list" )
-
-
-  # now find the builtin macros:
-  STRING(REGEX MATCHALL "#define[^\n]+\n" _defineLines "${_gccStdout}")
-# A few example lines which the regexp below has to match properly:
-#  #define   MAX(a,b) ((a) > (b) ? (a) : (b))
-#  #define __fastcall __attribute__((__fastcall__))
-#  #define   FOO (23)
-#  #define __UINTMAX_TYPE__ long long unsigned int
-#  #define __UINTMAX_TYPE__ long long unsigned int
-#  #define __i386__  1
-
-  FOREACH(nextLine ${_defineLines})
-    STRING(REGEX MATCH "^#define +([A-Za-z_][A-Za-z0-9_]*)(\\([^\\)]+\\))? +(.+) *$" _dummy "${nextLine}")
-    SET(_name "${CMAKE_MATCH_1}${CMAKE_MATCH_2}")
-    STRING(STRIP "${CMAKE_MATCH_3}" _value)
-    #MESSAGE(STATUS "m1: -${CMAKE_MATCH_1}- m2: -${CMAKE_MATCH_2}- m3: -${CMAKE_MATCH_3}-")
-
-    LIST(APPEND ${_resultDefines} "${_name}")
-    IF(_value)
-      LIST(APPEND ${_resultDefines} "${_value}")
-    ELSE()
-      LIST(APPEND ${_resultDefines} " ")
-    ENDIF()
-  ENDFOREACH(nextLine)
-
-ENDMACRO(_DETERMINE_GCC_SYSTEM_INCLUDE_DIRS _lang)
-
-# Save the current LC_ALL, LC_MESSAGES, and LANG environment variables and set them
-# to "C" that way GCC's "search starts here" text is in English and we can grok it.
-SET(_orig_lc_all      $ENV{LC_ALL})
-SET(_orig_lc_messages $ENV{LC_MESSAGES})
-SET(_orig_lang        $ENV{LANG})
-IF(_orig_lc_all)
-  SET(ENV{LC_ALL}      C)
-ENDIF(_orig_lc_all)
-IF(_orig_lc_messages)
-  SET(ENV{LC_MESSAGES} C)
-ENDIF(_orig_lc_messages)
-IF(_orig_lang)
-  SET(ENV{LANG}        C)
-ENDIF(_orig_lang)
-
-# Now check for C, works for gcc and Intel compiler at least
-IF (NOT CMAKE_ECLIPSE_C_SYSTEM_INCLUDE_DIRS)
-  IF ("${CMAKE_C_COMPILER_ID}" MATCHES GNU  OR  "${CMAKE_C_COMPILER_ID}" MATCHES Intel)
-    _DETERMINE_GCC_SYSTEM_INCLUDE_DIRS(c _dirs _defines)
-    SET(CMAKE_ECLIPSE_C_SYSTEM_INCLUDE_DIRS "${_dirs}" CACHE INTERNAL "C compiler system include directories")
-    SET(CMAKE_ECLIPSE_C_SYSTEM_DEFINED_MACROS "${_defines}" CACHE INTERNAL "C compiler system defined macros")
-  ENDIF ("${CMAKE_C_COMPILER_ID}" MATCHES GNU  OR  "${CMAKE_C_COMPILER_ID}" MATCHES Intel)
-ENDIF (NOT CMAKE_ECLIPSE_C_SYSTEM_INCLUDE_DIRS)
-
-# And now the same for C++
-IF (NOT CMAKE_ECLIPSE_CXX_SYSTEM_INCLUDE_DIRS)
-  IF ("${CMAKE_CXX_COMPILER_ID}" MATCHES GNU  OR  "${CMAKE_CXX_COMPILER_ID}" MATCHES Intel)
-    _DETERMINE_GCC_SYSTEM_INCLUDE_DIRS(c++ _dirs _defines)
-    SET(CMAKE_ECLIPSE_CXX_SYSTEM_INCLUDE_DIRS "${_dirs}" CACHE INTERNAL "CXX compiler system include directories")
-    SET(CMAKE_ECLIPSE_CXX_SYSTEM_DEFINED_MACROS "${_defines}" CACHE INTERNAL "CXX compiler system defined macros")
-  ENDIF ("${CMAKE_CXX_COMPILER_ID}" MATCHES GNU  OR  "${CMAKE_CXX_COMPILER_ID}" MATCHES Intel)
-ENDIF (NOT CMAKE_ECLIPSE_CXX_SYSTEM_INCLUDE_DIRS)
-
-# Restore original LC_ALL, LC_MESSAGES, and LANG
-IF(_orig_lc_all)
-  SET(ENV{LC_ALL}      ${_orig_lc_all})
-ENDIF(_orig_lc_all)
-IF(_orig_lc_messages)
-  SET(ENV{LC_MESSAGES} ${_orig_lc_messages})
-ENDIF(_orig_lc_messages)
-IF(_orig_lang)
-  SET(ENV{LANG}        ${_orig_lang})
-ENDIF(_orig_lang)
+# Determine builtin macros and include dirs:
+include(${CMAKE_CURRENT_LIST_DIR}/CMakeExtraGeneratorDetermineCompilerMacrosAndIncludeDirs.cmake)

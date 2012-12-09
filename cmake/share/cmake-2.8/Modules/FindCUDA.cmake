@@ -68,6 +68,13 @@
 #  CUDA_HOST_COMPILATION_CPP (Default ON)
 #  -- Set to OFF for C compilation of host code.
 #
+#  CUDA_HOST_COMPILER (Default CMAKE_C_COMPILER, $(VCInstallDir)/bin for VS)
+#  -- Set the host compiler to be used by nvcc.  Ignored if -ccbin or
+#     --compiler-bindir is already present in the CUDA_NVCC_FLAGS or
+#     CUDA_NVCC_FLAGS_<CONFIG> variables.  For Visual Studio targets
+#     $(VCInstallDir)/bin is a special value that expands out to the path when
+#     the command is run from withing VS.
+#
 #  CUDA_NVCC_FLAGS
 #  CUDA_NVCC_FLAGS_<CONFIG>
 #  -- Additional NVCC command line arguments.  NOTE: multiple arguments must be
@@ -216,6 +223,18 @@
 #  CUDA_CUBLAS_LIBRARIES -- Device or emulation library for the Cuda BLAS
 #                           implementation (alterative to:
 #                           CUDA_ADD_CUBLAS_TO_TARGET macro).
+#  CUDA_curand_LIBRARY   -- CUDA Random Number Generation library.
+#                           Only available for CUDA version 3.2+.
+#  CUDA_cusparse_LIBRARY -- CUDA Sparse Matrix library.
+#                           Only available for CUDA version 3.2+.
+#  CUDA_npp_LIBRARY      -- NVIDIA Performance Primitives library.
+#                           Only available for CUDA version 4.0+.
+#  CUDA_nvcuvenc_LIBRARY -- CUDA Video Encoder library.
+#                           Only available for CUDA version 3.2+.
+#                           Windows only.
+#  CUDA_nvcuvid_LIBRARY  -- CUDA Video Decoder library.
+#                           Only available for CUDA version 3.2+.
+#                           Windows only.
 #
 #
 #  James Bigler, NVIDIA Corp (nvidia.com - jbigler)
@@ -266,20 +285,20 @@ macro(CUDA_FIND_HELPER_FILE _name _extension)
   # processed.  Using this variable, we can pull out the current path, and
   # provide a way to get access to the other files we need local to here.
   get_filename_component(CMAKE_CURRENT_LIST_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
-  find_file(CUDA_${_name} ${_full_name} PATHS ${CMAKE_CURRENT_LIST_DIR}/FindCUDA NO_DEFAULT_PATH)
-  if(NOT CUDA_${_name})
-    set(error_message "${_full_name} not found in CMAKE_MODULE_PATH")
+  set(CUDA_${_name} "${CMAKE_CURRENT_LIST_DIR}/FindCUDA/${_full_name}")
+  if(NOT EXISTS "${CUDA_${_name}}")
+    set(error_message "${_full_name} not found in ${CMAKE_CURRENT_LIST_DIR}/FindCUDA")
     if(CUDA_FIND_REQUIRED)
       message(FATAL_ERROR "${error_message}")
-    else(CUDA_FIND_REQUIRED)
+    else()
       if(NOT CUDA_FIND_QUIETLY)
         message(STATUS "${error_message}")
-      endif(NOT CUDA_FIND_QUIETLY)
-    endif(CUDA_FIND_REQUIRED)
-  endif(NOT CUDA_${_name})
+      endif()
+    endif()
+  endif()
   # Set this variable as internal, so the user isn't bugged with it.
   set(CUDA_${_name} ${CUDA_${_name}} CACHE INTERNAL "Location of ${_full_name}" FORCE)
-endmacro(CUDA_FIND_HELPER_FILE)
+endmacro()
 
 #####################################################################
 ## CUDA_INCLUDE_NVCC_DEPENDENCIES
@@ -320,29 +339,31 @@ macro(CUDA_INCLUDE_NVCC_DEPENDENCIES dependency_file)
 #     message("CUDA_NVCC_DEPEND NOT set")
 #   endif()
   if(CUDA_NVCC_DEPEND)
-    #message("CUDA_NVCC_DEPEND true")
+    #message("CUDA_NVCC_DEPEND found")
     foreach(f ${CUDA_NVCC_DEPEND})
-      #message("searching for ${f}")
+      # message("searching for ${f}")
       if(NOT EXISTS ${f})
         #message("file ${f} not found")
         set(CUDA_NVCC_DEPEND_REGENERATE TRUE)
       endif()
-    endforeach(f)
-  else(CUDA_NVCC_DEPEND)
+    endforeach()
+  else()
     #message("CUDA_NVCC_DEPEND false")
     # No dependencies, so regenerate the file.
     set(CUDA_NVCC_DEPEND_REGENERATE TRUE)
-  endif(CUDA_NVCC_DEPEND)
+  endif()
 
   #message("CUDA_NVCC_DEPEND_REGENERATE = ${CUDA_NVCC_DEPEND_REGENERATE}")
   # No incoming dependencies, so we need to generate them.  Make the
   # output depend on the dependency file itself, which should cause the
   # rule to re-run.
   if(CUDA_NVCC_DEPEND_REGENERATE)
+    set(CUDA_NVCC_DEPEND ${dependency_file})
+    #message("Generating an empty dependency_file: ${dependency_file}")
     file(WRITE ${dependency_file} "#FindCUDA.cmake generated file.  Do not edit.\n")
-  endif(CUDA_NVCC_DEPEND_REGENERATE)
+  endif()
 
-endmacro(CUDA_INCLUDE_NVCC_DEPENDENCIES)
+endmacro()
 
 ###############################################################################
 ###############################################################################
@@ -375,6 +396,12 @@ option(CUDA_HOST_COMPILATION_CPP "Generated file extension" ON)
 
 # Extra user settable flags
 set(CUDA_NVCC_FLAGS "" CACHE STRING "Semi-colon delimit multiple arguments.")
+
+if(CMAKE_GENERATOR MATCHES "Visual Studio")
+  set(CUDA_HOST_COMPILER "$(VCInstallDir)bin" CACHE FILEPATH "Host side compiler used by NVCC")
+else()
+  set(CUDA_HOST_COMPILER "${CMAKE_C_COMPILER}" CACHE FILEPATH "Host side compiler used by NVCC")
+endif()
 
 # Propagate the host flags to the host compiler via -Xcompiler
 option(CUDA_PROPAGATE_HOST_FLAGS "Propage C/CXX_FLAGS and friends to the host compiler via -Xcompile" ON)
@@ -415,18 +442,24 @@ endforeach()
 # if they have then clear the cache variables, so that will be detected again.
 if(NOT "${CUDA_TOOLKIT_ROOT_DIR}" STREQUAL "${CUDA_TOOLKIT_ROOT_DIR_INTERNAL}")
   unset(CUDA_NVCC_EXECUTABLE CACHE)
-  unset(CUDA_VERSION CACHE)
   unset(CUDA_TOOLKIT_INCLUDE CACHE)
   unset(CUDA_CUDART_LIBRARY CACHE)
+  # Make sure you run this before you unset CUDA_VERSION.
   if(CUDA_VERSION VERSION_EQUAL "3.0")
     # This only existed in the 3.0 version of the CUDA toolkit
     unset(CUDA_CUDARTEMU_LIBRARY CACHE)
   endif()
+  unset(CUDA_VERSION CACHE)
   unset(CUDA_CUDA_LIBRARY CACHE)
   unset(CUDA_cublas_LIBRARY CACHE)
   unset(CUDA_cublasemu_LIBRARY CACHE)
   unset(CUDA_cufft_LIBRARY CACHE)
   unset(CUDA_cufftemu_LIBRARY CACHE)
+  unset(CUDA_curand_LIBRARY CACHE)
+  unset(CUDA_cusparse_LIBRARY CACHE)
+  unset(CUDA_npp_LIBRARY CACHE)
+  unset(CUDA_nvcuvenc_LIBRARY CACHE)
+  unset(CUDA_nvcuvid_LIBRARY CACHE)
 endif()
 
 if(NOT "${CUDA_SDK_ROOT_DIR}" STREQUAL "${CUDA_SDK_ROOT_DIR_INTERNAL}")
@@ -443,7 +476,10 @@ if(NOT CUDA_TOOLKIT_ROOT_DIR)
   # Search in the CUDA_BIN_PATH first.
   find_path(CUDA_TOOLKIT_ROOT_DIR
     NAMES nvcc nvcc.exe
-    PATHS ENV CUDA_BIN_PATH
+    PATHS
+      ENV CUDA_PATH
+      ENV CUDA_BIN_PATH
+    PATH_SUFFIXES bin bin64
     DOC "Toolkit location."
     NO_DEFAULT_PATH
     )
@@ -459,22 +495,23 @@ if(NOT CUDA_TOOLKIT_ROOT_DIR)
     string(REGEX REPLACE "[/\\\\]?bin[64]*[/\\\\]?$" "" CUDA_TOOLKIT_ROOT_DIR ${CUDA_TOOLKIT_ROOT_DIR})
     # We need to force this back into the cache.
     set(CUDA_TOOLKIT_ROOT_DIR ${CUDA_TOOLKIT_ROOT_DIR} CACHE PATH "Toolkit location." FORCE)
-  endif(CUDA_TOOLKIT_ROOT_DIR)
+  endif()
   if (NOT EXISTS ${CUDA_TOOLKIT_ROOT_DIR})
     if(CUDA_FIND_REQUIRED)
       message(FATAL_ERROR "Specify CUDA_TOOLKIT_ROOT_DIR")
     elseif(NOT CUDA_FIND_QUIETLY)
       message("CUDA_TOOLKIT_ROOT_DIR not found or specified")
     endif()
-  endif (NOT EXISTS ${CUDA_TOOLKIT_ROOT_DIR})
-endif (NOT CUDA_TOOLKIT_ROOT_DIR)
+  endif ()
+endif ()
 
 # CUDA_NVCC_EXECUTABLE
 find_program(CUDA_NVCC_EXECUTABLE
   NAMES nvcc
-  PATHS "${CUDA_TOOLKIT_ROOT_DIR}/bin"
-        "${CUDA_TOOLKIT_ROOT_DIR}/bin64"
+  PATHS "${CUDA_TOOLKIT_ROOT_DIR}"
+  ENV CUDA_PATH
   ENV CUDA_BIN_PATH
+  PATH_SUFFIXES bin bin64
   NO_DEFAULT_PATH
   )
 # Search default search paths, after we search our own set of paths.
@@ -500,8 +537,10 @@ set(CUDA_VERSION_STRING "${CUDA_VERSION}")
 # CUDA_TOOLKIT_INCLUDE
 find_path(CUDA_TOOLKIT_INCLUDE
   device_functions.h # Header included in toolkit
-  PATHS "${CUDA_TOOLKIT_ROOT_DIR}/include"
+  PATHS "${CUDA_TOOLKIT_ROOT_DIR}"
+  ENV CUDA_PATH
   ENV CUDA_INC_PATH
+  PATH_SUFFIXES include
   NO_DEFAULT_PATH
   )
 # Search default search paths, after we search our own set of paths.
@@ -514,21 +553,18 @@ set (CUDA_INCLUDE_DIRS ${CUDA_TOOLKIT_INCLUDE})
 
 macro(FIND_LIBRARY_LOCAL_FIRST _var _names _doc)
   if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    # CUDA 3.2+ on Windows moved the library directoryies, so we need the new
+    # CUDA 3.2+ on Windows moved the library directories, so we need the new
     # and old paths.
-    set(_cuda_64bit_lib_dir
-      "${CUDA_TOOLKIT_ROOT_DIR}/lib/x64"
-      "${CUDA_TOOLKIT_ROOT_DIR}/lib64"
-      )
+    set(_cuda_64bit_lib_dir "lib/x64" "lib64" )
   endif()
   # CUDA 3.2+ on Windows moved the library directories, so we need to new
   # (lib/Win32) and the old path (lib).
   find_library(${_var}
     NAMES ${_names}
-    PATHS ${_cuda_64bit_lib_dir}
-          "${CUDA_TOOLKIT_ROOT_DIR}/lib/Win32"
-          "${CUDA_TOOLKIT_ROOT_DIR}/lib"
+    PATHS "${CUDA_TOOLKIT_ROOT_DIR}"
+    ENV CUDA_PATH
     ENV CUDA_LIB_PATH
+    PATH_SUFFIXES ${_cuda_64bit_lib_dir} "lib/Win32" "lib"
     DOC ${_doc}
     NO_DEFAULT_PATH
     )
@@ -572,7 +608,7 @@ find_library_local_first(CUDA_CUDA_LIBRARY cuda "\"cuda\" library (older version
 # Add cuda library to the link line only if it is found.
 if (CUDA_CUDA_LIBRARY)
   set(CUDA_LIBRARIES ${CUDA_LIBRARIES} ${CUDA_CUDA_LIBRARY})
-endif(CUDA_CUDA_LIBRARY)
+endif()
 
 mark_as_advanced(
   CUDA_CUDA_LIBRARY
@@ -584,7 +620,7 @@ mark_as_advanced(
 macro(FIND_CUDA_HELPER_LIBS _name)
   find_library_local_first(CUDA_${_name}_LIBRARY ${_name} "\"${_name}\" library")
   mark_as_advanced(CUDA_${_name}_LIBRARY)
-endmacro(FIND_CUDA_HELPER_LIBS)
+endmacro()
 
 #######################
 # Disable emulation for v3.1 onward
@@ -594,7 +630,7 @@ if(CUDA_VERSION VERSION_GREATER "3.0")
   endif()
 endif()
 
-# Search for cufft and cublas libraries.
+# Search for additional CUDA toolkit libraries.
 if(CUDA_VERSION VERSION_LESS "3.1")
   # Emulation libraries aren't available in version 3.1 onward.
   find_cuda_helper_libs(cufftemu)
@@ -602,6 +638,18 @@ if(CUDA_VERSION VERSION_LESS "3.1")
 endif()
 find_cuda_helper_libs(cufft)
 find_cuda_helper_libs(cublas)
+if(NOT CUDA_VERSION VERSION_LESS "3.2")
+  # cusparse showed up in version 3.2
+  find_cuda_helper_libs(cusparse)
+  find_cuda_helper_libs(curand)
+  if (WIN32)
+    find_cuda_helper_libs(nvcuvenc)
+    find_cuda_helper_libs(nvcuvid)
+  endif()
+endif()
+if(NOT CUDA_VERSION VERSION_LESS "4.0")
+  find_cuda_helper_libs(npp)
+endif()
 
 if (CUDA_BUILD_EMULATION)
   set(CUDA_CUFFT_LIBRARIES ${CUDA_cufftemu_LIBRARY})
@@ -615,9 +663,11 @@ endif()
 # Look for the SDK stuff.  As of CUDA 3.0 NVSDKCUDA_ROOT has been replaced with
 # NVSDKCOMPUTE_ROOT with the old CUDA C contents moved into the C subdirectory
 find_path(CUDA_SDK_ROOT_DIR common/inc/cutil.h
+ HINTS
   "$ENV{NVSDKCOMPUTE_ROOT}/C"
-  "$ENV{NVSDKCUDA_ROOT}"
+  ENV NVSDKCUDA_ROOT
   "[HKEY_LOCAL_MACHINE\\SOFTWARE\\NVIDIA Corporation\\Installed Products\\NVIDIA SDK 10\\Compute;InstallDir]"
+ PATHS
   "/Developer/GPU\ Computing/C"
   )
 
@@ -656,9 +706,9 @@ set(CUDA_SDK_SEARCH_PATH
 
 # if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 #   set(cuda_cutil_name cutil64)
-# else(CMAKE_SIZEOF_VOID_P EQUAL 8)
+# else()
 #   set(cuda_cutil_name cutil32)
-# endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+# endif()
 
 # find_library(CUDA_CUT_LIBRARY
 #   NAMES cutil ${cuda_cutil_name}
@@ -707,9 +757,9 @@ find_package_handle_standard_args(CUDA
 # Add include directories to pass to the nvcc command.
 macro(CUDA_INCLUDE_DIRECTORIES)
   foreach(dir ${ARGN})
-    list(APPEND CUDA_NVCC_INCLUDE_ARGS_USER "-I${dir}")
-  endforeach(dir ${ARGN})
-endmacro(CUDA_INCLUDE_DIRECTORIES)
+    list(APPEND CUDA_NVCC_INCLUDE_ARGS_USER -I${dir})
+  endforeach()
+endmacro()
 
 
 ##############################################################################
@@ -736,13 +786,13 @@ macro(CUDA_GET_SOURCES_AND_OPTIONS _sources _cmake_options _options)
         arg STREQUAL "SHARED" OR
         arg STREQUAL "MODULE"
         )
-      list(APPEND ${_cmake_options} "${arg}")
+      list(APPEND ${_cmake_options} ${arg})
     else()
       if ( _found_options )
-        list(APPEND ${_options} "${arg}")
+        list(APPEND ${_options} ${arg})
       else()
         # Assume this is a file
-        list(APPEND ${_sources} "${arg}")
+        list(APPEND ${_sources} ${arg})
       endif()
     endif()
   endforeach()
@@ -809,6 +859,43 @@ function(CUDA_BUILD_SHARED_LIBRARY shared_flag)
 endfunction()
 
 ##############################################################################
+# Helper to avoid clashes of files with the same basename but different paths.
+# This doesn't attempt to do exactly what CMake internals do, which is to only
+# add this path when there is a conflict, since by the time a second collision
+# in names is detected it's already too late to fix the first one.  For
+# consistency sake the relative path will be added to all files.
+function(CUDA_COMPUTE_BUILD_PATH path build_path)
+  #message("CUDA_COMPUTE_BUILD_PATH([${path}] ${build_path})")
+  # Only deal with CMake style paths from here on out
+  file(TO_CMAKE_PATH "${path}" bpath)
+  if (IS_ABSOLUTE "${bpath}")
+    # Absolute paths are generally unnessary, especially if something like
+    # file(GLOB_RECURSE) is used to pick up the files.
+    file(RELATIVE_PATH bpath "${CMAKE_CURRENT_SOURCE_DIR}" "${bpath}")
+  endif()
+
+  # This recipie is from cmLocalGenerator::CreateSafeUniqueObjectFileName in the
+  # CMake source.
+
+  # Remove leading /
+  string(REGEX REPLACE "^[/]+" "" bpath "${bpath}")
+  # Avoid absolute paths by removing ':'
+  string(REPLACE ":" "_" bpath "${bpath}")
+  # Avoid relative paths that go up the tree
+  string(REPLACE "../" "__/" bpath "${bpath}")
+  # Avoid spaces
+  string(REPLACE " " "_" bpath "${bpath}")
+
+  # Strip off the filename.  I wait until here to do it, since removin the
+  # basename can make a path that looked like path/../basename turn into
+  # path/.. (notice the trailing slash).
+  get_filename_component(bpath "${bpath}" PATH)
+
+  set(${build_path} "${bpath}" PARENT_SCOPE)
+  #message("${build_path} = ${bpath}")
+endfunction()
+
+##############################################################################
 # This helper macro populates the following variables and setups up custom
 # commands and targets to invoke the nvcc compiler to generate C or PTX source
 # dependent upon the format parameter.  The compiler is invoked once with -M
@@ -826,15 +913,7 @@ endfunction()
 
 macro(CUDA_WRAP_SRCS cuda_target format generated_files)
 
-  if( ${format} MATCHES "PTX" )
-    set( compile_to_ptx ON )
-  elseif( ${format} MATCHES "OBJ")
-    set( compile_to_ptx OFF )
-  else()
-    message( FATAL_ERROR "Invalid format flag passed to CUDA_WRAP_SRCS: '${format}'.  Use OBJ or PTX.")
-  endif()
-
-  # Set up all the command line flags here, so that they can be overriden on a per target basis.
+  # Set up all the command line flags here, so that they can be overridden on a per target basis.
 
   set(nvcc_flags "")
 
@@ -842,20 +921,20 @@ macro(CUDA_WRAP_SRCS cuda_target format generated_files)
   if (CUDA_BUILD_EMULATION)
     # Emulation.
     set(nvcc_flags ${nvcc_flags} --device-emulation -D_DEVICEEMU -g)
-  else(CUDA_BUILD_EMULATION)
+  else()
     # Device mode.  No flags necessary.
-  endif(CUDA_BUILD_EMULATION)
+  endif()
 
   if(CUDA_HOST_COMPILATION_CPP)
     set(CUDA_C_OR_CXX CXX)
-  else(CUDA_HOST_COMPILATION_CPP)
+  else()
     if(CUDA_VERSION VERSION_LESS "3.0")
       set(nvcc_flags ${nvcc_flags} --host-compilation C)
     else()
       message(WARNING "--host-compilation flag is deprecated in CUDA version >= 3.0.  Removing --host-compilation C flag" )
     endif()
     set(CUDA_C_OR_CXX C)
-  endif(CUDA_HOST_COMPILATION_CPP)
+  endif()
 
   set(generated_extension ${CMAKE_${CUDA_C_OR_CXX}_OUTPUT_EXTENSION})
 
@@ -866,12 +945,11 @@ macro(CUDA_WRAP_SRCS cuda_target format generated_files)
   endif()
 
   # This needs to be passed in at this stage, because VS needs to fill out the
-  # value of VCInstallDir from within VS.
+  # value of VCInstallDir from within VS.  Note that CCBIN is only used if
+  # -ccbin or --compiler-bindir isn't used and CUDA_HOST_COMPILER matches
+  # $(VCInstallDir)/bin.
   if(CMAKE_GENERATOR MATCHES "Visual Studio")
-    if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-      # Add nvcc flag for 64b Windows
-      set(ccbin_flags -D "\"CCBIN:PATH=$(VCInstallDir)bin\"" )
-    endif()
+    set(ccbin_flags -D "\"CCBIN:PATH=$(VCInstallDir)bin\"" )
   endif()
 
   # Figure out which configure we will use and pass that in as an argument to
@@ -890,7 +968,7 @@ macro(CUDA_WRAP_SRCS cuda_target format generated_files)
   get_directory_property(CUDA_NVCC_INCLUDE_DIRECTORIES INCLUDE_DIRECTORIES)
   if(CUDA_NVCC_INCLUDE_DIRECTORIES)
     foreach(dir ${CUDA_NVCC_INCLUDE_DIRECTORIES})
-      list(APPEND CUDA_NVCC_INCLUDE_ARGS "-I${dir}")
+      list(APPEND CUDA_NVCC_INCLUDE_ARGS -I${dir})
     endforeach()
   endif()
 
@@ -930,12 +1008,12 @@ macro(CUDA_WRAP_SRCS cuda_target format generated_files)
   # Only add the CMAKE_{C,CXX}_FLAGS if we are propagating host flags.  We
   # always need to set the SHARED_FLAGS, though.
   if(CUDA_PROPAGATE_HOST_FLAGS)
-    set(CUDA_HOST_FLAGS "set(CMAKE_HOST_FLAGS ${CMAKE_${CUDA_C_OR_CXX}_FLAGS} ${CUDA_HOST_SHARED_FLAGS})")
+    set(_cuda_host_flags "set(CMAKE_HOST_FLAGS ${CMAKE_${CUDA_C_OR_CXX}_FLAGS} ${CUDA_HOST_SHARED_FLAGS})")
   else()
-    set(CUDA_HOST_FLAGS "set(CMAKE_HOST_FLAGS ${CUDA_HOST_SHARED_FLAGS})")
+    set(_cuda_host_flags "set(CMAKE_HOST_FLAGS ${CUDA_HOST_SHARED_FLAGS})")
   endif()
 
-  set(CUDA_NVCC_FLAGS_CONFIG "# Build specific configuration flags")
+  set(_cuda_nvcc_flags_config "# Build specific configuration flags")
   # Loop over all the configuration types to generate appropriate flags for run_nvcc.cmake
   foreach(config ${CUDA_configuration_types})
     string(TOUPPER ${config} config_upper)
@@ -944,26 +1022,30 @@ macro(CUDA_WRAP_SRCS cuda_target format generated_files)
 
     if(CUDA_PROPAGATE_HOST_FLAGS)
       # nvcc chokes on -g3 in versions previous to 3.0, so replace it with -g
-      if(CMAKE_COMPILER_IS_GNUCC AND CUDA_VERSION VERSION_LESS "3.0")
+      set(_cuda_fix_g3 FALSE)
+
+      if(CMAKE_COMPILER_IS_GNUCC)
+        if (CUDA_VERSION VERSION_LESS  "3.0" OR
+            CUDA_VERSION VERSION_EQUAL "4.1" OR
+            CUDA_VERSION VERSION_EQUAL "4.2"
+            )
+          set(_cuda_fix_g3 TRUE)
+        endif()
+      endif()
+      if(_cuda_fix_g3)
         string(REPLACE "-g3" "-g" _cuda_C_FLAGS "${CMAKE_${CUDA_C_OR_CXX}_FLAGS_${config_upper}}")
       else()
         set(_cuda_C_FLAGS "${CMAKE_${CUDA_C_OR_CXX}_FLAGS_${config_upper}}")
       endif()
 
-      set(CUDA_HOST_FLAGS "${CUDA_HOST_FLAGS}\nset(CMAKE_HOST_FLAGS_${config_upper} ${_cuda_C_FLAGS})")
+      set(_cuda_host_flags "${_cuda_host_flags}\nset(CMAKE_HOST_FLAGS_${config_upper} ${_cuda_C_FLAGS})")
     endif()
 
     # Note that if we ever want CUDA_NVCC_FLAGS_<CONFIG> to be string (instead of a list
     # like it is currently), we can remove the quotes around the
     # ${CUDA_NVCC_FLAGS_${config_upper}} variable like the CMAKE_HOST_FLAGS_<CONFIG> variable.
-    set(CUDA_NVCC_FLAGS_CONFIG "${CUDA_NVCC_FLAGS_CONFIG}\nset(CUDA_NVCC_FLAGS_${config_upper} \"${CUDA_NVCC_FLAGS_${config_upper}};;${CUDA_WRAP_OPTION_NVCC_FLAGS_${config_upper}}\")")
+    set(_cuda_nvcc_flags_config "${_cuda_nvcc_flags_config}\nset(CUDA_NVCC_FLAGS_${config_upper} ${CUDA_NVCC_FLAGS_${config_upper}} ;; ${CUDA_WRAP_OPTION_NVCC_FLAGS_${config_upper}})")
   endforeach()
-
-  if(compile_to_ptx)
-    # Don't use any of the host compilation flags for PTX targets.
-    set(CUDA_HOST_FLAGS)
-    set(CUDA_NVCC_FLAGS_CONFIG)
-  endif()
 
   # Get the list of definitions from the directory property
   get_directory_property(CUDA_NVCC_DEFINITIONS COMPILE_DEFINITIONS)
@@ -977,13 +1059,6 @@ macro(CUDA_WRAP_SRCS cuda_target format generated_files)
     list(APPEND nvcc_flags "-D${cuda_target}_EXPORTS")
   endif()
 
-  # Determine output directory
-  if(CUDA_GENERATED_OUTPUT_DIR)
-    set(cuda_compile_output_dir "${CUDA_GENERATED_OUTPUT_DIR}")
-  else()
-    set(cuda_compile_output_dir "${CMAKE_CURRENT_BINARY_DIR}")
-  endif()
-
   # Reset the output variable
   set(_cuda_wrap_generated_files "")
 
@@ -994,6 +1069,43 @@ macro(CUDA_WRAP_SRCS cuda_target format generated_files)
     get_source_file_property(_is_header ${file} HEADER_FILE_ONLY)
     if(${file} MATCHES ".*\\.cu$" AND NOT _is_header)
 
+      # Allow per source file overrides of the format.
+      get_source_file_property(_cuda_source_format ${file} CUDA_SOURCE_PROPERTY_FORMAT)
+      if(NOT _cuda_source_format)
+        set(_cuda_source_format ${format})
+      endif()
+
+      if( ${_cuda_source_format} MATCHES "PTX" )
+        set( compile_to_ptx ON )
+      elseif( ${_cuda_source_format} MATCHES "OBJ")
+        set( compile_to_ptx OFF )
+      else()
+        message( FATAL_ERROR "Invalid format flag passed to CUDA_WRAP_SRCS for file '${file}': '${_cuda_source_format}'.  Use OBJ or PTX.")
+      endif()
+
+
+      if(compile_to_ptx)
+        # Don't use any of the host compilation flags for PTX targets.
+        set(CUDA_HOST_FLAGS)
+        set(CUDA_NVCC_FLAGS_CONFIG)
+      else()
+        set(CUDA_HOST_FLAGS ${_cuda_host_flags})
+        set(CUDA_NVCC_FLAGS_CONFIG ${_cuda_nvcc_flags_config})
+      endif()
+
+      # Determine output directory
+      cuda_compute_build_path("${file}" cuda_build_path)
+      set(cuda_compile_intermediate_directory "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${cuda_target}.dir/${cuda_build_path}")
+      if(CUDA_GENERATED_OUTPUT_DIR)
+        set(cuda_compile_output_dir "${CUDA_GENERATED_OUTPUT_DIR}")
+      else()
+        if ( compile_to_ptx )
+          set(cuda_compile_output_dir "${CMAKE_CURRENT_BINARY_DIR}")
+        else()
+          set(cuda_compile_output_dir "${cuda_compile_intermediate_directory}")
+        endif()
+      endif()
+
       # Add a custom target to generate a c or ptx file. ######################
 
       get_filename_component( basename ${file} NAME )
@@ -1002,21 +1114,21 @@ macro(CUDA_WRAP_SRCS cuda_target format generated_files)
         set(generated_file_basename "${cuda_target}_generated_${basename}.ptx")
         set(format_flag "-ptx")
         file(MAKE_DIRECTORY "${cuda_compile_output_dir}")
-      else( compile_to_ptx )
+      else()
         set(generated_file_path "${cuda_compile_output_dir}/${CMAKE_CFG_INTDIR}")
         set(generated_file_basename "${cuda_target}_generated_${basename}${generated_extension}")
         set(format_flag "-c")
-      endif( compile_to_ptx )
+      endif()
 
       # Set all of our file names.  Make sure that whatever filenames that have
       # generated_file_path in them get passed in through as a command line
       # argument, so that the ${CMAKE_CFG_INTDIR} gets expanded at run time
       # instead of configure time.
       set(generated_file "${generated_file_path}/${generated_file_basename}")
-      set(cmake_dependency_file "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${generated_file_basename}.depend")
-      set(NVCC_generated_dependency_file "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${generated_file_basename}.NVCC-depend")
+      set(cmake_dependency_file "${cuda_compile_intermediate_directory}/${generated_file_basename}.depend")
+      set(NVCC_generated_dependency_file "${cuda_compile_intermediate_directory}/${generated_file_basename}.NVCC-depend")
       set(generated_cubin_file "${generated_file_path}/${generated_file_basename}.cubin.txt")
-      set(custom_target_script "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${generated_file_basename}.cmake")
+      set(custom_target_script "${cuda_compile_intermediate_directory}/${generated_file_basename}.cmake")
 
       # Setup properties for obj files:
       if( NOT compile_to_ptx )
@@ -1040,17 +1152,17 @@ macro(CUDA_WRAP_SRCS cuda_target format generated_files)
       # Convience string for output ###########################################
       if(CUDA_BUILD_EMULATION)
         set(cuda_build_type "Emulation")
-      else(CUDA_BUILD_EMULATION)
+      else()
         set(cuda_build_type "Device")
-      endif(CUDA_BUILD_EMULATION)
+      endif()
 
       # Build the NVCC made dependency file ###################################
       set(build_cubin OFF)
       if ( NOT CUDA_BUILD_EMULATION AND CUDA_BUILD_CUBIN )
          if ( NOT compile_to_ptx )
            set ( build_cubin ON )
-         endif( NOT compile_to_ptx )
-      endif( NOT CUDA_BUILD_EMULATION AND CUDA_BUILD_CUBIN )
+         endif()
+      endif()
 
       # Configure the build script
       configure_file("${CUDA_run_nvcc}" "${custom_target_script}" @ONLY)
@@ -1096,6 +1208,7 @@ macro(CUDA_WRAP_SRCS cuda_target format generated_files)
           -D "generated_file:STRING=${generated_file}"
           -D "generated_cubin_file:STRING=${generated_cubin_file}"
           -P "${custom_target_script}"
+        WORKING_DIRECTORY "${cuda_compile_intermediate_directory}"
         COMMENT "${cuda_build_comment_string}"
         )
 
@@ -1124,12 +1237,12 @@ macro(CUDA_WRAP_SRCS cuda_target format generated_files)
       list(REMOVE_DUPLICATES CUDA_ADDITIONAL_CLEAN_FILES)
       set(CUDA_ADDITIONAL_CLEAN_FILES ${CUDA_ADDITIONAL_CLEAN_FILES} CACHE INTERNAL "List of intermediate files that are part of the cuda dependency scanning.")
 
-    endif(${file} MATCHES ".*\\.cu$" AND NOT _is_header)
-  endforeach(file)
+    endif()
+  endforeach()
 
   # Set the return parameter
   set(${generated_files} ${_cuda_wrap_generated_files})
-endmacro(CUDA_WRAP_SRCS)
+endmacro()
 
 
 ###############################################################################
@@ -1166,7 +1279,7 @@ macro(CUDA_ADD_LIBRARY cuda_target)
     LINKER_LANGUAGE ${CUDA_C_OR_CXX}
     )
 
-endmacro(CUDA_ADD_LIBRARY cuda_target)
+endmacro()
 
 
 ###############################################################################
@@ -1200,7 +1313,7 @@ macro(CUDA_ADD_EXECUTABLE cuda_target)
     LINKER_LANGUAGE ${CUDA_C_OR_CXX}
     )
 
-endmacro(CUDA_ADD_EXECUTABLE cuda_target)
+endmacro()
 
 
 ###############################################################################
@@ -1218,7 +1331,7 @@ macro(CUDA_COMPILE generated_files)
 
   set( ${generated_files} ${_generated_files})
 
-endmacro(CUDA_COMPILE)
+endmacro()
 
 
 ###############################################################################
@@ -1236,7 +1349,7 @@ macro(CUDA_COMPILE_PTX generated_files)
 
   set( ${generated_files} ${_generated_files})
 
-endmacro(CUDA_COMPILE_PTX)
+endmacro()
 
 ###############################################################################
 ###############################################################################
@@ -1285,4 +1398,4 @@ macro(CUDA_BUILD_CLEAN_TARGET)
   # This is useful so that the files won't persist in the list after targets
   # have been removed.
   set(CUDA_ADDITIONAL_CLEAN_FILES "" CACHE INTERNAL "List of intermediate files that are part of the cuda dependency scanning.")
-endmacro(CUDA_BUILD_CLEAN_TARGET)
+endmacro()

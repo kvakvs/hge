@@ -61,7 +61,7 @@
 # If the check fails and QUIET is not given the function terminates
 # with a FATAL_ERROR message describing the problem.  The purpose of
 # this check is to stop a build early for incompatible compiler
-# combinations.
+# combinations.  The test is built in the Release configuration.
 #
 # FortranCInterface is aware of possible GLOBAL and MODULE manglings
 # for many Fortran compilers, but it also provides an interface to
@@ -115,6 +115,14 @@ endforeach()
 
 #-----------------------------------------------------------------------------
 set(FortranCInterface_SOURCE_DIR ${CMAKE_ROOT}/Modules/FortranCInterface)
+
+# MinGW's make tool does not always like () in the path
+if("${CMAKE_GENERATOR}" MATCHES "MinGW" AND
+    "${FortranCInterface_SOURCE_DIR}" MATCHES "[()]")
+  file(COPY ${FortranCInterface_SOURCE_DIR}/
+    DESTINATION ${CMAKE_BINARY_DIR}/CMakeFiles/FortranCInterfaceMinGW)
+  set(FortranCInterface_SOURCE_DIR ${CMAKE_BINARY_DIR}/CMakeFiles/FortranCInterfaceMinGW)
+endif()
 
 # Create the interface detection project if it does not exist.
 if(NOT FortranCInterface_BINARY_DIR)
@@ -207,7 +215,7 @@ ${_desc_${macro}}
         message(AUTHOR_WARNING "No FortranCInterface mangling known for ${f}")
       endif()
     endif()
-  endforeach(f)
+  endforeach()
 
   # Store the content.
   configure_file(${FortranCInterface_SOURCE_DIR}/Macro.h.in ${FILE} @ONLY)
@@ -242,6 +250,7 @@ function(FortranCInterface_VERIFY)
     message(STATUS "${_desc}")
 
     # Build a sample project which reports symbols.
+    set(CMAKE_TRY_COMPILE_CONFIGURATION Release)
     try_compile(FortranCInterface_VERIFY_${lang}_COMPILED
       ${FortranCInterface_BINARY_DIR}/Verify${lang}
       ${FortranCInterface_SOURCE_DIR}/Verify
@@ -251,6 +260,9 @@ function(FortranCInterface_VERIFY)
                  "-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}"
                  "-DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}"
                  "-DCMAKE_Fortran_FLAGS:STRING=${CMAKE_Fortran_FLAGS}"
+                 "-DCMAKE_C_FLAGS_RELEASE:STRING=${CMAKE_C_FLAGS_RELEASE}"
+                 "-DCMAKE_CXX_FLAGS_RELEASE:STRING=${CMAKE_CXX_FLAGS_RELEASE}"
+                 "-DCMAKE_Fortran_FLAGS_RELEASE:STRING=${CMAKE_Fortran_FLAGS_RELEASE}"
       OUTPUT_VARIABLE _output)
     file(WRITE "${FortranCInterface_BINARY_DIR}/Verify${lang}/output.txt" "${_output}")
 

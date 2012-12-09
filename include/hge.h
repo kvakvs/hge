@@ -10,7 +10,6 @@
 
 
 #include <windows.h>
-//#include <stdint.h>
 
 #define HGE_VERSION 0x181
 

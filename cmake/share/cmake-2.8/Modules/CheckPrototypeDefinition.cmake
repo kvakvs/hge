@@ -34,7 +34,10 @@
 #  License text for the above reference.)
 #
 
+include("${CMAKE_CURRENT_LIST_DIR}/CMakeExpandImportedTargets.cmake")
+
 get_filename_component(__check_proto_def_dir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
 
 function(CHECK_PROTOTYPE_DEFINITION _FUNCTION _PROTOTYPE _RETURN _HEADER _VARIABLE)
 
@@ -43,22 +46,24 @@ function(CHECK_PROTOTYPE_DEFINITION _FUNCTION _PROTOTYPE _RETURN _HEADER _VARIAB
 
     set(CHECK_PROTOTYPE_DEFINITION_FLAGS ${CMAKE_REQUIRED_FLAGS})
     if (CMAKE_REQUIRED_LIBRARIES)
+      # this one translates potentially used imported library targets to their files on disk
+      cmake_expand_imported_targets(_ADJUSTED_CMAKE_REQUIRED_LIBRARIES  LIBRARIES  ${CMAKE_REQUIRED_LIBRARIES} CONFIGURATION "${CMAKE_TRY_COMPILE_CONFIGURATION}")
       set(CHECK_PROTOTYPE_DEFINITION_LIBS
-        "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
-    else(CMAKE_REQUIRED_LIBRARIES)
+        "-DLINK_LIBRARIES:STRING=${_ADJUSTED_CMAKE_REQUIRED_LIBRARIES}")
+    else()
       set(CHECK_PROTOTYPE_DEFINITION_LIBS)
-    endif(CMAKE_REQUIRED_LIBRARIES)
+    endif()
     if (CMAKE_REQUIRED_INCLUDES)
       set(CMAKE_SYMBOL_EXISTS_INCLUDES
         "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_REQUIRED_INCLUDES}")
-    else(CMAKE_REQUIRED_INCLUDES)
+    else()
       set(CMAKE_SYMBOL_EXISTS_INCLUDES)
-    endif(CMAKE_REQUIRED_INCLUDES)
+    endif()
 
     foreach(_FILE ${_HEADER})
       set(CHECK_PROTOTYPE_DEFINITION_HEADER
         "${CHECK_PROTOTYPE_DEFINITION_HEADER}#include <${_FILE}>\n")
-    endforeach(_FILE)
+    endforeach()
 
     set(CHECK_PROTOTYPE_DEFINITION_SYMBOL ${_FUNCTION})
     set(CHECK_PROTOTYPE_DEFINITION_PROTO ${_PROTOTYPE})
@@ -84,13 +89,13 @@ function(CHECK_PROTOTYPE_DEFINITION _FUNCTION _PROTOTYPE _RETURN _HEADER _VARIAB
       file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
         "Determining if the prototype ${_FUNCTION} exists for ${_VARIABLE} passed with the following output:\n"
         "${OUTPUT}\n\n")
-    else (${_VARIABLE})
+    else ()
       message(STATUS "Checking prototype ${_FUNCTION} for ${_VARIABLE} - False")
       set(${_VARIABLE} 0 CACHE INTERNAL "Have correct prototype for ${_FUNCTION}")
       file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
         "Determining if the prototype ${_FUNCTION} exists for ${_VARIABLE} failed with the following output:\n"
         "${OUTPUT}\n\n${_SOURCE}\n\n")
-    endif (${_VARIABLE})
-  endif("${_VARIABLE}" MATCHES "^${_VARIABLE}$")
+    endif ()
+  endif()
 
-endfunction(CHECK_PROTOTYPE_DEFINITION)
+endfunction()

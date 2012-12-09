@@ -1,6 +1,6 @@
 # - Check if the variable exists.
 #  CHECK_VARIABLE_EXISTS(VAR VARIABLE)
-#  
+#
 #  VAR      - the name of the variable
 #  VARIABLE - variable to store the result
 #
@@ -26,36 +26,41 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-MACRO(CHECK_VARIABLE_EXISTS VAR VARIABLE)
-  IF("${VARIABLE}" MATCHES "^${VARIABLE}$")
-    SET(MACRO_CHECK_VARIABLE_DEFINITIONS 
+include("${CMAKE_CURRENT_LIST_DIR}/CMakeExpandImportedTargets.cmake")
+
+
+macro(CHECK_VARIABLE_EXISTS VAR VARIABLE)
+  if("${VARIABLE}" MATCHES "^${VARIABLE}$")
+    set(MACRO_CHECK_VARIABLE_DEFINITIONS
       "-DCHECK_VARIABLE_EXISTS=${VAR} ${CMAKE_REQUIRED_FLAGS}")
-    MESSAGE(STATUS "Looking for ${VAR}")
-    IF(CMAKE_REQUIRED_LIBRARIES)
-      SET(CHECK_VARIABLE_EXISTS_ADD_LIBRARIES
-        "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
-    ELSE(CMAKE_REQUIRED_LIBRARIES)
-      SET(CHECK_VARIABLE_EXISTS_ADD_LIBRARIES)
-    ENDIF(CMAKE_REQUIRED_LIBRARIES)
-    TRY_COMPILE(${VARIABLE}
+    message(STATUS "Looking for ${VAR}")
+    if(CMAKE_REQUIRED_LIBRARIES)
+      # this one translates potentially used imported library targets to their files on disk
+      CMAKE_EXPAND_IMPORTED_TARGETS(_ADJUSTED_CMAKE_REQUIRED_LIBRARIES  LIBRARIES  ${CMAKE_REQUIRED_LIBRARIES} CONFIGURATION "${CMAKE_TRY_COMPILE_CONFIGURATION}")
+      set(CHECK_VARIABLE_EXISTS_ADD_LIBRARIES
+        "-DLINK_LIBRARIES:STRING=${_ADJUSTED_CMAKE_REQUIRED_LIBRARIES}")
+    else()
+      set(CHECK_VARIABLE_EXISTS_ADD_LIBRARIES)
+    endif()
+    try_compile(${VARIABLE}
       ${CMAKE_BINARY_DIR}
       ${CMAKE_ROOT}/Modules/CheckVariableExists.c
       COMPILE_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS}
       CMAKE_FLAGS -DCOMPILE_DEFINITIONS:STRING=${MACRO_CHECK_VARIABLE_DEFINITIONS}
       "${CHECK_VARIABLE_EXISTS_ADD_LIBRARIES}"
       OUTPUT_VARIABLE OUTPUT)
-    IF(${VARIABLE})
-      SET(${VARIABLE} 1 CACHE INTERNAL "Have variable ${VAR}")
-      MESSAGE(STATUS "Looking for ${VAR} - found")
-      FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
+    if(${VARIABLE})
+      set(${VARIABLE} 1 CACHE INTERNAL "Have variable ${VAR}")
+      message(STATUS "Looking for ${VAR} - found")
+      file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
         "Determining if the variable ${VAR} exists passed with the following output:\n"
         "${OUTPUT}\n\n")
-    ELSE(${VARIABLE})
-      SET(${VARIABLE} "" CACHE INTERNAL "Have variable ${VAR}")
-      MESSAGE(STATUS "Looking for ${VAR} - not found")
-      FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log 
+    else()
+      set(${VARIABLE} "" CACHE INTERNAL "Have variable ${VAR}")
+      message(STATUS "Looking for ${VAR} - not found")
+      file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
         "Determining if the variable ${VAR} exists failed with the following output:\n"
         "${OUTPUT}\n\n")
-    ENDIF(${VARIABLE})
-  ENDIF("${VARIABLE}" MATCHES "^${VARIABLE}$")
-ENDMACRO(CHECK_VARIABLE_EXISTS)
+    endif()
+  endif()
+endmacro()
