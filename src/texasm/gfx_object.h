@@ -49,6 +49,8 @@ struct std::greater<CGfxObject*>  : public binary_function<CGfxObject*, CGfxObje
                (a->GetHeight() > b->GetWidth() && a->GetHeight() > b->GetHeight());
 	}
 };
+#else
+#include <functional>
 #endif
 #endif
 
