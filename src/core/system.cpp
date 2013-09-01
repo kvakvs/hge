@@ -69,7 +69,6 @@ bool HGE_CALL HGE_Impl::System_Initiate()
     SYSTEMTIME      tm;
     MEMORYSTATUS    mem_st;
     WNDCLASS        winclass;
-    int             width, height;
 
     // Log system info
 
@@ -108,25 +107,24 @@ bool HGE_CALL HGE_Impl::System_Initiate()
     }
 
     // Create window
-
-    width=nScreenWidth + GetSystemMetrics(SM_CXFIXEDFRAME)*2;
-    height=nScreenHeight + GetSystemMetrics(SM_CYFIXEDFRAME)*2 + GetSystemMetrics(SM_CYCAPTION);
-
-    rectW.left   = (GetSystemMetrics(SM_CXSCREEN)-width)/2;
-    rectW.top    = (GetSystemMetrics(SM_CYSCREEN)-height)/2;
-    rectW.right  = rectW.left+width;
-    rectW.bottom = rectW.top+height;
-    styleW = WS_POPUP|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX|WS_VISIBLE; //WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX;
-	
+	// Thanks to Bryan for window rectangle fix in later Windows systems 7,8
+	// http://i-am-bryan.com/webs/tutorials/hge/fix-hge-window-sizing-bug/
+	rectW.left      =   GetSystemMetrics(SM_CXSCREEN)/2 - nScreenWidth/2;
+	rectW.top       =   GetSystemMetrics(SM_CYSCREEN)/2 - nScreenHeight/2;
+	rectW.right     =   rectW.left + nScreenWidth;
+	rectW.bottom    =   rectW.top  + nScreenHeight;
+	styleW          =   WS_POPUP|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX|WS_VISIBLE; //WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX;
+ 
 	// Fix for styled windows in Windows versions newer than XP
-	AdjustWindowRect(&rectW, styleW, false);
-
-    rectFS.left=0;
-    rectFS.top=0;
-    rectFS.right=nScreenWidth;
-    rectFS.bottom=nScreenHeight;
-    styleFS=WS_POPUP|WS_VISIBLE; //WS_POPUP
-
+	AdjustWindowRect(&rectW,styleW,false);
+ 
+	//Fullscreen
+	rectFS.left     =   0;
+	rectFS.top      =   0;
+	rectFS.right    =   nScreenWidth;
+	rectFS.bottom   =   nScreenHeight;
+	styleFS         =   WS_POPUP|WS_VISIBLE; //WS_POPUP
+	
     if(hwndParent)
     {
         rectW.left=0;
