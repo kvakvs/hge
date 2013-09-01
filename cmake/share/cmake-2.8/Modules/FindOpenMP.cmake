@@ -1,7 +1,9 @@
 # - Finds OpenMP support
 # This module can be used to detect OpenMP support in a compiler.
 # If the compiler supports OpenMP, the flags required to compile with
-# openmp support are set.
+# OpenMP support are returned in variables for the different languages.
+# The variables may be empty if the compiler does not need a special
+# flag to support OpenMP.
 #
 # The following variables are set:
 #   OpenMP_C_FLAGS - flags to add to the C compiler for OpenMP support
@@ -95,7 +97,7 @@ if(CMAKE_C_COMPILER_LOADED)
     unset(OpenMP_C_FLAG_CANDIDATES)
   else()
     _OPENMP_FLAG_CANDIDATES("C")
-    include(CheckCSourceCompiles)
+    include(${CMAKE_CURRENT_LIST_DIR}/CheckCSourceCompiles.cmake)
   endif()
 
   foreach(FLAG ${OpenMP_C_FLAG_CANDIDATES})
@@ -126,7 +128,7 @@ if(CMAKE_CXX_COMPILER_LOADED)
     unset(OpenMP_CXX_FLAG_CANDIDATES)
   else()
     _OPENMP_FLAG_CANDIDATES("CXX")
-    include(CheckCXXSourceCompiles)
+    include(${CMAKE_CURRENT_LIST_DIR}/CheckCXXSourceCompiles.cmake)
 
     # use the same source for CXX as C for now
     set(OpenMP_CXX_TEST_SOURCE ${OpenMP_C_TEST_SOURCE})

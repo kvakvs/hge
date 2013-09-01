@@ -311,13 +311,11 @@ endif()
 # Are we packaging components ?
 if(CPACK_RPM_PACKAGE_COMPONENT)
   set(CPACK_RPM_PACKAGE_COMPONENT_PART_NAME "-${CPACK_RPM_PACKAGE_COMPONENT}")
-  set(CPACK_RPM_PACKAGE_COMPONENT_PART_PATH "/${CPACK_RPM_PACKAGE_COMPONENT}")
-  set(WDIR "${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}/${CPACK_RPM_PACKAGE_COMPONENT}")
 else()
   set(CPACK_RPM_PACKAGE_COMPONENT_PART_NAME "")
-  set(CPACK_RPM_PACKAGE_COMPONENT_PART_PATH "")
-  set(WDIR "${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}")
 endif()
+
+set(WDIR "${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}${CPACK_RPM_PACKAGE_COMPONENT_PART_PATH}")
 
 #
 # Use user-defined RPM specific variables value
@@ -453,31 +451,41 @@ endif()
 
 # Check if additional fields for RPM spec header are given
 # There may be some COMPONENT specific variables as well
+# If component specific var is not provided we use the global one
+# for each component
 foreach(_RPM_SPEC_HEADER URL REQUIRES SUGGESTS PROVIDES OBSOLETES PREFIX CONFLICTS AUTOPROV AUTOREQ AUTOREQPROV)
     if(CPACK_RPM_PACKAGE_DEBUG)
       message("CPackRPM:Debug: processing ${_RPM_SPEC_HEADER}")
     endif()
     if(CPACK_RPM_PACKAGE_COMPONENT)
-        if(CPACK_RPM_${CPACK_RPM_PACKAGE_COMPONENT}_PACKAGE_${_RPM_SPEC_HEADER})
+        if(DEFINED CPACK_RPM_${CPACK_RPM_PACKAGE_COMPONENT}_PACKAGE_${_RPM_SPEC_HEADER})
             if(CPACK_RPM_PACKAGE_DEBUG)
               message("CPackRPM:Debug: using CPACK_RPM_${CPACK_RPM_PACKAGE_COMPONENT}_PACKAGE_${_RPM_SPEC_HEADER}")
             endif()
             set(CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER}_TMP ${CPACK_RPM_${CPACK_RPM_PACKAGE_COMPONENT}_PACKAGE_${_RPM_SPEC_HEADER}})
         else()
-            if(CPACK_RPM_PACKAGE_DEBUG)
-              message("CPackRPM:Debug: CPACK_RPM_${CPACK_RPM_PACKAGE_COMPONENT}_PACKAGE_${_RPM_SPEC_HEADER} not defined")
-              message("CPackRPM:Debug: using CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER}")
+            if(DEFINED CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER})
+              if(CPACK_RPM_PACKAGE_DEBUG)
+                message("CPackRPM:Debug: CPACK_RPM_${CPACK_RPM_PACKAGE_COMPONENT}_PACKAGE_${_RPM_SPEC_HEADER} not defined")
+                message("CPackRPM:Debug: using CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER}")
+              endif()
+              set(CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER}_TMP ${CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER}})
             endif()
-            set(CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER}_TMP ${CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER}})
         endif()
     else()
-        if(CPACK_RPM_PACKAGE_DEBUG)
-          message("CPackRPM:Debug: using CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER}")
+        if(DEFINED CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER})
+          if(CPACK_RPM_PACKAGE_DEBUG)
+            message("CPackRPM:Debug: using CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER}")
+          endif()
+          set(CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER}_TMP ${CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER}})
         endif()
-        set(CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER}_TMP ${CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER}})
     endif()
 
-  if(CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER}_TMP)
+  # Treat the RPM Spec keyword iff it has been properly defined
+  if(DEFINED CPACK_RPM_PACKAGE_${_RPM_SPEC_HEADER}_TMP)
+    # Transform NAME --> Name e.g. PROVIDES --> Provides
+    # The Upper-case first letter and lowercase tail is the
+    # appropriate value required in the final RPM spec file.
     string(LENGTH ${_RPM_SPEC_HEADER} _PACKAGE_HEADER_STRLENGTH)
     math(EXPR _PACKAGE_HEADER_STRLENGTH "${_PACKAGE_HEADER_STRLENGTH} - 1")
     string(SUBSTRING ${_RPM_SPEC_HEADER} 1 ${_PACKAGE_HEADER_STRLENGTH} _PACKAGE_HEADER_TAIL)
