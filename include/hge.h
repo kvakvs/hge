@@ -1,7 +1,11 @@
 /*
 ** Haaf's Game Engine 1.8
 ** Copyright (C) 2003-2007, Relish Games
-** hge.relishgames.com
+** http://hge.relishgames.com; Forum: http://relishgames.com/forum
+**
+** Maintained 2012-2014 by dmytro.lytovchenko@gmail.com
+** Forum post: http://relishgames.com/forum/index.php?p=/discussion/6235/hge1.81-all-ides-directx-8-directx-9-shaders-git-repo/p1
+** Check out the source at https://github.com/kvakvs/hge 
 **
 ** System layer API
 */

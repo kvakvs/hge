@@ -1027,7 +1027,7 @@ void HGE_Impl::_GfxDone()
         pIB->Release();
         pIB=0;
     }
-    if(pVB) {
+    if(pVB && pD3DDevice) {
         if(VertArray) {
             pVB->Unlock();
             VertArray=0;
