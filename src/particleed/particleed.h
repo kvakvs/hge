@@ -30,16 +30,15 @@
 
 extern HGE *hge;
 
-struct PEditorState
-{
-	bool				bHelp;
-	bool				bBBox;
-	bool				bIFace;
-	int					nPreset;
-	float				mx, my;
-	HTEXTURE			texBG;
-	hgeSprite			*sprBG;
-	hgeParticleSystem	*ps;
+struct PEditorState {
+    bool				bHelp;
+    bool				bBBox;
+    bool				bIFace;
+    int					nPreset;
+    float				mx, my;
+    HTEXTURE			texBG;
+    hgeSprite			*sprBG;
+    hgeParticleSystem	*ps;
 };
 
 extern hgeFont		*fnt;

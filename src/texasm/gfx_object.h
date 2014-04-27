@@ -8,42 +8,56 @@
 
 using namespace std;
 
-class CGfxObject
-{
+class CGfxObject {
 public:
-	CGfxObject(char *_name, int _resgroup) { name=_name; placed = false; resgroup = _resgroup; }
+    CGfxObject(char *_name, int _resgroup) {
+        name=_name;
+        placed = false;
+        resgroup = _resgroup;
+    }
 
-	char	*GetName()						{ return name; }
-	void	Place(int _x, int _y)			{ x = _x; y = _y; placed = true; }
-	bool	IsPlaced()						{ return placed; }
-	int		GetResGroup()					{ return resgroup; }
-	void	GetTargetPos(int *_x, int *_y)	{ *_x = x; *_y = y; }
+    char	*GetName()						{
+        return name;
+    }
+    void	Place(int _x, int _y)			{
+        x = _x;
+        y = _y;
+        placed = true;
+    }
+    bool	IsPlaced()						{
+        return placed;
+    }
+    int		GetResGroup()					{
+        return resgroup;
+    }
+    void	GetTargetPos(int *_x, int *_y)	{
+        *_x = x;
+        *_y = y;
+    }
 
-	virtual int			GetWidth() const = 0;
-	virtual int			GetHeight() const = 0;
-	virtual HTEXTURE	GetTexture() = 0;
-	virtual void		GetSourcePos(int *_x, int *_y) = 0;
-	virtual bool		SaveDescription(FILE *fp, char *texname) = 0;
+    virtual int			GetWidth() const = 0;
+    virtual int			GetHeight() const = 0;
+    virtual HTEXTURE	GetTexture() = 0;
+    virtual void		GetSourcePos(int *_x, int *_y) = 0;
+    virtual bool		SaveDescription(FILE *fp, char *texname) = 0;
 
 protected:
-	char		*name;
-	int			resgroup;
-	bool		placed;
-	int			x;
-	int			y;
+    char		*name;
+    int			resgroup;
+    bool		placed;
+    int			x;
+    int			y;
 };
 
 
 // sorting predicate
 #include <functional>
 
-struct ByLargestDimensionDescending : public greater<CGfxObject *>
-{
-	bool operator()(CGfxObject* &a, CGfxObject* &b) const
-	{ 
-		return (a->GetWidth()  < b->GetWidth() && a->GetWidth()  > b->GetHeight()) ||
+struct ByLargestDimensionDescending : public greater<CGfxObject *> {
+    bool operator()(CGfxObject* &a, CGfxObject* &b) const {
+        return (a->GetWidth()  < b->GetWidth() && a->GetWidth()  > b->GetHeight()) ||
                (a->GetHeight() > b->GetWidth() && a->GetHeight() > b->GetHeight());
-	}
+    }
 };
 
 

@@ -15,31 +15,31 @@
 #include <stdint.h>
 
 
-struct CFontListItem
-{
-	char		  family[LF_FACESIZE];
-	CFontListItem *next;
+struct CFontListItem {
+    char		  family[LF_FACESIZE];
+    CFontListItem *next;
 };
 
-class CFontList
-{
-	friend int CALLBACK EnumFontFamExProc(ENUMLOGFONTEX *lpelfe, NEWTEXTMETRICEX *lpntme,
-		unsigned int FontType, LPARAM lParam);
+class CFontList {
+    friend int CALLBACK EnumFontFamExProc(ENUMLOGFONTEX *lpelfe, NEWTEXTMETRICEX *lpntme,
+                                          unsigned int FontType, LPARAM lParam);
 
 public:
-	CFontList();
-	~CFontList();
+    CFontList();
+    ~CFontList();
 
-	void	BuildList();
-	int		GetNumFonts() { return nFonts; }
-	char	*GetFontByIdx(int n);
+    void	BuildList();
+    int		GetNumFonts() {
+        return nFonts;
+    }
+    char	*GetFontByIdx(int n);
 
 private:
-	void			ClearList();
-	void			FindSortAdd(char *family);
+    void			ClearList();
+    void			FindSortAdd(char *family);
 
-	int				nFonts;
-	CFontListItem	*pFonts;
+    int				nFonts;
+    CFontListItem	*pFonts;
 };
 
 extern CFontList	*FontList;

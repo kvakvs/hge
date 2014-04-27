@@ -19,150 +19,179 @@ HGE *hgeStringTable::hge=0;
 
 hgeStringTable::hgeStringTable(const char *filename)
 {
-	int i;
-	void *data;
-	hgeU32 size;
-	char *desc, *pdesc;
-	NamedString *str;
-	char str_name[MAXSTRNAMELENGTH];
-	char *str_value, *pvalue;
-	
-	hge=hgeCreate(HGE_VERSION);
-	strings=0;
+    int i;
+    void *data;
+    hgeU32 size;
+    char *desc, *pdesc;
+    NamedString *str;
+    char str_name[MAXSTRNAMELENGTH];
+    char *str_value, *pvalue;
 
-	// load string table file
-	data=hge->Resource_Load(filename, &size);
-	if(!data) return;
+    hge=hgeCreate(HGE_VERSION);
+    strings=0;
 
-	desc = new char[size+1];
-	memcpy(desc,data,size);
-	desc[size]=0;
-	hge->Resource_Free(data);
+    // load string table file
+    data=hge->Resource_Load(filename, &size);
+    if(!data) {
+        return;
+    }
 
-	// check header
-	if(memcmp(desc, STRHEADERTAG, sizeof(STRHEADERTAG)-1))
-	{
-		hge->System_Log(STRFORMATERROR, filename);
-		delete[] desc;	
-		return;
-	}
+    desc = new char[size+1];
+    memcpy(desc,data,size);
+    desc[size]=0;
+    hge->Resource_Free(data);
 
-	pdesc=desc+sizeof(STRHEADERTAG);
-	str_value=new char[8192];
+    // check header
+    if(memcmp(desc, STRHEADERTAG, sizeof(STRHEADERTAG)-1)) {
+        hge->System_Log(STRFORMATERROR, filename);
+        delete[] desc;
+        return;
+    }
 
-	for(;;)
-	{
-		// skip whitespaces
-		while(isspace(*pdesc)) pdesc++;
-		if(!*pdesc) break;
+    pdesc=desc+sizeof(STRHEADERTAG);
+    str_value=new char[8192];
 
-		// skip comments
-		if(*pdesc==';')
-		{
-			while(*pdesc && *pdesc != '\n') pdesc++;
-			pdesc++;
-			continue;
-		}
+    for(;;) {
+        // skip whitespaces
+        while(isspace(*pdesc)) {
+            pdesc++;
+        }
+        if(!*pdesc) {
+            break;
+        }
 
-		// get string name -> str_name
-		i=0;
-		while(pdesc[i] && pdesc[i]!='=' && !isspace(pdesc[i]) && i<MAXSTRNAMELENGTH)
-		{
-			str_name[i]=pdesc[i];
-			i++;
-		}
-		str_name[i]=0;
-		pdesc+=i;
+        // skip comments
+        if(*pdesc==';') {
+            while(*pdesc && *pdesc != '\n') {
+                pdesc++;
+            }
+            pdesc++;
+            continue;
+        }
 
-		// skip string name overflow characters
-		while(*pdesc && *pdesc!='=' && !isspace(*pdesc)) pdesc++;
-		if(!*pdesc) break;
+        // get string name -> str_name
+        i=0;
+        while(pdesc[i] && pdesc[i]!='=' && !isspace(pdesc[i]) && i<MAXSTRNAMELENGTH) {
+            str_name[i]=pdesc[i];
+            i++;
+        }
+        str_name[i]=0;
+        pdesc+=i;
 
-		// skip whitespaces to '='
-		while(isspace(*pdesc)) pdesc++;
-		if(*pdesc!='=')	{ hge->System_Log(STRFORMATERROR, filename); break; }
-		pdesc++;
+        // skip string name overflow characters
+        while(*pdesc && *pdesc!='=' && !isspace(*pdesc)) {
+            pdesc++;
+        }
+        if(!*pdesc) {
+            break;
+        }
 
-		// skip whitespaces to '"'
-		while(isspace(*pdesc)) pdesc++;
-		if(*pdesc!='"')	{ hge->System_Log(STRFORMATERROR, filename); break;	}
-		pdesc++;
+        // skip whitespaces to '='
+        while(isspace(*pdesc)) {
+            pdesc++;
+        }
+        if(*pdesc!='=')	{
+            hge->System_Log(STRFORMATERROR, filename);
+            break;
+        }
+        pdesc++;
 
-		// parse string value till the closing '"' -> str_value
-		// consider: \", \n, \\, LF, CR, whitespaces at line begin/end
-		pvalue=str_value;
+        // skip whitespaces to '"'
+        while(isspace(*pdesc)) {
+            pdesc++;
+        }
+        if(*pdesc!='"')	{
+            hge->System_Log(STRFORMATERROR, filename);
+            break;
+        }
+        pdesc++;
 
-		while(*pdesc && *pdesc!='"')
-		{
-			if(*pdesc=='\n' || *pdesc=='\r')
-			{
-				while(isspace(*pdesc)) pdesc++;
+        // parse string value till the closing '"' -> str_value
+        // consider: \", \n, \\, LF, CR, whitespaces at line begin/end
+        pvalue=str_value;
 
-				pvalue--;
-				while(pvalue>=str_value && isspace(*pvalue)) pvalue--;
-				pvalue++; *pvalue=' '; pvalue++;
+        while(*pdesc && *pdesc!='"') {
+            if(*pdesc=='\n' || *pdesc=='\r') {
+                while(isspace(*pdesc)) {
+                    pdesc++;
+                }
 
-				continue;
-			}
+                pvalue--;
+                while(pvalue>=str_value && isspace(*pvalue)) {
+                    pvalue--;
+                }
+                pvalue++;
+                *pvalue=' ';
+                pvalue++;
 
-			if(*pdesc=='\\')
-			{
-				pdesc++;
-				if(!*pdesc) continue;
-				if(*pdesc=='n') *pvalue='\n';
-				else *pvalue=*pdesc;
-				pvalue++;
-				pdesc++;
-				continue;
-			}
+                continue;
+            }
 
-			*pvalue=*pdesc; pvalue++;
-			pdesc++;
-		}
+            if(*pdesc=='\\') {
+                pdesc++;
+                if(!*pdesc) {
+                    continue;
+                }
+                if(*pdesc=='n') {
+                    *pvalue='\n';
+                } else {
+                    *pvalue=*pdesc;
+                }
+                pvalue++;
+                pdesc++;
+                continue;
+            }
 
-		*pvalue=0;
+            *pvalue=*pdesc;
+            pvalue++;
+            pdesc++;
+        }
 
-		// add the parsed string to the list
-		str=new NamedString;
-		strcpy(str->name, str_name);
-		str->string=new char[strlen(str_value)+1];
-		strcpy(str->string, str_value);
-		str->next=strings;
-		strings=str;
+        *pvalue=0;
 
-		if(!*pdesc) break;
-		pdesc++;
-	}
+        // add the parsed string to the list
+        str=new NamedString;
+        strcpy(str->name, str_name);
+        str->string=new char[strlen(str_value)+1];
+        strcpy(str->string, str_value);
+        str->next=strings;
+        strings=str;
 
-	delete[] str_value;
-	delete[] desc;
+        if(!*pdesc) {
+            break;
+        }
+        pdesc++;
+    }
+
+    delete[] str_value;
+    delete[] desc;
 }
 
 hgeStringTable::~hgeStringTable()
 {
-	NamedString *str, *strnext;
+    NamedString *str, *strnext;
 
-	str=strings;
-	while(str)
-	{
-		strnext=str->next;
-		delete[] str->string;
-		delete str;
-		str=strnext;
-	}
+    str=strings;
+    while(str) {
+        strnext=str->next;
+        delete[] str->string;
+        delete str;
+        str=strnext;
+    }
 
-	hge->Release();
+    hge->Release();
 }
 
 char *hgeStringTable::GetString(const char *name)
 {
-	NamedString *str=strings;
+    NamedString *str=strings;
 
-	while(str)
-	{
-		if(!strcmp(name, str->name)) return str->string;
-		str=str->next;
-	}
+    while(str) {
+        if(!strcmp(name, str->name)) {
+            return str->string;
+        }
+        str=str->next;
+    }
 
-	return 0;
+    return 0;
 }

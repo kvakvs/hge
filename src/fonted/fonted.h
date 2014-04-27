@@ -40,16 +40,14 @@
 #define CHR_ALL			64 // 0x21-0xFF
 
 
-struct CSymbolRange	
-{
-	unsigned short	First;
-	unsigned short	Last;
+struct CSymbolRange {
+    unsigned short	First;
+    unsigned short	Last;
 };
 
-struct CHAR_DESC
-{
-	int x, y, w, h;
-	int a, c;
+struct CHAR_DESC {
+    int x, y, w, h;
+    int a, c;
 };
 
 extern CHAR_DESC vChars[256];
@@ -60,22 +58,21 @@ void cmdGenerateFont();
 
 extern HGE *hge;
 
-struct FEditorState
-{
-	bool				bHelp;
-	bool				bBBox;
-	bool				bDrag;
-	float				nDragXOffset, nDragYOffset;
-	float				nDragOldX, nDragOldY;
-	float				mx, my;
+struct FEditorState {
+    bool				bHelp;
+    bool				bBBox;
+    bool				bDrag;
+    float				nDragXOffset, nDragYOffset;
+    float				nDragOldX, nDragOldY;
+    float				mx, my;
 
-	char				*FontFamily;
-	int					nSize;
-	int					nPadTop, nPadBtm, nPadLft, nPadRgt;
-	bool				bBold;
-	bool				bItalic;
-	bool				bAntialias;
-	CSymbolRange		sr;
+    char				*FontFamily;
+    int					nSize;
+    int					nPadTop, nPadBtm, nPadLft, nPadRgt;
+    bool				bBold;
+    bool				bItalic;
+    bool				bAntialias;
+    CSymbolRange		sr;
 };
 
 extern hgeFont		*fnt;
@@ -96,13 +93,13 @@ bool HandleKeys(int key);
 bool DoCommands(int id);
 bool SavePNG(HTEXTURE tex, char *filename);
 HTEXTURE FontGenerate(char *szFontName,
-					  int nSize,
-					  int nPaddingTop, int nPaddingBtm, int nPaddingLft, int nPaddingRgt,
-					  bool bItalic,
-					  bool bBold,
-					  bool bAntialias,
-					  CSymbolRange *pRanges,
-					  int nRangeCount);
+                      int nSize,
+                      int nPaddingTop, int nPaddingBtm, int nPaddingLft, int nPaddingRgt,
+                      bool bItalic,
+                      bool bBold,
+                      bool bAntialias,
+                      CSymbolRange *pRanges,
+                      int nRangeCount);
 
 #define CMD_EXIT				1
 #define CMD_HELP				2

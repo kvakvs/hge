@@ -24,8 +24,7 @@
 typedef BOOL (WINAPI *GetSystemPowerStatusFunc)(LPSYSTEM_POWER_STATUS);
 
 
-struct CRenderTargetList
-{
+struct CRenderTargetList {
     int                 width;
     int                 height;
     hgeGAPITexture *    pTex;
@@ -33,30 +32,26 @@ struct CRenderTargetList
     CRenderTargetList * next;
 };
 
-struct CTextureList
-{
+struct CTextureList {
     HTEXTURE            tex;
     int                 width;
     int                 height;
     CTextureList*       next;
 };
 
-struct CResourceList
-{
+struct CResourceList {
     char                filename[_MAX_PATH];
     char                password[64];
     CResourceList*      next;
 };
 
-struct CStreamList
-{
+struct CStreamList {
     HSTREAM             hstream;
     void*               data;
     CStreamList*        next;
 };
 
-struct CInputEventList
-{
+struct CInputEventList {
     hgeInputEvent       event;
     CInputEventList*    next;
 };
@@ -70,8 +65,7 @@ bool DFrame();
 /*
 ** HGE Interface implementation
 */
-class HGE_Impl : public HGE
-{
+class HGE_Impl : public HGE {
 public:
     virtual void        HGE_CALL    Release();
 
@@ -106,8 +100,10 @@ public:
     virtual int         HGE_CALL    Ini_GetInt(const char *section, const char *name, int def_val);
     virtual void        HGE_CALL    Ini_SetFloat(const char *section, const char *name, float value);
     virtual float       HGE_CALL    Ini_GetFloat(const char *section, const char *name, float def_val);
-    virtual void        HGE_CALL    Ini_SetString(const char *section, const char *name, const char *value);
-    virtual char*       HGE_CALL    Ini_GetString(const char *section, const char *name, const char *def_val);
+    virtual void        HGE_CALL    Ini_SetString(const char *section, const char *name,
+            const char *value);
+    virtual char*       HGE_CALL    Ini_GetString(const char *section, const char *name,
+            const char *def_val);
 
     virtual void        HGE_CALL    Random_Seed(int seed=0);
     virtual int         HGE_CALL    Random_Int(int min, int max);
@@ -120,11 +116,13 @@ public:
     virtual HEFFECT     HGE_CALL    Effect_Load(const char *filename, hgeU32 size=0);
     virtual void        HGE_CALL    Effect_Free(HEFFECT eff);
     virtual HCHANNEL    HGE_CALL    Effect_Play(HEFFECT eff);
-    virtual HCHANNEL    HGE_CALL    Effect_PlayEx(HEFFECT eff, int volume=100, int pan=0, float pitch=1.0f, bool loop=false);
+    virtual HCHANNEL    HGE_CALL    Effect_PlayEx(HEFFECT eff, int volume=100, int pan=0,
+            float pitch=1.0f, bool loop=false);
 
     virtual HMUSIC      HGE_CALL    Music_Load(const char *filename, hgeU32 size=0);
     virtual void        HGE_CALL    Music_Free(HMUSIC mus);
-    virtual HCHANNEL    HGE_CALL    Music_Play(HMUSIC mus, bool loop, int volume = 100, int order = 0, int row = 0);
+    virtual HCHANNEL    HGE_CALL    Music_Play(HMUSIC mus, bool loop, int volume = 100, int order = 0,
+            int row = 0);
     virtual void        HGE_CALL    Music_SetAmplification(HMUSIC music, int ampl);
     virtual int         HGE_CALL    Music_GetAmplification(HMUSIC music);
     virtual int         HGE_CALL    Music_GetLength(HMUSIC music);
@@ -152,7 +150,8 @@ public:
     virtual float       HGE_CALL    Channel_GetLength(HCHANNEL chn);
     virtual float       HGE_CALL    Channel_GetPos(HCHANNEL chn);
     virtual void        HGE_CALL    Channel_SetPos(HCHANNEL chn, float fSeconds);
-    virtual void        HGE_CALL    Channel_SlideTo(HCHANNEL channel, float time, int volume, int pan = -101, float pitch = -1);
+    virtual void        HGE_CALL    Channel_SlideTo(HCHANNEL channel, float time, int volume,
+            int pan = -101, float pitch = -1);
     virtual bool        HGE_CALL    Channel_IsSliding(HCHANNEL channel);
 
     virtual void        HGE_CALL    Input_GetMousePos(float *x, float *y);
@@ -170,18 +169,21 @@ public:
     virtual bool        HGE_CALL    Gfx_BeginScene(HTARGET target=0);
     virtual void        HGE_CALL    Gfx_EndScene();
     virtual void        HGE_CALL    Gfx_Clear(hgeU32 color);
-    virtual void        HGE_CALL    Gfx_RenderLine(float x1, float y1, float x2, float y2, hgeU32 color=0xFFFFFFFF, float z=0.5f);
+    virtual void        HGE_CALL    Gfx_RenderLine(float x1, float y1, float x2, float y2,
+            hgeU32 color=0xFFFFFFFF, float z=0.5f);
     virtual void        HGE_CALL    Gfx_RenderTriple(const hgeTriple *triple);
     virtual void        HGE_CALL    Gfx_RenderQuad(const hgeQuad *quad);
-    virtual hgeVertex*  HGE_CALL    Gfx_StartBatch(int prim_type, HTEXTURE tex, int blend, int *max_prim);
+    virtual hgeVertex*  HGE_CALL    Gfx_StartBatch(int prim_type, HTEXTURE tex, int blend,
+            int *max_prim);
     virtual void        HGE_CALL    Gfx_FinishBatch(int nprim);
     virtual void        HGE_CALL    Gfx_SetClipping(int x=0, int y=0, int w=0, int h=0);
-    virtual void        HGE_CALL    Gfx_SetTransform(float x=0, float y=0, float dx=0, float dy=0, float rot=0, float hscale=0, float vscale=0); 
+    virtual void        HGE_CALL    Gfx_SetTransform(float x=0, float y=0, float dx=0, float dy=0,
+            float rot=0, float hscale=0, float vscale=0);
 
 #if HGE_DIRECTX_VER >= 9
-	virtual HSHADER		HGE_CALL	Shader_Create(const char *filename);
-	virtual void		HGE_CALL	Shader_Free(HSHADER shader);
-	virtual void		HGE_CALL	Gfx_SetShader(HSHADER shader);
+    virtual HSHADER		HGE_CALL	Shader_Create(const char *filename);
+    virtual void		HGE_CALL	Shader_Free(HSHADER shader);
+    virtual void		HGE_CALL	Gfx_SetShader(HSHADER shader);
 #endif
 
     virtual HTARGET     HGE_CALL    Target_Create(int width, int height, bool zbuffer);
@@ -189,11 +191,13 @@ public:
     virtual HTEXTURE    HGE_CALL    Target_GetTexture(HTARGET target);
 
     virtual HTEXTURE    HGE_CALL    Texture_Create(int width, int height);
-    virtual HTEXTURE    HGE_CALL    Texture_Load(const char *filename, hgeU32 size=0, bool bMipmap=false);
+    virtual HTEXTURE    HGE_CALL    Texture_Load(const char *filename, hgeU32 size=0,
+            bool bMipmap=false);
     virtual void        HGE_CALL    Texture_Free(HTEXTURE tex);
     virtual int         HGE_CALL    Texture_GetWidth(HTEXTURE tex, bool bOriginal=false);
     virtual int         HGE_CALL    Texture_GetHeight(HTEXTURE tex, bool bOriginal=false);
-    virtual hgeU32*      HGE_CALL    Texture_Lock(HTEXTURE tex, bool bReadOnly=true, int left=0, int top=0, int width=0, int height=0);
+    virtual hgeU32*      HGE_CALL    Texture_Lock(HTEXTURE tex, bool bReadOnly=true, int left=0,
+            int top=0, int width=0, int height=0);
     virtual void        HGE_CALL    Texture_Unlock(HTEXTURE tex);
 
     //////// Implementation ////////
@@ -239,9 +243,9 @@ public:
     bool                bDontSuspend;
     HWND                hwndParent;
 
-    #ifdef HGE_SPLASH_ENABLE
+#ifdef HGE_SPLASH_ENABLE
     bool                bDMO;
-    #endif
+#endif
 
 
     // Power
@@ -286,7 +290,7 @@ public:
     int                 CurBlendMode;
     HTEXTURE            CurTexture;
 #if HGE_DIRECTX_VER >= 9
-	HSHADER				CurShader;
+    HSHADER				CurShader;
 #endif
 
     bool                _GfxInit();
@@ -299,7 +303,7 @@ public:
     int                 _format_id(D3DFORMAT fmt);
     void                _SetBlendMode(int blend);
     void                _SetProjectionMatrix(int width, int height);
-    
+
 
     // Audio
     HINSTANCE           hBass;
