@@ -21,6 +21,19 @@ CFontList::~CFontList()
     ClearList();
 }
 
+
+int CALLBACK EnumFontFamExProc(
+    ENUMLOGFONTEX *lpelfe,    // logical-font data
+    NEWTEXTMETRICEX *lpntme,  // physical-font data
+    unsigned int FontType,           // type of font
+    LPARAM lParam             // application-defined data
+)
+{
+    ((CFontList *)lParam)->FindSortAdd(lpelfe->elfLogFont.lfFaceName);
+    return 1;
+}
+
+
 void CFontList::BuildList()
 {
     HDC hdc = CreateCompatibleDC(0);
@@ -98,15 +111,3 @@ void CFontList::FindSortAdd(char *family)
     }
     nFonts++;
 }
-
-int CALLBACK EnumFontFamExProc(
-    ENUMLOGFONTEX *lpelfe,    // logical-font data
-    NEWTEXTMETRICEX *lpntme,  // physical-font data
-    unsigned int FontType,           // type of font
-    LPARAM lParam             // application-defined data
-)
-{
-    ((CFontList *)lParam)->FindSortAdd(lpelfe->elfLogFont.lfFaceName);
-    return 1;
-}
-
