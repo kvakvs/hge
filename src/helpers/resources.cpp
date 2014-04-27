@@ -275,7 +275,7 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *sname
 	RScript *res_script;
 	void *data;
 	hgeU32 size;
-	char *script, name[MAXRESCHARS], basename[MAXRESCHARS];
+	char *script, lname[MAXRESCHARS], basename[MAXRESCHARS];
 	int restype;
 
 	if(!FindRes(rm, RES_SCRIPT, sname))
@@ -316,7 +316,7 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *sname
 				else if(np->tokentype > TTRES__FIRST && np->tokentype < TTRES__LAST)
 				{
 					restype=np->tokentype-TTRES__FIRST-1;
-					name[0]=basename[0]=0;
+					lname[0]=basename[0]=0;
 
 					np->get_token();
 					if(FindRes(rm, restype, np->tkn_string()))
@@ -326,7 +326,7 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *sname
 						np->put_back();
 						continue;
 					}
-					strcpy(name, np->tkn_string());
+					strcpy(lname, np->tkn_string());
 
 					np->get_token();
 
@@ -342,18 +342,18 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *sname
 					{
 						switch(restype)
 						{
-							case RES_RESOURCE:	RResource::Parse(rm, np, name, basename); break;
-							case RES_TEXTURE:	RTexture::Parse(rm, np, name, basename); break;
-							case RES_EFFECT:	REffect::Parse(rm, np, name, basename); break;
-							case RES_MUSIC:		RMusic::Parse(rm, np, name, basename); break;
-							case RES_STREAM:	RStream::Parse(rm, np, name, basename); break;
-							case RES_TARGET:	RTarget::Parse(rm, np, name, basename);	break;
-							case RES_SPRITE:	RSprite::Parse(rm, np, name, basename);	break;
-							case RES_ANIMATION:	RAnimation::Parse(rm, np, name, basename); break;
-							case RES_FONT:		RFont::Parse(rm, np, name, basename); break;
-							case RES_PARTICLE:	RParticle::Parse(rm, np, name, basename); break;
-							case RES_DISTORT:	RDistort::Parse(rm, np, name, basename); break;
-							case RES_STRTABLE:	RStringTable::Parse(rm, np, name, basename); break;
+							case RES_RESOURCE:	RResource::Parse(rm, np, lname, basename); break;
+							case RES_TEXTURE:	RTexture::Parse(rm, np, lname, basename); break;
+							case RES_EFFECT:	REffect::Parse(rm, np, lname, basename); break;
+							case RES_MUSIC:		RMusic::Parse(rm, np, lname, basename); break;
+							case RES_STREAM:	RStream::Parse(rm, np, lname, basename); break;
+							case RES_TARGET:	RTarget::Parse(rm, np, lname, basename);	break;
+							case RES_SPRITE:	RSprite::Parse(rm, np, lname, basename);	break;
+							case RES_ANIMATION:	RAnimation::Parse(rm, np, lname, basename); break;
+							case RES_FONT:		RFont::Parse(rm, np, lname, basename); break;
+							case RES_PARTICLE:	RParticle::Parse(rm, np, lname, basename); break;
+							case RES_DISTORT:	RDistort::Parse(rm, np, lname, basename); break;
+							case RES_STRTABLE:	RStringTable::Parse(rm, np, lname, basename); break;
 						}
 					}
 					else

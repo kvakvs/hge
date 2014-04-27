@@ -34,7 +34,7 @@ struct ResDesc
 	ResDesc*	next;
 
 	ResDesc()	{ hge=hgeCreate(HGE_VERSION); }
-	~ResDesc()	{ hge->Release(); }
+	virtual ~ResDesc()	{ hge->Release(); }
 
 	virtual hgeU32 Get(hgeResourceManager *rm) = 0;
 	virtual void  Free() = 0;

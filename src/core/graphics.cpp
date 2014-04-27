@@ -929,7 +929,7 @@ void HGE_Impl::_GfxDone()
     }
     pTargets=0;
 
-    if(pIB)
+    if(pIB && pD3DDevice)
     {
 #if HGE_DIRECTX_VER == 8
         pD3DDevice->SetIndices(NULL,0);

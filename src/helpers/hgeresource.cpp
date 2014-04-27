@@ -287,18 +287,14 @@ hgeStringTable* hgeResourceManager::GetStringTable(const char *name, int resgrou
 	else
 	{
 		strtable=new hgeStringTable(name);
-		if(strtable)
-		{
-			resource=new RStringTable();
-			resource->handle=(hgeU32)strtable;
-			resource->resgroup=resgroup;
-			strcpy(resource->name, name);
-			strcpy(resource->filename, name);
-			AddRes(this, RES_STRTABLE, resource);
+		resource=new RStringTable();
+		resource->handle=(hgeU32)strtable;
+		resource->resgroup=resgroup;
+		strcpy(resource->name, name);
+		strcpy(resource->filename, name);
+		AddRes(this, RES_STRTABLE, resource);
 
-			return strtable;
-		}
+		return strtable;
 	}
-
 	return 0;
 }

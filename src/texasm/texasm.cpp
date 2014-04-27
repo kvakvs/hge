@@ -185,7 +185,7 @@ void SysLog(const char *format, ...)
 	vsprintf(buf, format, ap);
 	va_end(ap);
 
-	printf(buf);
+	printf("%s", buf);
 	hge->System_Log(buf);
 }
 

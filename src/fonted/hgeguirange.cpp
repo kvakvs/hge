@@ -65,11 +65,11 @@ void hgeGUIRange::Render()
 		last=nfirst;
 	}
 
-	xf=rect.x1 + cw*(first%ncols);
-	yf=rect.y1 + ch*(first/ncols);
+	xf=rect.x1 + cw * (float)(first%ncols);
+	yf=rect.y1 + ch * (float)(first/ncols);
 
-	xl=rect.x1 + cw*(last%ncols);
-	yl=rect.y1 + ch*(last/ncols);
+	xl=rect.x1 + cw * (float)(last%ncols);
+	yl=rect.y1 + ch * (float)(last/ncols);
 
 	if(yf == yl) spr->RenderStretch(xf, yf, xl+cw, yf+ch);
 	else
