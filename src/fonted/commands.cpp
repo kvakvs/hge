@@ -9,6 +9,7 @@
 
 #include "fonted.h"
 #include <windows.h>
+#include <stdio.h>
 #include <string>
 
 using namespace std;

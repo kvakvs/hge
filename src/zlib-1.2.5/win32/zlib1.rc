@@ -1,40 +1,49 @@
-#include <winver.h>
-#include "../zlib.h"
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
 
-#ifdef GCC_WINDRES
-VS_VERSION_INFO		VERSIONINFO
-#else
-VS_VERSION_INFO		VERSIONINFO	MOVEABLE IMPURE LOADONCALL DISCARDABLE
-#endif
-  FILEVERSION		ZLIB_VER_MAJOR,ZLIB_VER_MINOR,ZLIB_VER_REVISION,0
-  PRODUCTVERSION	ZLIB_VER_MAJOR,ZLIB_VER_MINOR,ZLIB_VER_REVISION,0
-  FILEFLAGSMASK		VS_FFI_FILEFLAGSMASK
-#ifdef _DEBUG
-  FILEFLAGS		1
-#else
-  FILEFLAGS		0
-#endif
-  FILEOS		VOS__WINDOWS32
-  FILETYPE		VFT_DLL
-  FILESUBTYPE		0	// not used
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
 BEGIN
-  BLOCK "StringFileInfo"
-  BEGIN
-    BLOCK "040904E4"
-    //language ID = U.S. English, char set = Windows, Multilingual
-    BEGIN
-      VALUE "FileDescription",	"zlib data compression library\0"
-      VALUE "FileVersion",	ZLIB_VERSION "\0"
-      VALUE "InternalName",	"zlib1.dll\0"
-      VALUE "LegalCopyright",	"(C) 1995-2006 Jean-loup Gailly & Mark Adler\0"
-      VALUE "OriginalFilename",	"zlib1.dll\0"
-      VALUE "ProductName",	"zlib\0"
-      VALUE "ProductVersion",	ZLIB_VERSION "\0"
-      VALUE "Comments",		"For more information visit http://www.zlib.net/\0"
-    END
-  END
-  BLOCK "VarFileInfo"
-  BEGIN
-    VALUE "Translation", 0x0409, 1252
-  END
+    "resource.h\0"
 END
+
+2 TEXTINCLUDE 
+BEGIN
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

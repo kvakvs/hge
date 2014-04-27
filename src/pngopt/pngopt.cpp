@@ -159,9 +159,9 @@ bool convert(char *filename)
 
 				if(count)
 				{
-					buf[i*pitch+j].r = unsigned char(r / count);
-					buf[i*pitch+j].g = unsigned char(g / count);
-					buf[i*pitch+j].b = unsigned char(b / count);
+					buf[i*pitch+j].r = (unsigned char)(r / count);
+					buf[i*pitch+j].g = (unsigned char)(g / count);
+					buf[i*pitch+j].b = (unsigned char)(b / count);
 				}
 			}
 

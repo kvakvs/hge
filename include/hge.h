@@ -115,6 +115,12 @@ typedef hgeU32 HCHANNEL;
 #define BLEND_ZWRITE        4
 #define BLEND_NOZWRITE      0
 
+// Darken does real color multiplication, white source pixels don't change destination, while
+// black source pixels make destination completely black
+// Use example: http://relishgames.com/forum/index.php?p=/discussion/5799/darken-screen-plus-uneffected-hole/p1
+#define BLEND_DARKEN		8
+#define BLEND_BLACKEN		8 /* synonym for darken */
+
 #define BLEND_DEFAULT       (BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE)
 #define BLEND_DEFAULT_Z     (BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_ZWRITE)
 

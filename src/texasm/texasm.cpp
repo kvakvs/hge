@@ -12,6 +12,7 @@
 #include "..\..\include\hgeresource.h"
 
 #include <direct.h>
+#include <ctype.h>
 
 
 HGE *hge = 0;

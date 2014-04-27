@@ -601,27 +601,63 @@ void HGE_Impl::_render_batch(bool bEndScene)
     }
 }
 
+//void HGE_Impl::_SetBlendMode(int blend)
+//{
+//    if((blend & BLEND_ALPHABLEND) != (CurBlendMode & BLEND_ALPHABLEND))
+//    {
+//        if(blend & BLEND_ALPHABLEND) pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+//        else pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+//    }
+//
+//    if((blend & BLEND_ZWRITE) != (CurBlendMode & BLEND_ZWRITE))
+//    {
+//        if(blend & BLEND_ZWRITE) pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+//        else pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+//    }           
+//    
+//    if((blend & BLEND_COLORADD) != (CurBlendMode & BLEND_COLORADD))
+//    {
+//        if(blend & BLEND_COLORADD) pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_ADD);
+//        else pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+//    }
+//
+//    CurBlendMode = blend;
+//}
 void HGE_Impl::_SetBlendMode(int blend)
 {
-    if((blend & BLEND_ALPHABLEND) != (CurBlendMode & BLEND_ALPHABLEND))
-    {
-        if(blend & BLEND_ALPHABLEND) pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-        else pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+  int d = -1;
+ 
+  if((blend & BLEND_ALPHABLEND) != (CurBlendMode & BLEND_ALPHABLEND)) {
+    if(blend & BLEND_ALPHABLEND) d = D3DBLEND_INVSRCALPHA;
+    else d = D3DBLEND_ONE;
+  }
+ 
+  if ((blend & BLEND_DARKEN) != (CurBlendMode & BLEND_DARKEN)) {
+    if (blend & BLEND_DARKEN) {
+      pD3DDevice->SetRenderState (D3DRS_SRCBLEND, D3DBLEND_ZERO);
+      d = D3DBLEND_SRCCOLOR;
+    } else {
+      pD3DDevice->SetRenderState (D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+      d = D3DBLEND_INVSRCALPHA;
     }
-
+  }
+ 
+  if (d != -1) pD3DDevice->SetRenderState (D3DRS_DESTBLEND, d);
+ 
     if((blend & BLEND_ZWRITE) != (CurBlendMode & BLEND_ZWRITE))
-    {
-        if(blend & BLEND_ZWRITE) pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-        else pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-    }           
-    
-    if((blend & BLEND_COLORADD) != (CurBlendMode & BLEND_COLORADD))
-    {
-        if(blend & BLEND_COLORADD) pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_ADD);
-        else pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-    }
-
-    CurBlendMode = blend;
+  {
+    if(blend & BLEND_ZWRITE) pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+    else pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+  }
+ 
+  if((blend & (BLEND_COLORADD+BLEND_DARKEN)) != (CurBlendMode & (BLEND_COLORADD+BLEND_DARKEN)))
+  {
+    if (blend & BLEND_COLORADD) pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_ADD);
+    else if (blend & BLEND_DARKEN) pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_BLENDCURRENTALPHA);
+    else pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+  }
+ 
+  CurBlendMode = blend;
 }
 
 void HGE_Impl::_SetProjectionMatrix(int width, int height)

@@ -35,26 +35,7 @@ protected:
 
 
 // sorting predicate
-
-// WORKAROUND for VC6 and earlier - http://support.microsoft.com/kb/265109
-
-#ifdef _MSC_VER
-#if _MSC_VER < 1300
-template<>
-struct std::greater<CGfxObject*>  : public binary_function<CGfxObject*, CGfxObject*, bool> 
-{
-	bool operator()(const CGfxObject* &a, const CGfxObject* &b) const
-	{ 
-		return (a->GetWidth()  < b->GetWidth() && a->GetWidth()  > b->GetHeight()) ||
-               (a->GetHeight() > b->GetWidth() && a->GetHeight() > b->GetHeight());
-	}
-};
-#else
 #include <functional>
-#endif
-#endif
-
-// END WORKAROUND
 
 struct ByLargestDimensionDescending : public greater<CGfxObject *>
 {
