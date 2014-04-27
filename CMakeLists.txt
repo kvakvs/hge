@@ -9,10 +9,11 @@ cmake_minimum_required( VERSION 2.8 )
 
 ##--- set this to 8 or 9 ---
 SET( HGE_DIRECTX_VER "9" )
-## SET( DIRECTX_SDK_DIR "D:/DX8SDK" )
-SET( DIRECTX_SDK_DIR "C:/DX9SDK" )
+##
+## NOTE: if you use HGE_DIRECTX_VER=9 here, you MUST also set same define for your whole project
+##
 
-SET( HGE_UNICODE "1" )
+SET( DIRECTX_SDK_DIR "C:/DX9SDK" )
 
 ##----------------------------------------
 ## End of manual configuration section
