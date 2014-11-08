@@ -15,187 +15,101 @@
 
 void HGE_CALL HGE_Impl::Gfx_Clear(hgeU32 color)
 {
-    if(pCurTarget) {
-        if(pCurTarget->pDepth) {
-            pD3DDevice->Clear( 0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, color, 1.0f, 0 );
-        } else {
-            pD3DDevice->Clear( 0, NULL, D3DCLEAR_TARGET, color, 1.0f, 0 );
-        }
-    } else {
-        if(bZBuffer) {
-            pD3DDevice->Clear( 0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, color, 1.0f, 0 );
-        } else {
-            pD3DDevice->Clear( 0, NULL, D3DCLEAR_TARGET, color, 1.0f, 0 );
-        }
-    }
+  if(pCurTarget) {
+    SDL_SetRenderDrawColor(m_renderer,
+                          GETR(color), GETG(color), GETB(color), GETA(color));
+
+      // Clear the entire screen to our selected color.
+    SDL_RenderClear(m_renderer);
+  }
 }
 
 void HGE_CALL HGE_Impl::Gfx_SetClipping(int x, int y, int w, int h)
 {
-    hgeGAPIViewport vp;
-    int scr_width, scr_height;
+	SDL_Rect rc = {x, y, w, h};
+	SDL_RenderSetClipRect(m_renderer, & rc);
 
-    if(!pCurTarget) {
-        scr_width=pHGE->System_GetStateInt(HGE_SCREENWIDTH);
-        scr_height=pHGE->System_GetStateInt(HGE_SCREENHEIGHT);
-    } else {
-        scr_width=Texture_GetWidth((HTEXTURE)pCurTarget->pTex);
-        scr_height=Texture_GetHeight((HTEXTURE)pCurTarget->pTex);
-    }
+    //hgeGAPIViewport vp;
+    //int scr_width, scr_height;
 
-    if(!w) {
-        vp.X=0;
-        vp.Y=0;
-        vp.Width=scr_width;
-        vp.Height=scr_height;
-    } else {
-        if(x<0) {
-            w+=x;
-            x=0;
-        }
-        if(y<0) {
-            h+=y;
-            y=0;
-        }
+    //if(!pCurTarget) {
+    //    scr_width=pHGE->System_GetStateInt(HGE_SCREENWIDTH);
+    //    scr_height=pHGE->System_GetStateInt(HGE_SCREENHEIGHT);
+    //} else {
+    //    scr_width=Texture_GetWidth((HTEXTURE)pCurTarget->pTex);
+    //    scr_height=Texture_GetHeight((HTEXTURE)pCurTarget->pTex);
+    //}
 
-        if(x+w > scr_width) {
-            w=scr_width-x;
-        }
-        if(y+h > scr_height) {
-            h=scr_height-y;
-        }
+    //if(!w) {
+    //    vp.X=0;
+    //    vp.Y=0;
+    //    vp.Width=scr_width;
+    //    vp.Height=scr_height;
+    //} else {
+    //    if(x<0) {
+    //        w+=x;
+    //        x=0;
+    //    }
+    //    if(y<0) {
+    //        h+=y;
+    //        y=0;
+    //    }
 
-        vp.X=x;
-        vp.Y=y;
-        vp.Width=w;
-        vp.Height=h;
-    }
+    //    if(x+w > scr_width) {
+    //        w=scr_width-x;
+    //    }
+    //    if(y+h > scr_height) {
+    //        h=scr_height-y;
+    //    }
 
-    vp.MinZ=0.0f;
-    vp.MaxZ=1.0f;
+    //    vp.X=x;
+    //    vp.Y=y;
+    //    vp.Width=w;
+    //    vp.Height=h;
+    //}
 
-    _render_batch();
-    pD3DDevice->SetViewport(&vp);
+    //vp.MinZ=0.0f;
+    //vp.MaxZ=1.0f;
 
-    D3DXMATRIX tmp;
-    D3DXMatrixScaling(&matProj, 1.0f, -1.0f, 1.0f);
-    D3DXMatrixTranslation(&tmp, -0.5f, +0.5f, 0.0f);
-    D3DXMatrixMultiply(&matProj, &matProj, &tmp);
-    D3DXMatrixOrthoOffCenterLH(&tmp, (float)vp.X, (float)(vp.X+vp.Width), -((float)(vp.Y+vp.Height)),
-                               -((float)vp.Y), vp.MinZ, vp.MaxZ);
-    D3DXMatrixMultiply(&matProj, &matProj, &tmp);
-    pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
+    //_render_batch();
+    //pD3DDevice->SetViewport(&vp);
+
+    //D3DXMATRIX tmp;
+    //D3DXMatrixScaling(&matProj, 1.0f, -1.0f, 1.0f);
+    //D3DXMatrixTranslation(&tmp, -0.5f, +0.5f, 0.0f);
+    //D3DXMatrixMultiply(&matProj, &matProj, &tmp);
+    //D3DXMatrixOrthoOffCenterLH(&tmp, (float)vp.X, (float)(vp.X+vp.Width), -((float)(vp.Y+vp.Height)),
+    //                           -((float)vp.Y), vp.MinZ, vp.MaxZ);
+    //D3DXMatrixMultiply(&matProj, &matProj, &tmp);
+    //pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
 }
 
 void HGE_CALL HGE_Impl::Gfx_SetTransform(float x, float y, float dx, float dy, float rot,
         float hscale, float vscale)
 {
-    D3DXMATRIX tmp;
+	// TODO!
+    //D3DXMATRIX tmp;
 
-    if(vscale==0.0f) {
-        D3DXMatrixIdentity(&matView);
-    } else {
-        D3DXMatrixTranslation(&matView, -x, -y, 0.0f);
-        D3DXMatrixScaling(&tmp, hscale, vscale, 1.0f);
-        D3DXMatrixMultiply(&matView, &matView, &tmp);
-        D3DXMatrixRotationZ(&tmp, -rot);
-        D3DXMatrixMultiply(&matView, &matView, &tmp);
-        D3DXMatrixTranslation(&tmp, x+dx, y+dy, 0.0f);
-        D3DXMatrixMultiply(&matView, &matView, &tmp);
-    }
+    //if(vscale==0.0f) {
+    //    D3DXMatrixIdentity(&matView);
+    //} else {
+    //    D3DXMatrixTranslation(&matView, -x, -y, 0.0f);
+    //    D3DXMatrixScaling(&tmp, hscale, vscale, 1.0f);
+    //    D3DXMatrixMultiply(&matView, &matView, &tmp);
+    //    D3DXMatrixRotationZ(&tmp, -rot);
+    //    D3DXMatrixMultiply(&matView, &matView, &tmp);
+    //    D3DXMatrixTranslation(&tmp, x+dx, y+dy, 0.0f);
+    //    D3DXMatrixMultiply(&matView, &matView, &tmp);
+    //}
 
-    _render_batch();
-    pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
+    //_render_batch();
+    //pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
 }
 
-bool HGE_CALL HGE_Impl::Gfx_BeginScene(HTARGET targ)
+bool HGE_CALL HGE_Impl::Gfx_BeginScene(HTARGET target)
 {
-    hgeGAPISurface * pSurf = 0, * pDepth = 0;
-
-    D3DDISPLAYMODE Mode;
-    CRenderTargetList *target=(CRenderTargetList *)targ;
-
-    HRESULT hr = pD3DDevice->TestCooperativeLevel();
-    if (hr == D3DERR_DEVICELOST) {
-        return false;
-    } else if (hr == D3DERR_DEVICENOTRESET) {
-        if(bWindowed) {
-            if(FAILED(pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode)) || Mode.Format==D3DFMT_UNKNOWN) {
-                _PostError("Can't determine desktop video mode");
-                return false;
-            }
-
-            d3dppW.BackBufferFormat = Mode.Format;
-            if(_format_id(Mode.Format) < 4) {
-                nScreenBPP=16;
-            } else {
-                nScreenBPP=32;
-            }
-        }
-
-        if(!_GfxRestore()) {
-            return false;
-        }
-    }
-
-    if(VertArray) {
-        _PostError("Gfx_BeginScene: Scene is already being rendered");
-        return false;
-    }
-
-    if(target != pCurTarget) {
-        if(target) {
-            target->pTex->GetSurfaceLevel(0, &pSurf);
-            pDepth=target->pDepth;
-        } else {
-            pSurf=pScreenSurf;
-            pDepth=pScreenDepth;
-        }
-#if HGE_DIRECTX_VER == 8
-        if(FAILED(pD3DDevice->SetRenderTarget(pSurf, pDepth)))
-#endif
-#if HGE_DIRECTX_VER == 9
-            if(FAILED(pD3DDevice->SetRenderTarget(0, pSurf)))
-#endif
-            {
-                if(target) {
-                    pSurf->Release();
-                }
-                _PostError("Gfx_BeginScene: Can't set render target");
-                return false;
-            }
-        if(target) {
-            pSurf->Release();
-            if(target->pDepth) {
-                pD3DDevice->SetRenderState( D3DRS_ZENABLE, D3DZB_TRUE );
-            } else {
-                pD3DDevice->SetRenderState( D3DRS_ZENABLE, D3DZB_FALSE );
-            }
-            _SetProjectionMatrix(target->width, target->height);
-        } else {
-            if(bZBuffer) {
-                pD3DDevice->SetRenderState( D3DRS_ZENABLE, D3DZB_TRUE );
-            } else {
-                pD3DDevice->SetRenderState( D3DRS_ZENABLE, D3DZB_FALSE );
-            }
-            _SetProjectionMatrix(nScreenWidth, nScreenHeight);
-        }
-
-        pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
-        D3DXMatrixIdentity(&matView);
-        pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
-
-        pCurTarget=target;
-    }
-
-    pD3DDevice->BeginScene();
-#if HGE_DIRECTX_VER == 8
-    pVB->Lock( 0, 0, (hgeU8**)&VertArray, D3DLOCK_DISCARD );
-#endif
-#if HGE_DIRECTX_VER == 9
-    pVB->Lock( 0, 0, (VOID**)&VertArray, D3DLOCK_DISCARD );
-#endif
-    return true;
+  pCurTarget = target;
+  return true;
 }
 
 void HGE_CALL HGE_Impl::Gfx_EndScene()
@@ -241,24 +155,24 @@ void HGE_CALL HGE_Impl::Gfx_RenderLine(float x1, float y1, float x2, float y2, h
 
 void HGE_CALL HGE_Impl::Gfx_RenderTriple(const hgeTriple *triple)
 {
-    if(VertArray) {
-        if(CurPrimType!=HGEPRIM_TRIPLES || nPrim>=VERTEX_BUFFER_SIZE/HGEPRIM_TRIPLES
-                || CurTexture!=triple->tex || CurBlendMode!=triple->blend) {
-            _render_batch();
+    //if(VertArray) {
+    //    if(CurPrimType!=HGEPRIM_TRIPLES || nPrim>=VERTEX_BUFFER_SIZE/HGEPRIM_TRIPLES
+    //            || CurTexture!=triple->tex || CurBlendMode!=triple->blend) {
+    //        _render_batch();
 
-            CurPrimType=HGEPRIM_TRIPLES;
-            if(CurBlendMode != triple->blend) {
-                _SetBlendMode(triple->blend);
-            }
-            if(triple->tex != CurTexture) {
-                pD3DDevice->SetTexture( 0, (hgeGAPITexture *)triple->tex );
-                CurTexture = triple->tex;
-            }
-        }
+    //        CurPrimType=HGEPRIM_TRIPLES;
+    //        if(CurBlendMode != triple->blend) {
+    //            _SetBlendMode(triple->blend);
+    //        }
+    //        if(triple->tex != CurTexture) {
+    //            pD3DDevice->SetTexture( 0, (hgeGAPITexture *)triple->tex );
+    //            CurTexture = triple->tex;
+    //        }
+    //    }
 
-        memcpy(&VertArray[nPrim*HGEPRIM_TRIPLES], triple->v, sizeof(hgeVertex)*HGEPRIM_TRIPLES);
-        nPrim++;
-    }
+    //    memcpy(&VertArray[nPrim*HGEPRIM_TRIPLES], triple->v, sizeof(hgeVertex)*HGEPRIM_TRIPLES);
+    //    nPrim++;
+    //}
 }
 
 void HGE_CALL HGE_Impl::Gfx_RenderQuad(const hgeQuad *quad)
@@ -311,100 +225,50 @@ void HGE_CALL HGE_Impl::Gfx_FinishBatch(int nprim)
 
 HTARGET HGE_CALL HGE_Impl::Target_Create(int width, int height, bool zbuffer)
 {
-    CRenderTargetList *pTarget;
-    D3DSURFACE_DESC TDesc;
+    SDL_Texture * t = SDL_CreateTexture(m_renderer, 
+                                        SDL_PIXELFORMAT_ARGB8888, 
+                                        SDL_TEXTUREACCESS_TARGET,
+                                        width, height);
 
-    pTarget = new CRenderTargetList;
-    pTarget->pTex=0;
-    pTarget->pDepth=0;
+//    if(zbuffer) {
+//#if HGE_DIRECTX_VER == 8
+//        if(FAILED(pD3DDevice->CreateDepthStencilSurface(pTarget->width, pTarget->height,
+//                  D3DFMT_D16, D3DMULTISAMPLE_NONE, &pTarget->pDepth)))
+//#endif
+//#if HGE_DIRECTX_VER == 9
+//            if(FAILED(pD3DDevice->CreateDepthStencilSurface(width, height,
+//                      D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, false, &pTarget->pDepth, NULL)))
+//#endif
+//            {
+//                pTarget->pTex->Release();
+//                _PostError("Can't create render target depth buffer");
+//                delete pTarget;
+//                return 0;
+//            }
+//    }
 
-    if(FAILED(D3DXCreateTexture(pD3DDevice, width, height, 1, D3DUSAGE_RENDERTARGET,
-                                d3dpp->BackBufferFormat, D3DPOOL_DEFAULT, &pTarget->pTex))) {
-        _PostError("Can't create render target texture");
-        delete pTarget;
-        return 0;
-    }
-
-    pTarget->pTex->GetLevelDesc(0, &TDesc);
-    pTarget->width=TDesc.Width;
-    pTarget->height=TDesc.Height;
-
-    if(zbuffer) {
-#if HGE_DIRECTX_VER == 8
-        if(FAILED(pD3DDevice->CreateDepthStencilSurface(pTarget->width, pTarget->height,
-                  D3DFMT_D16, D3DMULTISAMPLE_NONE, &pTarget->pDepth)))
-#endif
-#if HGE_DIRECTX_VER == 9
-            if(FAILED(pD3DDevice->CreateDepthStencilSurface(width, height,
-                      D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, false, &pTarget->pDepth, NULL)))
-#endif
-            {
-                pTarget->pTex->Release();
-                _PostError("Can't create render target depth buffer");
-                delete pTarget;
-                return 0;
-            }
-    }
-
-    pTarget->next=pTargets;
-    pTargets=pTarget;
-
-    return (HTARGET)pTarget;
+    return new_htarget(t);
 }
 
 void HGE_CALL HGE_Impl::Target_Free(HTARGET target)
 {
-    CRenderTargetList *pTarget=pTargets, *pPrevTarget=NULL;
-
-    while(pTarget) {
-        if((CRenderTargetList *)target == pTarget) {
-            if(pPrevTarget) {
-                pPrevTarget->next = pTarget->next;
-            } else {
-                pTargets = pTarget->next;
-            }
-
-            if(pTarget->pTex) {
-                pTarget->pTex->Release();
-            }
-            if(pTarget->pDepth) {
-                pTarget->pDepth->Release();
-            }
-
-            delete pTarget;
-            return;
-        }
-
-        pPrevTarget = pTarget;
-        pTarget = pTarget->next;
-    }
+  SDL_DestroyTexture(from_htarget(target));
 }
 
 HTEXTURE HGE_CALL HGE_Impl::Target_GetTexture(HTARGET target)
 {
-    CRenderTargetList *targ=(CRenderTargetList *)target;
-    if(target) {
-        return (HTEXTURE)targ->pTex;
-    } else {
-        return 0;
-    }
+  return new_htexture(from_htarget(target));
 }
 
 HTEXTURE HGE_CALL HGE_Impl::Texture_Create(int width, int height)
 {
-    hgeGAPITexture * pTex;
-
-    if( FAILED( D3DXCreateTexture( pD3DDevice, width, height,
-                                   1,                  // Mip levels
-                                   0,                  // Usage
-                                   D3DFMT_A8R8G8B8,    // Format
-                                   D3DPOOL_MANAGED,    // Memory pool
-                                   &pTex ) ) ) {
-        _PostError("Can't create texture");
-        return NULL;
-    }
-
-    return (HTEXTURE)pTex;
+  // access_static: changes rarely, not lockable
+  // access_streaming: changes frequently, lockable
+  SDL_Texture * t = SDL_CreateTexture(m_renderer, 
+                                    SDL_PIXELFORMAT_ARGB8888, 
+                                    SDL_TEXTUREACCESS_STREAMING,
+                                    width, height);
+  return new_htexture(t);
 }
 
 HTEXTURE HGE_CALL HGE_Impl::Texture_Load(const char *filename, hgeU32 size, bool bMipmap)
@@ -724,202 +588,204 @@ void HGE_Impl::_SetProjectionMatrix(int width, int height)
 
 bool HGE_Impl::_GfxInit()
 {
-    static const char *szFormats[]= {"UNKNOWN", "R5G6B5", "X1R5G5B5", "A1R5G5B5", "X8R8G8B8", "A8R8G8B8"};
-    hgeGAPIAdapterIdentifier AdID;
-    D3DDISPLAYMODE Mode;
-    D3DFORMAT Format=D3DFMT_UNKNOWN;
-    UINT nModes, i;
+//    static const char *szFormats[]= {"UNKNOWN", "R5G6B5", "X1R5G5B5", "A1R5G5B5", "X8R8G8B8", "A8R8G8B8"};
+//    hgeGAPIAdapterIdentifier AdID;
+//    D3DDISPLAYMODE Mode;
+//    D3DFORMAT Format=D3DFMT_UNKNOWN;
+//    UINT nModes, i;
+//
+//// Init D3D
+//#if HGE_DIRECTX_VER == 8
+//    pD3D=Direct3DCreate8(120); // D3D_SDK_VERSION
+//#endif
+//#if HGE_DIRECTX_VER == 9
+//    pD3D=Direct3DCreate9(D3D_SDK_VERSION); // D3D_SDK_VERSION
+//#endif
+//    if(pD3D==NULL) {
+//        _PostError("Can't create D3D interface");
+//        return false;
+//    }
+//
+//// Get adapter info
+//
+//#if HGE_DIRECTX_VER == 8
+//    pD3D->GetAdapterIdentifier(D3DADAPTER_DEFAULT, D3DENUM_NO_WHQL_LEVEL, &AdID);
+//#endif
+//#if HGE_DIRECTX_VER == 9
+//    pD3D->GetAdapterIdentifier(D3DADAPTER_DEFAULT, 0, &AdID);
+//#endif
+//    System_Log("D3D Driver: %s",AdID.Driver);
+//    System_Log("Description: %s",AdID.Description);
+//    System_Log("Version: %d.%d.%d.%d",
+//               HIWORD(AdID.DriverVersion.HighPart),
+//               LOWORD(AdID.DriverVersion.HighPart),
+//               HIWORD(AdID.DriverVersion.LowPart),
+//               LOWORD(AdID.DriverVersion.LowPart));
+//
+//// Set up Windowed presentation parameters
+//
+//    if(FAILED(pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode)) || Mode.Format==D3DFMT_UNKNOWN) {
+//        _PostError("Can't determine desktop video mode");
+//        if(bWindowed) {
+//            return false;
+//        }
+//    }
+//
+//    ZeroMemory(&d3dppW, sizeof(d3dppW));
+//
+//    d3dppW.BackBufferWidth  = nScreenWidth;
+//    d3dppW.BackBufferHeight = nScreenHeight;
+//    d3dppW.BackBufferFormat = Mode.Format;
+//    d3dppW.BackBufferCount  = 1;
+//    d3dppW.MultiSampleType  = D3DMULTISAMPLE_NONE;
+//    d3dppW.hDeviceWindow    = hwnd;
+//    d3dppW.Windowed         = TRUE;
+//
+//#if HGE_DIRECTX_VER == 8
+//    if(nHGEFPS==HGEFPS_VSYNC) {
+//        d3dppW.SwapEffect = D3DSWAPEFFECT_COPY_VSYNC;
+//    } else {
+//        d3dppW.SwapEffect = D3DSWAPEFFECT_COPY;
+//    }
+//#endif
+//#if HGE_DIRECTX_VER == 9
+//    if(nHGEFPS==HGEFPS_VSYNC) {
+//        d3dppW.SwapEffect = D3DSWAPEFFECT_COPY;
+//        d3dppW.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+//    } else {
+//        d3dppW.SwapEffect = D3DSWAPEFFECT_COPY;
+//        d3dppW.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+//    }
+//#endif
+//
+//    if(bZBuffer) {
+//        d3dppW.EnableAutoDepthStencil = TRUE;
+//        d3dppW.AutoDepthStencilFormat = D3DFMT_D16;
+//    }
+//
+//// Set up Full Screen presentation parameters
+//
+//#if HGE_DIRECTX_VER == 8
+//    nModes=pD3D->GetAdapterModeCount(D3DADAPTER_DEFAULT);
+//#endif
+//#if HGE_DIRECTX_VER == 9
+//    nModes=pD3D->GetAdapterModeCount(D3DADAPTER_DEFAULT, Mode.Format);
+//#endif
+//
+//    for(i=0; i<nModes; i++) {
+//#if HGE_DIRECTX_VER == 8
+//        pD3D->EnumAdapterModes(D3DADAPTER_DEFAULT, i, &Mode);
+//#endif
+//#if HGE_DIRECTX_VER == 9
+//        pD3D->EnumAdapterModes(D3DADAPTER_DEFAULT, Mode.Format, i, &Mode);
+//#endif
+//
+//        if(Mode.Width != (UINT)nScreenWidth || Mode.Height != (UINT)nScreenHeight) {
+//            continue;
+//        }
+//        if(nScreenBPP==16 && (_format_id(Mode.Format) > _format_id(D3DFMT_A1R5G5B5))) {
+//            continue;
+//        }
+//        if(_format_id(Mode.Format) > _format_id(Format)) {
+//            Format=Mode.Format;
+//        }
+//    }
+//
+//    if(Format == D3DFMT_UNKNOWN) {
+//        _PostError("Can't find appropriate full screen video mode");
+//        if(!bWindowed) {
+//            return false;
+//        }
+//    }
+//
+//    ZeroMemory(&d3dppFS, sizeof(d3dppFS));
+//
+//    d3dppFS.BackBufferWidth  = nScreenWidth;
+//    d3dppFS.BackBufferHeight = nScreenHeight;
+//    d3dppFS.BackBufferFormat = Format;
+//    d3dppFS.BackBufferCount  = 1;
+//    d3dppFS.MultiSampleType  = D3DMULTISAMPLE_NONE;
+//    d3dppFS.hDeviceWindow    = hwnd;
+//    d3dppFS.Windowed         = FALSE;
+//
+//    d3dppFS.SwapEffect       = D3DSWAPEFFECT_FLIP;
+//    d3dppFS.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+//
+//#if HGE_DIRECTX_VER == 8
+//    if(nHGEFPS==HGEFPS_VSYNC) {
+//        d3dppFS.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+//    } else {
+//        d3dppFS.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+//    }
+//#endif
+//#if HGE_DIRECTX_VER == 9
+//    if(nHGEFPS==HGEFPS_VSYNC) {
+//        d3dppFS.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+//    } else {
+//        d3dppFS.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+//    }
+//#endif
+//    if(bZBuffer) {
+//        d3dppFS.EnableAutoDepthStencil = TRUE;
+//        d3dppFS.AutoDepthStencilFormat = D3DFMT_D16;
+//    }
+//
+//    d3dpp = bWindowed ? &d3dppW : &d3dppFS;
+//
+//    if(_format_id(d3dpp->BackBufferFormat) < 4) {
+//        nScreenBPP=16;
+//    } else {
+//        nScreenBPP=32;
+//    }
+//
+//// Create D3D Device
+//// #if HGE_DIRECTX_VER == 8
+////     if( FAILED( pD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
+////                                   D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+////                                   d3dpp, &pD3DDevice ) ) )
+////     {
+////         _PostError("Can't create D3D8 device");
+////         return false;
+////     }
+//// #endif
+//// #if HGE_DIRECTX_VER == 9
+//    hgeGAPICaps caps;
+//    pD3D->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
+//    hgeU32   vp;
+//    if((caps.VertexShaderVersion < D3DVS_VERSION(1,1))
+//            || !(caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)) {
+//        System_Log("Software Vertex-processing device selected");
+//        vp = D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+//    } else {
+//        System_Log("Hardware Vertex-processing device selected");
+//        vp = D3DCREATE_HARDWARE_VERTEXPROCESSING;
+//    }
+//    if( FAILED( pD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, vp, d3dpp,
+//                                    &pD3DDevice ) ) ) {
+//        _PostError("Can't create D3D device");
+//        return false;
+//    }
+//// #endif
+//
+//    _AdjustWindow();
+//
+//    System_Log("Mode: %d x %d x %s\n",nScreenWidth,nScreenHeight,szFormats[_format_id(Format)]);
+//
+//// Create vertex batch buffer
+//
+//    VertArray=0;
+//    textures=0;
+//
+//// Init all stuff that can be lost
+//
+//    _SetProjectionMatrix(nScreenWidth, nScreenHeight);
+//    D3DXMatrixIdentity(&matView);
+//
+//    if(!_init_lost()) {
+//        return false;
+//    }
 
-// Init D3D
-#if HGE_DIRECTX_VER == 8
-    pD3D=Direct3DCreate8(120); // D3D_SDK_VERSION
-#endif
-#if HGE_DIRECTX_VER == 9
-    pD3D=Direct3DCreate9(D3D_SDK_VERSION); // D3D_SDK_VERSION
-#endif
-    if(pD3D==NULL) {
-        _PostError("Can't create D3D interface");
-        return false;
-    }
-
-// Get adapter info
-
-#if HGE_DIRECTX_VER == 8
-    pD3D->GetAdapterIdentifier(D3DADAPTER_DEFAULT, D3DENUM_NO_WHQL_LEVEL, &AdID);
-#endif
-#if HGE_DIRECTX_VER == 9
-    pD3D->GetAdapterIdentifier(D3DADAPTER_DEFAULT, 0, &AdID);
-#endif
-    System_Log("D3D Driver: %s",AdID.Driver);
-    System_Log("Description: %s",AdID.Description);
-    System_Log("Version: %d.%d.%d.%d",
-               HIWORD(AdID.DriverVersion.HighPart),
-               LOWORD(AdID.DriverVersion.HighPart),
-               HIWORD(AdID.DriverVersion.LowPart),
-               LOWORD(AdID.DriverVersion.LowPart));
-
-// Set up Windowed presentation parameters
-
-    if(FAILED(pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode)) || Mode.Format==D3DFMT_UNKNOWN) {
-        _PostError("Can't determine desktop video mode");
-        if(bWindowed) {
-            return false;
-        }
-    }
-
-    ZeroMemory(&d3dppW, sizeof(d3dppW));
-
-    d3dppW.BackBufferWidth  = nScreenWidth;
-    d3dppW.BackBufferHeight = nScreenHeight;
-    d3dppW.BackBufferFormat = Mode.Format;
-    d3dppW.BackBufferCount  = 1;
-    d3dppW.MultiSampleType  = D3DMULTISAMPLE_NONE;
-    d3dppW.hDeviceWindow    = hwnd;
-    d3dppW.Windowed         = TRUE;
-
-#if HGE_DIRECTX_VER == 8
-    if(nHGEFPS==HGEFPS_VSYNC) {
-        d3dppW.SwapEffect = D3DSWAPEFFECT_COPY_VSYNC;
-    } else {
-        d3dppW.SwapEffect = D3DSWAPEFFECT_COPY;
-    }
-#endif
-#if HGE_DIRECTX_VER == 9
-    if(nHGEFPS==HGEFPS_VSYNC) {
-        d3dppW.SwapEffect = D3DSWAPEFFECT_COPY;
-        d3dppW.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
-    } else {
-        d3dppW.SwapEffect = D3DSWAPEFFECT_COPY;
-        d3dppW.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-    }
-#endif
-
-    if(bZBuffer) {
-        d3dppW.EnableAutoDepthStencil = TRUE;
-        d3dppW.AutoDepthStencilFormat = D3DFMT_D16;
-    }
-
-// Set up Full Screen presentation parameters
-
-#if HGE_DIRECTX_VER == 8
-    nModes=pD3D->GetAdapterModeCount(D3DADAPTER_DEFAULT);
-#endif
-#if HGE_DIRECTX_VER == 9
-    nModes=pD3D->GetAdapterModeCount(D3DADAPTER_DEFAULT, Mode.Format);
-#endif
-
-    for(i=0; i<nModes; i++) {
-#if HGE_DIRECTX_VER == 8
-        pD3D->EnumAdapterModes(D3DADAPTER_DEFAULT, i, &Mode);
-#endif
-#if HGE_DIRECTX_VER == 9
-        pD3D->EnumAdapterModes(D3DADAPTER_DEFAULT, Mode.Format, i, &Mode);
-#endif
-
-        if(Mode.Width != (UINT)nScreenWidth || Mode.Height != (UINT)nScreenHeight) {
-            continue;
-        }
-        if(nScreenBPP==16 && (_format_id(Mode.Format) > _format_id(D3DFMT_A1R5G5B5))) {
-            continue;
-        }
-        if(_format_id(Mode.Format) > _format_id(Format)) {
-            Format=Mode.Format;
-        }
-    }
-
-    if(Format == D3DFMT_UNKNOWN) {
-        _PostError("Can't find appropriate full screen video mode");
-        if(!bWindowed) {
-            return false;
-        }
-    }
-
-    ZeroMemory(&d3dppFS, sizeof(d3dppFS));
-
-    d3dppFS.BackBufferWidth  = nScreenWidth;
-    d3dppFS.BackBufferHeight = nScreenHeight;
-    d3dppFS.BackBufferFormat = Format;
-    d3dppFS.BackBufferCount  = 1;
-    d3dppFS.MultiSampleType  = D3DMULTISAMPLE_NONE;
-    d3dppFS.hDeviceWindow    = hwnd;
-    d3dppFS.Windowed         = FALSE;
-
-    d3dppFS.SwapEffect       = D3DSWAPEFFECT_FLIP;
-    d3dppFS.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-
-#if HGE_DIRECTX_VER == 8
-    if(nHGEFPS==HGEFPS_VSYNC) {
-        d3dppFS.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_ONE;
-    } else {
-        d3dppFS.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-    }
-#endif
-#if HGE_DIRECTX_VER == 9
-    if(nHGEFPS==HGEFPS_VSYNC) {
-        d3dppFS.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
-    } else {
-        d3dppFS.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-    }
-#endif
-    if(bZBuffer) {
-        d3dppFS.EnableAutoDepthStencil = TRUE;
-        d3dppFS.AutoDepthStencilFormat = D3DFMT_D16;
-    }
-
-    d3dpp = bWindowed ? &d3dppW : &d3dppFS;
-
-    if(_format_id(d3dpp->BackBufferFormat) < 4) {
-        nScreenBPP=16;
-    } else {
-        nScreenBPP=32;
-    }
-
-// Create D3D Device
-// #if HGE_DIRECTX_VER == 8
-//     if( FAILED( pD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
-//                                   D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-//                                   d3dpp, &pD3DDevice ) ) )
-//     {
-//         _PostError("Can't create D3D8 device");
-//         return false;
-//     }
-// #endif
-// #if HGE_DIRECTX_VER == 9
-    hgeGAPICaps caps;
-    pD3D->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
-    hgeU32   vp;
-    if((caps.VertexShaderVersion < D3DVS_VERSION(1,1))
-            || !(caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)) {
-        System_Log("Software Vertex-processing device selected");
-        vp = D3DCREATE_SOFTWARE_VERTEXPROCESSING;
-    } else {
-        System_Log("Hardware Vertex-processing device selected");
-        vp = D3DCREATE_HARDWARE_VERTEXPROCESSING;
-    }
-    if( FAILED( pD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, vp, d3dpp,
-                                    &pD3DDevice ) ) ) {
-        _PostError("Can't create D3D device");
-        return false;
-    }
-// #endif
-
-    _AdjustWindow();
-
-    System_Log("Mode: %d x %d x %s\n",nScreenWidth,nScreenHeight,szFormats[_format_id(Format)]);
-
-// Create vertex batch buffer
-
-    VertArray=0;
-    textures=0;
-
-// Init all stuff that can be lost
-
-    _SetProjectionMatrix(nScreenWidth, nScreenHeight);
-    D3DXMatrixIdentity(&matView);
-
-    if(!_init_lost()) {
-        return false;
-    }
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
 
     Gfx_Clear(0);
 

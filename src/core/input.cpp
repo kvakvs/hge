@@ -71,11 +71,7 @@ void HGE_CALL HGE_Impl::Input_GetMousePos(float *x, float *y)
 
 void HGE_CALL HGE_Impl::Input_SetMousePos(float x, float y)
 {
-    POINT pt;
-    pt.x=(long)x;
-    pt.y=(long)y;
-    ClientToScreen(hwnd, &pt);
-    SetCursorPos(pt.x,pt.y);
+	SDL_WarpMouseInWindow(m_window, x, y);
 }
 
 int HGE_CALL HGE_Impl::Input_GetMouseWheel()
@@ -124,25 +120,23 @@ int HGE_CALL HGE_Impl::Input_GetChar()
 
 void HGE_Impl::_InputInit()
 {
-    POINT	pt;
-    GetCursorPos(&pt);
-    ScreenToClient(hwnd, &pt);
-    Xpos = (float)pt.x;
-    Ypos = (float)pt.y;
-
-    memset(&keyz, 0, sizeof(keyz));
+	int x, y;
+	SDL_GetMouseState(&x, &y);
+    Xpos = (float)x;
+    Ypos = (float)y;
+	memset(&keyz, 0, sizeof(keyz));
 }
 
 void HGE_Impl::_UpdateMouse()
 {
-    POINT	pt;
-    RECT	rc;
+	int window_width, window_height;
+	int mouse_x, mouse_y;
+	SDL_GetWindowSize(m_window, & window_width, & window_height);
+	SDL_GetRelativeMouseState(& mouse_x, & mouse_y);
 
-    GetCursorPos(&pt);
-    GetClientRect(hwnd, &rc);
-    MapWindowPoints(hwnd, NULL, (LPPOINT)&rc, 2);
-
-    if(bCaptured || (PtInRect(&rc, pt) && WindowFromPoint(pt)==hwnd)) {
+    if(bCaptured || (mouse_x >= 0 && mouse_x < window_width 
+		&& mouse_y >= 0 && mouse_y < window_height)) 
+	{
         bMouseOver=true;
     } else {
         bMouseOver=false;
@@ -174,7 +168,6 @@ void HGE_Impl::_BuildEvent(int type, int key, int scan, int flags, int x, int y)
     if(type==INPUT_MOUSEWHEEL) {
         eptr->event.key=0;
         eptr->event.wheel=key;
-        ScreenToClient(hwnd,&pt);
     } else {
         eptr->event.key=key;
         eptr->event.wheel=0;
@@ -182,7 +175,7 @@ void HGE_Impl::_BuildEvent(int type, int key, int scan, int flags, int x, int y)
 
     if(type==INPUT_MBUTTONDOWN) {
         keyz[key] |= 1;
-        SetCapture(hwnd);
+		//SetCapture(hwnd);
         bCaptured=true;
     }
     if(type==INPUT_MBUTTONUP) {
@@ -274,4 +267,67 @@ void HGE_Impl::_ClearQueue()
     VKey=0;
     Char=0;
     Zpos=0;
+}
+
+// If the event is keyboard related, pass the info down to HGE event handler
+bool /*private*/ HGE_Impl::handle_keyboard_event(SDL_Event &event)
+{
+	if (event.type == SDL_KEYDOWN) {
+		_BuildEvent(INPUT_KEYDOWN, 
+					event.key.keysym.sym,
+					event.key.keysym.scancode,
+					event.key.repeat, 
+					-1, -1);
+		return true;
+	}
+	if (event.type == SDL_KEYUP) {
+		_BuildEvent(INPUT_KEYUP, 
+					event.key.keysym.sym,
+					event.key.keysym.scancode,
+					0, -1, -1);
+		return true;
+	}
+	if (event.type == SDL_QUIT) {
+		if (pHGE->procExitFunc && !pHGE->procExitFunc()) {
+            return FALSE;
+        }
+        pHGE->bActive=false;
+	}
+	return false;
+}
+
+bool /*private*/ HGE_Impl::handle_mouse_event(SDL_Event &event)
+{
+	if (event.type == SDL_MOUSEMOTION) {
+		_BuildEvent(INPUT_MOUSEMOVE, 0, 0, 0,
+					event.motion.x, event.motion.y);	
+		return true;
+	}
+
+	// TODO: Allow recognition and ignoring of touchpad events, since SDL allows this
+	if (event.type == SDL_MOUSEBUTTONDOWN) {
+		_BuildEvent(INPUT_MBUTTONDOWN,
+					hge_mouse_keycode_from_sdl_event(event), 0, 
+					(event.button.clicks > 1) ? HGEINP_REPEAT : 0,
+					event.button.x, event.button.y);	
+		return true;
+	}
+	if (event.type == SDL_MOUSEBUTTONUP) {
+		_BuildEvent(INPUT_MBUTTONUP,
+					hge_mouse_keycode_from_sdl_event(event), 0,
+					(event.button.clicks > 1) ? HGEINP_REPEAT : 0,
+					event.button.x, event.button.y);
+		return true;
+	}	
+	return false;
+}
+
+// static private
+int hge_mouse_keycode_from_sdl_event(const SDL_Event & event) 
+{
+	switch (event.button.button) {
+		case SDL_BUTTON_RIGHT:	return HGEK_RBUTTON; 
+		case SDL_BUTTON_MIDDLE: return HGEK_MBUTTON; 
+	}
+	return HGEK_LBUTTON;
 }

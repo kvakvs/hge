@@ -17,7 +17,7 @@ HGE *hge=0;
 hgeFont			*fnt;
 hgeGUI			*gui;
 HTEXTURE		texGui;
-HTEXTURE		texFont=0;
+HTEXTURE		texFont = 0;
 
 hgeSprite		*sprFont=0, *sprBlack;
 hgeSprite		*sprLeftPane1, *sprLeftPane2;

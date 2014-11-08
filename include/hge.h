@@ -15,7 +15,7 @@
 
 #include <windows.h>
 
-#define HGE_VERSION 0x181
+#define HGE_VERSION 0x200
 
 // CMake adds PROJECTNAME_EXPORTS when compiles DLL
 #ifdef hge_EXPORTS
@@ -83,9 +83,35 @@
 ** HGE Handle types
 */
 
-// FIXME: Won't compile in 64-bit mode due to handles (4 bytes) holding a pointer (8 bytes)
-typedef hgeU32 HTEXTURE;
-typedef hgeU32 HTARGET;
+class HTEXTURE {
+protected:
+  friend class HGE_Impl;
+  void * texture;
+public:
+  HTEXTURE(void *t): texture(t) {}
+  HTEXTURE(): texture(nullptr) {}
+
+  operator bool() const {
+    return texture != nullptr;
+  }
+};
+
+class HTARGET {
+protected:
+  friend class HGE_Impl;
+  void * target; // basically is SDL_Texture*
+public:
+  HTARGET(void *t): target(t) {}
+  // conversion from int, to allow Gfx_BeginScene(0)
+  HTARGET(int): target(nullptr) {}
+  HTARGET(): target(nullptr) {}
+
+  operator bool() const {
+    return target != nullptr;
+  }
+};
+
+
 typedef hgeU32 HEFFECT;
 typedef hgeU32 HMUSIC;
 typedef hgeU32 HSTREAM;
@@ -244,7 +270,7 @@ struct hgeTriple
 {
     hgeVertex		v[3];
     HTEXTURE		tex;
-    int				blend;
+    int			blend;
 };
 
 
@@ -255,7 +281,7 @@ struct hgeQuad
 {
     hgeVertex		v[4];
     HTEXTURE		tex;
-    int				blend;
+    int			blend;
 };
 
 

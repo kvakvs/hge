@@ -92,72 +92,79 @@ bool HGE_CALL HGE_Impl::System_Initiate()
     GlobalMemoryStatus(&mem_st);
     System_Log("Memory: %ldK total, %ldK free\n",mem_st.dwTotalPhys/1024L,mem_st.dwAvailPhys/1024L);
 
+	if (SDL_Init(SDL_INIT_EVERYTHING) != 0){
+		System_Log("SDL_Init Error: %s\n", SDL_GetError());
+		return false;
+	}
 
     // Register window class
+	if (! init_window()) {
+		return false; 
+	}
 
-    winclass.style = CS_DBLCLKS | CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-    winclass.lpfnWndProc    = WindowProc;
-    winclass.cbClsExtra     = 0;
-    winclass.cbWndExtra     = 0;
-    winclass.hInstance      = hInstance;
-    winclass.hCursor        = LoadCursor(NULL, IDC_ARROW);
-    winclass.hbrBackground  = (HBRUSH)GetStockObject(BLACK_BRUSH);
-    winclass.lpszMenuName   = NULL;
-    winclass.lpszClassName  = WINDOW_CLASS_NAME;
-    if(szIcon) {
-        winclass.hIcon = LoadIcon(hInstance, szIcon);
-    } else {
-        winclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-    }
+    //winclass.style = CS_DBLCLKS | CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+    //winclass.lpfnWndProc    = WindowProc;
+    //winclass.cbClsExtra     = 0;
+    //winclass.cbWndExtra     = 0;
+    //winclass.hInstance      = hInstance;
+    //winclass.hCursor        = LoadCursor(NULL, IDC_ARROW);
+    //winclass.hbrBackground  = (HBRUSH)GetStockObject(BLACK_BRUSH);
+    //winclass.lpszMenuName   = NULL;
+    //winclass.lpszClassName  = WINDOW_CLASS_NAME;
+    //if(szIcon) {
+    //    winclass.hIcon = LoadIcon(hInstance, szIcon);
+    //} else {
+    //    winclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    //}
 
-    if (!RegisterClass(&winclass)) {
-        _PostError("Can't register window class");
-        return false;
-    }
+    //if (!RegisterClass(&winclass)) {
+    //    _PostError("Can't register window class");
+    //    return false;
+    //}
 
-    // Create window
-    // Thanks to Bryan for window rectangle fix in later Windows systems 7,8
-    // http://i-am-bryan.com/webs/tutorials/hge/fix-hge-window-sizing-bug/
-    rectW.left      =   GetSystemMetrics(SM_CXSCREEN)/2 - nScreenWidth/2;
-    rectW.top       =   GetSystemMetrics(SM_CYSCREEN)/2 - nScreenHeight/2;
-    rectW.right     =   rectW.left + nScreenWidth;
-    rectW.bottom    =   rectW.top  + nScreenHeight;
-    styleW          =
-        WS_POPUP|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX|WS_VISIBLE; //WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX;
+    //// Create window
+    //// Thanks to Bryan for window rectangle fix in later Windows systems 7,8
+    //// http://i-am-bryan.com/webs/tutorials/hge/fix-hge-window-sizing-bug/
+    //rectW.left      =   GetSystemMetrics(SM_CXSCREEN)/2 - nScreenWidth/2;
+    //rectW.top       =   GetSystemMetrics(SM_CYSCREEN)/2 - nScreenHeight/2;
+    //rectW.right     =   rectW.left + nScreenWidth;
+    //rectW.bottom    =   rectW.top  + nScreenHeight;
+    //styleW          =
+    //    WS_POPUP|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX|WS_VISIBLE; //WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX;
 
-    // Fix for styled windows in Windows versions newer than XP
-    AdjustWindowRect(&rectW,styleW,false);
+    //// Fix for styled windows in Windows versions newer than XP
+    //AdjustWindowRect(&rectW,styleW,false);
 
-    //Fullscreen
-    rectFS.left     =   0;
-    rectFS.top      =   0;
-    rectFS.right    =   nScreenWidth;
-    rectFS.bottom   =   nScreenHeight;
-    styleFS         =   WS_POPUP|WS_VISIBLE; //WS_POPUP
+    ////Fullscreen
+    //rectFS.left     =   0;
+    //rectFS.top      =   0;
+    //rectFS.right    =   nScreenWidth;
+    //rectFS.bottom   =   nScreenHeight;
+    //styleFS         =   WS_POPUP|WS_VISIBLE; //WS_POPUP
 
-    if(hwndParent) {
-        rectW.left=0;
-        rectW.top=0;
-        rectW.right=nScreenWidth;
-        rectW.bottom=nScreenHeight;
-        styleW=WS_CHILD|WS_VISIBLE;
-        bWindowed=true;
-    }
+    //if(hwndParent) {
+    //    rectW.left=0;
+    //    rectW.top=0;
+    //    rectW.right=nScreenWidth;
+    //    rectW.bottom=nScreenHeight;
+    //    styleW=WS_CHILD|WS_VISIBLE;
+    //    bWindowed=true;
+    //}
 
-    if(bWindowed)
-        hwnd = CreateWindowEx(0, WINDOW_CLASS_NAME, szWinTitle, styleW,
-                              rectW.left, rectW.top, rectW.right-rectW.left, rectW.bottom-rectW.top,
-                              hwndParent, NULL, hInstance, NULL);
-    else
-        hwnd = CreateWindowEx(WS_EX_TOPMOST, WINDOW_CLASS_NAME, szWinTitle, styleFS,
-                              0, 0, 0, 0,
-                              NULL, NULL, hInstance, NULL);
-    if (!hwnd) {
-        _PostError("Can't create window");
-        return false;
-    }
+    //if(bWindowed)
+    //    hwnd = CreateWindowEx(0, WINDOW_CLASS_NAME, szWinTitle, styleW,
+    //                          rectW.left, rectW.top, rectW.right-rectW.left, rectW.bottom-rectW.top,
+    //                          hwndParent, NULL, hInstance, NULL);
+    //else
+    //    hwnd = CreateWindowEx(WS_EX_TOPMOST, WINDOW_CLASS_NAME, szWinTitle, styleFS,
+    //                          0, 0, 0, 0,
+    //                          NULL, NULL, hInstance, NULL);
+    //if (!hwnd) {
+    //    _PostError("Can't create window");
+    //    return false;
+    //}
 
-    ShowWindow(hwnd, SW_SHOW);
+    //ShowWindow(hwnd, SW_SHOW);
 
     // Init subsystems
 
@@ -212,6 +219,16 @@ bool HGE_CALL HGE_Impl::System_Initiate()
     return true;
 }
 
+bool /*private*/ HGE_Impl::init_window() 
+{
+	m_window = SDL_CreateWindow("Hello World!", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+	if (win == nullptr) {
+		System_Log("SDL_CreateWindow Error: %s\n", SDL_GetError());
+		SDL_Quit();
+		return 1;
+	}
+}
+
 void HGE_CALL HGE_Impl::System_Shutdown()
 {
     System_Log("\nFinishing..");
@@ -241,7 +258,6 @@ void HGE_CALL HGE_Impl::System_Shutdown()
     System_Log("The End.");
 }
 
-
 bool HGE_CALL HGE_Impl::System_Start()
 {
     MSG     msg;
@@ -259,25 +275,16 @@ bool HGE_CALL HGE_Impl::System_Start()
     bActive=true;
 
     // MAIN LOOP
+	SDL_Event event;
 
     for(;;) {
+		SDL_PollEvent(& event);
 
-        // Process window messages if not in "child mode"
-        // (if in "child mode" the parent application will do this for us)
-
-        if(!hwndParent) {
-            if (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
-                if (msg.message == WM_QUIT) {
-                    break;
-                }
-                // TranslateMessage(&msg);
-                DispatchMessage(&msg);
-                continue;
-            }
-        }
+		if (! handle_keyboard_event(event)) {
+			handle_mouse_event(event);
+		}
 
         // Check if mouse is over HGE window for Input_IsMouseOver
-
         _UpdateMouse();
 
         // If HGE window is focused or we have the "don't suspend" state - process the main loop
@@ -801,7 +808,7 @@ void HGE_CALL HGE_Impl::System_Snapshot(const char *filename)
 //////// Implementation ////////
 
 
-HGE_Impl::HGE_Impl()
+HGE_Impl::HGE_Impl(): m_window(nullptr)
 {
     hInstance=GetModuleHandle(0);
     hwnd=0;
@@ -902,6 +909,7 @@ void HGE_Impl::_FocusChange(bool bAct)
     }
 }
 
+#if 0
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     bool bActivating;
@@ -1034,4 +1042,4 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
     return DefWindowProc(hwnd, msg, wparam, lparam);
 }
-
+#endif //0

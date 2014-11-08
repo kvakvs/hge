@@ -6,13 +6,15 @@
 // GIT repository https://github.com/kvakvs/hge
 //-------------------------------------------------
 
+#include <SDL.h>
+
 #if HGE_DIRECTX_VER == 8
     #include <d3d8.h>
-    #include <d3dx8.h>
+//    #include <d3dx8.h>
 #else
     #if HGE_DIRECTX_VER == 9
         #include <d3d9.h>
-        #include <d3dx9.h>
+//        #include <d3dx9.h>
     #else
         #error Please change your CMakeLists.txt; set HGE_DIRECTX_VER to be 8 or 9, or edit C++ preprocessor definitions settings
     #endif

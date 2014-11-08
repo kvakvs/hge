@@ -32,11 +32,10 @@ set( HGECORE_SRC
 
 #------ additional includes ------
 include_directories( ${HGE_SOURCE_DIR}/include )
-include_directories( ${HGE_SOURCE_DIR}/src/libPNG )
-include_directories( ${HGE_SOURCE_DIR}/src/zlib-1.2.5 )
-include_directories( ${HGE_SOURCE_DIR}/src/zlib-1.2.5/contrib/minizip )
-## include_directories( ${HGE_SOURCE_DIR}/src )
-
+include_directories( ${HGE_SOURCE_DIR}/deps/libPNG )
+include_directories( ${HGE_SOURCE_DIR}/deps/zlib-1.2.5 )
+include_directories( ${HGE_SOURCE_DIR}/deps/zlib-1.2.5/contrib/minizip )
+include_directories( ${HGE_SOURCE_DIR}/deps/SDL2-2.0.3/include )
 include_directories( ${DIRECTX_SDK_DIR}/include )
 
 #------ link directories listed ------
@@ -48,8 +47,8 @@ endif()
 if( ${HGE_DIRECTX_VER} MATCHES "9" )
     link_libraries( d3d9 d3dx9 )
 endif()
-link_libraries( winmm )
-link_libraries( zlib hgehelpers )
+
+link_libraries( winmm zlib hgehelpers sdl2 )
 
 #------ precompiled headers support (not done for now) ------
 ## if (MSVC)

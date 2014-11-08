@@ -24,13 +24,13 @@
 typedef BOOL (WINAPI *GetSystemPowerStatusFunc)(LPSYSTEM_POWER_STATUS);
 
 
-struct CRenderTargetList {
-    int                 width;
-    int                 height;
-    hgeGAPITexture *    pTex;
-    hgeGAPISurface *    pDepth;
-    CRenderTargetList * next;
-};
+//struct CRenderTargetList {
+//    int                 width;
+//    int                 height;
+//    hgeGAPITexture *    pTex;
+//    hgeGAPISurface *    pDepth;
+//    CRenderTargetList * next;
+//};
 
 struct CTextureList {
     HTEXTURE            tex;
@@ -201,14 +201,14 @@ public:
     virtual void        HGE_CALL    Texture_Unlock(HTEXTURE tex);
 
     //////// Implementation ////////
-
+private:
     static HGE_Impl*    _Interface_Get();
     void                _FocusChange(bool bAct);
     void                _PostError(char *error);
 
 
     HINSTANCE           hInstance;
-    HWND                hwnd;
+    //HWND                hwnd;
 
     bool                bActive;
     char                szError[256];
@@ -276,11 +276,13 @@ public:
 
     hgeGAPISurface *    pScreenSurf;
     hgeGAPISurface *    pScreenDepth;
-    CRenderTargetList*  pTargets;
-    CRenderTargetList*  pCurTarget;
+    //CRenderTargetList*  pTargets;
 
-    D3DXMATRIX          matView;
-    D3DXMATRIX          matProj;
+    // NULL if default render target is used
+    HTARGET             pCurTarget;
+
+    //D3DXMATRIX          matView;
+    //D3DXMATRIX          matProj;
 
     CTextureList*       textures;
     hgeVertex*          VertArray;
@@ -290,7 +292,7 @@ public:
     int                 CurBlendMode;
     HTEXTURE            CurTexture;
 #if HGE_DIRECTX_VER >= 9
-    HSHADER				CurShader;
+    HSHADER		CurShader;
 #endif
 
     bool                _GfxInit();
@@ -303,7 +305,6 @@ public:
     int                 _format_id(D3DFORMAT fmt);
     void                _SetBlendMode(int blend);
     void                _SetProjectionMatrix(int width, int height);
-
 
     // Audio
     HINSTANCE           hBass;
@@ -342,17 +343,37 @@ public:
     // Timer
     float               fTime;
     float               fDeltaTime;
-    hgeU32               nFixedDelta;
+    hgeU32              nFixedDelta;
     int                 nFPS;
-    hgeU32               t0, t0fps, dt;
+    hgeU32              t0, t0fps, dt;
     int                 cfps;
 
+    SDL_Window	        * m_window;
+    SDL_Renderer	* m_renderer;
 
-private:
     HGE_Impl();
+    bool init_window();
+    bool handle_keyboard_event(SDL_Event &event);
+    bool handle_mouse_event(SDL_Event &event);
+    static int hge_mouse_keycode_from_sdl_event(const SDL_Event & event);
+
+    inline static HTARGET new_htarget(SDL_Texture * t) {
+      HTARGET target = {t};
+      return target;
+    }
+    inline static SDL_Texture * from_htarget(HTARGET t) {
+      return reinterpret_cast<SDL_Texture *>(t.target);
+    }
+    inline static HTEXTURE new_htexture(SDL_Texture * t) {
+      HTEXTURE tex = {t};
+      return tex;
+    }
+    inline static SDL_Texture * from_htexture(HTEXTURE t) {
+      return reinterpret_cast<SDL_Texture *>(t.texture);
+    }
 };
 
-extern HGE_Impl*        pHGE;
+extern HGE_Impl   * pHGE;
 
 #endif
 

@@ -35,8 +35,9 @@ SET( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 
 #---------------------------------
-add_subdirectory( src/zlib-1.2.5 )
-add_subdirectory( src/libPNG )
+add_subdirectory( deps/zlib-1.2.5 )
+add_subdirectory( deps/SDL2-2.0.3 )
+add_subdirectory( deps/libPNG )
 
 #--- HGE core library and helpers ---
 add_subdirectory( src/helpers )

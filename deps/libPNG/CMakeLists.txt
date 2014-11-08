@@ -25,8 +25,8 @@ set( HGELIBPNG_SRC
 
 #------ additional includes ------
 include_directories( ${HGE_SOURCE_DIR}/include )
-include_directories( ${HGE_SOURCE_DIR}/src )
-include_directories( ${HGE_SOURCE_DIR}/src/zlib-1.2.5 )
+include_directories( ${HGE_SOURCE_DIR}/deps )
+include_directories( ${HGE_SOURCE_DIR}/deps/zlib-1.2.5 )
 
 #------ link directories listed ------
 link_directories( ${HGE_SOURCE_DIR}/linklib )
