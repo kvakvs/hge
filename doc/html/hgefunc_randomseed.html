@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::Random_Seed</h1>
+<p>
+Sets random number generator's seed.
+</p>
+<pre>
+void Random_Seed(
+  int <i><b>seed</b></i> = 0
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>seed</i>
+<dd>Random number generator's seed. If =0 current time is used as seed value.
+</dl>
+<h2>Remarks</h2>
+<p>
+The random number generator produces pseudo-random sequences. Seed defines
+the next value generated in a sequence. So you can benefit from this feature
+identifying large series of numbers with a single seed value (eg. this
+may be useful for maps/levels generation).
+<br><br>
+To position the random sequence at random point use 0 as seed value.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_randomint.html">Random_Int</a>,
+<a href="hgefunc_randomfloat.html">Random_Float</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

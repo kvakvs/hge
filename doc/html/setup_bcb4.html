@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_setup.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Borland C++ Builder 4</h1>
+<h2>1. Create blank Win32 Application project</h2>
+<p>Open <b>File->New...</b>, choose <b>Console Wizard</b> from <b>New</b> dialog tab and press <b>OK</b>:</p>
+<center><img src="bcbsetup1.gif" width=443 heght=372 alt="Create blank project"></center>
+<br>
+<p>
+In next window select <b>Window [GUI]</b> from <b>Window Type</b> box and press <b>Finish</b>:</p>
+<center><img src="bcbsetup2.gif" width=486 heght=303 alt="Console Application Wizard"></center>
+<br>
+<h2>2. Set headers and libraries path</h2>
+<p>
+Open <b>Project->Options...</b>, select <b>Directories/Conditionals</b> dialog tab and open <b>...</b> button to type locations for <b>Include path</b>:</p>
+<center><img src="bcbsetup3.gif" width=424 heght=406 alt="Project Options"></center>
+<br>
+<p>
+Find <b>HGE</b> "include" folder and press <b>Add</b>, and <b>OK</b>:</p>
+<center><img src="bcbsetup4.gif" width=337 heght=340 alt="Directories"></center>
+<br>
+<p>
+Repeat this operation for <b>Library path</b>, typing <b>HGE</b> "lib\bc" folder.
+</p>
+<h2>3. Add libraries to the project</h2>
+<p>
+Open <b>Project->Add to Project...</b>, and type the path of <b>hge.lib</b> and <b>hgehelp.lib</b> files in <b>HGE</b> "lib\bc" folder:</p>
+<center><img src="bcbsetup5.gif" width=428 heght=284 alt="Directories"></center>
+<br>
+<h2>4. Start coding!</h2>
+<p>
+Include <b>hge.h</b> to access <b>HGE</b> functions. See <a href="tutorials__main.html">Tutorials</a> section for basic code examples.<br>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

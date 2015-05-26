@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgeparticle.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeParticleSystemInfo Structure</h1>
+<p>
+<b>hgeParticleSystemInfo</b> structure is used to define all particle system parameters:
+</p>
+<pre>
+struct hgeParticleSystemInfo
+{
+  hgeSprite*  <b>sprite</b>;
+  int         <b>nEmission</b>;
+  float       <b>fLifetime</b>;
+
+  float       <b>fParticleLifeMin</b>;
+  float       <b>fParticleLifeMax</b>;
+
+  float       <b>fDirection</b>;
+  float       <b>fSpread</b>;
+  bool        <b>bRelative</b>;
+
+  float       <b>fSpeedMin</b>;
+  float       <b>fSpeedMax</b>;
+
+  float       <b>fGravityMin</b>;
+  float       <b>fGravityMax</b>;
+
+  float       <b>fRadialAccelMin</b>;
+  float       <b>fRadialAccelMax</b>;
+
+  float       <b>fTangentialAccelMin</b>;
+  float       <b>fTangentialAccelMax</b>;
+
+  float       <b>fSizeStart</b>;
+  float       <b>fSizeEnd</b>;
+  float       <b>fSizeVar</b>;
+
+  float       <b>fSpinStart</b>;
+  float       <b>fSpinEnd</b>;
+  float       <b>fSpinVar</b>;
+
+  hgeColor    <b>colColorStart</b>;
+  hgeColor    <b>colColorEnd</b>;
+  float       <b>fColorVar</b>;
+  float       <b>fAlphaVar</b>;
+};
+</pre>
+<h2>Members</h2>
+<dl>
+<dt>sprite
+<dd>Pointer to a <a href="hgesprite__main.html">hgeSprite</a> object to use for rendering particles.
+Probably, the most useful sprite's parameters here are texture, blending mode and anchor point.
+Besides the <a href="hgesprite__main.html">hgeSprite</a> itself you may use here <a href="hgeanim__main.html">hgeAnimation</a> or other classes derived from it.
+<dt>nEmission
+<dd>Number of particles to be emitted each second. Note that maximum number of particles
+simultaneously allowed in one particle system is 500. If this number is exceeded,
+new particles wouldn't be created until some of the current particles die. The number
+of simultaneously alive aprticles depends on <b>nEmission</b>, <b>fParticleLifeMin</b> and <b>fParticleLifeMax members</b>.
+<dt>fLifetime
+<dd>The period of time during which the particle system should emit particles (in seconds).
+When this amount of time is passed since call to the <a href="hgeparticle_fire.html">Fire</a> method, the particles are no more emitted.
+If = -1.0 the particle system keeps emitting particles until stopped manually. 
+</dl>
+<dl>
+<dt>fParticleLifeMin
+<dd>The minimum period of lifetime for a specific particle in seconds.
+<dt>fParticleLifeMax
+<dd>The maximum period of lifetime for a specific particle in seconds.
+</dl>
+<dl>
+<dt>fDirection
+<dd>This is an angle in radians, defining the particles emitting direction.
+<dt>fSpread
+<dd>This is an angle in radians, defining the sector within which the particles
+are emitted. For example, if it is 0.5, the emitted particles direction lies within
+<b>fDirection</b>-0.5 and <b>fDirection</b>+0.5. If the <b>fSpread</b> is 2*pi,
+the <b>fDirection</b> parameter becomes meaningless as the whole circle is covered.
+<dt>bRelative
+<dd>If <b>true</b>, the <b>fDirection</b> member is treated relatively to the current
+particle system movement direction. If <b>false</b>, the <b>fDirection</b> member
+is treated absolutely (0 means straight up).
+</dl>
+<dl>
+<dt>fSpeedMin
+<dd>The minimum starting speed for a specific particle in pixels per second.
+<dt>fSpeedMax
+<dd>The maximum starting speed for a specific particle in pixels per second.
+</dl>
+<dl>
+<dt>fGravityMin
+<dd>The minimum gravity value for a specific particle.
+The gravity is basically just an acceleration along the y-axis.
+<dt>fGravityMax
+<dd>The maximum gravity value for a specific particle.
+The gravity is basically just an acceleration along the y-axis.
+</dl>
+<dl>
+<dt>fRadialAccelMin
+<dd>The minimum value of the acceleration directed towards the particle system's center
+for a specific particle.
+<dt>fRadialAccelMax
+<dd>The maximum value of the acceleration directed towards the particle system's center
+for a specific particle.
+</dl>
+<dl>
+<dt>fTangentialAccelMin
+<dd>The minimum value of the acceleration directed perpendicularly to the radial
+acceleration for a specific particle.
+<dt>fTangentialAccelMax
+<dd>The maximum value of the acceleration directed perpendicularly to the radial
+acceleration for a specific particle.
+</dl>
+<dl>
+<dt>fSizeStart
+<dd>The starting scaling for a specific particle. 1.0 means the default sprite's size.
+<dt>fSizeEnd
+<dd>The ending scaling for a specific particle. 1.0 means the default sprite's size.
+<dt>fSizeVar
+<dd>The starting scaling variation from 0.0 (means no variation) to 1.0 (means
+random variation from <b>fSizeStart</b> to <b>fSizeEnd</b>).
+</dl>
+<dl>
+<dt>fSpinStart
+<dd>The starting spin for a specific particle in radians.
+<dt>fSpinEnd
+<dd>The ending spin for a specific particle in radians.
+<dt>fSpinVar
+<dd>The starting spin variation from 0.0 (means no variation) to 1.0 (means
+random variation from <b>fSpinStart</b> to <b>fSpinEnd</b>).
+</dl>
+<dl>
+<dt>colColorStart
+<dd>The starting color and opacity for a specific particle. See <a href="hgecolor__main.html">hgeColor</a> class for details.
+<br>
+If <b>colColorStart.r == -1</b> a special coloring mode is turned on: the particle system stops altering RGB of it's sprite
+and uses the color already set in it (the same for all particles). Only the alpha component is changed for each particle.
+<dt>colColorEnd
+<dd>The ending color and opacity for a specific particle. See <a href="hgecolor__main.html">hgeColor</a> class for details.
+<dt>fColorVar
+<dd>The starting color variation from 0.0 (means no variation) to 1.0 (means
+random variation between the starting and ending colors).
+<dt>fAlphaVar
+<dd>The starting opacity variation from 0.0 (means no variation) to 1.0 (means
+random variation between the starting and ending opacities).
+</dl>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgeparticle.h<br>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

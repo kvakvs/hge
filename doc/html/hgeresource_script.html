@@ -1,0 +1,458 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgeresource.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Resource script</h1>
+<p>
+Resource script files are used with <a href="hgeresource__main.html">hgeResourceManager</a>
+helper class to define complex resources. They are just plain text files containing resource
+definitions.
+</p>
+<h2>Common rules</h2>
+<p>
+Resource script consists of commands separated by whitespace characters ('\t', '\n', '\r' or ' ').
+If a semicolon (';') encountered, the rest of the line is treated as user's comment and is not parsed.
+All the commands and names are case sensitive.
+<br><br>
+The common command format is:
+</p>
+<pre>
+ResourceType ResourceName : BaseResourceName
+{
+ Parameter1=Value1
+ Parameter2=Value2
+ ...
+ ParameterN=ValueN
+}
+</pre>
+<p>
+Parameters could appear in any order. Most of the parameters have default values
+and can be omitted. If a parameter has multiple values, all of them must be specified.
+Multiple values are separated with comma: ','.
+<br><br>
+Resource names are words started from a letter and separated by whitespace characters.
+Resources of different types could share the same name.
+It is not allowed to use script commands or parameters as names.
+Characters ',', ':', '{', '}' and '=' are also not allowed in names.
+To define a resource name or file path containing whitespace and/or
+special characters use quoted strings: "01name:part1 part2". Note that
+quoted strings can not be placed on several lines.
+<br><br>
+If <b>BaseResourceName</b> is specified and the resource with this name of the
+same type already was defined, all it's parameters are copied for the new resource
+and only specified ones are replaced with new values.
+<br><br>
+If <a href="hgeresource__main.html">hgeResourceManager</a> encounters problem
+reading script, it tries to skip the smallest possible part and continue parsing.
+All the parsing errors are written to the log file in the most meaningful way possible.
+</p>
+<h2>Quick reference</h2>
+<p>
+<table width=100%>
+<tr>
+<td>
+<a href="#include">Include</a><br>
+<a href="#resource">Resource</a><br>
+<a href="#texture">Texture</a><br>
+</td>
+<td>
+<a href="#sound">Sound</a><br>
+<a href="#music">Music</a><br>
+<a href="#stream">Stream</a><br>
+</td>
+<td>
+<a href="#target">Target</a><br>
+<a href="#sprite">Sprite</a><br>
+<a href="#animation">Animation</a><br>
+</td>
+<td>
+<a href="#font">Font</a><br>
+<a href="#particle">Particle</a><br>
+<a href="#distortion">Distortion</a><br>
+<a href="#stringtable">StringTable</a><br>
+</td>
+</tr>
+</table>
+</p>
+<a name="include"></a>
+<h2>Include</h2>
+<p>
+Command "Include" includes another script file into processing.
+This allows you to split your script into several files and use
+them in various combinations. Self- and loop-references are
+automatically detected and denied.
+<br><br>
+Example:
+</p>
+<pre>
+Include level2.res
+</pre>
+<a name="resource"></a>
+<h2>Resource</h2>
+<p>
+Command "Resource" defines a raw resource. Supported parameters:
+</p>
+<dl>
+<dt>filename
+<dd>Raw resource filename, either absolute or relative to the application folder or resource package root.
+<dt>resgroup
+<dd>Integer resource group identificator. Default is 0, meaning no specific group.
+</dl>
+<p>
+Example:
+</p>
+<pre>
+Resource level1
+{
+ filename=levels\level1.dat
+ resgroup=1
+}
+</pre>
+<a name="texture"></a>
+<h2>Texture</h2>
+<p>
+Command "Texture" defines a texture. Supported parameters:
+</p>
+<dl>
+<dt>filename
+<dd>Texture filename, either absolute or relative to the application folder or resource package root.
+<dt>mipmap 
+<dd>If "<b>true</b>", a set of mipmap levels will be created and used for the texture. 
+<dt>resgroup
+<dd>Integer resource group identificator. Default is 0, meaning no specific group.
+</dl>
+<p>
+Example:
+</p>
+<pre>
+Texture background
+{
+ filename=images\bg.jpg
+ resgroup=1
+}
+</pre>
+<a name="sound"></a>
+<h2>Sound</h2>
+<p>
+Command "Sound" defines a sound effect. Supported parameters:
+</p>
+<dl>
+<dt>filename
+<dd>Sound effect filename, either absolute or relative to the application folder or resource package root.
+<dt>resgroup
+<dd>Integer resource group identificator. Default is 0, meaning no specific group.
+</dl>
+<p>
+Example:
+</p>
+<pre>
+Sound explosion1
+{
+ filename=sounds\expl1.ogg
+ resgroup=1
+}
+</pre>
+<a name="music"></a>
+<h2>Music</h2>
+<p>
+Command "Music" defines a music. Supported parameters:
+</p>
+<dl>
+<dt>filename
+<dd>Music filename, either absolute or relative to the application folder or resource package root.
+<dt>amplify
+<dd>Level of amplification for the music. Default is 50.
+<dt>resgroup
+<dd>Integer resource group identificator. Default is 0, meaning no specific group.
+</dl>
+<p>
+Example:
+</p>
+<pre>
+Music main_theme
+{
+ filename=sounds\music1.xm
+ amplify=70
+ resgroup=1
+}
+</pre>
+<a name="stream"></a>
+<h2>Stream</h2>
+<p>
+Command "Stream" defines an audio stream. Supported parameters:
+</p>
+<dl>
+<dt>filename
+<dd>Stream filename, either absolute or relative to the application folder or resource package root.
+<dt>resgroup
+<dd>Integer resource group identificator. Default is 0, meaning no specific group.
+</dl>
+<p>
+Example:
+</p>
+<pre>
+Stream sountrack1
+{
+ filename=ost.mp3
+ resgroup=1
+}
+</pre>
+<a name="target"></a>
+<h2>Target</h2>
+<p>
+Command "Target" defines a render target. Supported parameters:
+</p>
+<dl>
+<dt>size
+<dd>Render target dimensions, two integers: width and height.
+Should be a power of two numbers. The default dimensions are 256x256.
+<dt>zbuffer
+<dd>A boolean value, specifying whether to use Z-buffer for this render target or not. The default value is <b>false</b>.
+<dt>resgroup
+<dd>Integer resource group identificator. Default is 0, meaning no specific group.
+</dl>
+<p>
+Example:
+</p>
+<pre>
+Target HUD
+{
+ size=256,256
+ zbuffer=false
+ resgroup=1
+}
+</pre>
+<a name="sprite"></a>
+<h2>Sprite</h2>
+<p>
+Command "Sprite" defines a sprite. Supported parameters:
+</p>
+<dl>
+<dt>texture
+<dd>Name of the texture to use for the sprite.
+Could be a defined texture resource name or just plain filename.
+<dt>rect
+<dd>Texture region to use for the sprite, four float values:
+top-left corner X-coordinate, top-left corner Y-coordinate, width and height.
+<dt>hotspot
+<dd>The sprite anchor point, two floats: X-offset and Y-offset from the sprite's
+top-left corner. The default value is 0,0.
+<dt>blendmode
+<dd>The sprite blending mode, list of one or more of the following constants:
+<b>COLORMUL</b>, <b>COLORADD</b>, <b>ALPHABLEND</b>, <b>ALPHAADD</b>,
+<b>ZWRITE</b>, <b>NOZWRITE</b>. See <a href="hgeconst_blendmode.html">Blending modes</a> for detailed description.
+The default value is <b>COLORMUL</b>, <b>ALPHABLEND</b>, <b>NOZWRITE</b>.
+<dt>color
+<dd>The sprite color, a hexadecimal value. See <a href="hgedata_hwcolor.html">Hardware color format</a> for details.
+The default value is FFFFFFFF.
+<dt>zorder
+<dd>The sprite Z-order: a float value. The default value is 0.5.
+<dt>flip
+<dd>Two boolean values, specifying whether the sprite should be flipped
+horizontally and vertically. The default value is <b>false</b>, <b>false</b>.
+<dt>resgroup
+<dd>Integer resource group identificator. Default is 0, meaning no specific group.
+</dl>
+<p>
+Example:
+</p>
+<pre>
+Sprite wizard
+{
+ texture=characters
+ rect=0,0,32,32
+ hotspot=16,16
+ blendmode=COLORMUL,ALPHABLEND,NOZWRITE
+ resgroup=1
+}
+
+Sprite orc : wizard
+{
+ rect=0,64,32,32
+ color=FF808000
+}
+</pre>
+<a name="animation"></a>
+<h2>Animation</h2>
+<p>
+Command "Animation" defines an animation. It supports all the
+Sprite parameters plus the following ones:
+</p>
+<dl>
+<dt>frames
+<dd>Overall number of animation frames, an integer value. Default is 1.
+<dt>fps
+<dd>The animation playback speed in frames per second, a float value. Default is 12.0.
+<dt>mode
+<dd>The animation playback mode, list of one or more of the following constants:
+<b>FORWARD</b>, <b>REVERSE</b>, <b>PINGPONG</b>, <b>NOPINGPONG</b>,
+<b>LOOP</b>, <b>NOLOOP</b>. See <a href="hgeanim_setmode.html">hgeAnimation::SetMode</a> for detailed description.
+The default value is <b>FORWARD</b>, <b>LOOP</b>.
+</dl>
+<p>
+Example:
+</p>
+<pre>
+Animation hero.walk
+{
+ texture=characters
+ rect=0,128,32,32
+ frames=8
+ fps=6.0
+ mode=FORWARD,NOLOOP
+ hotspot=16,16
+ blendmode=COLORMUL,ALPHABLEND,NOZWRITE
+ resgroup=1
+}
+</pre>
+<a name="font"></a>
+<h2>Font</h2>
+<p>
+Command "Font" defines a font. Supported parameters:
+</p>
+<dl>
+<dt>filename
+<dd><a href="hgefont_description.html">Font description file</a> name relative to the application folder or resource package root.
+<dt>mipmap
+<dd>If "<b>true</b>", a set of mipmap levels will be created and used for font texture.
+<dt>blendmode
+<dd>The font blending mode, list of one or more of the following constants:
+<b>COLORMUL</b>, <b>COLORADD</b>, <b>ALPHABLEND</b>, <b>ALPHAADD</b>,
+<b>ZWRITE</b>, <b>NOZWRITE</b>. See <a href="hgeconst_blendmode.html">Blending modes</a> for detailed description.
+The default value is <b>COLORMUL</b>, <b>ALPHABLEND</b>, <b>NOZWRITE</b>.
+<dt>color
+<dd>The font color, a hexadecimal value. See <a href="hgedata_hwcolor.html">Hardware color format</a> for details.
+The default value is FFFFFFFF.
+<dt>zorder
+<dd>The font Z-order: a float value. The default value is 0.5.
+<dt>scale
+<dd>The font scaling, a float value. Default is 1.0.
+<dt>proportion
+<dd>The font proportion, a float value. Default is 1.0.
+<dt>rotation
+<dd>The letters rotation in radians, a float value. Default is 0.0.
+<dt>tracking
+<dd>The font tracking in pixels, a float value. Could be negative. Default is 0.0.
+<dt>spacing
+<dd>Line spacing multiplier, a float value. Default is 1.0.
+<dt>resgroup
+<dd>Integer resource group identificator. Default is 0, meaning no specific group.
+</dl>
+<p>
+Example:
+</p>
+<pre>
+Font tengwar
+{
+ filename=fonts\tengwar.fnt
+ tracking=1.0
+ resgroup=1
+}
+</pre>
+<a name="particle"></a>
+<h2>Particle</h2>
+<p>
+Command "Particle" defines a particle system. Supported parameters:
+</p>
+<dl>
+<dt>filename
+<dd><a href="peditor_presets.html">Particle system preset</a> filename relative to the application folder or resource package root.
+<dt>sprite
+<dd>The sprite name to use for the particle system.
+<dt>resgroup
+<dd>Integer resource group identificator. Default is 0, meaning no specific group.
+</dl>
+<p>
+Example:
+</p>
+<pre>
+Particle explosion1
+{
+ filename=data\explosion1.psi
+ sprite=explosion1
+ resgroup=1
+}
+</pre>
+<a name="distortion"></a>
+<h2>Distortion</h2>
+<p>
+Command "Distortion" defines a distortion mesh. Supported parameters:
+</p>
+<dl>
+<dt>texture
+<dd>Name of the texture to use for the mesh.
+Could be a defined texture resource name or just plain filename.
+<dt>rect
+<dd>Texture region to use for the mesh, four float values:
+top-left corner X-coordinate, top-left corner Y-coordinate, width and height.
+<dt>mesh
+<dd>The mesh resolution, two integer values: columns and rows. The default value is 2,2.
+<dt>blendmode
+<dd>The mesh blending mode, list of one or more of the following constants:
+<b>COLORMUL</b>, <b>COLORADD</b>, <b>ALPHABLEND</b>, <b>ALPHAADD</b>,
+<b>ZWRITE</b>, <b>NOZWRITE</b>. See <a href="hgeconst_blendmode.html">Blending modes</a> for detailed description.
+The default value is <b>COLORMUL</b>, <b>ALPHABLEND</b>, <b>NOZWRITE</b>.
+<dt>color
+<dd>The mesh color, a hexadecimal value. See <a href="hgedata_hwcolor.html">Hardware color format</a> for details.
+The default value is FFFFFFFF.
+<dt>zorder
+<dd>The mesh Z-order: a float value. The default value is 0.5.
+<dt>resgroup
+<dd>Integer resource group identificator. Default is 0, meaning no specific group.
+</dl>
+<p>
+Example:
+</p>
+<pre>
+Distortion waves
+{
+ texture=title
+ rect=0,0,400,200
+ mesh=16,8
+ color=FF2060F0
+ resgroup=1
+}
+</pre>
+<a name="stringtable"></a>
+<h2>StringTable</h2>
+<p>
+Command "StringTable" defines a string table. Supported parameters:
+</p>
+<dl>
+<dt>filename
+<dd>The string table filename, either absolute or relative to the application folder or resource package root.
+<dt>resgroup
+<dd>Integer resource group identificator. Default is 0, meaning no specific group.
+</dl>
+<p>
+Example:
+</p>
+<pre>
+StringTable dialogs
+{
+ filename=strings\dialogs.txt
+ resgroup=1
+}
+</pre>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

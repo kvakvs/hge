@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::System_SetState</h1>
+<p>
+Sets internal system states.
+</p>
+<pre>
+void System_SetState(
+  hgeBoolState <i><b>state</b></i>,
+  bool <i><b>value</b></i>
+);
+
+void System_SetState(
+  hgeFuncState <i><b>state</b></i>,
+  hgeCallback <i><b>value</b></i>
+);
+
+void System_SetState(
+  hgeHwndState <i><b>state</b></i>,
+  HWND <i><b>value</b></i>
+);
+
+void System_SetState(
+  hgeIntState <i><b>state</b></i>,
+  int <i><b>value</b></i>
+);
+
+void System_SetState(
+  hgeStringState <i><b>state</b></i>,
+  const char *<i><b>value</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>state</i>
+<dd>Member belonging to one of the <a href="hgeconst_systemstate.html">System states</a> enumerated types. Denotes the desired system state.
+<dt><i>value</i>
+<dd>New value for the system state.
+</dl>
+<h2>Remarks</h2>
+<p>
+Use this function to set desired internal system states such as screen resolution,
+window title, log file name etc. Although most of them have appropriate defaults,
+at least <a href="hgeconst_systemstate.html#HGE_FRAMEFUNC">HGE_FRAMEFUNC</a>
+must be set before calling <a href="hgefunc_systemstart.html">System_Start</a>.
+<br><br>
+See <a href="hgeconst_systemstate.html">System states</a> section for complete
+states description.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_systemgetstate.html">System_GetState</a>,
+<a href="hgeconst_systemstate.html">System states</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

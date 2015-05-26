@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgevector.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeVector Operators</h1>
+<p>
+The following operators are defined for <b>hgeVector</b> class:
+<p>
+<pre>
+hgeVector   operator-  ();
+hgeVector   operator-  (const hgeVector &v);
+hgeVector   operator+  (const hgeVector &v);
+hgeVector&  operator-= (const hgeVector &v);
+hgeVector&  operator+= (const hgeVector &v);
+bool        operator== (const hgeVector &v);
+bool        operator!= (const hgeVector &v);
+
+hgeVector   operator/  (float scalar);
+hgeVector   operator*  (float scalar);
+hgeVector&  operator*= (float scalar);
+
+hgeVector&  operator=  (const hgeVector &v);
+
+float       operator^  (const hgeVector &v, const hgeVector &u);
+float       operator%  (const hgeVector &v, const hgeVector &u);
+</pre>
+<p>
+So, you can use <b>hgeVector</b> objects in expressions like
+<br><br>
+<b>vector1</b> = -<b>vector2</b>;<br>
+<b>vector1</b> = <b>vector2</b> + <b>vector3</b> * 0.5f;<br>
+if(<b>vector1</b> != <b>vector2</b>) <b>vector1</b> += <b>vector3</b>;<br>
+<br>
+<b>angle</b> = <b>vector1</b> ^ <b>vector2</b>;<br>
+<b>dot_product</b> = <b>vector1</b> % <b>vector2</b>;<br>
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgevector.h<br>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

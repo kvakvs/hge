@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgeresource.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeResourceManager::GetResource</h1>
+<p>
+Returns pointer to a named raw resource.
+</p>
+<pre>
+void *GetResource(
+  const char *<i><b>name</b></i>,
+  int <i><b>resgroup</b></i> = 0
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>name</i>
+<dd>Raw resource name.
+<dt><i>resgroup</i>
+<dd>Resource group identificator.
+</dl>
+<h2>Return value</h2>
+<p>
+If successful, returns pointer to the raw resource in memory.
+Otherwise returns 0.
+</p>
+<h2>Remarks</h2>
+<p>
+You could use the name defined in the resource script or just a plain file name,
+either absolute or relative to the application folder or resource package root.
+<br><br>
+If the resource hasn't been loaded yet, it will be loaded.
+Otherwise pointer to the existing object will be returned.
+<br><br>
+The <b>resgroup</b> parameter is only used if you specify plain file name.
+When loading resources defined in resource script, <b>resgroup</b> is taken from the script.
+Use the value passed here with <a href="hgeresource_purge.html">Purge</a>
+to free the resource. If =0 or omitted - no specific group will be assigned to the recource.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgeresource.h<br>
+<b>Import library:</b> hgehelp.lib<br>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgegui.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Control management macros</h1>
+<p>
+<b>T</b>o ease the default GUI controls management some macros are defined in <b>hgeguictrls.h</b>:
+</p>
+<pre>
+#define hgeButtonGetState(gui,id)
+              ((hgeGUIButton*)gui->GetCtrl(id))->GetState()
+
+#define hgeButtonSetState(gui,id,b)
+              ((hgeGUIButton*)gui->GetCtrl(id))->SetState(b)
+
+#define hgeSliderGetValue(gui,id)
+              ((hgeGUISlider*)gui->GetCtrl(id))->GetValue()
+
+#define hgeSliderSetValue(gui,id,f)
+              ((hgeGUISlider*)gui->GetCtrl(id))->SetValue(f)
+
+#define hgeGetTextCtrl(gui,id)
+              ((hgeGUIText*)gui->GetCtrl(id))
+
+#define hgeGetListboxCtrl(gui,id)
+              ((hgeGUIListbox*)gui->GetCtrl(id))
+
+</pre>
+<h2>Macros</h2>
+<dl>
+<dt>hgeButtonGetState
+<dd>Returns a button's state (<b>bool</b>). The <b>gui</b> parameter is a pointer to the
+<a href="hgegui__main.html">hgeGUI</a> object (<b>hgeGUI *</b>), and the <b>id</b> parameter
+is the button's identificator (<b>int</b>).
+<dt>hgeButtonSetState
+<dd>Changes a button's state. The <b>gui</b> parameter is a pointer to the
+<a href="hgegui__main.html">hgeGUI</a> object (<b>hgeGUI *</b>), the <b>id</b> parameter
+is the button's identificator (<b>int</b>). The <b>b</b> parameter is the new
+state for the button (<b>bool</b>).
+<dt>hgeSliderGetValue
+<dd>Returns a slider's current position (<b>float</b>). The <b>gui</b> parameter is a pointer to the
+<a href="hgegui__main.html">hgeGUI</a> object (<b>hgeGUI *</b>), and the <b>id</b> parameter
+is the slider's identificator (<b>int</b>).
+<dt>hgeSliderSetValue
+<dd>Changes a slider's current position. The <b>gui</b> parameter is a pointer to the
+<a href="hgegui__main.html">hgeGUI</a> object (<b>hgeGUI *</b>), and the <b>id</b> parameter
+is the slider's identificator (<b>int</b>). The <b>f</b> parameter is the new position for
+the slider (<b>float</b>).
+<dt>hgeGetTextCtrl
+<dd>Returns a pointer to the <a href="hgegui_guitext.html">hgeGUIText</a> object, based on it's identificator.
+The <b>gui</b> parameter is a pointer to the <a href="hgegui__main.html">hgeGUI</a> object (<b>hgeGUI *</b>),
+and the <b>id</b> parameter is the text's identificator (<b>int</b>). 
+<dt>hgeGetListboxCtrl
+<dd>Returns a pointer to the <a href="hgegui_guilistbox.html">hgeGUIListbox</a> object, based on it's identificator.
+The <b>gui</b> parameter is a pointer to the <a href="hgegui__main.html">hgeGUI</a> object (<b>hgeGUI *</b>),
+and the <b>id</b> parameter is the text's identificator (<b>int</b>). 
+</dl>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgeguictrls.h<br>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

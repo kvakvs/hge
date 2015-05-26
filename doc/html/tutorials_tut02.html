@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_tutorials.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Tutorial 02 - Using input, sound and rendering</h1>
+<p>
+<b>T</b>o render something we will need a <a href="hgedata_quad.html">hgeQuad</a> structure.
+Quad is the basic primitive in <b>HGE</b> used for rendering graphics.
+Quad contains 4 vertices, numbered 0 to 3 clockwise.
+<br><br>
+Also we'll need a handle for the sound effect.
+</p>
+<pre>
+hgeQuad quad;
+
+HEFFECT snd;
+</pre>
+<p>
+Here go some "gameplay" variables and constants that we will use for our show.
+</p>
+<pre>
+float x=100.0f, y=100.0f;
+float dx=0.0f, dy=0.0f;
+
+const float speed=90;
+const float friction=0.98f;
+</pre>
+<p>
+Now we create the function that will play collision sound
+with parameters based on sprite position and speed.
+</p>
+<pre>
+void boom() {
+  int pan=int((x-400)/4);
+  float pitch=(dx*dx+dy*dy)*0.0005f+0.2f;
+  hge->Effect_PlayEx(snd,100,pan,pitch);
+}
+</pre>
+<p>
+Now to the frame function. First, we need to know the time elapsed since
+last call of frame function to adjust our animation speeds
+to the current frame rate. We obtain it by calling the
+<a href="hgefunc_timergetdelta.html">Timer_GetDelta</a> function.
+</p>
+<pre>
+bool FrameFunc()
+{
+  float dt=hge->Timer_GetDelta();
+</pre>
+<p>
+Now we process the key presses. We use here
+<a href="hgefunc_inputgetkeystate.html">Input_GetKeyState</a> function
+to monitor the keys state. To catch the key clicks you
+may use <a href="hgefunc_inputgetkey.html">Input_GetKey</a> function.
+</p>
+<pre>
+  if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
+  if (hge->Input_GetKeyState(HGEK_LEFT)) dx-=speed*dt;
+  if (hge->Input_GetKeyState(HGEK_RIGHT)) dx+=speed*dt;
+  if (hge->Input_GetKeyState(HGEK_UP)) dy-=speed*dt;
+  if (hge->Input_GetKeyState(HGEK_DOWN)) dy+=speed*dt;
+</pre>
+<p>
+Now we do some movement calculations and collision detection
+specific to our example:
+</p>
+<pre>
+  dx*=friction; dy*=friction; x+=dx; y+=dy;
+  if(x>784) {x=784-(x-784);dx=-dx;boom();}
+  if(x<16) {x=16+16-x;dx=-dx;boom();}
+  if(y>584) {y=584-(y-584);dy=-dy;boom();}
+  if(y<16) {y=16+16-y;dy=-dy;boom();}
+</pre>
+<p>
+Now we have updated the screen coordinates for our sprite and
+we should update the quad's vertices to reflect the changes.
+</p>
+<pre>
+  quad.v[0].x=x-16; quad.v[0].y=y-16;
+  quad.v[1].x=x+16; quad.v[1].y=y-16;
+  quad.v[2].x=x+16; quad.v[2].y=y+16;
+  quad.v[3].x=x-16; quad.v[3].y=y+16;
+</pre>
+<p>
+We've done with updating and should return <b>false</b> to continue
+execution.
+</p>
+<pre>
+  return false;
+}
+</pre>
+<p>
+Now to the rendering part. We are going to set up a separate function
+which will be called by <b>HGE</b> when the application window should be redrawn.
+<pre>
+bool RenderFunc()
+{
+</pre>
+<p>
+To start rendering we call the <a href="hgefunc_gfxbeginscene.html">Gfx_BeginScene</a>
+function. Then we clear the screen with a call to <a href="hgefunc_gfxclear.html">Gfx_Clear</a>
+and render the sprite with <a href="hgefunc_gfxrenderquad.html">Gfx_RenderQuad</a>.
+Finally we finish rendering and update the screen, calling the
+<a href="hgefunc_gfxendscene.html">Gfx_EndScene</a> function.
+</p>
+<pre>
+  hge->Gfx_BeginScene();
+  hge->Gfx_Clear(0);
+  hge->Gfx_RenderQuad(&quad);
+  hge->Gfx_EndScene();
+
+  return false;
+}
+</pre>
+<p>
+The rendering function should always return <b>false</b>.
+<br><br>
+Now let's see the changes in <b>WinMain</b> function.
+In this tutorial we set some more system states before <b>HGE</b>
+initiating. First, we should specify our rendering function. We also
+turn on the log file support and specify the desired video mode more explicitly:
+</p>
+<pre>
+  hge->System_SetState(HGE_LOGFILE, "hge_tut02.log");
+  hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
+  hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
+  hge->System_SetState(HGE_TITLE,
+           "HGE Tutorial 02 - Using input, sound and rendering");
+
+  hge->System_SetState(HGE_FPS, 100);
+  hge->System_SetState(HGE_WINDOWED, true);
+  hge->System_SetState(HGE_SCREENWIDTH, 800);
+  hge->System_SetState(HGE_SCREENHEIGHT, 600);
+  hge->System_SetState(HGE_SCREENBPP, 32);
+</pre>
+<p>
+When <b>HGE</b> is initiated we need to load a texture that
+holds graphics and a sound effect:
+</p>
+<pre>
+    snd=hge->Effect_Load("menu.wav");
+    quad.tex=hge->Texture_Load("particles.png");
+</pre>
+<p>
+Now we should set up the <a href="hgedata_quad.html">hgeQuad</a> structure
+that we will use for rendering. The quad's texture is already set up, now we set the
+blending mode and fill in the vertices array with the desired values.
+<br><br>
+We don't use z-buffer in this example, so the z-order of vertices
+is ignored here, and we set it to an arbitrary value in range from 0.0 to 1.0,
+just to be sure. The format of a vertex color <b>DWORD</b> is 0xAARRGGBB.
+<br><br>
+The texture coordinates <b>tx</b> and <b>ty</b> for each vertex define
+the part of the texture to be rendered with this quad. The values
+are in range 0.0 to 1.0. 0,0 means top left corner and 1,1 - bottom right
+corner of the texture. Here we have a 128x128 texture 
+and we want to use a 32x32 square part of it starting at 96,64.
+</p>
+<pre>
+    quad.blend=BLEND_ALPHAADD | BLEND_COLORMUL | BLEND_ZWRITE;
+
+    for(int i=0;i<4;i++)
+    {
+      quad.v[i].z=0.5f;
+      quad.v[i].col=0xFFFFA000;
+    }
+
+    quad.v[0].tx=96.0/128.0; quad.v[0].ty=64.0/128.0; 
+    quad.v[1].tx=128.0/128.0; quad.v[1].ty=64.0/128.0; 
+    quad.v[2].tx=128.0/128.0; quad.v[2].ty=96.0/128.0; 
+    quad.v[3].tx=96.0/128.0; quad.v[3].ty=96.0/128.0; 
+</pre>
+<p>
+Now we're ready to start the game loop with the <a href="hgefunc_systemstart.html">System_Start</a> function.
+When the frame function returns <b>true</b> and the game loop is finished we should free the loaded
+texture and the sound effect:
+</p>
+<pre>
+    hge->System_Start();
+
+    hge->Texture_Free(quad.tex);
+    hge->Effect_Free(snd);
+</pre>
+<p>
+The rest of shutdown process is identical to the one demonstrated in <a href="tutorials_tut01.html">Tutorial 01</a>.
+<br><br>
+The complete source code with detailed comments for this tutorial you may find in the folder
+<b>tutorials\tutorial02</b>. The required media files you'll find in the folder <b>tutorials\precompiled</b>.
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

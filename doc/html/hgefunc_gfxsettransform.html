@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::Gfx_SetTransform</h1>
+<p>
+Sets global transformation for all graphics being rendered further.
+</p>
+<pre>
+void Gfx_SetTransform(
+  float <i><b>x</b></i> = 0,
+  float <i><b>y</b></i> = 0,
+  float <i><b>dx</b></i> = 0,
+  float <i><b>dy</b></i> = 0,
+  float <i><b>rot</b></i> = 0,
+  float <i><b>hscale</b></i> = 0,
+  float <i><b>vscale</b></i> = 0
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>x</i>
+<dd>Center point X-coordinate.
+<dt><i>y</i>
+<dd>Center point Y-coordinate.
+<dt><i>dx</i>
+<dd>Center point X displacement.
+<dt><i>dy</i>
+<dd>Center point Y displacement.
+<dt><i>rot</i>
+<dd>Rotation angle in radians.
+<dt><i>hscale</i>
+<dd>Horizontal scaling factor.
+<dt><i>vscale</i>
+<dd>Vertical scaling factor.
+</dl>
+<h2>Remarks</h2>
+<p>
+Transformations are applied in this order: first scaling, then rotation and finally displacement.
+<br><br>
+If all the parameters are 0 or omitted, global transformation will be reset.
+When the render target is switched, global transformation is also reset.
+<br><br>
+<b>Gfx_SetTransform</b> flushes all accumulated graphic primitives.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgeconst.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE Virtual Key Codes</h1>
+<p>
+<b>HGE</b> virtual-key codes are used with <a href="hgefunc_inputgetkeystate.html">Input_GetKeyState</a>,
+<a href="hgefunc_inputgetkey.html">Input_GetKey</a> and other input functions to specify one of the keyboard keys or mouse buttons.
+They are defined in <b>hge.h</b> header:
+<br><br>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr><td width=30%><b>HGEK_LBUTTON</b></td><td>Left mouse button</td></tr>
+<tr><td><b>HGEK_RBUTTON</b></td><td>Right mouse button</td></tr>
+<tr><td><b>HGEK_MBUTTON</b></td><td>Middle mouse button (wheel button)</td></tr>
+<tr><td colspan=2>&nbsp;</td></tr>
+<tr><td><b>HGEK_ESCAPE</b></td><td>ESCAPE key</td></tr>
+<tr><td><b>HGEK_BACKSPACE</b></td><td>BACKSPACE key</td></tr>
+<tr><td><b>HGEK_TAB</b></td><td>TAB key</td></tr>
+<tr><td><b>HGEK_ENTER</b></td><td>Any of the two ENTER keys</td></tr>
+<tr><td><b>HGEK_SPACE</b></td><td>SPACE key</td></tr>
+<tr><td colspan=2>&nbsp;</td></tr>
+<tr><td><b>HGEK_SHIFT</b></td><td>Any of the two SHIFT keys</td></tr>
+<tr><td><b>HGEK_CTRL</b></td><td>Any of the two CTRL keys</td></tr>
+<tr><td><b>HGEK_ALT</b></td><td>Any of the two ALT keys</td></tr>
+<tr><td colspan=2>&nbsp;</td></tr>
+<tr><td><b>HGEK_LWIN</b></td><td>Left WINDOWS key</td></tr>
+<tr><td><b>HGEK_RWIN</b></td><td>Right WINDOWS key</td></tr>
+<tr><td><b>HGEK_APPS</b></td><td>APPLICATIONS key</td></tr>
+<tr><td colspan=2>&nbsp;</td></tr>
+<tr><td><b>HGEK_PAUSE</b></td><td>PAUSE key</td></tr>
+<tr><td><b>HGEK_CAPSLOCK</b></td><td>CAPS LOCK key</td></tr>
+<tr><td><b>HGEK_NUMLOCK</b></td><td>NUM LOCK key</td></tr>
+<tr><td><b>HGEK_SCROLLLOCK</b></td><td>SCROLL LOCK key</td></tr>
+<tr><td colspan=2>&nbsp;</td></tr>
+<tr><td><b>HGEK_PGUP</b></td><td>PAGE UP key</td></tr>
+<tr><td><b>HGEK_PGDN</b></td><td>PAGE DOWN key</td></tr>
+<tr><td><b>HGEK_HOME</b></td><td>HOME key</td></tr>
+<tr><td><b>HGEK_END</b></td><td>END key</td></tr>
+<tr><td><b>HGEK_INSERT</b></td><td>INSERT key</td></tr>
+<tr><td><b>HGEK_DELETE</b></td><td>DELETE key</td></tr>
+<tr><td colspan=2>&nbsp;</td></tr>
+<tr><td><b>HGEK_LEFT</b></td><td>LEFT ARROW key</td></tr>
+<tr><td><b>HGEK_UP</b></td><td>UP ARROW key</td></tr>
+<tr><td><b>HGEK_RIGHT</b></td><td>RIGHT ARROW key</td></tr>
+<tr><td><b>HGEK_DOWN</b></td><td>DOWN ARROW key</td></tr>
+<tr><td colspan=2>&nbsp;</td></tr>
+<tr><td><b>HGEK_0</b></td><td>Main keyboard '0' key</td></tr>
+<tr><td><b>HGEK_1</b></td><td>Main keyboard '1' key</td></tr>
+<tr><td><b>HGEK_2</b></td><td>Main keyboard '2' key</td></tr>
+<tr><td><b>HGEK_3</b></td><td>Main keyboard '3' key</td></tr>
+<tr><td><b>HGEK_4</b></td><td>Main keyboard '4' key</td></tr>
+<tr><td><b>HGEK_5</b></td><td>Main keyboard '5' key</td></tr>
+<tr><td><b>HGEK_6</b></td><td>Main keyboard '6' key</td></tr>
+<tr><td><b>HGEK_7</b></td><td>Main keyboard '7' key</td></tr>
+<tr><td><b>HGEK_8</b></td><td>Main keyboard '8' key</td></tr>
+<tr><td><b>HGEK_9</b></td><td>Main keyboard '9' key</td></tr>
+<tr><td colspan=2>&nbsp;</td></tr>
+<tr><td><b>HGEK_A</b></td><td>'A' key</td></tr>
+<tr><td><b>HGEK_B</b></td><td>'B' key</td></tr>
+<tr><td><b>HGEK_C</b></td><td>'C' key</td></tr>
+<tr><td><b>HGEK_D</b></td><td>'D' key</td></tr>
+<tr><td><b>HGEK_E</b></td><td>'E' key</td></tr>
+<tr><td><b>HGEK_F</b></td><td>'F' key</td></tr>
+<tr><td><b>HGEK_G</b></td><td>'G' key</td></tr>
+<tr><td><b>HGEK_H</b></td><td>'H' key</td></tr>
+<tr><td><b>HGEK_I</b></td><td>'I' key</td></tr>
+<tr><td><b>HGEK_J</b></td><td>'J' key</td></tr>
+<tr><td><b>HGEK_K</b></td><td>'K' key</td></tr>
+<tr><td><b>HGEK_L</b></td><td>'L' key</td></tr>
+<tr><td><b>HGEK_M</b></td><td>'M' key</td></tr>
+<tr><td><b>HGEK_N</b></td><td>'N' key</td></tr>
+<tr><td><b>HGEK_O</b></td><td>'O' key</td></tr>
+<tr><td><b>HGEK_P</b></td><td>'P' key</td></tr>
+<tr><td><b>HGEK_Q</b></td><td>'Q' key</td></tr>
+<tr><td><b>HGEK_R</b></td><td>'R' key</td></tr>
+<tr><td><b>HGEK_S</b></td><td>'S' key</td></tr>
+<tr><td><b>HGEK_T</b></td><td>'T' key</td></tr>
+<tr><td><b>HGEK_U</b></td><td>'U' key</td></tr>
+<tr><td><b>HGEK_V</b></td><td>'V' key</td></tr>
+<tr><td><b>HGEK_W</b></td><td>'W' key</td></tr>
+<tr><td><b>HGEK_X</b></td><td>'X' key</td></tr>
+<tr><td><b>HGEK_Y</b></td><td>'Y' key</td></tr>
+<tr><td><b>HGEK_Z</b></td><td>'Z' key</td></tr>
+<tr><td colspan=2>&nbsp;</td></tr>
+<tr><td><b>HGEK_GRAVE</b></td><td>Grave accent (`)</td></tr>
+<tr><td><b>HGEK_MINUS</b></td><td>Main keyboard MINUS key (-)</td></tr>
+<tr><td><b>HGEK_EQUALS</b></td><td>Main keyboard EQUALS key (=)</td></tr>
+<tr><td><b>HGEK_BACKSLASH</b></td><td>BACK SLASH key (\)</td></tr>
+<tr><td><b>HGEK_LBRACKET</b></td><td>Left square bracket ([)</td></tr>
+<tr><td><b>HGEK_RBRACKET</b></td><td>Right square bracket (])</td></tr>
+<tr><td><b>HGEK_SEMICOLON</b></td><td>Semicolon (;)</td></tr>
+<tr><td><b>HGEK_APOSTROPHE</b></td><td>Apostrophe (')</td></tr>
+<tr><td><b>HGEK_COMMA</b></td><td>Comma (,)</td></tr>
+<tr><td><b>HGEK_PERIOD</b></td><td>Main keyboard PERIOD key (.)</td></tr>
+<tr><td><b>HGEK_SLASH</b></td><td>Main keyboard SLASH key (/)</td></tr>
+<tr><td colspan=2>&nbsp;</td></tr>
+<tr><td><b>HGEK_NUMPAD0</b></td><td>Numeric keyboard '0' key</td></tr>
+<tr><td><b>HGEK_NUMPAD1</b></td><td>Numeric keyboard '1' key</td></tr>
+<tr><td><b>HGEK_NUMPAD2</b></td><td>Numeric keyboard '2' key</td></tr>
+<tr><td><b>HGEK_NUMPAD3</b></td><td>Numeric keyboard '3' key</td></tr>
+<tr><td><b>HGEK_NUMPAD4</b></td><td>Numeric keyboard '4' key</td></tr>
+<tr><td><b>HGEK_NUMPAD5</b></td><td>Numeric keyboard '5' key</td></tr>
+<tr><td><b>HGEK_NUMPAD6</b></td><td>Numeric keyboard '6' key</td></tr>
+<tr><td><b>HGEK_NUMPAD7</b></td><td>Numeric keyboard '7' key</td></tr>
+<tr><td><b>HGEK_NUMPAD8</b></td><td>Numeric keyboard '8' key</td></tr>
+<tr><td><b>HGEK_NUMPAD9</b></td><td>Numeric keyboard '9' key</td></tr>
+<tr><td colspan=2>&nbsp;</td></tr>
+<tr><td><b>HGEK_MULTIPLY</b></td><td>Numeric keyboard MULTIPLY key (*)</td></tr>
+<tr><td><b>HGEK_DIVIDE</b></td><td>Numeric keyboard DIVIDE key (/)</td></tr>
+<tr><td><b>HGEK_ADD</b></td><td>Numeric keyboard ADD key (+)</td></tr>
+<tr><td><b>HGEK_SUBTRACT</b></td><td>Numeric keyboard SUBTRACT key (-)</td></tr>
+<tr><td><b>HGEK_DECIMAL</b></td><td>Numeric keyboard DECIMAL key (.)</td></tr>
+<tr><td colspan=2>&nbsp;</td></tr>
+<tr><td><b>HGEK_F1</b></td><td>F1 key</td></tr>
+<tr><td><b>HGEK_F2</b></td><td>F2 key</td></tr>
+<tr><td><b>HGEK_F3</b></td><td>F3 key</td></tr>
+<tr><td><b>HGEK_F4</b></td><td>F4 key</td></tr>
+<tr><td><b>HGEK_F5</b></td><td>F5 key</td></tr>
+<tr><td><b>HGEK_F6</b></td><td>F6 key</td></tr>
+<tr><td><b>HGEK_F7</b></td><td>F7 key</td></tr>
+<tr><td><b>HGEK_F8</b></td><td>F8 key</td></tr>
+<tr><td><b>HGEK_F9</b></td><td>F9 key</td></tr>
+<tr><td><b>HGEK_F10</b></td><td>F10 key</td></tr>
+<tr><td><b>HGEK_F11</b></td><td>F11 key</td></tr>
+<tr><td><b>HGEK_F12</b></td><td>F12 key</td></tr>
+</table>
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_inputgetkeyname.html">Input_GetKeyName</a>,
+<a href="hgefunc_inputgetkeystate.html">Input_GetKeyState</a>,
+<a href="hgefunc_inputgetkey.html">Input_GetKey</a>,
+<a href="hgefunc_inputgetevent.html">Input_GetEvent</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

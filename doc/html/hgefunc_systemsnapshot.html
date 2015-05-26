@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::System_Snapshot</h1>
+<p>
+Saves current screen snapshot into a file.
+</p>
+<pre>
+void System_Snapshot(
+  const char *<i><b>filename</b></i> = 0
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>filename</i>
+<dd>An absolute or relative file name to save snapshot to. If =0 or omitted, the snapshot is saved into the application folder under <b>shotXXX.bmp</b> name,
+where XXX is the next free number.
+</dl>
+<h2>Remarks</h2>
+<p>
+The snapshot is saved in <b>BMP</b> file format.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_main.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Power Management</h1>
+<p>
+Lots of players use mobile computers, powered with batteries.
+So, to be polite, your game should respect power issues.
+Here go the most important recommendations.
+</p>
+<h2>Limit FPS</h2>
+<p>
+For most games there's no need to use all the computational power of CPU. To reduce power consumption and thus make
+batteries live longer, limit the FPS of your game using <a href="hgeconst_systemstate.html#HGE_FPS">HGE_FPS</a>
+system state:
+</p>
+<pre>
+hge->System_SetState(HGE_FPS, 50);
+</pre>
+</p>
+<h2>Detect low batteries level</h2>
+<p>
+Use <a href="hgeconst_systemstate.html#HGE_POWERSTATUS">HGE_POWERSTATUS</a> system state to
+monitor the power status:
+<ul>
+<li><b>HGEPWR_UNSUPPORTED</b> value means OS doesn't support power status reporting and we can't help. 
+<li><b>HGEPWR_AC</b> value means we have a constant AC power source and there's no need to worry.
+<li><b>Values 0-100</b> reflect the current batteries level in case the computer is powered with batteries.
+</ul>
+</p>
+<p>
+For example, to detect if batteries level is lower than 5% you may use the following code:
+<pre>
+int pstatus = hge->System_GetState(HGE_POWERSTATUS);
+
+if(pstatus != HGEPWR_UNSUPPORTED)
+{
+	if(pstatus != HGEPWR_AC && pstatus < 5)
+	{
+		// warn player with an icon or message
+		// secure player's data
+	}
+}
+</pre>
+</p>
+<p>
+If you have detected batteries level lower than 5% it is recommended to:
+<ul>
+<li>Warn player with an overlay icon or message
+<li>Save all player's data and progress to prevent losses
+</ul>
+</p>
+
+<h2>Acknowledgement</h2>
+<p>
+We'd like to thank <b>Intel Corp.</b> and <b>Victoria Zhislina</b>, who kindly
+helped us to implement the power management features in <b>HGE</b>.
+</p>
+
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

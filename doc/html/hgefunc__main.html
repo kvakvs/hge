@@ -1,0 +1,485 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="switchContents('cnt_main.html','cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE Functions</h1>
+<p>
+<b>H</b>ere you'll find description of all <b>HGE</b> system layer functions:
+</p>
+<h2>Interface functions</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td width=33%><a href="hgefunc_interfaceget.html">hgeCreate</a></td>
+<td>Returns a pointer to <b>HGE</b> interface.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_interfacerelease.html">Release</a></td>
+<td>Releases obtained <b>HGE</b> interface.</td>
+</tr>
+</table>
+</p>
+<h2>System functions</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td width=33%><a href="hgefunc_systeminitiate.html">System_Initiate</a></td>
+<td>Initializes hardware and software needed to run engine.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_systemshutdown.html">System_Shutdown</a></td>
+<td>Restores video mode and frees allocated resources.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_systemstart.html">System_Start</a></td>
+<td>Starts running user defined frame function.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_systemsetstate.html">System_SetState</a></td>
+<td>Sets internal system states.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_systemgetstate.html">System_GetState</a></td>
+<td>Returns internal system state values.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_systemgeterror.html">System_GetErrorMessage</a></td>
+<td>Returns last occured <b>HGE</b> error description.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_systemlog.html">System_Log</a></td>
+<td>Writes a formatted message to the log file.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_systemlaunch.html">System_Launch</a></td>
+<td>Launches an URL or external executable/data file.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_systemsnapshot.html">System_Snapshot</a></td>
+<td>Saves current screen snapshot into a file.</td>
+</tr>
+</table>
+</p>
+<h2>Resource functions</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td width=33%><a href="hgefunc_resourceload.html">Resource_Load</a></td>
+<td>Loads a resource into memory from disk.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_resourcefree.html">Resource_Free</a></td>
+<td>Deletes a previously loaded resource from memory.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_resourceattachpack.html">Resource_AttachPack</a></td>
+<td>Attaches a resource pack.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_resourceremovepack.html">Resource_RemovePack</a></td>
+<td>Removes a resource pack.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_resourceremoveallpacks.html">Resource_RemoveAllPacks</a></td>
+<td>Removes all resource packs previously attached.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_resourcemakepath.html">Resource_MakePath</a></td>
+<td>Builds absolute file path.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_resourceenumfiles.html">Resource_EnumFiles</a></td>
+<td>Enumerates files by given wildcard.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_resourceenumfolders.html">Resource_EnumFolders</a></td>
+<td>Enumerates folders by given wildcard.</td>
+</tr>
+</table>
+</p>
+<h2>Initialization file functions</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td width=33%><a href="hgefunc_inisetint.html">Ini_SetInt</a></td>
+<td>Writes an integer value to initialization file.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_inigetint.html">Ini_GetInt</a></td>
+<td>Reads an integer value from initialization file.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_inisetfloat.html">Ini_SetFloat</a></td>
+<td>Writes a float value to initialization file.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_inigetfloat.html">Ini_GetFloat</a></td>
+<td>Reads a float value from initialization file.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_inisetstring.html">Ini_SetString</a></td>
+<td>Writes a string to initialization file.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_inigetstring.html">Ini_GetString</a></td>
+<td>Reads a string from initialization file.</td>
+</tr>
+</table>
+</p>
+<h2>Random number generation functions</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td width=33%><a href="hgefunc_randomseed.html">Random_Seed</a></td>
+<td>Sets random number generator's seed.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_randomint.html">Random_Int</a></td>
+<td>Generates <b>int</b> random number.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_randomfloat.html">Random_Float</a></td>
+<td>Generates <b>float</b> random number.</td>
+</tr>
+</table>
+</p>
+<h2>Timer functions</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td width=33%><a href="hgefunc_timergettime.html">Timer_GetTime</a></td>
+<td>Returns time elapsed since <a href="hgefunc_systeminitiate.html">System_Initiate</a> call.</td>
+</tr>
+<tr>
+<td width=33%><a href="hgefunc_timergetdelta.html">Timer_GetDelta</a></td>
+<td>Returns time elapsed since last frame function call.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_timergetfps.html">Timer_GetFPS</a></td>
+<td>Returns current frames-per-second rate.</td>
+</tr>
+</table>
+</p>
+<h2>Sound effect functions</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td width=33%><a href="hgefunc_effectload.html">Effect_Load</a></td>
+<td>Loads a sound effect from disk or memory.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_effectfree.html">Effect_Free</a></td>
+<td>Deletes loaded effect and associated resources.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_effectplay.html">Effect_Play</a></td>
+<td>Starts playing sound effect.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_effectplayex.html">Effect_PlayEx</a></td>
+<td>Starts playing sound effect with additional parameters.</td>
+</tr>
+</table>
+</p>
+<h2>Music functions</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td width=33%><a href="hgefunc_musicload.html">Music_Load</a></td>
+<td>Loads a music from disk or memory.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_musicfree.html">Music_Free</a></td>
+<td>Deletes loaded music and associated resources.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_musicplay.html">Music_Play</a></td>
+<td>Starts playing music.</td>
+</tr>
+
+<tr>
+<td><a href="hgefunc_musicsetamplification.html">Music_SetAmplification</a></td>
+<td>Sets level of amplification for a music.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_musicgetamplification.html">Music_GetAmplification</a></td>
+<td>Returns level of amplification of a music.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_musicgetlength.html">Music_GetLength</a></td>
+<td>Returns length of a music's patterns list.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_musicsetpos.html">Music_SetPos</a></td>
+<td>Sets music position in patterns and rows.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_musicgetpos.html">Music_GetPos</a></td>
+<td>Returns current position of a music in patterns and rows.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_musicsetinstrvolume.html">Music_SetInstrVolume</a></td>
+<td>Sets volume of a specific instrument in a music.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_musicgetinstrvolume.html">Music_GetInstrVolume</a></td>
+<td>Returns volume of a specific instrument in a music.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_musicsetchannelvolume.html">Music_SetChannelVolume</a></td>
+<td>Sets volume of a specific channel in a music.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_musicgetchannelvolume.html">Music_GetChannelVolume</a></td>
+<td>Returns volume of a specific channel in a music.</td>
+</tr>
+</table>
+</p>
+<h2>Compressed audio stream functions</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td width=33%><a href="hgefunc_streamload.html">Stream_Load</a></td>
+<td>Loads a stream from disk or memory.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_streamfree.html">Stream_Free</a></td>
+<td>Deletes loaded stream and associated resources.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_streamplay.html">Stream_Play</a></td>
+<td>Starts playing stream.</td>
+</tr>
+</table>
+</p>
+<h2>Audio channel functions</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td width=33%><a href="hgefunc_channelsetpanning.html">Channel_SetPanning</a></td>
+<td>Changes an audio channel panning.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_channelsetvolume.html">Channel_SetVolume</a></td>
+<td>Changes an audio channel volume.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_channelsetpitch.html">Channel_SetPitch</a></td>
+<td>Changes an audio channel pitch.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_channelpause.html">Channel_Pause</a></td>
+<td>Pauses an audio channel.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_channelresume.html">Channel_Resume</a></td>
+<td>Resumes a paused audio channel.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_channelstop.html">Channel_Stop</a></td>
+<td>Stops an audio channel.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_channelpauseall.html">Channel_PauseAll</a></td>
+<td>Pauses all active audio channels.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_channelresumeall.html">Channel_ResumeAll</a></td>
+<td>Resumes all active audio channels.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_channelstopall.html">Channel_StopAll</a></td>
+<td>Stops all active audio channels.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_channelisplaying.html">Channel_IsPlaying</a></td>
+<td>Tests if an audio channel is playing.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_channelgetlength.html">Channel_GetLength</a></td>
+<td>Retrieves the total length of a playing channel.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_channelsetpos.html">Channel_SetPos</a></td>
+<td>Skips forwards or backwards in a playing channel.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_channelgetpos.html">Channel_GetPos</a></td>
+<td>Retrieves a playing channel's position.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_channelslideto.html">Channel_SlideTo</a></td>
+<td>Starts sliding a channel volume, panning or pitch.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_channelissliding.html">Channel_IsSliding</a></td>
+<td>Tests if a channel parameters are sliding.</td>
+</tr>
+</table>
+</p>
+<h2>Input functions</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td width=33%><a href="hgefunc_inputgetmousepos.html">Input_GetMousePos</a></td>
+<td>Returns current mouse cursor position.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_inputsetmousepos.html">Input_SetMousePos</a></td>
+<td>Sets current mouse cursor position.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_inputgetmousewheel.html">Input_GetMouseWheel</a></td>
+<td>Returns the mouse wheel shift since last frame.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_inputismouseover.html">Input_IsMouseOver</a></td>
+<td>Tests if mouse cursor is inside <b>HGE</b> window or not.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_inputkeydown.html">Input_KeyDown</a></td>
+<td>Tests if a key was pressed down during the last frame.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_inputkeyup.html">Input_KeyUp</a></td>
+<td>Tests if a key was released during the last frame.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_inputgetkeyname.html">Input_GetKeyName</a></td>
+<td>Returns a key or mouse button name from it's code.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_inputgetkeystate.html">Input_GetKeyState</a></td>
+<td>Tests if a key or mouse button is down.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_inputgetkey.html">Input_GetKey</a></td>
+<td>Returns the last pressed key code.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_inputgetchar.html">Input_GetChar</a></td>
+<td>Returns the last pressed character.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_inputgetevent.html">Input_GetEvent</a></td>
+<td>Gets the next input event from the queue.</td>
+</tr>
+</table>
+</p>
+<h2>Graphics functions</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td width=33%><a href="hgefunc_gfxbeginscene.html">Gfx_BeginScene</a></td>
+<td>Starts rendering graphics.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_gfxendscene.html">Gfx_EndScene</a></td>
+<td>Ends rendering and updates the screen.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_gfxclear.html">Gfx_Clear</a></td>
+<td>Clears render target and z-buffer.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_gfxrenderline.html">Gfx_RenderLine</a></td>
+<td>Renders a line.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_gfxrendertriple.html">Gfx_RenderTriple</a></td>
+<td>Renders a triple.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_gfxrenderquad.html">Gfx_RenderQuad</a></td>
+<td>Renders a quad.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_gfxstartbatch.html">Gfx_StartBatch</a></td>
+<td>Starts rendering of graphic primitives batch.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_gfxfinishbatch.html">Gfx_FinishBatch</a></td>
+<td>Ends rendering of graphic primitives batch.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_gfxsetclipping.html">Gfx_SetClipping</a></td>
+<td>Sets the clipping region.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_gfxsettransform.html">Gfx_SetTransform</a></td>
+<td>Sets global scene transformation.</td>
+</tr>
+</table>
+</p>
+<h2>Render target functions</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td width=33%><a href="hgefunc_targetcreate.html">Target_Create</a></td>
+<td>Creates a render target.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_targetfree.html">Target_Free</a></td>
+<td>Deletes a render target and associated resources.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_targetgettexture.html">Target_GetTexture</a></td>
+<td>Returns a render target's texture handle.</td>
+</tr>
+</table>
+</p>
+<h2>Texture functions</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td width=33%><a href="hgefunc_texturecreate.html">Texture_Create</a></td>
+<td>Creates an empty texture.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_textureload.html">Texture_Load</a></td>
+<td>Loads a texture from disk or memory.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_texturefree.html">Texture_Free</a></td>
+<td>Deletes loaded texture and associated resources.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_texturegetwidth.html">Texture_GetWidth</a></td>
+<td>Returns a texture width in pixels.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_texturegetheight.html">Texture_GetHeight</a></td>
+<td>Returns a texture height in pixels.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_texturelock.html">Texture_Lock</a></td>
+<td>Locks a texture for direct access.</td>
+</tr>
+<tr>
+<td><a href="hgefunc_textureunlock.html">Texture_Unlock</a></td>
+<td>Unlocks a texture.</td>
+</tr>
+</table>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

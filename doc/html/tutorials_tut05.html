@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_tutorials.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Tutorial 05 - Using distortion mesh</h1>
+<p>
+<b>I</b>n this tutorial we will learn how to use distortion mesh,
+a technique allowing you to create effects like water, lenses, page wraps,
+various twists and even real-time morphing. In this tutorial we use static
+texture, but you could render your whole game scene onto a texture using
+render targets functionality and then put it on the screen via distortion
+mesh to achieve some cool real-time effects.
+<br><br>
+<img src="t05_1.gif" width=150 height=113>&nbsp;&nbsp;
+<img src="t05_2.gif" width=150 height=113>&nbsp;&nbsp;
+<img src="t05_3.gif" width=150 height=113>&nbsp;&nbsp;
+<br><br>
+First, we include the required headers and declare the variables to handle
+our texture and distortion mesh:
+</p>
+<pre>
+#include &lt;hge.h&gt;
+#include &lt;hgedistort.h&gt;
+#include &lt;math.h&gt;
+
+HGE *hge = 0;
+HTEXTURE tex;
+hgeDistortionMesh *dis;
+</pre>
+<p>
+Then we declare some constants we will use.
+Here we define the mesh resolution and on-screen position:
+</p>
+<pre>
+const int nRows=16;
+const int nCols=16;
+
+const float meshx=144;
+const float meshy=44;
+</pre>
+<p>
+In the <b>FrameFunc</b> (frame function) we need some variables too.
+A couple of them for timing and the rest are used for displacements calculation:
+</p>
+<pre>
+  float dt;
+  static float t=0.0f;
+  int i, j, col;
+</pre>
+<p>
+Well, here's the tricky part. To animate our mesh we calculate
+it's displacements and coloring based on time elapsed:
+</p>
+<pre>
+  dt=hge->Timer_GetDelta();
+  t+=dt;
+
+  for(i=0; i&lt;nRows; i++)
+    for(j=1; j&lt;nCols-1; j++)
+    {
+      dis->SetDisplacement(j, i, cosf(t*5+j/2)*15,0,HGEDISP_NODE);
+      col=int((cosf(t*5+(i+j)/2)+1)*35);
+      dis->SetColor(j, i, 0xFF<<24 | col<<16 | col<<8 | col);
+    }
+</pre>
+<p>
+And finally we render the mesh to the screen within the <b>RenderFunc</b>:
+</p>
+<pre>
+  hge->Gfx_BeginScene();
+  hge->Gfx_Clear(0);
+  dis->Render(meshx, meshy);
+  hge->Gfx_EndScene();
+</pre>
+<p>
+In the <b>WinMain</b> function we should load a texture and initialize the mesh:
+</p>
+<pre>
+  tex=hge->Texture_Load("texture.jpg");
+  dis=new hgeDistortionMesh(nCols, nRows);
+  dis->SetTexture(tex);
+  dis->SetTextureRect(0, 0, 512, 512);
+  dis->SetBlendMode(BLEND_COLORADD|BLEND_ALPHABLEND|BLEND_ZWRITE);
+  dis->Clear(0xFF000000);
+</pre>
+<p>
+And during shutdown we should delete the texture and the mesh from memory:
+</p>
+<pre>
+  delete dis;
+  hge->Texture_Free(tex);
+</pre>
+<p>
+Voila! It's that simple.
+<br><br>
+The complete source code with detailed comments for this tutorial you may find in the folder
+<b>tutorials\tutorial05</b>. The required media files you'll find in the folder <b>tutorials\precompiled</b>.
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

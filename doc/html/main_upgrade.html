@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_main.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Upgrading from older HGE</h1>
+<p>
+<b>S</b>ince <b>HGE</b> interface is slightly changing with new releases, you have to do minor changes
+to your code written for previous versions to compile it with the latest release of <b>HGE</b>. Here's the brief guidelines
+for the modifications needed:
+</p>
+<h2>Upgrading from HGE 1.6</h2>
+<p>
+<ol>
+<li>Adjust all your particle system presets with the new editor. Basically you should just raise "Start speed", "Gravity", "Radial acceleration" and "Tangential acceleration" values.
+<li>Use <a href="hgeconst_systemstate.html#HGE_SHOWSPLASH">HGE_SHOWSPLASH</a> to hide HGE splash screen instead of earlier <b>(hgeIntState)14</b> hack.
+<li>If you used <a href="hgesprite_settexturerect.html">hgeSprite::SetTextureRect</a> or <b>hgeAnimation::SetTextureRect</b>, put additional <b>false</b> argument into the calls.
+<li>If you used render targets, you now should restore them in <a href="hgeconst_systemstate.html#HGE_GFXRESTOREFUNC">HGE_GFXRESTOREFUNC</a>, not in <a href="hgeconst_systemstate.html#HGE_FOCUSGAINFUNC">HGE_FOCUSGAINFUNC</a> as earlier.
+<li>If you used <a href="hgefunc_gfxstartbatch.html">Gfx_StartBatch</a> - insert a check if the return value is not 0.
+</ol>
+</p>
+<h2>Upgrading from HGE 1.54</h2>
+<p>
+<ol>
+<li>Convert you bitmap fonts with <a href="fbuilder_fontconv.html">fontconv.exe</a> to the newer format.
+<li>Modify your <a href="hgefont_render.html">hgeFont::Render</a> and <a href="hgefont_printf.html">hgeFont::printf</a> calls according to their new declarations.
+<li>It is recommended to take the rendering code out of <a href="hgeconst_systemstate.html#HGE_FRAMEFUNC">HGE_FRAMEFUNC</a> and place it into <a href="hgeconst_systemstate.html#HGE_RENDERFUNC">HGE_RENDERFUNC</a> callback. Though your application will run as earlier without this modification.
+</ol>
+</p>
+<h2>Upgrading from HGE 1.53</h2>
+<p>
+<ol>
+<li>When using <a href="hgefunc_systemgetstate.html">System_GetState</a>, you don't need to select the type (you can simply erase <b>.int_value</b>, <b>.func_value</b>, etc., from your code).</li>
+</ol>
+</p>
+<h2>Upgrading from HGE 1.4</h2>
+<p>
+<ol>
+<li><b>PAY ATTENTION!</b> <a href="hgesprite_renderex.html">hgeSprite::RenderEx</a> and <a href="hgesprite_getboundingboxex.html">hgeSprite::GetBoundingBoxEx</a> have updated syntax with different parameters order. Your old code may compile fine but work incorrectly if you miss this.
+<li><a href="hgeparticle_transpose.html">hgeParticleSystem::Transpose</a> behaviour has slightly changed. Use <a href="hgeparticle_moveto.html">MoveTo(X,Y,true)</a> to reproduce previous <b>Transpose</b> behaviour.
+<li>By default a particle system's bounding box isn't tracked now. If you used this feature you should turn it on explicitly with <a href="hgeparticle_trackboundingbox.html">TrackBoundingBox</a> call.
+<li>Remove all references to the <b>reserved</b> field of <a href="hgedata_vertex.html">hgeVertex</a>, it isn't required anymore.
+<li>Remove all -0.5 coordinate adjustments previously used to ensure exact texel-to-pixel mapping, this is done automatically now.
+<li>Change <a href="hgefunc_inigetstring.html">Ini_GetString</a> calls to newer, simplified syntax.
+<li>Replace all <b>System_Rand</b> calls with <a href="hgefunc_randomfloat.html">Random_Float</a> calls.
+<li><b>HGE_RESOURCEFILE</b> system state was removed. Use <a href="hgefunc_resourceattachpack.html">Resource_AttachPack</a> function instead.
+<li><a href="hgefunc_musicplay.html">Music_Play</a> now takes additional <b>loop</b> parameter.
+
+</ol>
+</p>
+<h2>Upgrading from HGE 1.3</h2>
+<p>
+<ol>
+<li>Replace <b>Mouse_GetPosition</b>, <b>Mouse_GetWheel</b>, <b>Key_GetState</b>, <b>Key_GetKey</b> calls with <a href="hgefunc_inputgetmousepos.html">Input_GetMousePos</a>, <a href="hgefunc_inputgetmousewheel.html">Input_GetMouseWheel</a>, <a href="hgefunc_inputgetkeystate.html">Input_GetKeyState</a>, <a href="hgefunc_inputgetkey.html">Input_GetKey</a> respectively
+<li><a href="hgesprite__main.html">hgeSprite</a> methods <b>SetColorI</b> and <b>SetZI</b> were removed, use the updated <a href="hgesprite_setcolor.html">SetColor</a> and <a href="hgesprite_setz.html">SetZ</a> instead
+<li>If you created custom GUI controls, update your <a href="hgeguio_keyclick.html">hgeGUIObject::KeyClick</a> method. It now takes additional character parameter.
+<li>If you used default GUI controls, include additional header: <b>hgeguictrls.h</b>
+</ol>
+</p>
+<h2>Upgrading from HGE 1.2</h2>
+<p>
+<ol>
+<li>Remove any version checks with <b>System_GetVersion</b> if you made them.
+<li>Just provide <a href="hgefunc_interfaceget.html">hgeCreate</a> calls with <b>HGE_VERSION</b> as a parameter.
+<li><a href="hgeanim_play.html">hgeAnimation::Play</a> now takes no parameters. Use <a href="hgeanim_setmode.html">hgeAnimation::SetMode</a> to set the playback mode.
+<li>You should rewrite your code for the new GUI architecture (see <a href="hgegui__main.html">hgeGUI</a> and <a href="hgeguio__main.html">hgeGUIObject</a>).
+If you haven't created custom controls just replace <b>hgeGUI::ProcessInput</b> calls with <a href="hgegui_update.html">hgeGUI::Update</a>.
+<li>Particle Editor's default update rate is now 50 FPS. It is recommended to adjust all your presets for this rate. Although you could restore previous behavior,
+just write "UpdatesPerSec=0" in the <a href="peditor_ini.html">particleed.ini</a> file.
+</ol>
+</p>
+<h2>Upgrading from HGE 1.1</h2>
+<p>
+<ol>
+<li>You don't need to link to <b>d3d8.lib</b>, <b>d3dx8.lib</b> and <b>winmm.lib</b> anymore. Remove them from the project. Link to the correct versions of <b>hge.lib</b> and <b>hgehelp.lib</b> for your compiler.
+<li>Replace all your <b>Interface_Get</b> calls with <a href="hgefunc_interfaceget.html">hgeCreate</a> calls.
+<li>Replace all your <b>Interface_Release</b> calls with <a href="hgefunc_interfacerelease.html">Release</a> calls.
+<li>Replace all your <b>System_LoadResource</b> calls with <a href="hgefunc_resourceload.html">Resource_Load</a> calls.
+<li><b>IMPORTANT:</b> The resources loaded with <a href="hgefunc_resourceload.html">Resource_Load</a> now should be freed with <a href="hgefunc_resourcefree.html">Resource_Free</a> call, not with
+operator <b>delete</b> as earlier.
+<li>If you used <b>Key_Clear</b> function, you may replace it with <a href="hgefunc_inputgetkey.html">Key_GetKey</a> call.
+</ol>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

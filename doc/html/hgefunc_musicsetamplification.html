@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::Music_SetAmplification</h1>
+<p>
+Sets level of amplification for a music.
+</p>
+<pre>
+void Music_SetAmplification(
+  HMUSIC <i><b>music</b></i>,
+  int <i><b>ampl</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>music</i>
+<dd>Handle of a music.
+<dt><i>ampl</i>
+<dd>The amplification level, 0..100.
+</dl>
+<h2>Remarks</h2>
+<p>
+Since music samples are going through lots of mixing routines during playback, the resulting
+audio tends to be quiter than it is possible. Use <b>Music_SetAmplification</b> once, right
+after <a href="hgefunc_musicload.html">Music_Load</a> call to compensate the overall volume
+of a music. The default amplification of a loaded music is 50.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_musicgetamplification.html">Music_GetAmplification</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

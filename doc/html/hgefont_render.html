@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefont.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeFont::Render</h1>
+<p>
+Renders the text string to the screen.
+</p>
+<pre>
+void Render(
+  float <i><b>x</b></i>,
+  float <i><b>y</b></i>,
+  int <i><b>align</b></i>,
+  const char *<i><b>string</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>x</i>
+<dd>Screen x-coordinate.
+<dt><i>y</i>
+<dd>Screen y-coordinate.
+<dt><i>align</i>
+<dd>Alignment specificator. May be one of these:
+<b>HGETEXT_LEFT</b>, <b>HGETEXT_RIGHT</b>, <b>HGETEXT_CENTER</b>.
+<dt><i>string</i>
+<dd>The string to be rendered.
+</dl>
+<h2>Remarks</h2>
+<p>
+Line breaks ('\n') are correctly processed. All other control
+symbols are treated like ordinary characters.
+Symbols not defined in the font are rendered as '?'.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgefont.h<br>
+<b>Import library:</b> hgehelp.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefont_printf.html">printf</a>,
+<a href="hgefont_printfb.html">printfb</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

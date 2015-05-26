@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgedata.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE Vertex structure</h1>
+<p>
+<b>T</b>he <b>hgeVertex</b> structure is used to describe vertices of which <b>HGE</b> graphic primitives consist.
+</p>
+<pre>
+struct hgeVertex
+{
+  float  <b>x</b>, <b>y</b>;
+  float  <b>z</b>;
+  DWORD  <b>col</b>;
+  float  <b>tx</b>, <b>ty</b>;
+};
+</pre>
+<h2>Members</h2>
+<dl>
+<dt>x
+<dd>Screen X-coordinate.
+<dt>y
+<dd>Screen Y-coordinate.
+<dt>z
+<dd>Vertex Z-order ranging from 0.0 to 1.0.<br>
+If Z-buffer isn't used, the value is ignored.
+<dt>col
+<dd>Vertex color and opacity.
+<dt>tx
+<dd>Texture X-coordinate in range 0.0 to 1.0.
+<dt>ty
+<dd>Texture Y-coordinate in range 0.0 to 1.0.
+</dl>
+<h2>Remarks</h2>
+<p>
+If you specify values outside the 0.0-1.0 range for texture coordinates,
+the texture data will be repeated on every integer junction. For example,
+it is an easy way to implement "rotozoom" effect.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgedata_triple.html">Triple structure</a>,
+<a href="hgedata_quad.html">Quad structure</a>,
+<a href="hgedata_hwcolor.html">Hardware color format</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

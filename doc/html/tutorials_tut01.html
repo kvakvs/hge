@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_tutorials.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Tutorial 01 - Minimal HGE application</h1>
+<p>
+<b>F</b>irst, we include <b>hge.h</b> header and declare a variable to store the <b>HGE</b> interface pointer to:
+</p>
+<pre>
+#include &lt;hge.h&gt;
+
+HGE *hge = 0;
+</pre>
+<p>
+Then we create our frame function. The frame function is a user-defined function
+that will be called by <b>HGE</b> once per frame: put your game loop code here.
+When the frame function returns <b>true</b>, the <b>HGE</b> stops execution of game loop.
+<br><br>
+In this example we just check whether ESC key has been pressed:
+</p>
+<pre>
+bool FrameFunc()
+{
+  if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
+  return false;
+}
+</pre>
+<p>
+The <b>WinMain</b> function is a standard windows application entry point.
+Here we'll obtain a pointer to <b>HGE</b> interface to access <b>HGE</b> functions.
+In this example we use global pointer to <b>HGE</b> interface.
+Instead you may use <a href="hgefunc_interfaceget.html">hgeCreate</a>
+function every time you need access to <b>HGE</b>. Just be sure to
+have a corresponding <a href="hgefunc_interfacerelease.html">Release</a>
+call for each call to <a href="hgefunc_interfaceget.html">hgeCreate</a>.
+</p>
+<pre>
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+{
+  hge = hgeCreate(HGE_VERSION);
+</pre>
+<p>
+Then we set some internal <b>HGE</b> system states to configure the environment.
+Although most of the system states have appropriate defaults, at least
+<a href="hgeconst_systemstate.html#HGE_FRAMEFUNC">HGE_FRAMEFUNC</a> must be set before calling <a href="hgefunc_systemstart.html">System_Start</a>.
+</p>
+<pre>
+  hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
+  hge->System_SetState(HGE_WINDOWED, true);
+  hge->System_SetState(HGE_USESOUND, false);
+  hge->System_SetState(HGE_TITLE,
+                 "HGE Tutorial 01 - Minimal HGE application");
+</pre>
+<p>
+Now we initiate <b>HGE</b> with the states set.
+If something goes wrong, the <a href="hgefunc_systeminitiate.html">System_Initiate</a>
+function returns <b>false</b> and more specific description of what have
+happened can be read with <a href="hgefunc_systemgeterror.html">System_GetErrorMessage</a>.
+<br><br>
+Having <b>HGE</b> initiated we start the game loop with call to the <a href="hgefunc_systemstart.html">System_Start</a> function.
+The execution "stops" here until <b>true</b> is returned from the frame function.
+</p>
+<pre>
+  if(hge->System_Initiate())
+  {
+    hge->System_Start();
+  }
+  else
+  {	
+    MessageBox(NULL, hge->System_GetErrorMessage(), "Error",
+               MB_OK | MB_ICONERROR | MB_APPLMODAL);
+  }
+</pre>
+<p>
+Now <b>ESC</b> has been pressed or the user has closed the window by other means.
+We should restore video mode and free all allocated resources.
+Also we should release the <b>HGE</b> interface:
+</p>
+<pre>
+  hge->System_Shutdown();
+  hge->Release();
+
+  return 0;
+}
+</pre>
+<p>
+Voila! Just about 20 lines of code and we have fully functional and running environment for a
+game!
+<br><br>
+The complete source code with detailed comments for this tutorial you may find in the folder
+<b>tutorials\tutorial01</b>.
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

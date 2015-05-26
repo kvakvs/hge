@@ -1,0 +1,388 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_tutorials.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Tutorial 06 - Creating menus</h1>
+<p>
+<b>T</b>his tutorial shows how to create custom GUI controls and menus.
+<br><br>
+<img src="t06_1.gif" width=150 height=113>
+</p>
+<h2>Creating custom controls</h2>
+<p>
+First, we should define the custom control class, derived from <a href="hgeguio__main.html">hgeGUIObject</a>:
+</p>
+<pre>
+class hgeGUIMenuItem : public hgeGUIObject
+{
+public:
+  hgeGUIMenuItem(int id, hgeFont *fnt, HEFFECT snd,
+          float x, float y, float delay, char *title);
+
+  virtual void  Render();
+  virtual void  Update(float dt);
+
+  virtual void  Enter();
+  virtual void  Leave();
+  virtual bool  IsDone();
+  virtual void  Focus(bool bFocused);
+  virtual void  MouseOver(bool bOver);
+
+  virtual bool  MouseLButton(bool bDown);
+  virtual bool  KeyClick(int key, int chr);
+
+private:
+  hgeFont       *fnt;
+  HEFFECT       snd;
+  float         delay;
+  char          *title;
+
+  hgeColor      scolor, dcolor, scolor2, dcolor2, color;
+  hgeColor      sshadow, dshadow, shadow;
+  float         soffset, doffset, offset;
+  float         timer, timer2;
+};
+</pre>
+<p>
+The custom control constructor should initialize <a href="hgeguio__main.html">hgeGUIObject</a> data members
+<b>id</b>, <b>bStatic</b>, <b>bVisible</b>, <b>bEnabled</b> and <b>rect</b>:
+</p>
+<pre>
+hgeGUIMenuItem::hgeGUIMenuItem(int _id, hgeFont *_fnt,
+                HEFFECT _snd, float _x, float _y,
+                float _delay, char *_title)
+{
+  id=_id;
+  fnt=_fnt;
+  snd=_snd;
+  delay=_delay;
+  title=_title;
+
+  color.SetHWColor(0xFFFFE060);
+  shadow.SetHWColor(0x30000000);
+  offset=0.0f; timer=-1.0f; timer2=-1.0f;
+
+  bStatic=false; bVisible=true; bEnabled=true;
+
+  float w=fnt->GetStringWidth(title);
+  rect.Set(_x-w/2, _y, _x+w/2, _y+fnt->GetHeight());
+}
+</pre>
+<p>
+<a href="hgeguio_render.html">Render</a> method is essential, every control must define it:
+</p>
+<pre>
+void hgeGUIMenuItem::Render()
+{
+  fnt->SetColor(shadow.GetHWColor());
+  fnt->Render(rect.x1+offset+3, rect.y1+3, HGETEXT_LEFT, title);
+  fnt->SetColor(color.GetHWColor());
+  fnt->Render(rect.x1-offset, rect.y1-offset, HGETEXT_LEFT, title);
+}
+</pre>
+<p>
+All other methods are optional and you could not define them if you don't need.
+<br><br>
+<a href="hgeguio_update.html">Update</a> is called each time the GUI is updated
+and should do the animation. In this example we have two timers and adjust the
+control's color and position with time:
+</p>
+<pre>
+void hgeGUIMenuItem::Update(float dt)
+{
+  if(timer2 != -1.0f)
+  {
+    timer2+=dt;
+    if(timer2 >= delay+0.1f)
+    {
+      color=scolor2+dcolor2;
+      shadow=sshadow+dshadow;
+      offset=0.0f;
+      timer2=-1.0f;
+    }
+    else
+    {
+      if(timer2 < delay) { color=scolor2; shadow=sshadow; }
+      else {
+        color=scolor2+dcolor2*(timer2-delay)*10;
+        shadow=sshadow+dshadow*(timer2-delay)*10;
+      }
+    }
+  }
+  else if(timer != -1.0f)
+  {
+    timer+=dt;
+    if(timer >= 0.2f)
+    {
+      color=scolor+dcolor;
+      offset=soffset+doffset;
+      timer=-1.0f;
+    }
+    else
+    {
+      color=scolor+dcolor*timer*5;
+      offset=soffset+doffset*timer*5;
+    }
+  }
+}
+</pre>
+<p>
+<a href="hgeguio_enter.html">Enter</a> is called when the GUI is about to appear
+on the screen. A control should start it's Enter animation here:
+</p>
+<pre>
+void hgeGUIMenuItem::Enter()
+{
+  hgeColor tcolor2;
+
+  scolor2.SetHWColor(0x00FFE060);
+  tcolor2.SetHWColor(0xFFFFE060);
+  dcolor2=tcolor2-scolor2;
+
+  sshadow.SetHWColor(0x00000000);
+  tcolor2.SetHWColor(0x30000000);
+  dshadow=tcolor2-sshadow;
+
+  timer2=0.0f;
+}
+</pre>
+<p>
+<a href="hgeguio_leave.html">Leave</a> is called when the GUI is about to disappear
+from the screen. A control should start it's Leave animation here:
+</p>
+<pre>
+void hgeGUIMenuItem::Leave()
+{
+  hgeColor tcolor2;
+
+  scolor2.SetHWColor(0xFFFFE060);
+  tcolor2.SetHWColor(0x00FFE060);
+  dcolor2=tcolor2-scolor2;
+
+  sshadow.SetHWColor(0x30000000);
+  tcolor2.SetHWColor(0x00000000);
+  dshadow=tcolor2-sshadow;
+
+  timer2=0.0f;
+}
+</pre>
+<p>
+<a href="hgeguio_isdone.html">IsDone</a> is used to test if the control has finished
+it's Enter/Leave animation. When the animation is finished it should return <b>true</b>:
+</p>
+<pre>
+bool hgeGUIMenuItem::IsDone()
+{
+  if(timer2==-1.0f) return true;
+  else return false;
+}
+</pre>
+<p>
+<a href="hgeguio_focus.html">Focus</a> method is called when the control
+gains or loses keyboard input focus. In this example we start our focus
+animation here:
+</p>
+<pre>
+void hgeGUIMenuItem::Focus(bool bFocused)
+{
+  hgeColor tcolor;
+
+  if(bFocused)
+  {
+    hge->Effect_Play(snd);
+    scolor.SetHWColor(0xFFFFE060);
+    tcolor.SetHWColor(0xFFFFFFFF);
+    soffset=0;
+    doffset=4;
+  }
+  else
+  {
+    scolor.SetHWColor(0xFFFFFFFF);
+    tcolor.SetHWColor(0xFFFFE060);
+    soffset=4;
+    doffset=-4;
+  }
+
+  dcolor=tcolor-scolor;
+  timer=0.0f;
+}
+</pre>
+<p>
+<a href="hgeguio_mouseover.html">MouseOver</a> method is called to notify the
+control that the mouse cursor has entered or left it's area. Here we just set
+the input focus to our control when the mouse comes over it:
+</p>
+<pre>
+void hgeGUIMenuItem::MouseOver(bool bOver)
+{
+  if(bOver) gui->SetFocus(id);
+}
+</pre>
+<p>
+<a href="hgeguio_mouselbutton.html">MouseLButton</a> method is called to notify the
+control that the left mouse button state has changed. If the control changes it's state
+and wants the caller to be notified, it should return <b>true</b>:
+</p>
+<pre>
+bool hgeGUIMenuItem::MouseLButton(bool bDown)
+{
+  if(!bDown)
+  {
+    offset=4;
+    return true;
+  }
+  else 
+  {
+    hge->Effect_Play(snd);
+    offset=0;
+    return false;
+  }
+}
+</pre>
+<p>
+<a href="hgeguio_keyclick.html">KeyClick</a> method is called to notify the
+control that a key has been clicked. If the control changes it's state
+and wants the caller to be notified, it should return <b>true</b>:
+</p>
+<pre>
+bool hgeGUIMenuItem::KeyClick(int key, int chr)
+{
+  if(key==HGEK_ENTER || key==HGEK_SPACE)
+  {
+    MouseLButton(true);
+    return MouseLButton(false);
+  }
+
+  return false;
+}
+</pre>
+<p>
+Well, we have our custom control behaviour defined now.
+</p>
+<h2>Using GUI</h2>
+<p>
+Here's the simple part. First, we'll need some resource handles:
+</p>
+<pre>
+HEFFECT    snd;
+HTEXTURE   tex;
+
+hgeGUI     *gui;
+hgeFont    *fnt;
+hgeSprite  *spr;
+</pre>
+<p>
+In the <b>WinMain</b> function, during initialization
+we should load the required resources:
+</p>
+<pre>
+  snd=hge->Effect_Load("menu.wav");
+  tex=hge->Texture_Load("cursor.png");
+
+  fnt=new hgeFont("font1.fnt");
+  spr=new hgeSprite(tex,0,0,32,32);
+</pre>
+<p>
+Now we can create the GUI and add our menu items to it. GUI controls
+are managed internally and you could not hold the pointers:
+</p>
+<pre>
+  gui=new hgeGUI();
+
+  gui->AddCtrl(new hgeGUIMenuItem(
+               1,fnt,snd,400,200,0.0f,"Play"));
+  gui->AddCtrl(new hgeGUIMenuItem(
+               2,fnt,snd,400,240,0.1f,"Options"));
+  gui->AddCtrl(new hgeGUIMenuItem(
+               3,fnt,snd,400,280,0.2f,"Instructions"));
+  gui->AddCtrl(new hgeGUIMenuItem(
+               4,fnt,snd,400,320,0.3f,"Credits"));
+  gui->AddCtrl(new hgeGUIMenuItem(
+               5,fnt,snd,400,360,0.4f,"Exit"));
+</pre>
+<p>
+Now we set the GUI navigation mode, mouse cursor image and the default
+input focus, then we start the Enter animation: 
+</p>
+<pre>
+  gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
+  gui->SetCursor(spr);
+  gui->SetFocus(1);
+  gui->Enter();
+</pre>
+<p>
+Now let's see how we update our menu and receive notifications.
+In our frame function (<b>FrameFunc</b>) we call <a href="hgegui_update.html">hgeGUI::Update</a> method
+to update the animation and process user's input. If a control has changed it's state, this method
+returns the control identificator. If all the controls have finished their Leave animation, it returns -1.
+If nothing interesting happened, it returns 0.
+</p>
+<pre>
+  int id;
+  static int lastid=0;
+  float dt=hge->Timer_GetDelta();
+
+  id=gui->Update(dt);
+  if(id == -1)
+  {
+    switch(lastid)
+    {
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+        gui->SetFocus(1);
+        gui->Enter();
+        break;
+
+      case 5: return true;
+    }
+  }
+  else if(id) { lastid=id; gui->Leave(); }
+</pre>
+<p>
+To render the menu we just call <a href="hgegui_render.html">hgeGUI::Render</a> method
+within our <b>RenderFunc</b>:
+</p>
+<pre>
+  hge->Gfx_BeginScene();
+  gui->Render();
+  hge->Gfx_EndScene();
+</pre>
+<p>
+So, the menu is up and running. Now back to the <b>WinMain</b>.
+During shutdown we should delete the GUI and free the resources:
+</p>
+<pre>
+  delete gui;
+  delete fnt;
+  delete spr;
+  hge->Texture_Free(tex);
+  hge->Effect_Free(snd);
+</pre>
+<p>
+The complete source code with detailed comments for this tutorial you may find in the folder
+<b>tutorials\tutorial06</b>. The required media files you'll find in the folder <b>tutorials\precompiled</b>.
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

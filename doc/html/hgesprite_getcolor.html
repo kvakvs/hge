@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgesprite.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeSprite::GetColor</h1>
+<p>
+Returns color of the specified sprite vertex.
+</p>
+<pre>
+DWORD GetColor(
+  int <i><b>i</b></i> = 0
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>i</i>
+<dd>Optional index of the sprite vertex. Vertices are indexed clockwise starting from top-left one in the range 0-3.
+If omitted, color of the first vertex will be returned.
+</dl>
+<h2>Remarks</h2>
+<p>
+Returns color of the specified sprite vertex.
+</p>
+<h2>Remarks</h2>
+<p>
+The color parameter includes alpha value. See the
+<a href="hgedata_hwcolor.html">Hardware color format</a>
+section for details.
+The way the color is applied to the sprite depends on the sprite's blending mode.
+See <a href="hgeconst_blendmode.html">Blending modes</a> for more information.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgesprite.h<br>
+<b>Import library:</b> hgehelp.lib<br>
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgesprite_setcolor.html">SetColor</a>,
+<a href="hgedata_hwcolor.html">Hardware color format</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::Resource_AttachPack</h1>
+<p>
+Attaches a resource pack.
+</p>
+<pre>
+bool Resource_AttachPack(
+  const char *<i><b>filename</b></i>,
+  const char *<i><b>password</b></i> = 0
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>filename</i>
+<dd>Resource pack file name (relative to application folder or absolute).
+<dt><i>password</i>
+<dd>Optional password.
+</dl>
+<h2>Return value</h2>
+<p>
+If successful, returns <b>true</b>. Otherwise returns <b>false</b>.
+</p>
+<h2>Remarks</h2>
+<p>
+If the function fails, you may obtain error message with <a href="hgefunc_systemgeterror.html">System_GetErrorMessage</a>
+function. Also if <a href="hgeconst_systemstate.html#HGE_LOGFILE">HGE_LOGFILE</a> system state was set, the
+error message is written to log.
+<br><br>
+When loading a resource, packs attached later have higher priority.
+See <a href="main_respack.html">Compiling resource pack</a> section
+for more information on resource packs.
+<br><br>
+When the resource pack isn't needed longer, you must remove it with
+<a href="hgefunc_resourceremovepack.html">Resource_RemovePack</a> call.
+All unremoved packs are automatically deleted during
+<a href="hgefunc_interfacerelease.html">Release</a> call.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_resourceremovepack.html">Resource_RemovePack</a>,
+<a href="hgefunc_resourceremoveallpacks.html">Resource_RemoveAllPacks</a>,
+<a href="hgefunc_resourceload.html">Resource_Load</a>,<br>
+<a href="main_respack.html">Compiling resource pack</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

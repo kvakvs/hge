@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::Target_Create</h1>
+<p>
+Creates a render target.
+</p>
+<pre>
+HTARGET Target_Create(
+  int <i><b>width</b></i>,
+  int <i><b>height</b></i>,
+  bool <i><b>zbuffer</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>width</i>
+<dd>Width of the render target to be created.
+<dt><i>height</i>
+<dd>Height of the render target to be created.
+<dt><i>zbuffer</i>
+<dd>If <b>true</b>, a Z-buffer will be created and used for rendering to the render target.
+</dl>
+<h2>Return value</h2>
+<p>
+If successful, returns the render target handle to use with
+<a href="hgefunc_gfxbeginscene.html">Gfx_BeginScene</a>.
+Otherwise returns 0.
+</p>
+<h2>Remarks</h2>
+<p>
+The render target dimensions must be a power of 2. If this condition isn't met,
+the requested dimensions are automatically adjusted to the closest power of 2
+dimensions, bigger than the requested ones. 
+<br><br>
+Render targets support alpha channel in 32-bit video modes only, in 16-bit video modes
+render targets are always opaque. You could read <a href="hgeconst_systemstate.html#HGE_SCREENBPP">HGE_SCREENBPP</a>
+system state to discover in what video mode <b>HGE</b> is currently running.
+<br><br>
+If the function fails, you may obtain error message with <a href="hgefunc_systemgeterror.html">System_GetErrorMessage</a>
+function. Also if <a href="hgeconst_systemstate.html#HGE_LOGFILE">HGE_LOGFILE</a> system state was set, the
+error message is written to log.
+<br><br>
+When the render target isn't needed longer, you must delete it with
+<a href="hgefunc_targetfree.html">Target_Free</a> function.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_targetfree.html">Target_Free</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

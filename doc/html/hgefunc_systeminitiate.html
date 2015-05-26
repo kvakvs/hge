@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::System_Initiate</h1>
+<p>
+Initializes all hardware and software needed to run engine and creates application window.
+</p>
+<pre>
+bool System_Initiate();
+</pre>
+<h2>Return value</h2>
+<p>
+If successful, returns <b>true</b>. Otherwise returns <b>false</b>.
+</p>
+<h2>Remarks</h2>
+<p>
+Before calling this function set desired system states with <a href="hgefunc_systemsetstate.html">System_SetState</a> calls.
+Although most of them have appropriate default values and/or can be changed later, at least <a href="hgeconst_systemstate.html#HGE_FRAMEFUNC">HGE_FRAMEFUNC</a> must be set.
+<br><br>
+<b>Timer_*</b>, <b>Effect_*</b>, <b>Music_*</b>, <b>Stream_*</b>, <b>Channel_*</b>, <b>Input_*</b>,
+<b>Gfx_*</b>, <b>Target_*</b> and <b>Texture_*</b> functions are unavailable before the system is initiated.
+All other <b>HGE</b> functions can be used at any time.
+<br><br>
+If the function fails, you may obtain error message with <a href="hgefunc_systemgeterror.html">System_GetErrorMessage</a>
+function. Also if <a href="hgeconst_systemstate.html#HGE_LOGFILE">HGE_LOGFILE</a> system state was set, the
+error message is written to log.
+<br><br>
+Before program exit you must call <a href="hgefunc_systemshutdown.html">System_Shutdown</a> to restore video mode
+and free all allocated resources.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_systemsetstate.html">System_SetState</a>,
+<a href="hgefunc_systemgeterror.html">System_GetErrorMessage</a>,
+<a href="hgefunc_systemshutdown.html">System_Shutdown</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

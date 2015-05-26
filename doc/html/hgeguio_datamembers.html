@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgeguio.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeGUIObject Data members</h1>
+<p>
+<b>hgeGUIObject</b> has it's data members public, so you can access them directly:
+</p>
+<pre>
+int      <i><b>id</b></i>;
+bool     <i><b>bStatic</b></i>;
+bool     <i><b>bVisible</b></i>;
+bool     <i><b>bEnabled</b></i>;
+hgeRect  <i><b>rect</b></i>;
+DWORD    <i><b>color</b></i>;
+
+hgeGUI       *<i><b>gui</b></i>;
+hgeGUIObject *<i><b>next</b></i>;
+hgeGUIObject *<i><b>prev</b></i>;
+
+static HGE   *<i><b>hge</b></i>;
+</pre>
+<h2>Data members</h2>
+<dl>
+<dt>id
+<dd>Your constructor must set this field to the control's identificator used in GUI.
+<dt>bStatic
+<dd>If this field is <b>true</b>, the control can't be focused and will not receive keyboard events.
+The control is also bypassed by navigation routines. You must initialize <b>bStatic</b> in your constructor.
+<dt>bVisible
+<dd>If this field is <b>true</b> the control will be rendered with the GUI, otherwise it will be invisible.
+You must initialize <b>bVisible</b> in your constructor.
+<dt>bEnabled
+<dd>If this field is <b>false</b> the control shouldn't react to user input.
+The control still receives notifications, so it's your task to handle this field correctly.
+You must initialize <b>bEnabled</b> in your constructor.
+<dt>rect
+<dd>This field holds the control's bounding box in screen coordinates.
+You must initialize <b>rect</b> in your constructor.
+<dt>color
+<dd>This field holds the control's <a href="hgedata_hwcolor.html">color</a>.
+You must initialize <b>color</b> in your constructor.
+<dd>&nbsp;
+<dt>&nbsp;
+<dt>gui
+<dd>This is a pointer to the GUI object that uses the control.
+It is initialized by GUI when the control is added to it.
+You could use <b>gui</b> to communicate with GUI but must not change it.
+<dt>next
+<dd>This is an internal field, used to link all the controls together. The derived
+classes must not change it.
+<dt>prev
+<dd>This is an internal field, used to link all the controls together. The derived
+classes must not change it.
+<dd>&nbsp;
+<dt>&nbsp;
+<dt>hge
+<dd>This is a pointer you can use in derived classes to access <b>HGE</b> interface.
+</dl>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgegui.h<br>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

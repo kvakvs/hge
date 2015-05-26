@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgegui.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeGUIButton class</h1>
+<p>
+<b>hgeGUIButton</b> is a class for button GUI control. To create a <b>hgeGUIButton</b>
+object you may use this constructor:
+</p>
+<pre>
+hgeGUIButton(
+  int       <i><b>id</b></i>,
+  float     <i><b>x</b></i>,
+  float     <i><b>y</b></i>,
+  float     <i><b>w</b></i>,
+  float     <i><b>h</b></i>,
+  HTEXTURE  <i><b>tex</b></i>,
+  float     <i><b>tx</b></i>,
+  float     <i><b>ty</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>id</i>
+<dd>Integer identificator for the created control.
+<dt><i>x</i>
+<dd>The button's top-left corner x-coordinate.
+<dt><i>y</i>
+<dd>The button's top-left corner y-coordinate.
+<dt><i>w</i>
+<dd>The buttons's width.
+<dt><i>h</i>
+<dd>The button's height.
+<dt><i>tex</i>
+<dd>A handle of the texture, holding the button's image.
+The texture must hold two images, one for the button in the
+unpressed state, and directly to the right from it,
+the image for the button in pressed state.
+<dt><i>tx</i>
+<dd>The button image's top-left corner texture x-coordinate in pixels.
+<dt><i>ty</i>
+<dd>The button image's top-left corner texture y-coordinate in pixels.
+</dl>
+<h2>Other methods</h2>
+<p>
+<table width=486 cellspacing=0 cellpadding=0 border=0>
+<tr>
+<td><a href="hgegui_guibutton_setmode.html">SetMode</a></td>
+<td>Changes the button's behaviour mode.</td>
+</tr>
+<tr>
+<td><a href="hgegui_guibutton_setstate.html">SetState</a></td>
+<td>Changes the button's state.</td>
+</tr>
+<tr>
+<td><a href="hgegui_guibutton_getstate.html">GetState</a></td>
+<td>Returns the button's state.</td>
+</tr>
+</table>
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgeguictrls.h<br>
+<b>Import library:</b> hgehelp.lib<br>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

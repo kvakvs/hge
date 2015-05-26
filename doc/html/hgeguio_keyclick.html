@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgeguio.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">hgeGUIObject::KeyClick</h1>
+<p>
+Notifies the control of pressed keys.
+</p>
+<pre>
+virtual bool KeyClick(
+  int <i><b>key</b></i>,
+  int <i><b>chr</b></i>
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt>key
+<dd>Virtual code of the pressed key. See <a href="hgeconst_keycodes.html">Virtual Key Codes</a> for complete list.
+<dt>chr
+<dd>Character code, considering the current keyboard states and input locale.
+</dl>
+<h2>Return value</h2>
+<p>
+If the control has modified it's state and wants the caller to be notified,
+<b>KeyClick</b> should return <b>true</b>. Otherwise it should return <b>false</b>.
+</p>
+<h2>Remarks</h2>
+<p>
+<a href="hgeguio__main.html">hgeGUIObject</a> has default implementation,
+so you could not redefine this method if you don't need it.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hgegui.h<br>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

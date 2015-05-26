@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::Resource_Load</h1>
+<p>
+Loads a resource into memory from resource pack or disk file.
+</p>
+<pre>
+void *Resource_Load(
+  const char *<i><b>filename</b></i>,
+  DWORD *<i><b>size</b></i> = 0
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>filename</i>
+<dd>Resource file name.
+<dt><i>size</i>
+<dd>Pointer to a <b>DWORD</b> to store the resource size to. If = 0 or omitted, <b>Resource_Load</b> will not return the resource size.
+</dl>
+<h2>Return value</h2>
+<p>
+If successful, returns pointer to a memory allocated for the resource
+and stores resource size to a <b>DWORD</b> addressed by <i><b>size</b></i> parameter.
+Otherwise returns 0.
+</p>
+<h2>Remarks</h2>
+<p>
+If <b>filename</b> specifies relative path, resource file is first searched within all resource packs attached with
+<a href="hgefunc_resourceattachpack.html">Resource_AttachPack</a>, then in the application disk folder.
+If <b>filename</b> specifies absolute disk path, resource file is loaded directly from disk.
+<br><br>
+If the function fails, you may obtain error message with <a href="hgefunc_systemgeterror.html">System_GetErrorMessage</a>
+function. Also if <a href="hgeconst_systemstate.html#HGE_LOGFILE">HGE_LOGFILE</a> system state was set, the
+error message is written to log.
+<br><br>
+When the resource isn't needed longer, you must free the allocated memory
+with the <a href="hgefunc_resourcefree.html">Resource_Free</a> call.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_resourcefree.html">Resource_Free</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

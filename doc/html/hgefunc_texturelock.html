@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_hgefunc.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">HGE::Texture_Lock</h1>
+<p>
+Locks a texture for direct access.
+</p>
+<pre>
+DWORD *Texture_Lock(
+  HTEXTURE <i><b>texture</b></i>,
+  bool <i><b>bReadOnly</b></i> = true,
+  int <i><b>left</b></i> = 0,
+  int <i><b>top</b></i> = 0,
+  int <i><b>width</b></i> = 0,
+  int <i><b>height</b></i> = 0
+);
+</pre>
+<h2>Parameters</h2>
+<dl>
+<dt><i>texture</i>
+<dd>Handle of a texture to lock.
+<dt><i>bReadOnly</i>
+<dd>Optional. If <b>true</b>, the texture will not be updated after unlocking.
+<dt><i>left</i>
+<dd>Optional X-coordinate of the top-left corner of the texture region to lock.
+<dt><i>top</i>
+<dd>Optional Y-coordinate of the top-left corner of the texture region to lock.
+<dt><i>width</i>
+<dd>Optional width of the texture region to lock.
+<dt><i>height</i>
+<dd>Optional height of the texture region to lock.
+</dl>
+<h2>Return value</h2>
+<p>
+If successful, returns a pointer to the locked texture data.
+Otherwise returns 0.
+</p>
+<h2>Remarks</h2>
+<p>
+The locked texture data is an array of <b>DWORD</b> <a href="hgedata_hwcolor.html">color values</a>.
+Only 32-bit textures are lockable, so textures can't be locked on some very old video cards like <b>Intel Solano</b>.
+Render target and compressed textures are also not lockable.
+<br><br>
+If the texture region was specified, the returned pointer is appropriately offset from the start of the texture data.
+To access a texture pixel within the specified region use the following syntax:
+</p>
+<pre>DWORD color = locked_ptr[y*tex_width+x];</pre>
+<p>
+Where <b>tex_width</b> is the texture width, which you could obtain with <a href="hgefunc_texturegetwidth.html">Texture_GetWidth</a>.
+<br><br>
+If you're not going to modify the texture and just want to read some pixels - always set <b>bReadOnly</b> to <b>true</b>,
+this will skip updating texture in video memory, thus will work faster. Also if you're modifying just a part of the texture,
+always specify the region. Only this region will be updated in video memory.
+<br><br>
+When finished accessing the texture you must unlock it with <a href="hgefunc_textureunlock.html">Texture_Unlock</a> call.
+</p>
+<h2>Requirements</h2>
+<p>
+<b>Header:</b> hge.h<br>
+<b>Import library:</b> hge.lib
+</p>
+<h2>See also</h2>
+<p>
+<a href="hgefunc_textureunlock.html">Texture_Unlock</a>
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

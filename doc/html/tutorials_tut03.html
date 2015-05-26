@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_tutorials.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Tutorial 03 - Using helper classes</h1>
+<p>
+<b>I</b>n this tutorial we will learn how to use some of <b>HGE</b> helper classes.
+First, we include all the needed headers and declare the global pointer to
+the <b>HGE</b> interface that is required by most of the helper classes to work:
+</p>
+<pre>
+#include &lt;hge.h&gt;
+#include &lt;hgesprite.h&gt;
+#include &lt;hgefont.h&gt;
+#include &lt;hgeparticle.h&gt;
+
+HGE *hge=0;
+</pre>
+<p>
+Now we declare the pointers to the <b>HGE</b> objects we will use.
+</p>
+<pre>
+hgeSprite*          spr;
+hgeSprite*          spt;
+hgeFont*            fnt;
+hgeParticleSystem*  par;
+
+HTEXTURE            tex;
+</pre>
+<p>
+In the <b>FrameFunc</b> (frame function) we update the particle system object:
+we adjust it's emission rate based on the current sprite
+speed and move it to the current sprite location.
+</p>
+<pre>
+  par->info.nEmission=(int)(dx*dx+dy*dy)*2;
+  par->MoveTo(x,y);
+  par->Update(dt);
+</pre>
+<p>
+In the <b>RenderFunc</b> we render all our objects, calling their render methods:
+</p>
+<pre>
+  hge->Gfx_BeginScene();
+  hge->Gfx_Clear(0);
+  par->Render();
+  spr->Render(x, y);
+  fnt->printf(5, 5, HGETEXT_LEFT, "dt:%.3f\nFPS:%d",
+              hge->Timer_GetDelta(), hge->Timer_GetFPS());
+  hge->Gfx_EndScene();
+</pre>
+<p>
+In the <b>WinMain</b> function after <b>HGE</b> is initiated we
+create the <b>HGE</b> objects, that we will use. First, we create
+and set up a sprite:
+</p>
+<pre>
+    spr=new hgeSprite(tex, 96, 64, 32, 32);
+    spr->SetColor(0xFFFFA000);
+    spr->SetHotSpot(16, 16);
+</pre>
+<p>
+Then we load a font. The font is represented with two disk files:
+<b>font1.fnt</b> and <b>font1.png</b>.
+</p>
+<pre>
+    fnt=new hgeFont("font1.fnt");
+</pre>
+<p>
+We create a particle system and a sprite for it:
+</p>
+<pre>
+    spt=new hgeSprite(tex, 32, 32, 32, 32);
+    spt->SetBlendMode(
+              BLEND_COLORMUL | BLEND_ALPHAADD | BLEND_NOZWRITE);
+    spt->SetHotSpot(16, 16);
+    par=new hgeParticleSystem("trail.psi", spt);
+    par->Fire();
+</pre>
+<p>
+Now all our objects have been created and we start the game loop:
+</p>
+<pre>
+    hge->System_Start();
+</pre>
+<p>
+When the game loop is finished, we delete all created <b>HGE</b> objects:
+</p>
+<pre>
+    delete par;
+    delete fnt;
+    delete spt;
+    delete spr;
+</pre>
+<p>
+The rest of shutdown process is identical to the one demonstrated in previous tutorials.
+<br><br>
+The complete source code with detailed comments for this tutorial you may find in the folder
+<b>tutorials\tutorial03</b>. The required media files you'll find in the folder <b>tutorials\precompiled</b>.
+</p>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>

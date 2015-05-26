@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- http://hge.relishgames.com -->
+
+<html>
+
+<head>
+<meta name="Keywords" content="game engine, 2d, hardware accelerated, hge, engine, relish games, game development">
+<meta name="Description" content="Haaf's Game Engine - Hardware accelerated 2D games engine">
+<title>Haaf's Game Engine - Hardware accelerated 2D games engine</title>
+<link rel=stylesheet type=text/css href=hge.css>
+<script language="JavaScript" src="hge.js"></script>
+</head>
+
+<body onload="setContents('cnt_main.html');" bgcolor=#ffffff text=#000000 link=#7F0000 vlink=#7F0000 alink=#7F0000 marginwidth=0 marginheight=0 leftmargin=0 topmargin=0>
+<table height=100% cellspacing=0 cellpadding=0 border=0><tr>
+
+<td valign=top>
+<table width=566 cellspacing=0 cellpadding=20 border=0><tr><td>
+<h1 style="margin-top:0px">Package contents</h1>
+<p>
+<b>HGE 1.81</b> archive should contain these files:
+</p>
+<pre>
+hge.dll		  HGE 1.81 library DLL
+bass.dll		  BASS 2.3 library DLL
+license.txt	  HGE licensing information
+readme.txt	  Brief HGE overview
+<b>doc\		  HGE online documentation</b>
+  <b>html\</b>		    Documentation files
+  index.html	    Documentation index
+<b>include\		  HGE headers</b>
+  hge.h		    System layer header
+  hgeanim.h	    hgeAnimation class header
+  hgecolor.h	    hgeColor class header
+  hgedistort.h	    hgeDistortionMesh class header
+  hgefont.h	    hgeFont class header
+  hgegui.h	    hgeGUI and hgeGUIObject classes header
+  hgeguictrls.h	    Default GUI controls header
+  hgeparticle.h 	    hgeParticleSystem class header
+  hgerect.h	    hgeRect class header
+  hgeresource.h	    hgeResourceManager class header
+  hgesprite.h	    hgeSprite class header
+  hgestrings.h	    hgeStringTable class header
+  hgevector.h	    hgeVector class header
+<b>lib\		  HGE import libraries</b>
+  <b>bc\</b>		    Libraries for Borland C++/C++ Builder
+    hge.lib	      HGE system layer library
+<font color=#7F7F7F>    hgehelp.lib	      HGE helper classes library [not included]</font>
+  <b>gcc\</b>		    Libraries for MinGW/Dev-C++
+    hge.a		      HGE system layer library
+<font color=#7F7F7F>    hgehelp.a	      HGE helper classes library [not included]</font>
+  <b>vc\</b>		    Libraries for VC++/Intel C++/Codewarrior
+    hge.lib	      HGE system layer library
+    hgehelp.lib	      HGE helper classes library
+<b>src\		  HGE source code</b>
+  <b>core\</b>		    System Layer source code
+  <b>fontconv\</b>	    Font Converter source code
+  <b>fonted\</b>		    Bitmap Font Builder source code
+  <b>helpers\</b>	    Helper Classes source code
+  <b>particleed\</b>	    Particle Systems Editor source code
+  <b>pngopt\</b>		    PNG Optimizer source code
+  <b>texasm\</b>		    Texture Assembler source code
+<b>tools\		  HGE authoring tools</b>
+  <b>fonted\</b>		    HGE Bitmap Font Builder
+    fontconv.exe	      Command line font converter
+    fonted.exe	      Bitmap Font Builder executable
+    fonted.ini	      Bitmap Font Builder initialization file
+    fonted.paq	      Bitmap Font Builder resource pack
+    hge.dll	      HGE 1.81 library DLL
+  <b>particleed\</b>	    HGE Particle Systems Editor
+    hge.dll	      HGE 1.81 library DLL
+    particle1.psi	      Default preset #1
+    particle2.psi	      Default preset #2
+    particle3.psi	      Default preset #3
+    particle4.psi	      Default preset #4
+    particle5.psi	      Default preset #5
+    particle6.psi	      Default preset #6
+    particle7.psi	      Default preset #7
+    particle8.psi	      Default preset #8
+    particle9.psi	      Default preset #9
+    particleed.exe	      PS Editor executable
+    particleed.ini	      PS Editor initialization file
+    particleed.paq	      PS Editor resource pack
+    particles.png	      Particle textures
+  <b>pngopt\</b>		    PNG Optimizer
+    hge.dll	      HGE 1.81 library DLL
+    pngopt.exe	      PNG Optimizer executable
+    texasm.exe	      Texture Assembler executable
+<b>tutorials\	  HGE code examples</b>
+  <b>precompiled\</b>	    Precompiled tutorials and the media files
+    hge_tut01.exe	      Precompiled Tutorial 01
+    hge_tut02.exe	      Precompiled Tutorial 02
+    hge_tut03.exe	      Precompiled Tutorial 03
+    hge_tut04.exe	      Precompiled Tutorial 04
+    hge_tut05.exe	      Precompiled Tutorial 05
+    hge_tut06.exe	      Precompiled Tutorial 06
+    hge_tut07.exe	      Precompiled Tutorial 07
+    hge_tut08.exe	      Precompiled Tutorial 08
+    hge.dll	      HGE 1.81 library DLL
+    bass.dll	      BASS 2.3 library DLL
+    bg.png	      Background tile
+    bg2.png	      Background tile 2
+    cursor.png	      Mouse cursor image
+    font1.fnt	      Font 1 description file
+    font1.png	      Font 1 bitmap file
+    font2.fnt	      Font 2 description file
+    font2.png	      Font 2 bitmap file
+    objects.png	      Celestial bodies sprites
+    particles.png	      A set of particle sprites
+    zazaka.png	      Pink Hare sprite
+    texture.jpg	      An image used for distortion
+    trail.psi	      Particle system preset
+    menu.wav	      A sound effect
+  <b>tutorial01\</b>	    Tutorial 01 - Minimal HGE application
+    hge_tut01.cpp	      Source code
+    hge_tut01.dsp	      VC6 Project file
+    hge_tut01.dsw	      VC6 Workspace
+  <b>tutorial02\</b>	    Tutorial 02 - Input, sound and rendering
+    hge_tut02.cpp	      Source code
+    hge_tut02.dsp	      VC6 Project file
+    hge_tut02.dsw	      VC6 Workspace
+  <b>tutorial03\</b>	    Tutorial 03 - Using helper classes
+    hge_tut03.cpp	      Source code
+    hge_tut03.dsp	      VC6 Project file
+    hge_tut03.dsw	      VC6 Workspace
+  <b>tutorial04\</b>	    Tutorial 04 - Using render targets
+    hge_tut04.cpp	      Source code
+    hge_tut04.dsp	      VC6 Project file
+    hge_tut04.dsw	      VC6 Workspace
+  <b>tutorial05\</b>	    Tutorial 05 - Using distortion mesh
+    hge_tut05.cpp	      Source code
+    hge_tut05.dsp	      VC6 Project file
+    hge_tut05.dsw	      VC6 Workspace
+  <b>tutorial06\</b>	    Tutorial 06 - Creating menus
+    hge_tut06.cpp	      Source code
+    hge_tut06.dsp	      VC6 Project file
+    hge_tut06.dsw	      VC6 Workspace
+    menuitem.cpp	      Custom GUI control implementation
+    menuitem.h	      Custom GUI control header
+  <b>tutorial07\</b>	    Tutorial 07 - Thousand of Hares
+    hge_tut07.cpp	      Source code
+    hge_tut07.dsp	      VC6 Project file
+    hge_tut07.dsw	      VC6 Workspace
+  <b>tutorial08\</b>	    Tutorial 08 - The Big Calm
+    hge_tut08.cpp	      Source code
+    hge_tut08.dsp	      VC6 Project file
+    hge_tut08.dsw	      VC6 Workspace
+</pre>
+<br>
+</td></tr></table>
+</td>
+
+</tr></table>
+</body>
+
+</html>
