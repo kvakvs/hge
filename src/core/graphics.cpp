@@ -683,7 +683,11 @@ void HGE_Impl::_SetBlendMode(int blend)
             d = D3DBLEND_SRCCOLOR;
         } else {
             pD3DDevice->SetRenderState (D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-            d = D3DBLEND_INVSRCALPHA;
+            if(blend & BLEND_ALPHABLEND) {
+            	d = D3DBLEND_INVSRCALPHA;
+        	} else {
+            	d = D3DBLEND_ONE;
+        	}
         }
     }
 
