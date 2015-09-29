@@ -13,7 +13,7 @@ SET( HGE_DIRECTX_VER "9" )
 ## NOTE: if you use HGE_DIRECTX_VER=9 here, you MUST also set same define for your whole project
 ##
 
-SET( DIRECTX_SDK_DIR "C:/DX9SDK" )
+SET( DIRECTX_SDK_DIR "E:/Dev/DX9SDK" )
 
 ##----------------------------------------
 ## End of manual configuration section

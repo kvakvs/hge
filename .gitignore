@@ -1,4 +1,5 @@
-.build-*/
+_build
+_build/*
 bin/
 linklib/
 *.log

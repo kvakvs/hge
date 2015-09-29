@@ -63,7 +63,7 @@ link_libraries( zlib hgehelpers )
 
 #------ target (for creating HGE.DLL) -----
 add_library( hge SHARED ${HGECORE_SRC} )
-add_dependencies( hge hgezlib )
+add_dependencies( hge zlib )
 
 if( MSVC )
     SET_TARGET_PROPERTIES( hge PROPERTIES LINK_FLAGS "/NODEFAULTLIB:libci" )
