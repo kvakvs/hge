@@ -12,6 +12,9 @@
 #ifndef HGE_H
 #define HGE_H
 
+#ifndef HGE_DIRECTX_VER
+    #error Please set HGE_DIRECTX_VER to 8 or 9
+#endif // not defined HGE_DIRECTX_VER
 
 #include <windows.h>
 
