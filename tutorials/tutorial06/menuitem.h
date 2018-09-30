@@ -9,37 +9,38 @@
 // In menuitem.cpp/h we define the
 // behaviour of our custom GUI control
 
-#include "..\..\include\hge.h"
-#include "..\..\include\hgegui.h"
-#include "..\..\include\hgefont.h"
-#include "..\..\include\hgecolor.h"
+#pragma once
+
+#include "../../include/hge.h"
+#include "../../include/hgegui.h"
+#include "../../include/hgefont.h"
+#include "../../include/hgecolor.h"
 
 
-class hgeGUIMenuItem : public hgeGUIObject
-{
+class hgeGUIMenuItem : public hgeGUIObject {
 public:
-	hgeGUIMenuItem(int id, hgeFont *fnt, HEFFECT snd, float x, float y, float delay, char *title);
+    hgeGUIMenuItem(int id, hgeFont* fnt, HEFFECT snd, float x, float y, float delay, char* title);
 
-	virtual void	Render();
-	virtual void	Update(float dt);
+    void Render() override;
+    void Update(float dt) override;
 
-	virtual void	Enter();
-	virtual void	Leave();
-	virtual bool	IsDone();
-	virtual void	Focus(bool bFocused);
-	virtual void	MouseOver(bool bOver);
+    void Enter() override;
+    void Leave() override;
+    bool IsDone() override;
+    void Focus(bool bFocused) override;
+    void MouseOver(bool bOver) override;
 
-	virtual bool	MouseLButton(bool bDown);
-	virtual bool	KeyClick(int key, int chr);
+    bool MouseLButton(bool bDown) override;
+    bool KeyClick(int key, int chr) override;
 
 private:
-	hgeFont		*fnt;
-	HEFFECT		snd;
-	float		delay;
-	char		*title;
+    hgeFont* fnt;
+    HEFFECT snd;
+    float delay;
+    char* title;
 
-	hgeColor	scolor, dcolor, scolor2, dcolor2, sshadow, dshadow;
-	hgeColor	color, shadow;
-	float		soffset, doffset, offset;
-	float		timer, timer2;
+    hgeColor scolor, dcolor, scolor2, dcolor2, sshadow, dshadow;
+    hgeColor color, shadow;
+    float soffset, doffset, offset;
+    float timer, timer2;
 };

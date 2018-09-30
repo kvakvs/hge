@@ -9,12 +9,11 @@
 #include "..\..\include\hgedistort.h"
 
 
-HGE *hgeDistortionMesh::hge=0;
+HGE *hgeDistortionMesh::hge=nullptr;
 
 
 hgeDistortionMesh::hgeDistortionMesh(int cols, int rows)
 {
-    int i;
 
     hge=hgeCreate(HGE_VERSION);
 
@@ -25,7 +24,7 @@ hgeDistortionMesh::hgeDistortionMesh(int cols, int rows)
     quad.blend=BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_ZWRITE;
     disp_array=new hgeVertex[rows*cols];
 
-    for(i=0; i<rows*cols; i++) {
+    for(int i = 0; i<rows*cols; i++) {
         disp_array[i].x=0.0f;
         disp_array[i].y=0.0f;
         disp_array[i].tx=0.0f;
@@ -89,7 +88,6 @@ void hgeDistortionMesh::SetTexture(HTEXTURE tex)
 
 void hgeDistortionMesh::SetTextureRect(float x, float y, float w, float h)
 {
-    int i,j;
     float tw,th;
 
     tx=x;
@@ -108,8 +106,8 @@ void hgeDistortionMesh::SetTextureRect(float x, float y, float w, float h)
     cellw=w/(nCols-1);
     cellh=h/(nRows-1);
 
-    for(j=0; j<nRows; j++)
-        for(i=0; i<nCols; i++) {
+    for(int j = 0; j<nRows; j++)
+        for(int i = 0; i<nCols; i++) {
             disp_array[j*nCols+i].tx=(x+i*cellw)/tw;
             disp_array[j*nCols+i].ty=(y+j*cellh)/th;
 
@@ -125,10 +123,9 @@ void hgeDistortionMesh::SetBlendMode(int blend)
 
 void hgeDistortionMesh::Clear(hgeU32 col, float z)
 {
-    int i,j;
 
-    for(j=0; j<nRows; j++)
-        for(i=0; i<nCols; i++) {
+    for(int j = 0; j<nRows; j++)
+        for(int i = 0; i<nCols; i++) {
             disp_array[j*nCols+i].x=i*cellw;
             disp_array[j*nCols+i].y=j*cellh;
             disp_array[j*nCols+i].col=col;
@@ -138,11 +135,10 @@ void hgeDistortionMesh::Clear(hgeU32 col, float z)
 
 void hgeDistortionMesh::Render(float x, float y)
 {
-    int i,j,idx;
 
-    for(j=0; j<nRows-1; j++)
-        for(i=0; i<nCols-1; i++) {
-            idx=j*nCols+i;
+    for(int j = 0; j<nRows-1; j++)
+        for(int i = 0; i<nCols-1; i++) {
+            int idx = j*nCols+i;
 
             quad.v[0].tx=disp_array[idx].tx;
             quad.v[0].ty=disp_array[idx].ty;
@@ -215,18 +211,16 @@ float hgeDistortionMesh::GetZ(int col, int row) const
 {
     if(row<nRows && col<nCols) {
         return disp_array[row*nCols+col].z;
-    } else {
-        return 0.0f;
     }
+    return 0.0f;
 }
 
 hgeU32 hgeDistortionMesh::GetColor(int col, int row) const
 {
     if(row<nRows && col<nCols) {
         return disp_array[row*nCols+col].col;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 void hgeDistortionMesh::GetDisplacement(int col, int row, float *dx, float *dy, int ref) const

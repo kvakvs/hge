@@ -97,17 +97,14 @@ png_do_pack(png_row_infop row_info, png_bytep row, png_uint_32 bit_depth)
       {
          case 1:
          {
-            png_bytep sp, dp;
-            int mask, v;
-            png_uint_32 i;
-            png_uint_32 row_width = row_info->width;
+             png_uint_32 row_width = row_info->width;
 
-            sp = row;
-            dp = row;
-            mask = 0x80;
-            v = 0;
+            png_bytep sp = row;
+            png_bytep dp = row;
+            int mask = 0x80;
+            int v = 0;
 
-            for (i = 0; i < row_width; i++)
+            for (png_uint_32 i = 0; i < row_width; i++)
             {
                if (*sp != 0)
                   v |= mask;
@@ -128,20 +125,16 @@ png_do_pack(png_row_infop row_info, png_bytep row, png_uint_32 bit_depth)
          }
          case 2:
          {
-            png_bytep sp, dp;
-            int shift, v;
-            png_uint_32 i;
-            png_uint_32 row_width = row_info->width;
+             png_uint_32 row_width = row_info->width;
 
-            sp = row;
-            dp = row;
-            shift = 6;
-            v = 0;
-            for (i = 0; i < row_width; i++)
+            png_bytep sp = row;
+            png_bytep dp = row;
+            int shift = 6;
+            int v = 0;
+            for (png_uint_32 i = 0; i < row_width; i++)
             {
-               png_byte value;
 
-               value = (png_byte)(*sp & 0x03);
+                png_byte value = (png_byte)(*sp & 0x03);
                v |= (value << shift);
                if (shift == 0)
                {
@@ -160,20 +153,16 @@ png_do_pack(png_row_infop row_info, png_bytep row, png_uint_32 bit_depth)
          }
          case 4:
          {
-            png_bytep sp, dp;
-            int shift, v;
-            png_uint_32 i;
-            png_uint_32 row_width = row_info->width;
+             png_uint_32 row_width = row_info->width;
 
-            sp = row;
-            dp = row;
-            shift = 4;
-            v = 0;
-            for (i = 0; i < row_width; i++)
+            png_bytep sp = row;
+            png_bytep dp = row;
+            int shift = 4;
+            int v = 0;
+            for (png_uint_32 i = 0; i < row_width; i++)
             {
-               png_byte value;
 
-               value = (png_byte)(*sp & 0x0f);
+                png_byte value = (png_byte)(*sp & 0x0f);
                v |= (value << shift);
 
                if (shift == 0)
@@ -252,8 +241,7 @@ png_do_shift(png_row_infop row_info, png_bytep row, png_color_8p bit_depth)
       if (row_info->bit_depth < 8)
       {
          png_bytep bp = row;
-         png_uint_32 i;
-         png_byte mask;
+          png_byte mask;
          png_uint_32 row_bytes = row_info->rowbytes;
 
          if (bit_depth->gray == 1 && row_info->bit_depth == 2)
@@ -263,14 +251,12 @@ png_do_shift(png_row_infop row_info, png_bytep row, png_color_8p bit_depth)
          else
             mask = 0xff;
 
-         for (i = 0; i < row_bytes; i++, bp++)
+         for (png_uint_32 i = 0; i < row_bytes; i++, bp++)
          {
-            png_uint_16 v;
-            int j;
 
-            v = *bp;
+             png_uint_16 v = *bp;
             *bp = 0;
-            for (j = shift_start[0]; j > -shift_dec[0]; j -= shift_dec[0])
+            for (int j = shift_start[0]; j > -shift_dec[0]; j -= shift_dec[0])
             {
                if (j > 0)
                   *bp |= (png_byte)((v << j) & 0xff);
@@ -282,19 +268,16 @@ png_do_shift(png_row_infop row_info, png_bytep row, png_color_8p bit_depth)
       else if (row_info->bit_depth == 8)
       {
          png_bytep bp = row;
-         png_uint_32 i;
-         png_uint_32 istop = channels * row_info->width;
+          png_uint_32 istop = channels * row_info->width;
 
-         for (i = 0; i < istop; i++, bp++)
+         for (png_uint_32 i = 0; i < istop; i++, bp++)
          {
 
-            png_uint_16 v;
-            int j;
-            int c = (int)(i%channels);
+             int c = (int)(i%channels);
 
-            v = *bp;
+            png_uint_16 v = *bp;
             *bp = 0;
-            for (j = shift_start[c]; j > -shift_dec[c]; j -= shift_dec[c])
+            for (int j = shift_start[c]; j > -shift_dec[c]; j -= shift_dec[c])
             {
                if (j > 0)
                   *bp |= (png_byte)((v << j) & 0xff);
@@ -312,12 +295,10 @@ png_do_shift(png_row_infop row_info, png_bytep row, png_color_8p bit_depth)
          for (bp = row, i = 0; i < istop; i++)
          {
             int c = (int)(i%channels);
-            png_uint_16 value, v;
-            int j;
 
-            v = (png_uint_16)(((png_uint_16)(*bp) << 8) + *(bp + 1));
-            value = 0;
-            for (j = shift_start[c]; j > -shift_dec[c]; j -= shift_dec[c])
+             png_uint_16 v = (png_uint_16)(((png_uint_16)(*bp) << 8) + *(bp + 1));
+            png_uint_16 value = 0;
+            for (int j = shift_start[c]; j > -shift_dec[c]; j -= shift_dec[c])
             {
                if (j > 0)
                   value |= (png_uint_16)((v << j) & (png_uint_16)0xffff);

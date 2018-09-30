@@ -142,20 +142,18 @@ voidpf /* private */
 #endif
 png_zalloc(voidpf png_ptr, uInt items, uInt size)
 {
-   png_voidp ptr;
-   png_structp p=png_ptr;
+    png_structp p=png_ptr;
    png_uint_32 save_flags=p->flags;
-   png_uint_32 num_bytes;
 
-   if (items > PNG_UINT_32_MAX/size)
+    if (items > PNG_UINT_32_MAX/size)
    {
      png_warning (png_ptr, "Potential overflow in png_zalloc()");
      return (NULL);
    }
-   num_bytes = (png_uint_32)items * size;
+   png_uint_32 num_bytes = (png_uint_32)items * size;
 
    p->flags|=PNG_FLAG_MALLOC_NULL_MEM_OK;
-   ptr = (png_voidp)png_malloc((png_structp)png_ptr, num_bytes);
+   png_voidp ptr = (png_voidp)png_malloc((png_structp)png_ptr, num_bytes);
    p->flags=save_flags;
 
 #if defined(PNG_1_0_X) && !defined(PNG_NO_ZALLOC_ZERO)
@@ -231,13 +229,12 @@ png_calculate_crc(png_structp png_ptr, png_bytep ptr, png_size_t length)
 png_infop PNGAPI
 png_create_info_struct(png_structp png_ptr)
 {
-   png_infop info_ptr;
 
-   png_debug(1, "in png_create_info_struct\n");
+    png_debug(1, "in png_create_info_struct\n");
    if(png_ptr == NULL) return (NULL);
 #ifdef PNG_USER_MEM_SUPPORTED
-   info_ptr = (png_infop)png_create_struct_2(PNG_STRUCT_INFO,
-      png_ptr->malloc_fn, png_ptr->mem_ptr);
+   png_infop info_ptr = (png_infop)png_create_struct_2(PNG_STRUCT_INFO,
+                                                       png_ptr->malloc_fn, png_ptr->mem_ptr);
 #else
    info_ptr = (png_infop)png_create_struct(PNG_STRUCT_INFO);
 #endif
@@ -351,8 +348,7 @@ if (mask & PNG_FREE_TEXT)
    }
    else
    {
-       int i;
-       for (i = 0; i < info_ptr->num_text; i++)
+       for (int i = 0; i < info_ptr->num_text; i++)
            png_free_data(png_ptr, info_ptr, PNG_FREE_TEXT, i);
        png_free(png_ptr, info_ptr->text);
        info_ptr->text = NULL;
@@ -410,8 +406,7 @@ if (mask & PNG_FREE_PCAL)
     info_ptr->pcal_units = NULL;
     if (info_ptr->pcal_params != NULL)
     {
-        int i;
-        for (i = 0; i < (int)info_ptr->pcal_nparams; i++)
+        for (int i = 0; i < (int)info_ptr->pcal_nparams; i++)
         {
           png_free(png_ptr, info_ptr->pcal_params[i]);
           info_ptr->pcal_params[i]=NULL;
@@ -461,8 +456,7 @@ if (mask & PNG_FREE_SPLT)
    {
        if(info_ptr->splt_palettes_num)
        {
-         int i;
-         for (i = 0; i < (int)info_ptr->splt_palettes_num; i++)
+           for (int i = 0; i < (int)info_ptr->splt_palettes_num; i++)
             png_free_data(png_ptr, info_ptr, PNG_FREE_SPLT, i);
 
          png_free(png_ptr, info_ptr->splt_palettes);
@@ -491,11 +485,10 @@ if (mask & PNG_FREE_UNKN)
    }
    else
    {
-       int i;
 
        if(info_ptr->unknown_chunks_num)
        {
-         for (i = 0; i < (int)info_ptr->unknown_chunks_num; i++)
+         for (int i = 0; i < (int)info_ptr->unknown_chunks_num; i++)
             png_free_data(png_ptr, info_ptr, PNG_FREE_UNKN, i);
 
          png_free(png_ptr, info_ptr->unknown_chunks);
@@ -549,8 +542,7 @@ if (mask & PNG_FREE_ROWS)
 {
     if(info_ptr->row_pointers)
     {
-       int row;
-       for (row = 0; row < (int)info_ptr->height; row++)
+        for (int row = 0; row < (int)info_ptr->height; row++)
        {
           png_free(png_ptr, info_ptr->row_pointers[row]);
           info_ptr->row_pointers[row]=NULL;
@@ -726,13 +718,10 @@ png_get_header_version(png_structp png_ptr)
 int PNGAPI
 png_handle_as_unknown(png_structp png_ptr, png_bytep chunk_name)
 {
-   /* check chunk_name and return "keep" value if it's on the list, else 0 */
-   int i;
-   png_bytep p;
-   if((png_ptr == NULL && chunk_name == NULL) || png_ptr->num_chunk_list<=0)
+    if((png_ptr == NULL && chunk_name == NULL) || png_ptr->num_chunk_list<=0)
       return 0;
-   p=png_ptr->chunk_list+png_ptr->num_chunk_list*5-5;
-   for (i = png_ptr->num_chunk_list; i; i--, p-=5)
+   png_bytep p = png_ptr->chunk_list+png_ptr->num_chunk_list*5-5;
+   for (int i = png_ptr->num_chunk_list; i; i--, p-=5)
       if (!png_memcmp(chunk_name, p, 4))
         return ((int)*(p+4));
    return 0;

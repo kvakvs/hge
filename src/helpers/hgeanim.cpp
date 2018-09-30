@@ -118,8 +118,6 @@ void hgeAnimation::Update(float fDeltaTime)
 
 void hgeAnimation::SetFrame(int n)
 {
-    float tx1, ty1, tx2, ty2;
-    bool bX, bY, bHS;
     int ncols = int(orig_width) / int(width);
 
 
@@ -130,8 +128,8 @@ void hgeAnimation::SetFrame(int n)
     nCurFrame = n;
 
     // calculate texture coords for frame n
-    ty1 = ty;
-    tx1 = tx + n*width;
+    float ty1 = ty;
+    float tx1 = tx + n*width;
 
     if(tx1 > orig_width-width) {
         n -= int(orig_width-tx) / int(width);
@@ -139,8 +137,8 @@ void hgeAnimation::SetFrame(int n)
         ty1 += height * (1 + n/ncols);
     }
 
-    tx2 = tx1 + width;
-    ty2 = ty1 + height;
+    float tx2 = tx1 + width;
+    float ty2 = ty1 + height;
 
     tx1 /= tex_width;
     ty1 /= tex_height;
@@ -156,9 +154,9 @@ void hgeAnimation::SetFrame(int n)
     quad.v[3].tx=tx1;
     quad.v[3].ty=ty2;
 
-    bX=bXFlip;
-    bY=bYFlip;
-    bHS=bHSFlip;
+    bool bX = bXFlip;
+    bool bY = bYFlip;
+    bool bHS = bHSFlip;
     bXFlip=false;
     bYFlip=false;
     SetFlip(bX,bY,bHS);

@@ -42,17 +42,16 @@ png_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
 void PNGAPI
 png_default_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-   png_size_t check;
 
-   /* fread() returns 0 on error, so it is OK to store this in a png_size_t
+    /* fread() returns 0 on error, so it is OK to store this in a png_size_t
     * instead of an int, which is what fread() actually returns.
     */
 #if defined(_WIN32_WCE)
    if ( !ReadFile((HANDLE)(png_ptr->io_ptr), data, length, &check, NULL) )
       check = 0;
 #else
-   check = (png_size_t)fread(data, (png_size_t)1, length,
-      (png_FILE_p)png_ptr->io_ptr);
+   png_size_t check = (png_size_t)fread(data, (png_size_t)1, length,
+                                        (png_FILE_p)png_ptr->io_ptr);
 #endif
 
    if (check != length)

@@ -31,9 +31,8 @@ const char * ZEXPORT zlibVersion()
 
 uLong ZEXPORT zlibCompileFlags()
 {
-    uLong flags;
 
-    flags = 0;
+    uLong flags = 0;
     switch ((int)(sizeof(uInt))) {
     case 2:     break;
     case 4:     flags += 1;     break;

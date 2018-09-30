@@ -7,16 +7,15 @@
 */
 
 
-#ifndef PARTICLEED_H
-#define PARTICLEED_H
+#pragma once
 
 
-#include "..\..\include\hge.h"
-#include "..\..\include\hgeanim.h"
-#include "..\..\include\hgefont.h"
-#include "..\..\include\hgeparticle.h"
-#include "..\..\include\hgegui.h"
-#include "..\..\include\hgeguictrls.h"
+#include "../../include/hge.h"
+#include "../../include/hgeanim.h"
+#include "../../include/hgefont.h"
+#include "../../include/hgeparticle.h"
+#include "../../include/hgegui.h"
+#include "../../include/hgeguictrls.h"
 
 
 #define PARTICLE_SIZE			32
@@ -28,26 +27,26 @@
 #define GetTextCtrl(id)			((hgeGUIText*)gui->GetCtrl(id))
 
 
-extern HGE *hge;
+extern HGE* hge;
 
 struct PEditorState {
-    bool				bHelp;
-    bool				bBBox;
-    bool				bIFace;
-    int					nPreset;
-    float				mx, my;
-    HTEXTURE			texBG;
-    hgeSprite			*sprBG;
-    hgeParticleSystem	*ps;
+    bool bHelp;
+    bool bBBox;
+    bool bIFace;
+    int nPreset;
+    float mx, my;
+    HTEXTURE texBG;
+    hgeSprite* sprBG;
+    hgeParticleSystem* ps;
 };
 
-extern hgeFont		*fnt;
-extern hgeGUI		*gui;
-extern HTEXTURE		texGui, texParticle;
+extern hgeFont* fnt;
+extern hgeGUI* gui;
+extern HTEXTURE texGui, texParticle;
 
-extern hgeSprite	*sprLeftPane1, *sprLeftPane2, *sprRightPane1, *sprRightPane2;
-extern hgeSprite	*sprCursor, *sprColor, *sprBBox;
-extern hgeAnimation	*sprParticles;
+extern hgeSprite *sprLeftPane1, *sprLeftPane2, *sprRightPane1, *sprRightPane2;
+extern hgeSprite *sprCursor, *sprColor, *sprBBox;
+extern hgeAnimation* sprParticles;
 
 extern PEditorState state;
 
@@ -131,6 +130,3 @@ void cmdChangeColor(int id);
 #define CMD_PA_GEND				59
 #define CMD_PA_BEND				60
 #define CMD_PA_RGBVAR			61
-
-
-#endif

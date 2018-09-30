@@ -1,0 +1,13 @@
+﻿#
+# Editorconfig.org - editor and code style configuration file
+#
+
+root = true
+
+[*.{c,cpp,h,hpp}]
+indent_size = 4
+indent_style = space
+max_line_length = 100
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8

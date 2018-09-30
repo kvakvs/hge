@@ -12,7 +12,7 @@
 #include "resources.h"
 
 
-HGE *ResDesc::hge=0;
+HGE *ResDesc::hge=nullptr;
 
 
 /////////////// COMMON //
@@ -25,9 +25,8 @@ void AddRes(hgeResourceManager *rm, int type, ResDesc *resource)
 
 ResDesc *FindRes(hgeResourceManager *rm, int type, const char *name)
 {
-    ResDesc *rc;
 
-    rc=rm->res[type];
+    ResDesc *rc = rm->res[type];
     while(rc) {
         if(!strcmp(name, rc->name)) {
             return rc;
@@ -35,7 +34,7 @@ ResDesc *FindRes(hgeResourceManager *rm, int type, const char *name)
         rc=rc->next;
     }
 
-    return 0;
+    return nullptr;
 }
 
 bool ScriptSkipToNextParameter(RScriptParser *sp, bool bIgnore)
@@ -83,9 +82,9 @@ bool ScriptSkipToNextParameter(RScriptParser *sp, bool bIgnore)
 void ScriptParseFileResource(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                              const char *basename, ResDesc *rr, int restype)
 {
-    RResource *rc=(RResource *)rr, *base;
+    RResource *rc=(RResource *)rr;
 
-    base = (RResource *)FindRes(rm, restype, basename);
+    RResource *base = (RResource *)FindRes(rm, restype, basename);
     if(base) {
         *rc=*base;
     } else {
@@ -295,18 +294,14 @@ void ScriptParseSpriteAnim(RScriptParser *sp, RSprite *rc, bool anim)
 void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *sname,
                     const char *sbasename)
 {
-    RScriptParser *np;
-    RScript *res_script;
-    void *data;
     hgeU32 size;
-    char *script, lname[MAXRESCHARS], basename[MAXRESCHARS];
-    int restype;
+    char lname[MAXRESCHARS], basename[MAXRESCHARS];
 
     if(!FindRes(rm, RES_SCRIPT, sname)) {
-        res_script = new RScript(); // hack! we need an instance of RScript to access hge
+        RScript *res_script = new RScript(); // hack! we need an instance of RScript to access hge
         // if all ok, this object is used later to keep the script
 
-        data=hge->Resource_Load(sname, &size);
+        void *data = hge->Resource_Load(sname, &size);
         if(!data) {
             if(sp) {
                 sp->ScriptPostError("Script "," not found.");
@@ -315,104 +310,94 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *sname
             }
             delete res_script;
             return;
-        } else {
-            script= new char[size+1];
-            memcpy(script, data, size);
-            script[size]=0;
-            hge->Resource_Free(data);
+        }
+        char *script = new char[size+1];
+        memcpy(script, data, size);
+        script[size]=0;
+        hge->Resource_Free(data);
 
-            strcpy(res_script->name, sname);
-            AddRes(rm, RES_SCRIPT, res_script);
-            np = new RScriptParser(res_script->name, script);
+        strcpy(res_script->name, sname);
+        AddRes(rm, RES_SCRIPT, res_script);
+        RScriptParser *np = new RScriptParser(res_script->name, script);
 
-            for(;;) {
+        for(;;) {
+            np->get_token();
+            if(np->tokentype == TTEND) {
+                break;
+            }
+            if(np->tokentype == TTRES_INCLUDE) {
                 np->get_token();
-                if(np->tokentype == TTEND) {
-                    break;
-                }
+                RScript::Parse(rm, np, np->tkn_string(), nullptr);
+            }
 
-                else if(np->tokentype == TTRES_INCLUDE) {
-                    np->get_token();
-                    RScript::Parse(rm, np, np->tkn_string(), NULL);
-                }
+            else if(np->tokentype > TTRES__FIRST && np->tokentype < TTRES__LAST) {
+                int restype = np->tokentype-TTRES__FIRST-1;
+                lname[0]=basename[0]=0;
 
-                else if(np->tokentype > TTRES__FIRST && np->tokentype < TTRES__LAST) {
-                    restype=np->tokentype-TTRES__FIRST-1;
-                    lname[0]=basename[0]=0;
-
-                    np->get_token();
-                    if(FindRes(rm, restype, np->tkn_string())) {
-                        np->ScriptPostError("Resource "," of the same type already has been defined.");
-                        while((np->tokentype <= TTRES__FIRST || np->tokentype >= TTRES__LAST) && np->tokentype != TTEND) {
-                            np->get_token();
-                        }
-                        np->put_back();
-                        continue;
-                    }
-                    strcpy(lname, np->tkn_string());
-
-                    np->get_token();
-
-                    if(np->tokentype == TTBASED) {
-                        np->get_token();
-                        if(!FindRes(rm, restype, np->tkn_string())) {
-                            np->ScriptPostError("Base resource "," is not defined.");
-                        } else {
-                            strcpy(basename, np->tkn_string());
-                        }
+                np->get_token();
+                if(FindRes(rm, restype, np->tkn_string())) {
+                    np->ScriptPostError("Resource "," of the same type already has been defined.");
+                    while((np->tokentype <= TTRES__FIRST || np->tokentype >= TTRES__LAST) && np->tokentype != TTEND) {
                         np->get_token();
                     }
+                    np->put_back();
+                    continue;
+                }
+                strcpy(lname, np->tkn_string());
 
-                    if(np->tokentype == TTOPENBLOCK) {
-                        switch(restype) {
-                        case RES_RESOURCE:
-                            RResource::Parse(rm, np, lname, basename);
-                            break;
-                        case RES_TEXTURE:
-                            RTexture::Parse(rm, np, lname, basename);
-                            break;
-                        case RES_EFFECT:
-                            REffect::Parse(rm, np, lname, basename);
-                            break;
-                        case RES_MUSIC:
-                            RMusic::Parse(rm, np, lname, basename);
-                            break;
-                        case RES_STREAM:
-                            RStream::Parse(rm, np, lname, basename);
-                            break;
-                        case RES_TARGET:
-                            RTarget::Parse(rm, np, lname, basename);
-                            break;
-                        case RES_SPRITE:
-                            RSprite::Parse(rm, np, lname, basename);
-                            break;
-                        case RES_ANIMATION:
-                            RAnimation::Parse(rm, np, lname, basename);
-                            break;
-                        case RES_FONT:
-                            RFont::Parse(rm, np, lname, basename);
-                            break;
-                        case RES_PARTICLE:
-                            RParticle::Parse(rm, np, lname, basename);
-                            break;
-                        case RES_DISTORT:
-                            RDistort::Parse(rm, np, lname, basename);
-                            break;
-                        case RES_STRTABLE:
-                            RStringTable::Parse(rm, np, lname, basename);
-                            break;
-                        }
+                np->get_token();
+
+                if(np->tokentype == TTBASED) {
+                    np->get_token();
+                    if(!FindRes(rm, restype, np->tkn_string())) {
+                        np->ScriptPostError("Base resource "," is not defined.");
                     } else {
-                        np->ScriptPostError("Illegal resource syntax, "," found; '{' expected.");
-                        while((np->tokentype <= TTRES__FIRST || np->tokentype >= TTRES__LAST) && np->tokentype != TTEND) {
-                            np->get_token();
-                        }
-                        np->put_back();
+                        strcpy(basename, np->tkn_string());
                     }
+                    np->get_token();
                 }
 
-                else {
-                    np->ScriptPostError("Unrecognized resource specificator ",".");
+                if(np->tokentype == TTOPENBLOCK) {
+                    switch(restype) {
+                    case RES_RESOURCE:
+                        RResource::Parse(rm, np, lname, basename);
+                        break;
+                    case RES_TEXTURE:
+                        RTexture::Parse(rm, np, lname, basename);
+                        break;
+                    case RES_EFFECT:
+                        REffect::Parse(rm, np, lname, basename);
+                        break;
+                    case RES_MUSIC:
+                        RMusic::Parse(rm, np, lname, basename);
+                        break;
+                    case RES_STREAM:
+                        RStream::Parse(rm, np, lname, basename);
+                        break;
+                    case RES_TARGET:
+                        RTarget::Parse(rm, np, lname, basename);
+                        break;
+                    case RES_SPRITE:
+                        RSprite::Parse(rm, np, lname, basename);
+                        break;
+                    case RES_ANIMATION:
+                        RAnimation::Parse(rm, np, lname, basename);
+                        break;
+                    case RES_FONT:
+                        RFont::Parse(rm, np, lname, basename);
+                        break;
+                    case RES_PARTICLE:
+                        RParticle::Parse(rm, np, lname, basename);
+                        break;
+                    case RES_DISTORT:
+                        RDistort::Parse(rm, np, lname, basename);
+                        break;
+                    case RES_STRTABLE:
+                        RStringTable::Parse(rm, np, lname, basename);
+                        break;
+                    }
+                } else {
+                    np->ScriptPostError("Illegal resource syntax, "," found; '{' expected.");
                     while((np->tokentype <= TTRES__FIRST || np->tokentype >= TTRES__LAST) && np->tokentype != TTEND) {
                         np->get_token();
                     }
@@ -420,9 +405,18 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *sname
                 }
             }
 
-            delete np;
-            delete[] script;
+            else {
+                np->ScriptPostError("Unrecognized resource specificator ",".");
+                while((np->tokentype <= TTRES__FIRST || np->tokentype >= TTRES__LAST) && np->tokentype != TTEND) {
+                    np->get_token();
+                }
+                np->put_back();
+            }
+
         }
+
+        delete np;
+        delete[] script;
     } else {
         sp->ScriptPostError("Script "," already has been parsed.");
     }
@@ -457,10 +451,9 @@ void RResource::Free()
 void RTexture::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                      const char *basename)
 {
-    RTexture *rc, *base;
 
-    rc=new RTexture();
-    base = (RTexture *)FindRes(rm, RES_TEXTURE, basename);
+    RTexture *rc = new RTexture();
+    RTexture *base = (RTexture *)FindRes(rm, RES_TEXTURE, basename);
     if(base) {
         *rc=*base;
     } else {
@@ -547,10 +540,8 @@ void RMusic::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
 //	ScriptParseFileResource(rm, sp, name, basename, new RMusic(), RES_MUSIC);
 
 
-    RMusic *rc, *base;
-
-    rc=new RMusic();
-    base = (RMusic *)FindRes(rm, RES_MUSIC, basename);
+    RMusic *rc = new RMusic();
+    RMusic *base = (RMusic *)FindRes(rm, RES_MUSIC, basename);
 
     if(base) {
         *rc=*base;
@@ -638,10 +629,9 @@ void RStream::Free()
 void RTarget::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                     const char *basename)
 {
-    RTarget *rc, *base;
 
-    rc = new RTarget();
-    base = (RTarget *)FindRes(rm, RES_TARGET, basename);
+    RTarget *rc = new RTarget();
+    RTarget *base = (RTarget *)FindRes(rm, RES_TARGET, basename);
     if(base) {
         *rc=*base;
     } else {
@@ -706,10 +696,9 @@ void RTarget::Free()
 void RSprite::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                     const char *basename)
 {
-    RSprite *rc, *base;
 
-    rc = new RSprite();
-    base = (RSprite *)FindRes(rm, RES_SPRITE, basename);
+    RSprite *rc = new RSprite();
+    RSprite *base = (RSprite *)FindRes(rm, RES_SPRITE, basename);
     if(base) {
         *rc=*base;
     } else {
@@ -738,9 +727,8 @@ void RSprite::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
 
 hgeU32 RSprite::Get(hgeResourceManager *rm)
 {
-    hgeSprite *spr;
     if(!handle) {
-        spr = new hgeSprite(rm->GetTexture(texname, resgroup), tx, ty, w, h);
+        hgeSprite *spr = new hgeSprite(rm->GetTexture(texname, resgroup), tx, ty, w, h);
         spr->SetColor(color);
         spr->SetZ(z);
         spr->SetBlendMode(blend);
@@ -769,10 +757,9 @@ void RSprite::Free()
 void RAnimation::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                        const char *basename)
 {
-    RAnimation *rc, *base;
 
-    rc = new RAnimation();
-    base = (RAnimation *)FindRes(rm, RES_ANIMATION, basename);
+    RAnimation *rc = new RAnimation();
+    RAnimation *base = (RAnimation *)FindRes(rm, RES_ANIMATION, basename);
     if(base) {
         *rc=*base;
     } else {
@@ -804,9 +791,8 @@ void RAnimation::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *na
 
 hgeU32 RAnimation::Get(hgeResourceManager *rm)
 {
-    hgeAnimation *spr;
     if(!handle) {
-        spr = new hgeAnimation(rm->GetTexture(texname, resgroup), frames, fps, tx, ty, w, h);
+        hgeAnimation *spr = new hgeAnimation(rm->GetTexture(texname, resgroup), frames, fps, tx, ty, w, h);
         spr->SetColor(color);
         spr->SetZ(z);
         spr->SetBlendMode(blend);
@@ -835,10 +821,9 @@ void RAnimation::Free()
 
 void RFont::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name, const char *basename)
 {
-    RFont *rc, *base;
 
-    rc = new RFont();
-    base = (RFont *)FindRes(rm, RES_FONT, basename);
+    RFont *rc = new RFont();
+    RFont *base = (RFont *)FindRes(rm, RES_FONT, basename);
     if(base) {
         *rc=*base;
     } else {
@@ -934,9 +919,8 @@ void RFont::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name, c
 
 hgeU32 RFont::Get(hgeResourceManager *rm)
 {
-    hgeFont *fnt;
     if(!handle) {
-        fnt = new hgeFont(filename, mipmap);
+        hgeFont *fnt = new hgeFont(filename, mipmap);
         fnt->SetColor(color);
         fnt->SetZ(z);
         fnt->SetBlendMode(blend);
@@ -964,10 +948,9 @@ void RFont::Free()
 void RParticle::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                       const char *basename)
 {
-    RParticle *rc, *base;
 
-    rc = new RParticle();
-    base = (RParticle *)FindRes(rm, RES_PARTICLE, basename);
+    RParticle *rc = new RParticle();
+    RParticle *base = (RParticle *)FindRes(rm, RES_PARTICLE, basename);
     if(base) {
         *rc=*base;
     } else {
@@ -1009,9 +992,8 @@ void RParticle::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *nam
 
 hgeU32 RParticle::Get(hgeResourceManager *rm)
 {
-    hgeParticleSystem *par;
     if(!handle) {
-        par = new hgeParticleSystem(filename, rm->GetSprite(spritename));
+        hgeParticleSystem *par = new hgeParticleSystem(filename, rm->GetSprite(spritename));
 
         handle=(hgeU32)par;
     }
@@ -1031,10 +1013,9 @@ void RParticle::Free()
 void RDistort::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                      const char *basename)
 {
-    RDistort *rc, *base;
 
-    rc = new RDistort();
-    base = (RDistort *)FindRes(rm, RES_DISTORT, basename);
+    RDistort *rc = new RDistort();
+    RDistort *base = (RDistort *)FindRes(rm, RES_DISTORT, basename);
     if(base) {
         *rc=*base;
     } else {
@@ -1115,9 +1096,8 @@ void RDistort::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name
 
 hgeU32 RDistort::Get(hgeResourceManager *rm)
 {
-    hgeDistortionMesh *dis;
     if(!handle) {
-        dis = new hgeDistortionMesh(cols, rows);
+        hgeDistortionMesh *dis = new hgeDistortionMesh(cols, rows);
         dis->SetTexture(rm->GetTexture(texname, resgroup));
         dis->SetTextureRect(tx,ty,w,h);
         dis->SetBlendMode(blend);

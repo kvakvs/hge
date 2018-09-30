@@ -14,17 +14,15 @@
 void hgeColorHSV::SetHWColor(hgeU32 col)
 {
     float r, g, b;
-    float minv, maxv, delta;
-    float del_R, del_G, del_B;
 
     a = (col>>24) / 255.0f;
     r = ((col>>16) & 0xFF) / 255.0f;
     g = ((col>>8)  & 0xFF) / 255.0f;
     b = (col       & 0xFF) / 255.0f;
 
-    minv = min(min(r, g), b);
-    maxv = max(max(r, g), b);
-    delta = maxv - minv;
+    float minv = min(min(r, g), b);
+    float maxv = max(max(r, g), b);
+    float delta = maxv - minv;
 
     v = maxv;
 
@@ -33,9 +31,9 @@ void hgeColorHSV::SetHWColor(hgeU32 col)
         s = 0;
     } else {
         s = delta / maxv;
-        del_R = (((maxv - r) / 6) + (delta / 2)) / delta;
-        del_G = (((maxv - g) / 6) + (delta / 2)) / delta;
-        del_B = (((maxv - b) / 6) + (delta / 2)) / delta;
+        float del_R = (((maxv - r) / 6) + (delta / 2)) / delta;
+        float del_G = (((maxv - g) / 6) + (delta / 2)) / delta;
+        float del_B = (((maxv - b) / 6) + (delta / 2)) / delta;
 
         if      (r == maxv) {
             h = del_B - del_G;
@@ -57,21 +55,20 @@ void hgeColorHSV::SetHWColor(hgeU32 col)
 hgeU32 hgeColorHSV::GetHWColor() const
 {
     float r, g, b;
-    float xh, i, p1, p2, p3;
 
     if (s == 0) {
         r = v;
         g = v;
         b = v;
     } else {
-        xh = h * 6;
+        float xh = h * 6;
         if(xh == 6) {
             xh=0;
         }
-        i = floorf(xh);
-        p1 = v * (1 - s);
-        p2 = v * (1 - s * (xh - i));
-        p3 = v * (1 - s * (1 - (xh - i)));
+        float i = floorf(xh);
+        float p1 = v * (1 - s);
+        float p2 = v * (1 - s * (xh - i));
+        float p3 = v * (1 - s * (1 - (xh - i)));
 
         if      (i == 0) {
             r = v;

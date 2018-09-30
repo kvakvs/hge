@@ -10,19 +10,15 @@
 #include "hge_impl.h"
 
 
-float HGE_CALL HGE_Impl::Timer_GetTime()
-{
+float HGE_CALL HGE_Impl::Timer_GetTime() {
     return fTime;
 }
 
-float HGE_CALL HGE_Impl::Timer_GetDelta()
-{
+float HGE_CALL HGE_Impl::Timer_GetDelta() {
     return fDeltaTime;
 }
 
 
-int HGE_CALL HGE_Impl::Timer_GetFPS()
-{
+int HGE_CALL HGE_Impl::Timer_GetFPS() {
     return nFPS;
 }
-

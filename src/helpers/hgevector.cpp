@@ -48,9 +48,8 @@ float hgeVector::Angle(const hgeVector *v) const
         s.Normalize();
         t.Normalize();
         return acosf(s.Dot(&t));
-    } else {
-        return atan2f(y, x);
     }
+    return atan2f(y, x);
 }
 
 hgeVector *hgeVector::Rotate(float a)

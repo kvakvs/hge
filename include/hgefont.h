@@ -7,8 +7,7 @@
 */
 
 
-#ifndef HGEFONT_H
-#define HGEFONT_H
+#pragma once
 
 
 #include "hge.h"
@@ -28,66 +27,112 @@
 /*
 ** HGE Font class
 */
-class hgeFont
-{
+class hgeFont {
 public:
-	hgeFont(const char *filename, bool bMipmap=false);
-	~hgeFont();
+    hgeFont(const char* filename, bool bMipmap = false);
+    ~hgeFont();
 
-	void		Render(float x, float y, int align, const char *string);
-	void		printf(float x, float y, int align, const char *format, ...);
-	void		printfb(float x, float y, float w, float h, int align, const char *format, ...);
+    void Render(float x, float y, int align, const char* string);
+    void printf(float x, float y, int align, const char* format, ...);
+    void printfb(float x, float y, float w, float h, int align, const char* format, ...);
 
-	void		SetColor(hgeU32 col);
-	void		SetZ(float z);
-	void		SetBlendMode(int blend);
-	void		SetScale(float scale) {fScale=scale;}
-	void		SetProportion(float prop) { fProportion=prop; }
-	void		SetRotation(float rot) {fRot=rot;}
-	void		SetTracking(float tracking) {fTracking=tracking;}
-	void		SetSpacing(float spacing) {fSpacing=spacing;}
+    void SetColor(hgeU32 col);
+    void SetZ(float z);
+    void SetBlendMode(int blend);
 
-	hgeU32	GetColor() const {return dwCol;}
-	float		GetZ() const {return fZ;}
-	int			GetBlendMode() const {return nBlend;}
-	float		GetScale() const {return fScale;}
-	float		GetProportion() const { return fProportion; }
-	float		GetRotation() const {return fRot;}
-	float		GetTracking() const {return fTracking;}
-	float		GetSpacing() const {return fSpacing;}
+    void SetScale(const float scale) {
+        fScale = scale;
+    }
 
-	hgeSprite*	GetSprite(char chr) const { return letters[(unsigned char)chr]; }
-	float		GetPreWidth(char chr) const { return pre[(unsigned char)chr]; }
-	float		GetPostWidth(char chr) const { return post[(unsigned char)chr]; }
-	float		GetHeight() const { return fHeight; }
-	float		GetStringWidth(const char *string, bool bMultiline=true) const;
+    void SetProportion(const float prop) {
+        fProportion = prop;
+    }
+
+    void SetRotation(const float rot) {
+        fRot = rot;
+    }
+
+    void SetTracking(const float tracking) {
+        fTracking = tracking;
+    }
+
+    void SetSpacing(const float spacing) {
+        fSpacing = spacing;
+    }
+
+    hgeU32 GetColor() const {
+        return dwCol;
+    }
+
+    float GetZ() const {
+        return fZ;
+    }
+
+    int GetBlendMode() const {
+        return nBlend;
+    }
+
+    float GetScale() const {
+        return fScale;
+    }
+
+    float GetProportion() const {
+        return fProportion;
+    }
+
+    float GetRotation() const {
+        return fRot;
+    }
+
+    float GetTracking() const {
+        return fTracking;
+    }
+
+    float GetSpacing() const {
+        return fSpacing;
+    }
+
+    hgeSprite* GetSprite(const char chr) const {
+        return letters[static_cast<unsigned char>(chr)];
+    }
+
+    float GetPreWidth(const char chr) const {
+        return pre[static_cast<unsigned char>(chr)];
+    }
+
+    float GetPostWidth(const char chr) const {
+        return post[static_cast<unsigned char>(chr)];
+    }
+
+    float GetHeight() const {
+        return fHeight;
+    }
+
+    float GetStringWidth(const char* string, bool bMultiline = true) const;
 
 private:
-	hgeFont();
-	hgeFont(const hgeFont &fnt);
-	hgeFont&	operator= (const hgeFont &fnt);
+    hgeFont();
+    hgeFont(const hgeFont& fnt);
+    hgeFont& operator=(const hgeFont& fnt);
 
-	char*		_get_line(char *file, char *line);
+    char* _get_line(char* file, char* line);
 
-	static HGE	*hge;
+    static HGE* hge;
 
-	static char	buffer[1024];
+    static char buffer[1024];
 
-	HTEXTURE	hTexture;
-	hgeSprite*	letters[256];
-	float		pre[256];
-	float		post[256];
-	float		fHeight;
-	float		fScale;
-	float		fProportion;
-	float		fRot;
-	float		fTracking;
-	float		fSpacing;
+    HTEXTURE hTexture;
+    hgeSprite* letters[256];
+    float pre[256];
+    float post[256];
+    float fHeight;
+    float fScale;
+    float fProportion;
+    float fRot;
+    float fTracking;
+    float fSpacing;
 
-	hgeU32		dwCol;
-	float		fZ;
-	int			nBlend;
+    hgeU32 dwCol;
+    float fZ;
+    int nBlend;
 };
-
-
-#endif

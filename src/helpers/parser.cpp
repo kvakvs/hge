@@ -9,7 +9,7 @@
 #include "parser.h"
 
 
-HGE *RScriptParser::hge=0;
+HGE *RScriptParser::hge=nullptr;
 
 
 struct keyword {
@@ -80,7 +80,7 @@ keyword keytable[]= {
     { "RECT",		TTCON_RECT		},
     { "ALPHA",		TTCON_ALPHA		},
 
-    { NULL,			TTNONE			}
+    {nullptr,			TTNONE			}
 };
 
 RScriptParser::RScriptParser(char *name, char *scr)
@@ -184,8 +184,8 @@ int RScriptParser::get_token()
 
 bool RScriptParser::strtkcmp(char *str, char *mem)
 {
-    int i,len=strlen(str);
-    for(i=0; i<len; i++) {
+    int len=strlen(str);
+    for(int i = 0; i<len; i++) {
         if(!mem[i]) {
             return true;
         }
@@ -198,11 +198,9 @@ bool RScriptParser::strtkcmp(char *str, char *mem)
 
 hgeU32 RScriptParser::tkn_hex()
 {
-    int i;
     hgeU32 dw=0;
-    char chr;
-    for(i=0; tokenvalue[i]; i++) {
-        chr=tokenvalue[i];
+    for(int i = 0; tokenvalue[i]; i++) {
+        char chr = tokenvalue[i];
         if(chr >= 'a') {
             chr-='a'-':';
         }

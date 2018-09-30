@@ -14,29 +14,24 @@ const char STRHEADERTAG[]="[HGESTRINGTABLE]";
 const char STRFORMATERROR[]="String table %s has incorrect format.";
 
 
-HGE *hgeStringTable::hge=0;
+HGE *hgeStringTable::hge=nullptr;
 
 
 hgeStringTable::hgeStringTable(const char *filename)
 {
-    int i;
-    void *data;
     hgeU32 size;
-    char *desc, *pdesc;
-    NamedString *str;
     char str_name[MAXSTRNAMELENGTH];
-    char *str_value, *pvalue;
 
     hge=hgeCreate(HGE_VERSION);
-    strings=0;
+    strings=nullptr;
 
     // load string table file
-    data=hge->Resource_Load(filename, &size);
+    void *data = hge->Resource_Load(filename, &size);
     if(!data) {
         return;
     }
 
-    desc = new char[size+1];
+    char *desc = new char[size+1];
     memcpy(desc,data,size);
     desc[size]=0;
     hge->Resource_Free(data);
@@ -48,8 +43,8 @@ hgeStringTable::hgeStringTable(const char *filename)
         return;
     }
 
-    pdesc=desc+sizeof(STRHEADERTAG);
-    str_value=new char[8192];
+    char *pdesc = desc+sizeof(STRHEADERTAG);
+    char *str_value = new char[8192];
 
     for(;;) {
         // skip whitespaces
@@ -70,7 +65,7 @@ hgeStringTable::hgeStringTable(const char *filename)
         }
 
         // get string name -> str_name
-        i=0;
+        int i = 0;
         while(pdesc[i] && pdesc[i]!='=' && !isspace(pdesc[i]) && i<MAXSTRNAMELENGTH) {
             str_name[i]=pdesc[i];
             i++;
@@ -108,7 +103,7 @@ hgeStringTable::hgeStringTable(const char *filename)
 
         // parse string value till the closing '"' -> str_value
         // consider: \", \n, \\, LF, CR, whitespaces at line begin/end
-        pvalue=str_value;
+        char *pvalue = str_value;
 
         while(*pdesc && *pdesc!='"') {
             if(*pdesc=='\n' || *pdesc=='\r') {
@@ -150,7 +145,7 @@ hgeStringTable::hgeStringTable(const char *filename)
         *pvalue=0;
 
         // add the parsed string to the list
-        str=new NamedString;
+        NamedString *str = new NamedString;
         strcpy(str->name, str_name);
         str->string=new char[strlen(str_value)+1];
         strcpy(str->string, str_value);
@@ -169,11 +164,10 @@ hgeStringTable::hgeStringTable(const char *filename)
 
 hgeStringTable::~hgeStringTable()
 {
-    NamedString *str, *strnext;
 
-    str=strings;
+    NamedString *str = strings;
     while(str) {
-        strnext=str->next;
+        NamedString *strnext = str->next;
         delete[] str->string;
         delete str;
         str=strnext;
@@ -193,5 +187,5 @@ char *hgeStringTable::GetString(const char *name)
         str=str->next;
     }
 
-    return 0;
+    return nullptr;
 }

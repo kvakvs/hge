@@ -1,32 +1,32 @@
-#ifndef SPRITE_OBJECT_H
-#define SPRITE_OBJECT_H
+#pragma once
+
 
 
 #include "gfx_object.h"
-#include "..\..\include\hgesprite.h"
+#include "../../include/hgesprite.h"
 
 
 class CSpriteObject : public CGfxObject {
 public:
-    CSpriteObject(hgeSprite *_spr, char *_name, int _resgroup, bool _owned);
+    CSpriteObject(hgeSprite* _spr, char* _name, int _resgroup, bool _owned);
     ~CSpriteObject();
 
-    virtual int			GetWidth() const {
+    int GetWidth() const override {
         return spr ? int(spr->GetWidth()) : 0;
     }
-    virtual int			GetHeight() const {
+
+    int GetHeight() const override {
         return spr ? int(spr->GetHeight()) : 0;
     }
-    virtual HTEXTURE	GetTexture() {
+
+    HTEXTURE GetTexture() override {
         return spr ? spr->GetTexture() : 0;
     }
-    virtual void		GetSourcePos(int *_x, int *_y);
-    virtual bool		SaveDescription(FILE *fp, char *texname);
+
+    void GetSourcePos(int* _x, int* _y) override;
+    bool SaveDescription(FILE* fp, char* texname) override;
 
 private:
-    hgeSprite	*spr;
-    bool		owned;
+    hgeSprite* spr;
+    bool owned;
 };
-
-
-#endif

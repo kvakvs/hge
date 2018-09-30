@@ -1,6 +1,4 @@
-
-#ifndef OPTIMIZED_TEXTURE_H
-#define OPTIMIZED_TEXTURE_H
+#pragma once
 
 
 #include "texasm.h"
@@ -23,44 +21,45 @@ struct CColor {
 class COptimizedTexture {
 public:
     COptimizedTexture();
+
     ~COptimizedTexture() {
         Reset();
     }
 
-    void		Reset();
-    void		SetMaxSize(int w, int h) {
+    void Reset();
+
+    void SetMaxSize(const int w, const int h) {
         maxw = w;
         maxh = h;
     }
-    void		SetMargin(int margin) {
+
+    void SetMargin(const int margin) {
         placer.SetMargin(margin);
     }
-    bool		PlaceObject(CGfxObject *obj);
-    void		AddNoTextureObject(CGfxObject *obj);
-    int			GetNumPlaced() {
+
+    bool PlaceObject(CGfxObject* obj);
+    void AddNoTextureObject(CGfxObject* obj);
+
+    int GetNumPlaced() {
         return obj_list.size();
     }
 
-    bool		Create();
-    bool		CopyData();
-    bool		OptimizeAlpha();
-    bool		Save(char *filename);
-    bool		SaveDescriptions(char *resfile, char *texfile, char *texname);
+    bool Create();
+    bool CopyData();
+    bool OptimizeAlpha() const;
+    bool Save(char* filename) const;
+    bool SaveDescriptions(char* resfile, char* texfile, char* texname);
 
 private:
     int maxw;
     int maxh;
 
-    GfxObjList		obj_list;
-    CRectPlacement	placer;
+    GfxObjList obj_list;
+    CRectPlacement placer;
     int texw;
     int texh;
 
-    HTEXTURE	tex;
-    CColor		*tex_data;
-    int			pitch;
+    HTEXTURE tex;
+    CColor* tex_data;
+    int pitch;
 };
-
-
-
-#endif

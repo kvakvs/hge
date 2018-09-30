@@ -9,27 +9,24 @@
 #include "texasm.h"
 #include "texture_assembler.h"
 
-#include "..\..\include\hgeresource.h"
+#include "../../include/hgeresource.h"
 
 #include <direct.h>
 #include <ctype.h>
 
 
-HGE *hge = 0;
+HGE* hge = nullptr;
 
 
-void SysLog(const char *format, ...);
-bool ParseTask(char *task, int *resgroup, char *mask, bool *inclusive);
+void SysLog(const char* format, ...);
+bool ParseTask(char* task, int* resgroup, char* mask, bool* inclusive);
 
 
-int main(int argc, char* argv[])
-{
-    hgeResourceManager *rm;
-    CTextureAssembler  *ta;
-    char			   cwd[MAX_PATH];
+int main(int argc, char* argv[]) {
+    char cwd[MAX_PATH];
 
 
-    hge=hgeCreate(HGE_VERSION);
+    hge = hgeCreate(HGE_VERSION);
     hge->System_SetState(HGE_SHOWSPLASH, false);
     hge->System_SetState(HGE_USESOUND, false);
     hge->System_SetState(HGE_WINDOWED, true);
@@ -39,7 +36,7 @@ int main(int argc, char* argv[])
 
     // try to initiate HGE
 
-    if(!hge->System_Initiate()) {
+    if (!hge->System_Initiate()) {
         SysLog("Can't initiate HGE.\n");
         hge->System_Shutdown();
         hge->Release();
@@ -50,7 +47,7 @@ int main(int argc, char* argv[])
 
     // check for args count and display help
 
-    if(argc != 3 && argc != 4) {
+    if (argc != 3 && argc != 4) {
         SysLog("Usage: TEXASM.EXE <res-file>|<wildcard> <output-wildcard> [<task>]\n\n\n");
 
         SysLog("<res-file> - resource script to process.\n");
@@ -74,9 +71,11 @@ int main(int argc, char* argv[])
         SysLog("  2\n");
         SysLog("  Process all resources from resgroup 2\n\n");
         SysLog("  7+sprFlower/sprLeaf/sprTrunk\n");
-        SysLog("  Process resources from resgroup 7 whose\n  names start with sprFlower, sprLeaf or sprTrunk\n\n");
+        SysLog(
+            "  Process resources from resgroup 7 whose\n  names start with sprFlower, sprLeaf or sprTrunk\n\n");
         SysLog("  3-gui\\menu\\title\n");
-        SysLog("  Process resources from resgroup 3 whose\n  names DON'T start with gui, menu or title\n\n");
+        SysLog(
+            "  Process resources from resgroup 3 whose\n  names DON'T start with gui, menu or title\n\n");
         SysLog("  +mars/earth/mercury\n");
         SysLog("  Process all resources whose names start\n  with mars, earth or mercury\n\n");
         SysLog("  -gui\\menu\\title\n");
@@ -93,10 +92,11 @@ int main(int argc, char* argv[])
 
     bool bScript;
 
-    void *script = hge->Resource_Load(argv[1]);
-    if(script) {
+    void* script = hge->Resource_Load(argv[1]);
+    if (script) {
         bScript = true;
-    } else {
+    }
+    else {
         bScript = false;
     }
 
@@ -108,8 +108,8 @@ int main(int argc, char* argv[])
     bool inclusive = true;
     char mask[256] = "";
 
-    if(argc == 4)
-        if(!ParseTask(argv[3], &resgroup, mask, &inclusive)) {
+    if (argc == 4)
+        if (!ParseTask(argv[3], &resgroup, mask, &inclusive)) {
             SysLog("Invalid task: %s\n", argv[3]);
             hge->System_Shutdown();
             hge->Release();
@@ -119,8 +119,8 @@ int main(int argc, char* argv[])
 
     // create resource manager & texture assember
 
-    rm = new hgeResourceManager();
-    ta = new CTextureAssembler();
+    hgeResourceManager* rm = new hgeResourceManager();
+    CTextureAssembler* ta = new CTextureAssembler();
 
     // (possible enhancement: pass maximum texture size and margin from command line)
 
@@ -136,10 +136,11 @@ int main(int argc, char* argv[])
     // Add a task into texture assembler. There may be more than one
     // call to AccumulateRMResources() and/or AccumulateFileResources().
 
-    if(bScript) {
+    if (bScript) {
         rm->ChangeScript(argv[1]);
         ta->AccumulateRMResources(rm, resgroup, mask, inclusive);
-    } else {
+    }
+    else {
         ta->AccumulateFileResources(argv[1], resgroup, mask, inclusive);
     }
 
@@ -150,7 +151,7 @@ int main(int argc, char* argv[])
     //   b) texture data is corrected along the alpha channel border
     // - all extra info is removed from the saved PNGs
 
-    bool success = ta->GenerateTextures(argv[2]);
+    const auto success = ta->GenerateTextures(argv[2]);
 
     // restore current working directory
 
@@ -159,20 +160,20 @@ int main(int argc, char* argv[])
     delete ta;
     delete rm;
 
-    if(success) {
+    if (success) {
         SysLog("\nSuccess.\n");
-    } else {
+    }
+    else {
         SysLog("\nAborted.\n");
     }
 
     hge->System_Shutdown();
     hge->Release();
-    return (int)success;
+    return static_cast<int>(success);
 }
 
 
-void SysLog(const char *format, ...)
-{
+void SysLog(const char* format, ...) {
     char buf[256];
 
     va_list ap;
@@ -186,38 +187,38 @@ void SysLog(const char *format, ...)
 }
 
 
-bool ParseTask(char *task, int *resgroup, char *mask, bool *inclusive)
-{
+bool ParseTask(char* task, int* resgroup, char* mask, bool* inclusive) {
     *resgroup = 0;
     *inclusive = true;
     mask[0] = 0;
 
-    char *p = task;
+    char* p = task;
 
     // parse resgroup
 
-    while(isdigit(*p)) {
+    while (isdigit(*p)) {
         *resgroup *= 10;
         *resgroup += *p - '0';
         p++;
     }
 
-    if(!*p) {
+    if (!*p) {
         return true;
     }
 
     // parse inclusiveness
 
-    if(*p == '-') {
+    if (*p == '-') {
         *inclusive = false;
-    } else {
-        if(*p != '+') {
+    }
+    else {
+        if (*p != '+') {
             return false;
         }
     }
 
     p++;
-    if(!*p) {
+    if (!*p) {
         return false;
     }
 
@@ -226,8 +227,8 @@ bool ParseTask(char *task, int *resgroup, char *mask, bool *inclusive)
     strcpy(mask, p);
     p = mask;
 
-    while(*p) {
-        if(*p == '\\' || *p == '/') {
+    while (*p) {
+        if (*p == '\\' || *p == '/') {
             *p = 0;
         }
         p++;

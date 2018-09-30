@@ -14,289 +14,280 @@
 #include <unzip.h>
 
 
-bool HGE_CALL HGE_Impl::Resource_AttachPack(const char *filename, const char *password)
-{
-    char *szName;
-    CResourceList *resItem=res;
-    unzFile zip;
+bool HGE_CALL HGE_Impl::Resource_AttachPack(const char* filename, const char* password) {
+    auto res_item = res;
 
-    szName=Resource_MakePath(filename);
-    strupr(szName);
+    const auto sz_name = Resource_MakePath(filename);
+    strupr(sz_name);
 
-    while(resItem) {
-        if(!strcmp(szName,resItem->filename)) {
+    while (res_item) {
+        if (!strcmp(sz_name, res_item->filename)) {
             return false;
         }
-        resItem=resItem->next;
+        res_item = res_item->next;
     }
 
-    zip=unzOpen(szName);
-    if(!zip) {
+    const auto zip = unzOpen(sz_name);
+    if (!zip) {
         return false;
     }
     unzClose(zip);
 
-    resItem=new CResourceList;
-    strcpy(resItem->filename, szName);
-    if(password) {
-        strcpy(resItem->password, password);
-    } else {
-        resItem->password[0]=0;
+    res_item = new CResourceList;
+    strcpy(res_item->filename, sz_name);
+    if (password) {
+        strcpy(res_item->password, password);
     }
-    resItem->next=res;
-    res=resItem;
+    else {
+        res_item->password[0] = 0;
+    }
+    res_item->next = res;
+    res = res_item;
 
     return true;
 }
 
-void HGE_CALL HGE_Impl::Resource_RemovePack(const char *filename)
-{
-    char *szName;
-    CResourceList *resItem=res, *resPrev=0;
+void HGE_CALL HGE_Impl::Resource_RemovePack(const char* filename) {
+    auto res_item = res;
+    CResourceList* res_prev = nullptr;
 
-    szName=Resource_MakePath(filename);
-    strupr(szName);
+    const auto sz_name = Resource_MakePath(filename);
+    strupr(sz_name);
 
-    while(resItem) {
-        if(!strcmp(szName,resItem->filename)) {
-            if(resPrev) {
-                resPrev->next=resItem->next;
-            } else {
-                res=resItem->next;
+    while (res_item) {
+        if (!strcmp(sz_name, res_item->filename)) {
+            if (res_prev) {
+                res_prev->next = res_item->next;
             }
-            delete resItem;
+            else {
+                res = res_item->next;
+            }
+            delete res_item;
             break;
         }
 
-        resPrev=resItem;
-        resItem=resItem->next;
+        res_prev = res_item;
+        res_item = res_item->next;
     }
 }
 
-void HGE_CALL HGE_Impl::Resource_RemoveAllPacks()
-{
-    CResourceList *resItem=res, *resNextItem;
+void HGE_CALL HGE_Impl::Resource_RemoveAllPacks() {
+    auto res_item = res;
 
-    while(resItem) {
-        resNextItem=resItem->next;
-        delete resItem;
-        resItem=resNextItem;
+    while (res_item) {
+        const auto res_next_item = res_item->next;
+        delete res_item;
+        res_item = res_next_item;
     }
 
-    res=0;
+    res = nullptr;
 }
 
-void* HGE_CALL HGE_Impl::Resource_Load(const char *filename, hgeU32 *size)
-{
-    static char *res_err="Can't load resource: %s";
+void* HGE_CALL HGE_Impl::Resource_Load(const char* filename, hgeU32* size) {
+    static char* res_err = "Can't load resource: %s";
 
-    CResourceList *resItem=res;
-    char szName[_MAX_PATH];
-    char szZipName[_MAX_PATH];
-    unzFile zip;
+    auto res_item = res;
+    char sz_name[_MAX_PATH];
+    char sz_zip_name[_MAX_PATH];
     unz_file_info file_info;
-    int done, i;
-    void *ptr;
-    HANDLE hF;
+    int i;
+    void* ptr;
 
-    if(filename[0]=='\\' || filename[0]=='/' || filename[1]==':') {
-        goto _fromfile;    // skip absolute paths
+    if (filename[0] == '\\' || filename[0] == '/' || filename[1] == ':') {
+        goto _fromfile; // skip absolute paths
     }
 
     // Load from pack
 
-    strcpy(szName,filename);
-    strupr(szName);
-    for(i=0; szName[i]; i++) {
-        if(szName[i]=='/') {
-            szName[i]='\\';
+    strcpy(sz_name, filename);
+    strupr(sz_name);
+    for (i = 0; sz_name[i]; i++) {
+        if (sz_name[i] == '/') {
+            sz_name[i] = '\\';
         }
     }
 
-    while(resItem) {
-        zip=unzOpen(resItem->filename);
-        done=unzGoToFirstFile(zip);
-        while(done==UNZ_OK) {
-            unzGetCurrentFileInfo(zip, &file_info, szZipName, sizeof(szZipName), NULL, 0, NULL, 0);
-            strupr(szZipName);
-            for(i=0; szZipName[i]; i++)	{
-                if(szZipName[i]=='/') {
-                    szZipName[i]='\\';
+    while (res_item) {
+        const auto zip = unzOpen(res_item->filename);
+        auto done = unzGoToFirstFile(zip);
+        while (done == UNZ_OK) {
+            unzGetCurrentFileInfo(zip, &file_info, sz_zip_name, sizeof(sz_zip_name), nullptr, 0,
+                                  nullptr, 0);
+            strupr(sz_zip_name);
+            for (i = 0; sz_zip_name[i]; i++) {
+                if (sz_zip_name[i] == '/') {
+                    sz_zip_name[i] = '\\';
                 }
             }
-            if(!strcmp(szName,szZipName)) {
-                if(unzOpenCurrentFilePassword(zip, resItem->password[0] ? resItem->password : 0) != UNZ_OK) {
+            if (!strcmp(sz_name, sz_zip_name)) {
+                if (unzOpenCurrentFilePassword(zip, res_item->password[0] ? res_item->password : 0)
+                    !=
+                    UNZ_OK) {
                     unzClose(zip);
-                    sprintf(szName, res_err, filename);
-                    _PostError(szName);
-                    return 0;
+                    sprintf(sz_name, res_err, filename);
+                    _PostError(sz_name);
+                    return nullptr;
                 }
 
                 ptr = malloc(file_info.uncompressed_size);
-                if(!ptr) {
+                if (!ptr) {
                     unzCloseCurrentFile(zip);
                     unzClose(zip);
-                    sprintf(szName, res_err, filename);
-                    _PostError(szName);
-                    return 0;
+                    sprintf(sz_name, res_err, filename);
+                    _PostError(sz_name);
+                    return nullptr;
                 }
 
-                if(unzReadCurrentFile(zip, ptr, file_info.uncompressed_size) < 0) {
+                if (unzReadCurrentFile(zip, ptr, file_info.uncompressed_size) < 0) {
                     unzCloseCurrentFile(zip);
                     unzClose(zip);
                     free(ptr);
-                    sprintf(szName, res_err, filename);
-                    _PostError(szName);
-                    return 0;
+                    sprintf(sz_name, res_err, filename);
+                    _PostError(sz_name);
+                    return nullptr;
                 }
                 unzCloseCurrentFile(zip);
                 unzClose(zip);
-                if(size) {
-                    *size=file_info.uncompressed_size;
+                if (size) {
+                    *size = file_info.uncompressed_size;
                 }
                 return ptr;
             }
 
-            done=unzGoToNextFile(zip);
+            done = unzGoToNextFile(zip);
         }
 
         unzClose(zip);
-        resItem=resItem->next;
+        res_item = res_item->next;
     }
 
     // Load from file
 _fromfile:
-
-    hF = CreateFile(Resource_MakePath(filename), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
-                    FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
-    if(hF == INVALID_HANDLE_VALUE) {
-        sprintf(szName, res_err, filename);
-        _PostError(szName);
-        return 0;
+    const auto h_f = CreateFile(Resource_MakePath(filename), GENERIC_READ,
+                                FILE_SHARE_READ, nullptr, OPEN_EXISTING,
+                                FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS,
+                                nullptr);
+    if (h_f == INVALID_HANDLE_VALUE) {
+        sprintf(sz_name, res_err, filename);
+        _PostError(sz_name);
+        return nullptr;
     }
-    file_info.uncompressed_size = GetFileSize(hF, NULL);
+    file_info.uncompressed_size = GetFileSize(h_f, nullptr);
     ptr = malloc(file_info.uncompressed_size);
-    if(!ptr) {
-        CloseHandle(hF);
-        sprintf(szName, res_err, filename);
-        _PostError(szName);
-        return 0;
+    if (!ptr) {
+        CloseHandle(h_f);
+        sprintf(sz_name, res_err, filename);
+        _PostError(sz_name);
+        return nullptr;
     }
-    if(ReadFile(hF, ptr, file_info.uncompressed_size, &file_info.uncompressed_size, NULL ) == 0) {
-        CloseHandle(hF);
+    if (ReadFile(h_f, ptr, file_info.uncompressed_size, &file_info.uncompressed_size,
+                 nullptr) == 0) {
+        CloseHandle(h_f);
         free(ptr);
-        sprintf(szName, res_err, filename);
-        _PostError(szName);
-        return 0;
+        sprintf(sz_name, res_err, filename);
+        _PostError(sz_name);
+        return nullptr;
     }
 
-    CloseHandle(hF);
-    if(size) {
-        *size=file_info.uncompressed_size;
+    CloseHandle(h_f);
+    if (size) {
+        *size = file_info.uncompressed_size;
     }
     return ptr;
 }
 
 
-void HGE_CALL HGE_Impl::Resource_Free(void *res)
-{
-    if(res) {
+void HGE_CALL HGE_Impl::Resource_Free(void* res) {
+    if (res) {
         free(res);
     }
 }
 
 
-char* HGE_CALL HGE_Impl::Resource_MakePath(const char *filename)
-{
-    int i;
-
-    if(!filename) {
+char* HGE_CALL HGE_Impl::Resource_MakePath(const char* filename) {
+    if (!filename) {
         strcpy(szTmpFilename, szAppPath);
-    } else if(filename[0]=='\\' || filename[0]=='/' || filename[1]==':') {
+    }
+    else if (filename[0] == '\\' || filename[0] == '/' || filename[1] == ':') {
         strcpy(szTmpFilename, filename);
-    } else {
+    }
+    else {
         strcpy(szTmpFilename, szAppPath);
-        if(filename) {
+        if (filename) {
             strcat(szTmpFilename, filename);
         }
     }
 
-    for(i=0; szTmpFilename[i]; i++) {
-        if(szTmpFilename[i]=='/') {
-            szTmpFilename[i]='\\';
+    for (auto i = 0; szTmpFilename[i]; i++) {
+        if (szTmpFilename[i] == '/') {
+            szTmpFilename[i] = '\\';
         }
     }
     return szTmpFilename;
 }
 
-char* HGE_CALL HGE_Impl::Resource_EnumFiles(const char *wildcard)
-{
-    if(wildcard) {
-        if(hSearch) {
+char* HGE_CALL HGE_Impl::Resource_EnumFiles(const char* wildcard) {
+    if (wildcard) {
+        if (hSearch) {
             FindClose(hSearch);
-            hSearch=0;
+            hSearch = nullptr;
         }
-        hSearch=FindFirstFile(Resource_MakePath(wildcard), &SearchData);
-        if(hSearch==INVALID_HANDLE_VALUE) {
-            hSearch=0;
-            return 0;
+        hSearch = FindFirstFile(Resource_MakePath(wildcard), &SearchData);
+        if (hSearch == INVALID_HANDLE_VALUE) {
+            hSearch = nullptr;
+            return nullptr;
         }
 
-        if(!(SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+        if (!(SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
             return SearchData.cFileName;
-        } else {
-            return Resource_EnumFiles();
         }
-    } else {
-        if(!hSearch) {
-            return 0;
+        return Resource_EnumFiles();
+    }
+    if (!hSearch) {
+        return nullptr;
+    }
+    for (;;) {
+        if (!FindNextFile(hSearch, &SearchData)) {
+            FindClose(hSearch);
+            hSearch = nullptr;
+            return nullptr;
         }
-        for(;;) {
-            if(!FindNextFile(hSearch, &SearchData))	{
-                FindClose(hSearch);
-                hSearch=0;
-                return 0;
-            }
-            if(!(SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-                return SearchData.cFileName;
-            }
+        if (!(SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+            return SearchData.cFileName;
         }
     }
 }
 
-char* HGE_CALL HGE_Impl::Resource_EnumFolders(const char *wildcard)
-{
-    if(wildcard) {
-        if(hSearch) {
+char* HGE_CALL HGE_Impl::Resource_EnumFolders(const char* wildcard) {
+    if (wildcard) {
+        if (hSearch) {
             FindClose(hSearch);
-            hSearch=0;
+            hSearch = nullptr;
         }
-        hSearch=FindFirstFile(Resource_MakePath(wildcard), &SearchData);
-        if(hSearch==INVALID_HANDLE_VALUE) {
-            hSearch=0;
-            return 0;
+        hSearch = FindFirstFile(Resource_MakePath(wildcard), &SearchData);
+        if (hSearch == INVALID_HANDLE_VALUE) {
+            hSearch = nullptr;
+            return nullptr;
         }
 
-        if((SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-                strcmp(SearchData.cFileName,".") && strcmp(SearchData.cFileName,"..")) {
+        if ((SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
+            strcmp(SearchData.cFileName, ".") && strcmp(SearchData.cFileName, "..")) {
             return SearchData.cFileName;
-        } else {
-            return Resource_EnumFolders();
         }
-    } else {
-        if(!hSearch) {
-            return 0;
+        return Resource_EnumFolders();
+    }
+    if (!hSearch) {
+        return nullptr;
+    }
+    for (;;) {
+        if (!FindNextFile(hSearch, &SearchData)) {
+            FindClose(hSearch);
+            hSearch = nullptr;
+            return nullptr;
         }
-        for(;;) {
-            if(!FindNextFile(hSearch, &SearchData))	{
-                FindClose(hSearch);
-                hSearch=0;
-                return 0;
-            }
-            if((SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-                    strcmp(SearchData.cFileName,".") && strcmp(SearchData.cFileName,"..")) {
-                return SearchData.cFileName;
-            }
+        if ((SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
+            strcmp(SearchData.cFileName, ".") && strcmp(SearchData.cFileName, "..")) {
+            return SearchData.cFileName;
         }
     }
 }

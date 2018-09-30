@@ -41,9 +41,7 @@ png_create_read_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,
 #endif
 #endif
 
-   int i;
-
-   png_debug(1, "in png_create_read_struct\n");
+    png_debug(1, "in png_create_read_struct\n");
 #ifdef PNG_USER_MEM_SUPPORTED
    png_ptr = (png_structp)png_create_struct_2(PNG_STRUCT_PNG,
       (png_malloc_ptr)malloc_fn, (png_voidp)mem_ptr);
@@ -93,7 +91,7 @@ png_create_read_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,
 
    png_set_error_fn(png_ptr, error_ptr, error_fn, warn_fn);
 
-   i=0;
+   int i = 0;
    do
    {
      if(user_png_ver[i] != png_libpng_ver[i])
@@ -397,10 +395,9 @@ png_read_info(png_structp png_ptr, png_infop info_ptr)
 #endif
 #endif /* PNG_USE_LOCAL_ARRAYS */
       png_byte chunk_length[4];
-      png_uint_32 length;
 
-      png_read_data(png_ptr, chunk_length, 4);
-      length = png_get_uint_31(png_ptr,chunk_length);
+       png_read_data(png_ptr, chunk_length, 4);
+      png_uint_32 length = png_get_uint_31(png_ptr,chunk_length);
 
       png_reset_crc(png_ptr);
       png_crc_read(png_ptr, png_ptr->chunk_name, 4);
@@ -559,8 +556,7 @@ png_read_row(png_structp png_ptr, png_bytep row, png_bytep dsp_row)
    const int png_pass_dsp_mask[7] = {0xff, 0x0f, 0xff, 0x33, 0xff, 0x55, 0xff};
    const int png_pass_mask[7] = {0x80, 0x08, 0x88, 0x22, 0xaa, 0x55, 0xff};
 #endif
-   int ret;
-   png_debug2(1, "in png_read_row (row %lu, pass %d)\n",
+    png_debug2(1, "in png_read_row (row %lu, pass %d)\n",
       png_ptr->row_number, png_ptr->pass);
    if (!(png_ptr->flags & PNG_FLAG_ROW_INIT))
       png_read_start_row(png_ptr);
@@ -705,7 +701,7 @@ png_read_row(png_structp png_ptr, png_bytep row, png_bytep dsp_row)
             (png_size_t)png_ptr->zstream.avail_in);
          png_ptr->idat_size -= png_ptr->zstream.avail_in;
       }
-      ret = inflate(&png_ptr->zstream, Z_PARTIAL_FLUSH);
+      int ret = inflate(&png_ptr->zstream, Z_PARTIAL_FLUSH);
       if (ret == Z_STREAM_END)
       {
          if (png_ptr->zstream.avail_out || png_ptr->zstream.avail_in ||
@@ -814,12 +810,10 @@ png_read_rows(png_structp png_ptr, png_bytepp row,
    png_bytepp display_row, png_uint_32 num_rows)
 {
    png_uint_32 i;
-   png_bytepp rp;
-   png_bytepp dp;
 
-   png_debug(1, "in png_read_rows\n");
-   rp = row;
-   dp = display_row;
+    png_debug(1, "in png_read_rows\n");
+   png_bytepp rp = row;
+   png_bytepp dp = display_row;
    if (rp != NULL && dp != NULL)
       for (i = 0; i < num_rows; i++)
       {
@@ -861,14 +855,11 @@ png_read_rows(png_structp png_ptr, png_bytepp row,
 void PNGAPI
 png_read_image(png_structp png_ptr, png_bytepp image)
 {
-   png_uint_32 i,image_height;
-   int pass, j;
-   png_bytepp rp;
 
-   png_debug(1, "in png_read_image\n");
+    png_debug(1, "in png_read_image\n");
 
 #ifdef PNG_READ_INTERLACING_SUPPORTED
-   pass = png_set_interlace_handling(png_ptr);
+   int pass = png_set_interlace_handling(png_ptr);
 #else
    if (png_ptr->interlaced)
       png_error(png_ptr,
@@ -877,13 +868,13 @@ png_read_image(png_structp png_ptr, png_bytepp image)
 #endif
 
 
-   image_height=png_ptr->height;
+   png_uint_32 image_height = png_ptr->height;
    png_ptr->num_rows = image_height; /* Make sure this is set correctly */
 
-   for (j = 0; j < pass; j++)
+   for (int j = 0; j < pass; j++)
    {
-      rp = image;
-      for (i = 0; i < image_height; i++)
+      png_bytepp rp = image;
+      for (png_uint_32 i = 0; i < image_height; i++)
       {
          png_read_row(png_ptr, *rp, png_bytep_NULL);
          rp++;
@@ -901,9 +892,8 @@ void PNGAPI
 png_read_end(png_structp png_ptr, png_infop info_ptr)
 {
    png_byte chunk_length[4];
-   png_uint_32 length;
 
-   png_debug(1, "in png_read_end\n");
+    png_debug(1, "in png_read_end\n");
    png_crc_finish(png_ptr, 0); /* Finish off CRC from last IDAT chunk */
 
    do
@@ -967,7 +957,7 @@ png_read_end(png_structp png_ptr, png_infop info_ptr)
 #endif /* PNG_USE_LOCAL_ARRAYS */
 
       png_read_data(png_ptr, chunk_length, 4);
-      length = png_get_uint_31(png_ptr,chunk_length);
+      png_uint_32 length = png_get_uint_31(png_ptr,chunk_length);
 
       png_reset_crc(png_ptr);
       png_crc_read(png_ptr, png_ptr->chunk_name, 4);
@@ -1086,8 +1076,6 @@ png_destroy_read_struct(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr,
    png_structp png_ptr = NULL;
    png_infop info_ptr = NULL, end_info_ptr = NULL;
 #ifdef PNG_USER_MEM_SUPPORTED
-   png_free_ptr free_fn;
-   png_voidp mem_ptr;
 #endif
 
    png_debug(1, "in png_destroy_read_struct\n");
@@ -1101,8 +1089,8 @@ png_destroy_read_struct(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr,
       end_info_ptr = *end_info_ptr_ptr;
 
 #ifdef PNG_USER_MEM_SUPPORTED
-   free_fn = png_ptr->free_fn;
-   mem_ptr = png_ptr->mem_ptr;
+   png_free_ptr free_fn = png_ptr->free_fn;
+   png_voidp mem_ptr = png_ptr->mem_ptr;
 #endif
 
    png_read_destroy(png_ptr, info_ptr, end_info_ptr);
@@ -1155,11 +1143,7 @@ png_read_destroy(png_structp png_ptr, png_infop info_ptr, png_infop end_info_ptr
 #ifdef PNG_SETJMP_SUPPORTED
    jmp_buf tmp_jmp;
 #endif
-   png_error_ptr error_fn;
-   png_error_ptr warning_fn;
-   png_voidp error_ptr;
 #ifdef PNG_USER_MEM_SUPPORTED
-   png_free_ptr free_fn;
 #endif
 
    png_debug(1, "in png_read_destroy\n");
@@ -1218,9 +1202,8 @@ png_read_destroy(png_structp png_ptr, png_infop info_ptr, png_infop end_info_ptr
 #if defined(PNG_READ_GAMMA_SUPPORTED)
    if (png_ptr->gamma_16_table != NULL)
    {
-      int i;
-      int istop = (1 << (8 - png_ptr->gamma_shift));
-      for (i = 0; i < istop; i++)
+       int istop = (1 << (8 - png_ptr->gamma_shift));
+      for (int i = 0; i < istop; i++)
       {
          png_free(png_ptr, png_ptr->gamma_16_table[i]);
       }
@@ -1229,9 +1212,8 @@ png_read_destroy(png_structp png_ptr, png_infop info_ptr, png_infop end_info_ptr
 #if defined(PNG_READ_BACKGROUND_SUPPORTED)
    if (png_ptr->gamma_16_from_1 != NULL)
    {
-      int i;
-      int istop = (1 << (8 - png_ptr->gamma_shift));
-      for (i = 0; i < istop; i++)
+       int istop = (1 << (8 - png_ptr->gamma_shift));
+      for (int i = 0; i < istop; i++)
       {
          png_free(png_ptr, png_ptr->gamma_16_from_1[i]);
       }
@@ -1239,9 +1221,8 @@ png_read_destroy(png_structp png_ptr, png_infop info_ptr, png_infop end_info_ptr
    }
    if (png_ptr->gamma_16_to_1 != NULL)
    {
-      int i;
-      int istop = (1 << (8 - png_ptr->gamma_shift));
-      for (i = 0; i < istop; i++)
+       int istop = (1 << (8 - png_ptr->gamma_shift));
+      for (int i = 0; i < istop; i++)
       {
          png_free(png_ptr, png_ptr->gamma_16_to_1[i]);
       }
@@ -1271,11 +1252,11 @@ png_read_destroy(png_structp png_ptr, png_infop info_ptr, png_infop end_info_ptr
    png_memcpy(tmp_jmp, png_ptr->jmpbuf, png_sizeof (jmp_buf));
 #endif
 
-   error_fn = png_ptr->error_fn;
-   warning_fn = png_ptr->warning_fn;
-   error_ptr = png_ptr->error_ptr;
+   png_error_ptr error_fn = png_ptr->error_fn;
+   png_error_ptr warning_fn = png_ptr->warning_fn;
+   png_voidp error_ptr = png_ptr->error_ptr;
 #ifdef PNG_USER_MEM_SUPPORTED
-   free_fn = png_ptr->free_fn;
+   png_free_ptr free_fn = png_ptr->free_fn;
 #endif
 
    png_memset(png_ptr, 0, png_sizeof (png_struct));
@@ -1307,7 +1288,6 @@ png_read_png(png_structp png_ptr, png_infop info_ptr,
                            int transforms,
                            voidp params)
 {
-   int row;
 
 #if defined(PNG_READ_INVERT_ALPHA_SUPPORTED)
    /* invert the alpha channel from opacity to transparency
@@ -1435,7 +1415,7 @@ png_read_png(png_structp png_ptr, png_infop info_ptr,
 #ifdef PNG_FREE_ME_SUPPORTED
       info_ptr->free_me |= PNG_FREE_ROWS;
 #endif
-      for (row = 0; row < (int)info_ptr->height; row++)
+      for (int row = 0; row < (int)info_ptr->height; row++)
       {
          info_ptr->row_pointers[row] = (png_bytep)png_malloc(png_ptr,
             png_get_rowbytes(png_ptr, info_ptr));

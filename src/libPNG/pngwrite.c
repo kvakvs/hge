@@ -95,11 +95,10 @@ png_write_info_before_PLTE(png_structp png_ptr, png_infop info_ptr)
 #if defined(PNG_WRITE_UNKNOWN_CHUNKS_SUPPORTED)
    if (info_ptr->unknown_chunks_num)
    {
-       png_unknown_chunk *up;
 
        png_debug(5, "writing extra chunks\n");
 
-       for (up = info_ptr->unknown_chunks;
+       for (png_unknown_chunk *up = info_ptr->unknown_chunks;
             up < info_ptr->unknown_chunks + info_ptr->unknown_chunks_num;
             up++)
        {
@@ -144,8 +143,7 @@ png_write_info(png_structp png_ptr, png_infop info_ptr)
          if ((png_ptr->transformations & PNG_INVERT_ALPHA) &&
             info_ptr->color_type == PNG_COLOR_TYPE_PALETTE)
          {
-            int j;
-            for (j=0; j<(int)info_ptr->num_trans; j++)
+             for (int j = 0; j<(int)info_ptr->num_trans; j++)
                info_ptr->trans[j] = (png_byte)(255 - info_ptr->trans[j]);
          }
 #endif
@@ -259,11 +257,10 @@ png_write_info(png_structp png_ptr, png_infop info_ptr)
 #if defined(PNG_WRITE_UNKNOWN_CHUNKS_SUPPORTED)
    if (info_ptr->unknown_chunks_num)
    {
-       png_unknown_chunk *up;
 
        png_debug(5, "writing extra chunks\n");
 
-       for (up = info_ptr->unknown_chunks;
+       for (png_unknown_chunk *up = info_ptr->unknown_chunks;
             up < info_ptr->unknown_chunks + info_ptr->unknown_chunks_num;
             up++)
        {
@@ -297,7 +294,6 @@ png_write_end(png_structp png_ptr, png_infop info_ptr)
    if (info_ptr != NULL)
    {
 #if defined(PNG_WRITE_TEXT_SUPPORTED)
-      int i; /* local index variable */
 #endif
 #if defined(PNG_WRITE_tIME_SUPPORTED)
       /* check to see if user has supplied a time chunk */
@@ -307,7 +303,7 @@ png_write_end(png_structp png_ptr, png_infop info_ptr)
 #endif
 #if defined(PNG_WRITE_TEXT_SUPPORTED)
       /* loop through comment chunks */
-      for (i = 0; i < info_ptr->num_text; i++)
+      for (int i = 0; i < info_ptr->num_text; i++)
       {
          png_debug2(2, "Writing trailer text chunk %d, type %d\n", i,
             info_ptr->text[i].compression);
@@ -359,11 +355,10 @@ png_write_end(png_structp png_ptr, png_infop info_ptr)
 #if defined(PNG_WRITE_UNKNOWN_CHUNKS_SUPPORTED)
    if (info_ptr->unknown_chunks_num)
    {
-       png_unknown_chunk *up;
 
        png_debug(5, "writing extra chunks\n");
 
-       for (up = info_ptr->unknown_chunks;
+       for (png_unknown_chunk *up = info_ptr->unknown_chunks;
             up < info_ptr->unknown_chunks + info_ptr->unknown_chunks_num;
             up++)
        {
@@ -409,10 +404,9 @@ png_convert_from_struct_tm(png_timep ptime, struct tm FAR * ttime)
 void PNGAPI
 png_convert_from_time_t(png_timep ptime, time_t ttime)
 {
-   struct tm *tbuf;
 
-   png_debug(1, "in png_convert_from_time_t\n");
-   tbuf = gmtime(&ttime);
+    png_debug(1, "in png_convert_from_time_t\n");
+   struct tm *tbuf = gmtime(&ttime);
    png_convert_from_struct_tm(ptime, tbuf);
 }
 #endif
@@ -435,17 +429,15 @@ png_create_write_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,
    png_malloc_ptr malloc_fn, png_free_ptr free_fn)
 {
 #endif /* PNG_USER_MEM_SUPPORTED */
-   png_structp png_ptr;
 #ifdef PNG_SETJMP_SUPPORTED
 #ifdef USE_FAR_KEYWORD
    jmp_buf jmpbuf;
 #endif
 #endif
-   int i;
-   png_debug(1, "in png_create_write_struct\n");
+    png_debug(1, "in png_create_write_struct\n");
 #ifdef PNG_USER_MEM_SUPPORTED
-   png_ptr = (png_structp)png_create_struct_2(PNG_STRUCT_PNG,
-      (png_malloc_ptr)malloc_fn, (png_voidp)mem_ptr);
+   png_structp png_ptr = (png_structp)png_create_struct_2(PNG_STRUCT_PNG,
+                                                          (png_malloc_ptr)malloc_fn, (png_voidp)mem_ptr);
 #else
    png_ptr = (png_structp)png_create_struct(PNG_STRUCT_PNG);
 #endif /* PNG_USER_MEM_SUPPORTED */
@@ -486,7 +478,7 @@ png_create_write_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,
 #endif /* PNG_USER_MEM_SUPPORTED */
    png_set_error_fn(png_ptr, error_ptr, error_fn, warn_fn);
 
-   i=0;
+   int i = 0;
    do
    {
      if(user_png_ver[i] != png_libpng_ver[i])
@@ -705,19 +697,18 @@ void PNGAPI
 png_write_image(png_structp png_ptr, png_bytepp image)
 {
    png_uint_32 i; /* row index */
-   int pass, num_pass; /* pass variables */
-   png_bytepp rp; /* points to current row */
+    png_bytepp rp; /* points to current row */
 
    png_debug(1, "in png_write_image\n");
 #if defined(PNG_WRITE_INTERLACING_SUPPORTED)
    /* intialize interlace handling.  If image is not interlaced,
       this will set pass to 1 */
-   num_pass = png_set_interlace_handling(png_ptr);
+   int num_pass = png_set_interlace_handling(png_ptr);
 #else
    num_pass = 1;
 #endif
    /* loop through passes */
-   for (pass = 0; pass < num_pass; pass++)
+   for (int pass = 0; pass < num_pass; pass++)
    {
       /* loop through image */
       for (i = 0, rp = image; i < png_ptr->height; i++, rp++)
@@ -922,10 +913,9 @@ png_write_flush(png_structp png_ptr)
 
    do
    {
-      int ret;
 
-      /* compress the data */
-      ret = deflate(&png_ptr->zstream, Z_SYNC_FLUSH);
+       /* compress the data */
+      int ret = deflate(&png_ptr->zstream, Z_SYNC_FLUSH);
       wrote_IDAT = 0;
 
       /* check for compression errors */
@@ -1029,11 +1019,7 @@ png_write_destroy(png_structp png_ptr)
 #ifdef PNG_SETJMP_SUPPORTED
    jmp_buf tmp_jmp; /* save jump buffer */
 #endif
-   png_error_ptr error_fn;
-   png_error_ptr warning_fn;
-   png_voidp error_ptr;
 #ifdef PNG_USER_MEM_SUPPORTED
-   png_free_ptr free_fn;
 #endif
 
    png_debug(1, "in png_write_destroy\n");
@@ -1066,11 +1052,11 @@ png_write_destroy(png_structp png_ptr)
    png_memcpy(tmp_jmp, png_ptr->jmpbuf, png_sizeof (jmp_buf));
 #endif
 
-   error_fn = png_ptr->error_fn;
-   warning_fn = png_ptr->warning_fn;
-   error_ptr = png_ptr->error_ptr;
+   png_error_ptr error_fn = png_ptr->error_fn;
+   png_error_ptr warning_fn = png_ptr->warning_fn;
+   png_voidp error_ptr = png_ptr->error_ptr;
 #ifdef PNG_USER_MEM_SUPPORTED
-   free_fn = png_ptr->free_fn;
+   png_free_ptr free_fn = png_ptr->free_fn;
 #endif
 
    png_memset(png_ptr, 0, png_sizeof (png_struct));

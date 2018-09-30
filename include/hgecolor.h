@@ -7,8 +7,7 @@
 */
 
 
-#ifndef HGECOLOR_H
-#define HGECOLOR_H
+#pragma once
 
 
 #include "hge.h"
@@ -16,65 +15,190 @@
 
 #define hgeColor hgeColorRGB
 
-inline void ColorClamp(float &x) { if(x<0.0f) x=0.0f; if(x>1.0f) x=1.0f; }
+inline void ColorClamp(float& x) {
+    if (x < 0.0f) x = 0.0f;
+    if (x > 1.0f) x = 1.0f;
+}
 
 
-class hgeColorRGB
-{
+class hgeColorRGB {
 public:
-	float		r,g,b,a;
+    float r, g, b, a;
 
-	hgeColorRGB(float _r, float _g, float _b, float _a) { r=_r; g=_g; b=_b; a=_a; }
-	hgeColorRGB(hgeU32 col) { SetHWColor(col); }
-	hgeColorRGB() { r=g=b=a=0; }
+    hgeColorRGB(const float _r, const float _g, const float _b, const float _a) {
+        r = _r;
+        g = _g;
+        b = _b;
+        a = _a;
+    }
 
-	hgeColorRGB		operator-  (const hgeColorRGB &c) const { return hgeColorRGB(r-c.r, g-c.g, b-c.b, a-c.a); }
-	hgeColorRGB		operator+  (const hgeColorRGB &c) const { return hgeColorRGB(r+c.r, g+c.g, b+c.b, a+c.a); }
-	hgeColorRGB		operator*  (const hgeColorRGB &c) const { return hgeColorRGB(r*c.r, g*c.g, b*c.b, a*c.a); }
-	hgeColorRGB&	operator-= (const hgeColorRGB &c)		{ r-=c.r; g-=c.g; b-=c.b; a-=c.a; return *this;   }
-	hgeColorRGB&	operator+= (const hgeColorRGB &c)		{ r+=c.r; g+=c.g; b+=c.b; a+=c.a; return *this;   }
-	bool			operator== (const hgeColorRGB &c) const { return (r==c.r && g==c.g && b==c.b && a==c.a);  }
-	bool			operator!= (const hgeColorRGB &c) const { return (r!=c.r || g!=c.g || b!=c.b || a!=c.a);  }
+    hgeColorRGB(const hgeU32 col) {
+        SetHWColor(col);
+    }
 
-	hgeColorRGB		operator/  (const float scalar) const { return hgeColorRGB(r/scalar, g/scalar, b/scalar, a/scalar); }
-	hgeColorRGB		operator*  (const float scalar) const { return hgeColorRGB(r*scalar, g*scalar, b*scalar, a*scalar); }
-	hgeColorRGB&	operator*= (const float scalar)		  { r*=scalar; g*=scalar; b*=scalar; a*=scalar; return *this;   }
+    hgeColorRGB() {
+        r = g = b = a = 0;
+    }
 
-	void			Clamp() { ColorClamp(r); ColorClamp(g); ColorClamp(b); ColorClamp(a); }
-	void			SetHWColor(hgeU32 col) {	a = (col>>24)/255.0f; r = ((col>>16) & 0xFF)/255.0f; g = ((col>>8) & 0xFF)/255.0f; b = (col & 0xFF)/255.0f;	}
-	hgeU32		GetHWColor() const { return (hgeU32(a*255.0f)<<24) + (hgeU32(r*255.0f)<<16) + (hgeU32(g*255.0f)<<8) + hgeU32(b*255.0f);	}
+    hgeColorRGB operator-(const hgeColorRGB& c) const {
+        return hgeColorRGB(r - c.r, g - c.g, b - c.b, a - c.a);
+    }
+
+    hgeColorRGB operator+(const hgeColorRGB& c) const {
+        return hgeColorRGB(r + c.r, g + c.g, b + c.b, a + c.a);
+    }
+
+    hgeColorRGB operator*(const hgeColorRGB& c) const {
+        return hgeColorRGB(r * c.r, g * c.g, b * c.b, a * c.a);
+    }
+
+    hgeColorRGB& operator-=(const hgeColorRGB& c) {
+        r -= c.r;
+        g -= c.g;
+        b -= c.b;
+        a -= c.a;
+        return *this;
+    }
+
+    hgeColorRGB& operator+=(const hgeColorRGB& c) {
+        r += c.r;
+        g += c.g;
+        b += c.b;
+        a += c.a;
+        return *this;
+    }
+
+    bool operator==(const hgeColorRGB& c) const {
+        return (r == c.r && g == c.g && b == c.b && a == c.a);
+    }
+
+    bool operator!=(const hgeColorRGB& c) const {
+        return (r != c.r || g != c.g || b != c.b || a != c.a);
+    }
+
+    hgeColorRGB operator/(const float scalar) const {
+        return hgeColorRGB(r / scalar, g / scalar, b / scalar, a / scalar);
+    }
+
+    hgeColorRGB operator*(const float scalar) const {
+        return hgeColorRGB(r * scalar, g * scalar, b * scalar, a * scalar);
+    }
+
+    hgeColorRGB& operator*=(const float scalar) {
+        r *= scalar;
+        g *= scalar;
+        b *= scalar;
+        a *= scalar;
+        return *this;
+    }
+
+    void Clamp() {
+        ColorClamp(r);
+        ColorClamp(g);
+        ColorClamp(b);
+        ColorClamp(a);
+    }
+
+    void SetHWColor(const hgeU32 col) {
+        a = (col >> 24) / 255.0f;
+        r = ((col >> 16) & 0xFF) / 255.0f;
+        g = ((col >> 8) & 0xFF) / 255.0f;
+        b = (col & 0xFF) / 255.0f;
+    }
+
+    hgeU32 GetHWColor() const {
+        return (hgeU32(a * 255.0f) << 24) + (hgeU32(r * 255.0f) << 16) + (hgeU32(g * 255.0f) << 8) +
+                hgeU32(b * 255.0f);
+    }
 };
 
-inline hgeColorRGB operator* (const float sc, const hgeColorRGB &c) { return c*sc; }
+inline hgeColorRGB operator*(const float sc, const hgeColorRGB& c) {
+    return c * sc;
+}
 
 
-class hgeColorHSV
-{
+class hgeColorHSV {
 public:
-	float		h,s,v,a;
+    float h, s, v, a;
 
-	hgeColorHSV(float _h, float _s, float _v, float _a) { h=_h; s=_s; v=_v; a=_a; }
-	hgeColorHSV(hgeU32 col) { SetHWColor(col); }
-	hgeColorHSV() { h=s=v=a=0; }
+    hgeColorHSV(const float _h, const float _s, const float _v, const float _a) {
+        h = _h;
+        s = _s;
+        v = _v;
+        a = _a;
+    }
 
-	hgeColorHSV		operator-  (const hgeColorHSV &c) const { return hgeColorHSV(h-c.h, s-c.s, v-c.v, a-c.a); }
-	hgeColorHSV		operator+  (const hgeColorHSV &c) const { return hgeColorHSV(h+c.h, s+c.s, v+c.v, a+c.a); }
-	hgeColorHSV		operator*  (const hgeColorHSV &c) const { return hgeColorHSV(h*c.h, s*c.s, v*c.v, a*c.a); }
-	hgeColorHSV&	operator-= (const hgeColorHSV &c)		{ h-=c.h; s-=c.s; v-=c.v; a-=c.a; return *this;   }
-	hgeColorHSV&	operator+= (const hgeColorHSV &c)		{ h+=c.h; s+=c.s; v+=c.v; a+=c.a; return *this;   }
-	bool			operator== (const hgeColorHSV &c) const { return (h==c.h && s==c.s && v==c.v && a==c.a);  }
-	bool			operator!= (const hgeColorHSV &c) const { return (h!=c.h || s!=c.s || v!=c.v || a!=c.a);  }
+    hgeColorHSV(const hgeU32 col) {
+        SetHWColor(col);
+    }
 
-	hgeColorHSV		operator/  (const float scalar) const { return hgeColorHSV(h/scalar, s/scalar, v/scalar, a/scalar); }
-	hgeColorHSV		operator*  (const float scalar) const { return hgeColorHSV(h*scalar, s*scalar, v*scalar, a*scalar); }
-	hgeColorHSV&	operator*= (const float scalar)		  { h*=scalar; s*=scalar; v*=scalar; a*=scalar; return *this;   }
+    hgeColorHSV() {
+        h = s = v = a = 0;
+    }
 
-	void			Clamp() { ColorClamp(h); ColorClamp(s); ColorClamp(v); ColorClamp(a); }
-	void			SetHWColor(hgeU32 col);
-	hgeU32			GetHWColor() const;
+    hgeColorHSV operator-(const hgeColorHSV& c) const {
+        return hgeColorHSV(h - c.h, s - c.s, v - c.v, a - c.a);
+    }
+
+    hgeColorHSV operator+(const hgeColorHSV& c) const {
+        return hgeColorHSV(h + c.h, s + c.s, v + c.v, a + c.a);
+    }
+
+    hgeColorHSV operator*(const hgeColorHSV& c) const {
+        return hgeColorHSV(h * c.h, s * c.s, v * c.v, a * c.a);
+    }
+
+    hgeColorHSV& operator-=(const hgeColorHSV& c) {
+        h -= c.h;
+        s -= c.s;
+        v -= c.v;
+        a -= c.a;
+        return *this;
+    }
+
+    hgeColorHSV& operator+=(const hgeColorHSV& c) {
+        h += c.h;
+        s += c.s;
+        v += c.v;
+        a += c.a;
+        return *this;
+    }
+
+    bool operator==(const hgeColorHSV& c) const {
+        return (h == c.h && s == c.s && v == c.v && a == c.a);
+    }
+
+    bool operator!=(const hgeColorHSV& c) const {
+        return (h != c.h || s != c.s || v != c.v || a != c.a);
+    }
+
+    hgeColorHSV operator/(const float scalar) const {
+        return hgeColorHSV(h / scalar, s / scalar, v / scalar, a / scalar);
+    }
+
+    hgeColorHSV operator*(const float scalar) const {
+        return hgeColorHSV(h * scalar, s * scalar, v * scalar, a * scalar);
+    }
+
+    hgeColorHSV& operator*=(const float scalar) {
+        h *= scalar;
+        s *= scalar;
+        v *= scalar;
+        a *= scalar;
+        return *this;
+    }
+
+    void Clamp() {
+        ColorClamp(h);
+        ColorClamp(s);
+        ColorClamp(v);
+        ColorClamp(a);
+    }
+
+    void SetHWColor(hgeU32 col);
+    hgeU32 GetHWColor() const;
 };
 
-inline hgeColorHSV operator* (const float sc, const hgeColorHSV &c) { return c*sc; }
-
-
-#endif
+inline hgeColorHSV operator*(const float sc, const hgeColorHSV& c) {
+    return c * sc;
+}

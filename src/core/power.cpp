@@ -10,40 +10,40 @@
 #include "hge_impl.h"
 
 
-void HGE_Impl::_InitPowerStatus()
-{
+void HGE_Impl::_InitPowerStatus() {
     hKrnl32 = LoadLibrary("kernel32.dll");
 
-    if(hKrnl32 != NULL) {
-        lpfnGetSystemPowerStatus = (GetSystemPowerStatusFunc)GetProcAddress(hKrnl32,
-                                   "GetSystemPowerStatus");
+    if (hKrnl32 != nullptr) {
+        lpfnGetSystemPowerStatus = reinterpret_cast<GetSystemPowerStatusFunc>(
+            GetProcAddress(hKrnl32, "GetSystemPowerStatus"));
     }
 
     _UpdatePowerStatus();
 }
 
 
-void HGE_Impl::_UpdatePowerStatus()
-{
+void HGE_Impl::_UpdatePowerStatus() {
     SYSTEM_POWER_STATUS ps;
 
-    if(lpfnGetSystemPowerStatus != NULL && lpfnGetSystemPowerStatus(&ps)) {
-        if(ps.ACLineStatus == 1) {
+    if (lpfnGetSystemPowerStatus != nullptr && lpfnGetSystemPowerStatus(&ps)) {
+        if (ps.ACLineStatus == 1) {
             nPowerStatus = HGEPWR_AC;
-        } else if(ps.BatteryFlag < 128) {
+        }
+        else if (ps.BatteryFlag < 128) {
             nPowerStatus = ps.BatteryLifePercent;
-        } else {
+        }
+        else {
             nPowerStatus = HGEPWR_UNSUPPORTED;
         }
-    } else {
+    }
+    else {
         nPowerStatus = HGEPWR_UNSUPPORTED;
     }
 }
 
 
-void HGE_Impl::_DonePowerStatus()
-{
-    if(hKrnl32 != NULL) {
+void HGE_Impl::_DonePowerStatus() const {
+    if (hKrnl32 != nullptr) {
         FreeLibrary(hKrnl32);
     }
 }

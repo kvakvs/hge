@@ -21,19 +21,19 @@ void ErrorCallback(png_structp png_ptr,
 bool Write32BitPNGWithPitch(FILE* fp, void* pBits, bool bNeedAlpha, int nWidth, int nHeight,
                             int nPitch)
 {
-    png_structp png_ptr = 0;
-    png_infop info_ptr = 0;
+    png_structp png_ptr = nullptr;
+    png_infop info_ptr = nullptr;
     try {
         //	create png structs
         png_ptr = png_create_write_struct
-                  (PNG_LIBPNG_VER_STRING, 0,
+                  (PNG_LIBPNG_VER_STRING, nullptr,
                    ErrorCallback, WarningCallback);
-        if (png_ptr == 0) {
+        if (png_ptr == nullptr) {
             return false;
         }
 
         info_ptr = png_create_info_struct(png_ptr);
-        if (info_ptr == 0) {
+        if (info_ptr == nullptr) {
             return false;
         }
 
@@ -71,11 +71,11 @@ bool Write32BitPNGWithPitch(FILE* fp, void* pBits, bool bNeedAlpha, int nWidth, 
 
         png_write_end(png_ptr, info_ptr);
     } catch(PNGError) {
-        png_destroy_write_struct(&png_ptr, (info_ptr == 0) ? NULL : &info_ptr);
+        png_destroy_write_struct(&png_ptr, (info_ptr == nullptr) ? NULL : &info_ptr);
         return false;
     }
 
     //	cleanup
-    png_destroy_write_struct( &png_ptr, (info_ptr == 0) ? NULL : &info_ptr);
+    png_destroy_write_struct( &png_ptr, (info_ptr == nullptr) ? NULL : &info_ptr);
     return true;
 }

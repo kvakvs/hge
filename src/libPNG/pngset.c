@@ -204,9 +204,8 @@ png_set_gAMA_fixed(png_structp png_ptr, png_infop info_ptr, png_fixed_point
 void PNGAPI
 png_set_hIST(png_structp png_ptr, png_infop info_ptr, png_uint_16p hist)
 {
-   int i;
 
-   png_debug1(1, "in %s storage function\n", "hIST");
+    png_debug1(1, "in %s storage function\n", "hIST");
    if (png_ptr == NULL || info_ptr == NULL)
       return;
    if (info_ptr->num_palette == 0)
@@ -228,7 +227,7 @@ png_set_hIST(png_structp png_ptr, png_infop info_ptr, png_uint_16p hist)
        return;
      }
 
-   for (i = 0; i < info_ptr->num_palette; i++)
+   for (int i = 0; i < info_ptr->num_palette; i++)
        png_ptr->hist[i] = hist[i];
    info_ptr->hist = png_ptr->hist;
    info_ptr->valid |= PNG_INFO_hIST;
@@ -371,14 +370,12 @@ png_set_pCAL(png_structp png_ptr, png_infop info_ptr,
    png_charp purpose, png_int_32 X0, png_int_32 X1, int type, int nparams,
    png_charp units, png_charpp params)
 {
-   png_uint_32 length;
-   int i;
 
-   png_debug1(1, "in %s storage function\n", "pCAL");
+    png_debug1(1, "in %s storage function\n", "pCAL");
    if (png_ptr == NULL || info_ptr == NULL)
       return;
 
-   length = png_strlen(purpose) + 1;
+   png_uint_32 length = png_strlen(purpose) + 1;
    png_debug1(3, "allocating purpose for info (%lu bytes)\n", length);
    info_ptr->pcal_purpose = (png_charp)png_malloc_warn(png_ptr, length);
    if (info_ptr->pcal_purpose == NULL)
@@ -414,7 +411,7 @@ png_set_pCAL(png_structp png_ptr, png_infop info_ptr,
 
    info_ptr->pcal_params[nparams] = NULL;
 
-   for (i = 0; i < nparams; i++)
+   for (int i = 0; i < nparams; i++)
    {
       length = png_strlen(params[i]) + 1;
       png_debug2(3, "allocating parameter %d for info (%lu bytes)\n", i, length);
@@ -576,19 +573,14 @@ png_set_sRGB_gAMA_and_cHRM(png_structp png_ptr, png_infop info_ptr,
 {
 #if defined(PNG_gAMA_SUPPORTED)
 #ifdef PNG_FLOATING_POINT_SUPPORTED
-   float file_gamma;
 #endif
 #ifdef PNG_FIXED_POINT_SUPPORTED
-   png_fixed_point int_file_gamma;
 #endif
 #endif
 #if defined(PNG_cHRM_SUPPORTED)
 #ifdef PNG_FLOATING_POINT_SUPPORTED
-   float white_x, white_y, red_x, red_y, green_x, green_y, blue_x, blue_y;
 #endif
 #ifdef PNG_FIXED_POINT_SUPPORTED
-   png_fixed_point int_white_x, int_white_y, int_red_x, int_red_y, int_green_x,
-      int_green_y, int_blue_x, int_blue_y;
 #endif
 #endif
    png_debug1(1, "in %s storage function\n", "sRGB_gAMA_and_cHRM");
@@ -599,39 +591,39 @@ png_set_sRGB_gAMA_and_cHRM(png_structp png_ptr, png_infop info_ptr,
 
 #if defined(PNG_gAMA_SUPPORTED)
 #ifdef PNG_FLOATING_POINT_SUPPORTED
-   file_gamma = (float).45455;
+   float file_gamma = (float).45455;
    png_set_gAMA(png_ptr, info_ptr, file_gamma);
 #endif
 #ifdef PNG_FIXED_POINT_SUPPORTED
-   int_file_gamma = 45455L;
+   png_fixed_point int_file_gamma = 45455L;
    png_set_gAMA_fixed(png_ptr, info_ptr, int_file_gamma);
 #endif
 #endif
 
 #if defined(PNG_cHRM_SUPPORTED)
 #ifdef PNG_FIXED_POINT_SUPPORTED
-   int_white_x = 31270L;
-   int_white_y = 32900L;
-   int_red_x   = 64000L;
-   int_red_y   = 33000L;
-   int_green_x = 30000L;
-   int_green_y = 60000L;
-   int_blue_x  = 15000L;
-   int_blue_y  =  6000L;
+   png_fixed_point int_white_x = 31270L;
+   png_fixed_point int_white_y = 32900L;
+   png_fixed_point int_red_x = 64000L;
+   png_fixed_point int_red_y = 33000L;
+   png_fixed_point int_green_x = 30000L;
+   png_fixed_point int_green_y = 60000L;
+   png_fixed_point int_blue_x = 15000L;
+   png_fixed_point int_blue_y = 6000L;
 
    png_set_cHRM_fixed(png_ptr, info_ptr,
       int_white_x, int_white_y, int_red_x, int_red_y, int_green_x, int_green_y,
       int_blue_x, int_blue_y);
 #endif
 #ifdef PNG_FLOATING_POINT_SUPPORTED
-   white_x = (float).3127;
-   white_y = (float).3290;
-   red_x   = (float).64;
-   red_y   = (float).33;
-   green_x = (float).30;
-   green_y = (float).60;
-   blue_x  = (float).15;
-   blue_y  = (float).06;
+   float white_x = (float).3127;
+   float white_y = (float).3290;
+   float red_x = (float).64;
+   float red_y = (float).33;
+   float green_x = (float).30;
+   float green_y = (float).60;
+   float blue_x = (float).15;
+   float blue_y = (float).06;
 
    png_set_cHRM(png_ptr, info_ptr,
       white_x, white_y, red_x, red_y, green_x, green_y, blue_x, blue_y);
@@ -647,21 +639,19 @@ png_set_iCCP(png_structp png_ptr, png_infop info_ptr,
              png_charp name, int compression_type,
              png_charp profile, png_uint_32 proflen)
 {
-   png_charp new_iccp_name;
-   png_charp new_iccp_profile;
 
-   png_debug1(1, "in %s storage function\n", "iCCP");
+    png_debug1(1, "in %s storage function\n", "iCCP");
    if (png_ptr == NULL || info_ptr == NULL || name == NULL || profile == NULL)
       return;
 
-   new_iccp_name = (png_charp)png_malloc_warn(png_ptr, png_strlen(name)+1);
+   png_charp new_iccp_name = (png_charp)png_malloc_warn(png_ptr, png_strlen(name)+1);
    if (new_iccp_name == NULL)
    {
       png_warning(png_ptr, "Insufficient memory to process iCCP chunk.");
       return;
    }
    png_strcpy(new_iccp_name, name);
-   new_iccp_profile = (png_charp)png_malloc_warn(png_ptr, proflen);
+   png_charp new_iccp_profile = (png_charp)png_malloc_warn(png_ptr, proflen);
    if (new_iccp_profile == NULL)
    {
       png_free (png_ptr, new_iccp_name);
@@ -690,8 +680,7 @@ void PNGAPI
 png_set_text(png_structp png_ptr, png_infop info_ptr, png_textp text_ptr,
    int num_text)
 {
-   int ret;
-   ret=png_set_text_2(png_ptr, info_ptr, text_ptr, num_text);
+    int ret = png_set_text_2(png_ptr, info_ptr, text_ptr, num_text);
    if (ret)
      png_error(png_ptr, "Insufficient memory to store text");
 }
@@ -700,9 +689,8 @@ int /* PRIVATE */
 png_set_text_2(png_structp png_ptr, png_infop info_ptr, png_textp text_ptr,
    int num_text)
 {
-   int i;
 
-   png_debug1(1, "in %s storage function\n", (png_ptr->chunk_name[0] == '\0' ?
+    png_debug1(1, "in %s storage function\n", (png_ptr->chunk_name[0] == '\0' ?
       "text" : (png_const_charp)png_ptr->chunk_name));
 
    if (png_ptr == NULL || info_ptr == NULL || num_text == 0)
@@ -715,12 +703,10 @@ png_set_text_2(png_structp png_ptr, png_infop info_ptr, png_textp text_ptr,
    {
       if (info_ptr->text != NULL)
       {
-         png_textp old_text;
-         int old_max;
 
-         old_max = info_ptr->max_text;
+          int old_max = info_ptr->max_text;
          info_ptr->max_text = info_ptr->num_text + num_text + 8;
-         old_text = info_ptr->text;
+         png_textp old_text = info_ptr->text;
          info_ptr->text = (png_textp)png_malloc_warn(png_ptr,
             (png_uint_32)(info_ptr->max_text * png_sizeof (png_text)));
          if (info_ptr->text == NULL)
@@ -747,16 +733,16 @@ png_set_text_2(png_structp png_ptr, png_infop info_ptr, png_textp text_ptr,
       png_debug1(3, "allocated %d entries for info_ptr->text\n",
          info_ptr->max_text);
    }
-   for (i = 0; i < num_text; i++)
+   for (int i = 0; i < num_text; i++)
    {
-      png_size_t text_length,key_len;
+      png_size_t text_length;
       png_size_t lang_len,lang_key_len;
       png_textp textp = &(info_ptr->text[info_ptr->num_text]);
 
       if (text_ptr[i].key == NULL)
           continue;
 
-      key_len = png_strlen(text_ptr[i].key);
+      png_size_t key_len = png_strlen(text_ptr[i].key);
 
       if(text_ptr[i].compression <= 0)
       {
@@ -918,11 +904,9 @@ void PNGAPI
 png_set_sPLT(png_structp png_ptr,
              png_infop info_ptr, png_sPLT_tp entries, int nentries)
 {
-    png_sPLT_tp np;
-    int i;
 
-    np = (png_sPLT_tp)png_malloc_warn(png_ptr,
-        (info_ptr->splt_palettes_num + nentries) * png_sizeof(png_sPLT_t));
+    png_sPLT_tp np = (png_sPLT_tp)png_malloc_warn(png_ptr,
+                                                  (info_ptr->splt_palettes_num + nentries) * png_sizeof(png_sPLT_t));
     if (np == NULL)
     {
       png_warning(png_ptr, "No memory for sPLT palettes.");
@@ -934,7 +918,7 @@ png_set_sPLT(png_structp png_ptr,
     png_free(png_ptr, info_ptr->splt_palettes);
     info_ptr->splt_palettes=NULL;
 
-    for (i = 0; i < nentries; i++)
+    for (int i = 0; i < nentries; i++)
     {
         png_sPLT_tp to = np + info_ptr->splt_palettes_num + i;
         png_sPLT_tp from = entries + i;
@@ -966,15 +950,13 @@ void PNGAPI
 png_set_unknown_chunks(png_structp png_ptr,
    png_infop info_ptr, png_unknown_chunkp unknowns, int num_unknowns)
 {
-    png_unknown_chunkp np;
-    int i;
 
     if (png_ptr == NULL || info_ptr == NULL || num_unknowns == 0)
         return;
 
-    np = (png_unknown_chunkp)png_malloc_warn(png_ptr,
-        (info_ptr->unknown_chunks_num + num_unknowns) *
-        png_sizeof(png_unknown_chunk));
+    png_unknown_chunkp np = (png_unknown_chunkp)png_malloc_warn(png_ptr,
+                                                                (info_ptr->unknown_chunks_num + num_unknowns) *
+                                                                png_sizeof(png_unknown_chunk));
     if (np == NULL)
     {
        png_warning(png_ptr, "Out of memory while processing unknown chunk.");
@@ -986,7 +968,7 @@ png_set_unknown_chunks(png_structp png_ptr,
     png_free(png_ptr, info_ptr->unknown_chunks);
     info_ptr->unknown_chunks=NULL;
 
-    for (i = 0; i < num_unknowns; i++)
+    for (int i = 0; i < num_unknowns; i++)
     {
         png_unknown_chunkp to = np + info_ptr->unknown_chunks_num + i;
         png_unknown_chunkp from = unknowns + i;
@@ -1057,8 +1039,8 @@ void PNGAPI
 png_set_keep_unknown_chunks(png_structp png_ptr, int keep, png_bytep
    chunk_list, int num_chunks)
 {
-    png_bytep new_list, p;
-    int i, old_num_chunks;
+    png_bytep p;
+    int i;
     if (num_chunks == 0)
     {
       if(keep == PNG_HANDLE_CHUNK_ALWAYS || keep == PNG_HANDLE_CHUNK_IF_SAFE)
@@ -1074,9 +1056,9 @@ png_set_keep_unknown_chunks(png_structp png_ptr, int keep, png_bytep
     }
     if (chunk_list == NULL)
       return;
-    old_num_chunks=png_ptr->num_chunk_list;
-    new_list=(png_bytep)png_malloc(png_ptr,
-       (png_uint_32)(5*(num_chunks+old_num_chunks)));
+    int old_num_chunks = png_ptr->num_chunk_list;
+    png_bytep new_list = (png_bytep)png_malloc(png_ptr,
+                                               (png_uint_32)(5*(num_chunks+old_num_chunks)));
     if(png_ptr->chunk_list != NULL)
     {
        png_memcpy(new_list, png_ptr->chunk_list,
@@ -1151,26 +1133,11 @@ png_set_invalid(png_structp png_ptr, png_infop info_ptr, int mask)
 void PNGAPI
 png_set_asm_flags (png_structp png_ptr, png_uint_32 asm_flags)
 {
-    png_uint_32 settable_asm_flags;
-    png_uint_32 settable_mmx_flags;
 
-    settable_mmx_flags =
-#ifdef PNG_HAVE_ASSEMBLER_COMBINE_ROW
-                         PNG_ASM_FLAG_MMX_READ_COMBINE_ROW  |
-#endif
-#ifdef PNG_HAVE_ASSEMBLER_READ_INTERLACE
-                         PNG_ASM_FLAG_MMX_READ_INTERLACE    |
-#endif
-#ifdef PNG_HAVE_ASSEMBLER_READ_FILTER_ROW
-                         PNG_ASM_FLAG_MMX_READ_FILTER_SUB   |
-                         PNG_ASM_FLAG_MMX_READ_FILTER_UP    |
-                         PNG_ASM_FLAG_MMX_READ_FILTER_AVG   |
-                         PNG_ASM_FLAG_MMX_READ_FILTER_PAETH |
-#endif
-                         0;
+    png_uint_32 settable_mmx_flags = 0;
 
     /* could be some non-MMX ones in the future, but not currently: */
-    settable_asm_flags = settable_mmx_flags;
+    png_uint_32 settable_asm_flags = settable_mmx_flags;
 
     if (!(png_ptr->asm_flags & PNG_ASM_FLAG_MMX_SUPPORT_COMPILED) ||
         !(png_ptr->asm_flags & PNG_ASM_FLAG_MMX_SUPPORT_IN_CPU))

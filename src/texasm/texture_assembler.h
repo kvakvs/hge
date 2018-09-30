@@ -1,6 +1,4 @@
-
-#ifndef TEXTURE_ASSEMBLER_H
-#define TEXTURE_ASSEMBLER_H
+#pragma once
 
 
 #include "..\..\include\hgeresource.h"
@@ -14,27 +12,26 @@ public:
         ClearResources();
     }
 
-    void AccumulateRMResources(hgeResourceManager *rm, int resgroup = 0, char *mask_set = 0,
+    void AccumulateRMResources(hgeResourceManager* rm, int resgroup = 0, char* mask_set = nullptr,
                                bool bMaskInclusive = false);
-    void AccumulateFileResources(char *wildcard, int resgroup = 0, char *mask_set = 0,
+    void AccumulateFileResources(char* wildcard, int resgroup = 0, char* mask_set = nullptr,
                                  bool bMaskInclusive = false);
     void ClearResources();
 
-    void SetMaxTextureSize(int w, int h) {
+    void SetMaxTextureSize(const int w, const int h) {
         texture.SetMaxSize(w, h);
     }
-    void SetMargin(int margin) {
+
+    void SetMargin(const int margin) {
         texture.SetMargin(margin);
     }
-    bool GenerateTextures(char *wildcard);
+
+    bool GenerateTextures(char* wildcard);
 
 private:
-    bool		CheckMask(char *name, char *mask_set, bool bMaskInclusive);
-    CGfxObject *FindObj(GfxObjList objlist, char *name);
+    bool CheckMask(char* name, char* mask_set, bool bMaskInclusive);
+    CGfxObject* FindObj(GfxObjList objlist, char* name);
 
-    GfxObjList			obj_list;
-    COptimizedTexture	texture;
+    GfxObjList obj_list;
+    COptimizedTexture texture;
 };
-
-
-#endif

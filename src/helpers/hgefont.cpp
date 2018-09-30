@@ -16,18 +16,15 @@ const char FNTBITMAPTAG[] = "Bitmap";
 const char FNTCHARTAG[]   = "Char";
 
 
-HGE *hgeFont::hge=0;
+HGE *hgeFont::hge=nullptr;
 char hgeFont::buffer[1024];
 
 
 hgeFont::hgeFont(const char *szFont, bool bMipmap)
 {
-    void	*data;
     hgeU32	size;
-    char	*desc, *pdesc;
     char	linebuf[256];
     char	buf[MAX_PATH], *pbuf;
-    char	chr;
     int		i, x, y, w, h, a, c;
 
     // Setup variables
@@ -52,17 +49,17 @@ hgeFont::hgeFont(const char *szFont, bool bMipmap)
 
     // Load font description
 
-    data=hge->Resource_Load(szFont, &size);
+    void *data = hge->Resource_Load(szFont, &size);
     if(!data) {
         return;
     }
 
-    desc = new char[size+1];
+    char *desc = new char[size+1];
     memcpy(desc,data,size);
     desc[size]=0;
     hge->Resource_Free(data);
 
-    pdesc=_get_line(desc,linebuf);
+    char *pdesc = _get_line(desc,linebuf);
     if(strcmp(linebuf, FNTHEADERTAG)) {
         hge->System_Log("Font %s has incorrect format.", szFont);
         delete[] desc;
@@ -110,7 +107,7 @@ hgeFont::hgeFont(const char *szFont, bool bMipmap)
             } else {
                 i=0;
                 while((*pbuf>='0' && *pbuf<='9') || (*pbuf>='A' && *pbuf<='F') || (*pbuf>='a' && *pbuf<='f')) {
-                    chr=*pbuf;
+                    char chr = *pbuf;
                     if(chr >= 'a') {
                         chr-='a'-':';
                     }
@@ -157,7 +154,6 @@ hgeFont::~hgeFont()
 
 void hgeFont::Render(float x, float y, int align, const char *string)
 {
-    int i;
     float	fx=x;
 
     align &= HGETEXT_HORZMASK;
@@ -179,7 +175,7 @@ void hgeFont::Render(float x, float y, int align, const char *string)
                 fx -= int(GetStringWidth(string+1, false)/2.0f);
             }
         } else {
-            i=(unsigned char)*string;
+            int i = (unsigned char)*string;
             if(!letters[i]) {
                 i='?';
             }
@@ -206,28 +202,26 @@ void hgeFont::printf(float x, float y, int align, const char *format, ...)
 
 void hgeFont::printfb(float x, float y, float w, float h, int align, const char *format, ...)
 {
-    char	chr, *pbuf, *prevword, *linestart;
-    int		i,lines=0;
-    float	tx, ty, hh, ww;
+    int lines=0;
     char	*pArg=(char *) &format+sizeof(format);
 
     _vsnprintf(buffer, sizeof(buffer)-1, format, pArg);
     buffer[sizeof(buffer)-1]=0;
     //vsprintf(buffer, format, pArg);
 
-    linestart=buffer;
-    pbuf=buffer;
-    prevword=0;
+    char *linestart = buffer;
+    char *pbuf = buffer;
+    char *prevword = nullptr;
 
     for(;;) {
-        i=0;
+        int i = 0;
         while(pbuf[i] && pbuf[i]!=' ' && pbuf[i]!='\n') {
             i++;
         }
 
-        chr=pbuf[i];
+        char chr = pbuf[i];
         pbuf[i]=0;
-        ww=GetStringWidth(linestart);
+        float ww = GetStringWidth(linestart);
         pbuf[i]=chr;
 
         if(ww > w) {
@@ -259,9 +253,9 @@ void hgeFont::printfb(float x, float y, float w, float h, int align, const char 
         pbuf=&pbuf[i+1];
     }
 
-    tx=x;
-    ty=y;
-    hh=fHeight*fSpacing*fScale*lines;
+    float tx = x;
+    float ty = y;
+    float hh = fHeight*fSpacing*fScale*lines;
 
     switch(align & HGETEXT_HORZMASK) {
     case HGETEXT_LEFT:
@@ -290,14 +284,13 @@ void hgeFont::printfb(float x, float y, float w, float h, int align, const char 
 
 float hgeFont::GetStringWidth(const char *string, bool bMultiline) const
 {
-    int i;
-    float linew, w = 0;
+    float w = 0;
 
     while(*string) {
-        linew = 0;
+        float linew = 0;
 
         while(*string && *string != '\n') {
-            i=(unsigned char)*string;
+            int i = (unsigned char)*string;
             if(!letters[i]) {
                 i='?';
             }
@@ -359,7 +352,7 @@ char *hgeFont::_get_line(char *file, char *line)
     int i=0;
 
     if(!file[i]) {
-        return 0;
+        return nullptr;
     }
 
     while(file[i] && file[i]!='\n' && file[i]!='\r') {

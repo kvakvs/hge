@@ -7,8 +7,7 @@
 */
 
 
-#ifndef HGEGUICTRLS_H
-#define HGEGUICTRLS_H
+#pragma once
 
 
 #include "hge.h"
@@ -29,46 +28,52 @@
 /*
 ** hgeGUIText
 */
-class hgeGUIText : public hgeGUIObject
-{
+class hgeGUIText : public hgeGUIObject {
 public:
-	hgeGUIText(int id, float x, float y, float w, float h, hgeFont *fnt);
+    hgeGUIText(int id, float x, float y, float w, float h, hgeFont* fnt);
 
-	void			SetMode(int _align);
-	void			SetText(const char *_text);
-	void			printf(const char *format, ...);
+    void SetMode(int _align);
+    void SetText(const char* _text);
+    void printf(const char* format, ...);
 
-	virtual void	Render();
+    void Render() override;
 
 private:
-	hgeFont*		font;
-	float			tx, ty;
-	int				align;
-	char			text[256];
+    hgeFont* font;
+    float tx, ty;
+    int align;
+    char text[256];
 };
 
 
 /*
 ** hgeGUIButton
 */
-class hgeGUIButton : public hgeGUIObject
-{
+class hgeGUIButton : public hgeGUIObject {
 public:
-	hgeGUIButton(int id, float x, float y, float w, float h, HTEXTURE tex, float tx, float ty);
-	virtual			~hgeGUIButton();
+    hgeGUIButton(int id, float x, float y, float w, float h, HTEXTURE tex, float tx, float ty);
+    virtual ~hgeGUIButton();
 
-	void			SetMode(bool _bTrigger) { bTrigger=_bTrigger; }
-	void			SetState(bool _bPressed) { bPressed=_bPressed; }
-	bool			GetState() const { return bPressed; }
+    void SetMode(const bool _bTrigger) {
+        bTrigger = _bTrigger;
+    }
 
-	virtual void	Render();
-	virtual bool	MouseLButton(bool bDown);
+    void SetState(const bool _bPressed) {
+        bPressed = _bPressed;
+    }
+
+    bool GetState() const {
+        return bPressed;
+    }
+
+    void Render() override;
+    bool MouseLButton(bool bDown) override;
 
 private:
-	bool			bTrigger;
-	bool			bPressed;
-	bool			bOldState;
-	hgeSprite		*sprUp, *sprDown;
+    bool bTrigger;
+    bool bPressed;
+    bool bOldState;
+    hgeSprite *sprUp, *sprDown;
 };
 
 
@@ -79,72 +84,101 @@ private:
 #define HGESLIDER_BARRELATIVE	1
 #define HGESLIDER_SLIDER		2
 
-class hgeGUISlider : public hgeGUIObject
-{
+class hgeGUISlider : public hgeGUIObject {
 public:
-	hgeGUISlider(int id, float x, float y, float w, float h, HTEXTURE tex, float tx, float ty, float sw, float sh, bool vertical=false);
-	virtual			~hgeGUISlider();
+    hgeGUISlider(int id, float x, float y, float w, float h, HTEXTURE tex, float tx, float ty,
+                 float sw, float sh, bool vertical = false);
+    virtual ~hgeGUISlider();
 
-	void			SetMode(float _fMin, float _fMax, int _mode) { fMin=_fMin; fMax=_fMax; mode=_mode; }
-	void			SetValue(float _fVal);
-	float			GetValue() const { return fVal; }
+    void SetMode(const float _fMin, const float _fMax, const int _mode) {
+        fMin = _fMin;
+        fMax = _fMax;
+        mode = _mode;
+    }
 
-	virtual void	Render();
-	virtual bool	MouseMove(float x, float y);
-	virtual bool	MouseLButton(bool bDown);
+    void SetValue(float _fVal);
+
+    float GetValue() const {
+        return fVal;
+    }
+
+    void Render() override;
+    bool MouseMove(float x, float y) override;
+    bool MouseLButton(bool b_down) override;
 
 private:
-	bool			bPressed;
-	bool			bVertical;
-	int				mode;
-	float			fMin, fMax, fVal;
-	float			sl_w, sl_h;
-	hgeSprite		*sprSlider;
+    bool bPressed;
+    bool bVertical;
+    int mode;
+    float fMin, fMax, fVal;
+    float sl_w, sl_h;
+    hgeSprite* sprSlider;
 };
 
 
 /*
 ** hgeGUIListbox
 */
-struct hgeGUIListboxItem
-{
-	char				text[64];
-	hgeGUIListboxItem	*next;
+struct hgeGUIListboxItem {
+    char text[64];
+    hgeGUIListboxItem* next;
 };
 
-class hgeGUIListbox : public hgeGUIObject
-{
+class hgeGUIListbox : public hgeGUIObject {
 public:
-	hgeGUIListbox(int id, float x, float y, float w, float h, hgeFont *fnt, hgeU32 tColor, hgeU32 thColor, hgeU32 hColor);
-	virtual			~hgeGUIListbox();
+    hgeGUIListbox(int id, float x, float y, float w, float h, hgeFont* fnt, hgeU32 tColor,
+                  hgeU32 thColor, hgeU32 hColor);
+    virtual ~hgeGUIListbox();
 
-	int				AddItem(char *item);
-	void			DeleteItem(int n);
-	int				GetSelectedItem() { return nSelectedItem; }
-	void			SetSelectedItem(int n) { if(n>=0 && n<GetNumItems()) nSelectedItem=n; }
-	int				GetTopItem() { return nTopItem; }
-	void			SetTopItem(int n) { if(n>=0 && n<=GetNumItems()-GetNumRows()) nTopItem=n; }
+    int AddItem(char* item);
+    void DeleteItem(int n);
 
-	char			*GetItemText(int n);
-	int				GetNumItems() { return nItems; }
-	int				GetNumRows() { return int((rect.y2-rect.y1)/font->GetHeight()); }
-	void			Clear();
+    int GetSelectedItem() {
+        return nSelectedItem;
+    }
 
-	virtual void	Render();
-	virtual bool	MouseMove(float x, float y) { mx=x; my=y; return false; }
-	virtual bool	MouseLButton(bool bDown);
-	virtual bool	MouseWheel(int nNotches);
-	virtual bool	KeyClick(int key, int chr);
+    void SetSelectedItem(const int n) {
+        if (n >= 0 && n < GetNumItems()) nSelectedItem = n;
+    }
+
+    int GetTopItem() {
+        return nTopItem;
+    }
+
+    void SetTopItem(const int n) {
+        if (n >= 0 && n <= GetNumItems() - GetNumRows()) nTopItem = n;
+    }
+
+    char* GetItemText(int n);
+
+    int GetNumItems() {
+        return nItems;
+    }
+
+    int GetNumRows() {
+        return int((rect.y2 - rect.y1) / font->GetHeight());
+    }
+
+    void Clear();
+
+    void Render() override;
+
+    bool MouseMove(const float x, const float y) override {
+        mx = x;
+        my = y;
+        return false;
+    }
+
+    bool MouseLButton(bool bDown) override;
+    bool MouseWheel(int nNotches) override;
+    bool KeyClick(int key, int chr) override;
 
 private:
-	hgeSprite		*sprHighlight;
-	hgeFont			*font;
-	hgeU32			textColor, texthilColor;
+    hgeSprite* sprHighlight;
+    hgeFont* font;
+    hgeU32 textColor, texthilColor;
 
-	int					nItems, nSelectedItem, nTopItem;
-	float				mx, my;
-	hgeGUIListboxItem	*pItems;
+    int nItems, nSelectedItem, nTopItem;
+    float mx, my;
+    hgeGUIListboxItem* pItems;
 };
-
-
-#endif

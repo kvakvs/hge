@@ -554,9 +554,8 @@ png_push_crc_finish(png_structp png_ptr)
 void PNGAPI
 png_push_fill_buffer(png_structp png_ptr, png_bytep buffer, png_size_t length)
 {
-   png_bytep ptr;
 
-   ptr = buffer;
+    png_bytep ptr = buffer;
    if (png_ptr->save_buffer_size)
    {
       png_size_t save_size;
@@ -596,11 +595,11 @@ png_push_save_buffer(png_structp png_ptr)
    {
       if (png_ptr->save_buffer_ptr != png_ptr->save_buffer)
       {
-         png_size_t i,istop;
+         png_size_t i;
          png_bytep sp;
          png_bytep dp;
 
-         istop = png_ptr->save_buffer_size;
+         png_size_t istop = png_ptr->save_buffer_size;
          for (i = 0, sp = png_ptr->save_buffer_ptr, dp = png_ptr->save_buffer;
             i < istop; i++, sp++, dp++)
          {
@@ -611,16 +610,14 @@ png_push_save_buffer(png_structp png_ptr)
    if (png_ptr->save_buffer_size + png_ptr->current_buffer_size >
       png_ptr->save_buffer_max)
    {
-      png_size_t new_max;
-      png_bytep old_buffer;
 
-      if (png_ptr->save_buffer_size > PNG_SIZE_MAX - 
+       if (png_ptr->save_buffer_size > PNG_SIZE_MAX - 
          (png_ptr->current_buffer_size + 256))
       {
         png_error(png_ptr, "Potential overflow of save_buffer");
       }
-      new_max = png_ptr->save_buffer_size + png_ptr->current_buffer_size + 256;
-      old_buffer = png_ptr->save_buffer;
+      png_size_t new_max = png_ptr->save_buffer_size + png_ptr->current_buffer_size + 256;
+      png_bytep old_buffer = png_ptr->save_buffer;
       png_ptr->save_buffer = (png_bytep)png_malloc(png_ptr,
          (png_uint_32)new_max);
       png_memcpy(png_ptr->save_buffer, old_buffer, png_ptr->save_buffer_size);
@@ -743,16 +740,15 @@ void /* PRIVATE */
 png_process_IDAT_data(png_structp png_ptr, png_bytep buffer,
    png_size_t buffer_length)
 {
-   int ret;
 
-   if ((png_ptr->flags & PNG_FLAG_ZLIB_FINISHED) && buffer_length)
+    if ((png_ptr->flags & PNG_FLAG_ZLIB_FINISHED) && buffer_length)
       png_error(png_ptr, "Extra compression data");
 
    png_ptr->zstream.next_in = buffer;
    png_ptr->zstream.avail_in = (uInt)buffer_length;
    for(;;)
    {
-      ret = inflate(&png_ptr->zstream, Z_PARTIAL_FLUSH);
+      int ret = inflate(&png_ptr->zstream, Z_PARTIAL_FLUSH);
       if (ret != Z_OK)
       {
          if (ret == Z_STREAM_END)
@@ -768,10 +764,9 @@ png_process_IDAT_data(png_structp png_ptr, png_bytep buffer,
             png_ptr->flags |= PNG_FLAG_ZLIB_FINISHED;
             break;
          }
-         else if (ret == Z_BUF_ERROR)
-            break;
-         else
-            png_error(png_ptr, "Decompression Error");
+          if (ret == Z_BUF_ERROR)
+              break;
+          png_error(png_ptr, "Decompression Error");
       }
       if (!(png_ptr->zstream.avail_out))
       {
@@ -943,8 +938,7 @@ png_push_process_row(png_structp png_ptr)
          }
          case 5:
          {
-            int i;
-            for (i = 0; i < 2 && png_ptr->pass == 5; i++)
+             for (int i = 0; i < 2 && png_ptr->pass == 5; i++)
             {
                png_push_have_row(png_ptr, png_ptr->row_buf + 1);
                png_read_push_finish_row(png_ptr);
@@ -1095,12 +1089,9 @@ png_push_read_tEXt(png_structp png_ptr, png_infop info_ptr)
    }
    if (!(png_ptr->current_text_left))
    {
-      png_textp text_ptr;
-      png_charp text;
-      png_charp key;
-      int ret;
+       png_charp text;
 
-      if (png_ptr->buffer_size < 4)
+       if (png_ptr->buffer_size < 4)
       {
          png_push_save_buffer(png_ptr);
          return;
@@ -1113,7 +1104,7 @@ png_push_read_tEXt(png_structp png_ptr, png_infop info_ptr)
          return;
 #endif
 
-      key = png_ptr->current_text;
+      png_charp key = png_ptr->current_text;
 
       for (text = key; *text; text++)
          /* empty loop */ ;
@@ -1121,8 +1112,8 @@ png_push_read_tEXt(png_structp png_ptr, png_infop info_ptr)
       if (text != key + png_ptr->current_text_size)
          text++;
 
-      text_ptr = (png_textp)png_malloc(png_ptr,
-         (png_uint_32)png_sizeof(png_text));
+      png_textp text_ptr = (png_textp)png_malloc(png_ptr,
+                                                 (png_uint_32)png_sizeof(png_text));
       text_ptr->compression = PNG_TEXT_COMPRESSION_NONE;
       text_ptr->key = key;
 #ifdef PNG_iTXt_SUPPORTED
@@ -1131,7 +1122,7 @@ png_push_read_tEXt(png_structp png_ptr, png_infop info_ptr)
 #endif
       text_ptr->text = text;
 
-      ret = png_set_text_2(png_ptr, info_ptr, text_ptr, 1);
+      int ret = png_set_text_2(png_ptr, info_ptr, text_ptr, 1);
 
       png_free(png_ptr, key);
       png_free(png_ptr, text_ptr);
@@ -1194,13 +1185,9 @@ png_push_read_zTXt(png_structp png_ptr, png_infop info_ptr)
    }
    if (!(png_ptr->current_text_left))
    {
-      png_textp text_ptr;
-      png_charp text;
-      png_charp key;
-      int ret;
-      png_size_t text_size, key_size;
+       png_charp text;
 
-      if (png_ptr->buffer_size < 4)
+       if (png_ptr->buffer_size < 4)
       {
          png_push_save_buffer(png_ptr);
          return;
@@ -1208,7 +1195,7 @@ png_push_read_zTXt(png_structp png_ptr, png_infop info_ptr)
 
       png_push_crc_finish(png_ptr);
 
-      key = png_ptr->current_text;
+      png_charp key = png_ptr->current_text;
 
       for (text = key; *text; text++)
          /* empty loop */ ;
@@ -1238,10 +1225,10 @@ png_push_read_zTXt(png_structp png_ptr, png_infop info_ptr)
       png_ptr->zstream.next_out = png_ptr->zbuf;
       png_ptr->zstream.avail_out = (uInt)png_ptr->zbuf_size;
 
-      key_size = text - key;
-      text_size = 0;
+      png_size_t key_size = text - key;
+      png_size_t text_size = 0;
       text = NULL;
-      ret = Z_STREAM_END;
+      int ret = Z_STREAM_END;
 
       while (png_ptr->zstream.avail_in)
       {
@@ -1271,9 +1258,8 @@ png_push_read_zTXt(png_structp png_ptr, png_infop info_ptr)
             }
             else
             {
-               png_charp tmp;
 
-               tmp = text;
+                png_charp tmp = text;
                text = (png_charp)png_malloc(png_ptr, text_size +
                   (png_uint_32)(png_ptr->zbuf_size - png_ptr->zstream.avail_out
                    + 1));
@@ -1315,8 +1301,8 @@ png_push_read_zTXt(png_structp png_ptr, png_infop info_ptr)
       key = text;
       text += key_size;
 
-      text_ptr = (png_textp)png_malloc(png_ptr,
-          (png_uint_32)png_sizeof(png_text));
+      png_textp text_ptr = (png_textp)png_malloc(png_ptr,
+                                                 (png_uint_32)png_sizeof(png_text));
       text_ptr->compression = PNG_TEXT_COMPRESSION_zTXt;
       text_ptr->key = key;
 #ifdef PNG_iTXt_SUPPORTED

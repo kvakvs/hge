@@ -175,10 +175,9 @@ png_do_invert(png_row_infop row_info, png_bytep row)
    if (row_info->color_type == PNG_COLOR_TYPE_GRAY)
    {
       png_bytep rp = row;
-      png_uint_32 i;
-      png_uint_32 istop = row_info->rowbytes;
+       png_uint_32 istop = row_info->rowbytes;
 
-      for (i = 0; i < istop; i++)
+      for (png_uint_32 i = 0; i < istop; i++)
       {
          *rp = (png_byte)(~(*rp));
          rp++;
@@ -188,10 +187,9 @@ png_do_invert(png_row_infop row_info, png_bytep row)
       row_info->bit_depth == 8)
    {
       png_bytep rp = row;
-      png_uint_32 i;
-      png_uint_32 istop = row_info->rowbytes;
+       png_uint_32 istop = row_info->rowbytes;
 
-      for (i = 0; i < istop; i+=2)
+      for (png_uint_32 i = 0; i < istop; i+=2)
       {
          *rp = (png_byte)(~(*rp));
          rp+=2;
@@ -201,10 +199,9 @@ png_do_invert(png_row_infop row_info, png_bytep row)
       row_info->bit_depth == 16)
    {
       png_bytep rp = row;
-      png_uint_32 i;
-      png_uint_32 istop = row_info->rowbytes;
+       png_uint_32 istop = row_info->rowbytes;
 
-      for (i = 0; i < istop; i+=4)
+      for (png_uint_32 i = 0; i < istop; i+=4)
       {
          *rp = (png_byte)(~(*rp));
          *(rp+1) = (png_byte)(~(*(rp+1)));
@@ -227,10 +224,9 @@ png_do_swap(png_row_infop row_info, png_bytep row)
        row_info->bit_depth == 16)
    {
       png_bytep rp = row;
-      png_uint_32 i;
-      png_uint_32 istop= row_info->width * row_info->channels;
+       png_uint_32 istop= row_info->width * row_info->channels;
 
-      for (i = 0; i < istop; i++, rp += 2)
+      for (png_uint_32 i = 0; i < istop; i++, rp += 2)
       {
          png_byte t = *rp;
          *rp = *(rp + 1);
@@ -357,9 +353,9 @@ png_do_packswap(png_row_infop row_info, png_bytep row)
 #endif
        row_info->bit_depth < 8)
    {
-      png_bytep rp, end, table;
+      png_bytep table;
 
-      end = row + row_info->rowbytes;
+      png_bytep end = row + row_info->rowbytes;
 
       if (row_info->bit_depth == 1)
          table = onebppswaptable;
@@ -370,7 +366,7 @@ png_do_packswap(png_row_infop row_info, png_bytep row)
       else
          return;
 
-      for (rp = row; rp < end; rp++)
+      for (png_bytep rp = row; rp < end; rp++)
          *rp = table[*rp];
    }
 }

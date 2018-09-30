@@ -499,7 +499,7 @@ png_free(png_structp png_ptr, png_voidp ptr)
       (*(png_ptr->free_fn))(png_ptr, ptr);
       return;
    }
-   else png_free_default(png_ptr, ptr);
+    png_free_default(png_ptr, ptr);
 }
 void PNGAPI
 png_free_default(png_structp png_ptr, png_voidp ptr)
@@ -533,11 +533,10 @@ png_free_default(png_structp png_ptr, png_voidp ptr)
 png_voidp PNGAPI
 png_malloc_warn(png_structp png_ptr, png_uint_32 size)
 {
-   png_voidp ptr;
-   png_uint_32 save_flags=png_ptr->flags;
+    png_uint_32 save_flags=png_ptr->flags;
 
    png_ptr->flags|=PNG_FLAG_MALLOC_NULL_MEM_OK;
-   ptr = (png_voidp)png_malloc((png_structp)png_ptr, size);
+   png_voidp ptr = (png_voidp)png_malloc((png_structp)png_ptr, size);
    png_ptr->flags=save_flags;
    return(ptr);
 }
@@ -547,9 +546,8 @@ png_voidp PNGAPI
 png_memcpy_check (png_structp png_ptr, png_voidp s1, png_voidp s2,
    png_uint_32 length)
 {
-   png_size_t size;
 
-   size = (png_size_t)length;
+    png_size_t size = (png_size_t)length;
    if ((png_uint_32)size != length)
       png_error(png_ptr,"Overflow in png_memcpy_check.");
 
@@ -560,9 +558,8 @@ png_voidp PNGAPI
 png_memset_check (png_structp png_ptr, png_voidp s1, int value,
    png_uint_32 length)
 {
-   png_size_t size;
 
-   size = (png_size_t)length;
+    png_size_t size = (png_size_t)length;
    if ((png_uint_32)size != length)
       png_error(png_ptr,"Overflow in png_memset_check.");
 

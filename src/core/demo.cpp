@@ -14,7 +14,7 @@
 hgeQuad dquad;
 float dtime;
 
-unsigned short hgelogo[]= {
+unsigned short hgelogo[] = {
     0x5089,0x474E,0x0A0D,0x0A1A,0x0000,0x0D00,0x4849,0x5244,
     0x0000,0x8000,0x0000,0x8000,0x0308,0x0000,0xF400,0x91E0,
     0x00F9,0x0000,0x6704,0x4D41,0x0041,0xAF00,0x37C8,0x8A05,
@@ -159,67 +159,66 @@ unsigned short hgelogo[]= {
     0x0000,0x4549,0x444E,0x42AE,0x8260
 };
 
-void DInit()
-{
-    int x=pHGE->System_GetState(HGE_SCREENWIDTH)/2;
-    int y=pHGE->System_GetState(HGE_SCREENHEIGHT)/2;
+void DInit() {
+    int x = pHGE->System_GetState(HGE_SCREENWIDTH) / 2;
+    int y = pHGE->System_GetState(HGE_SCREENHEIGHT) / 2;
 
-    dquad.tex=pHGE->Texture_Load((char *)hgelogo, sizeof(hgelogo));
-    dquad.blend=BLEND_DEFAULT;
+    dquad.tex = pHGE->Texture_Load((char *)hgelogo, sizeof(hgelogo));
+    dquad.blend = BLEND_DEFAULT;
 
-    for(int i=0; i<4; i++) {
-        dquad.v[i].z=0.5f;
-        dquad.v[i].col=0xFFFFFFFF;
+    for (int i = 0; i < 4; i++) {
+        dquad.v[i].z = 0.5f;
+        dquad.v[i].col = 0xFFFFFFFF;
     }
 
-    dquad.v[0].tx=0.0f;
-    dquad.v[0].ty=0.0f;
-    dquad.v[1].tx=1.0f;
-    dquad.v[1].ty=0.0f;
-    dquad.v[2].tx=1.0f;
-    dquad.v[2].ty=1.0f;
-    dquad.v[3].tx=0.0f;
-    dquad.v[3].ty=1.0f;
+    dquad.v[0].tx = 0.0f;
+    dquad.v[0].ty = 0.0f;
+    dquad.v[1].tx = 1.0f;
+    dquad.v[1].ty = 0.0f;
+    dquad.v[2].tx = 1.0f;
+    dquad.v[2].ty = 1.0f;
+    dquad.v[3].tx = 0.0f;
+    dquad.v[3].ty = 1.0f;
 
-    dquad.v[0].x=x-64.0f;
-    dquad.v[0].y=y-64.0f;
-    dquad.v[1].x=x+64.0f;
-    dquad.v[1].y=y-64.0f;
-    dquad.v[2].x=x+64.0f;
-    dquad.v[2].y=y+64.0f;
-    dquad.v[3].x=x-64.0f;
-    dquad.v[3].y=y+64.0f;
+    dquad.v[0].x = x - 64.0f;
+    dquad.v[0].y = y - 64.0f;
+    dquad.v[1].x = x + 64.0f;
+    dquad.v[1].y = y - 64.0f;
+    dquad.v[2].x = x + 64.0f;
+    dquad.v[2].y = y + 64.0f;
+    dquad.v[3].x = x - 64.0f;
+    dquad.v[3].y = y + 64.0f;
 
-    dtime=0.0f;
+    dtime = 0.0f;
 }
 
-void DDone()
-{
+void DDone() {
     pHGE->Texture_Free(dquad.tex);
 }
 
-bool DFrame()
-{
+bool DFrame() {
     hgeU8 alpha;
-    hgeU32 col;
 
-    dtime+=pHGE->Timer_GetDelta();
+    dtime += pHGE->Timer_GetDelta();
 
-    if(dtime<0.25) {
-        alpha=(hgeU8)((dtime*4)*0xFF);
-    } else if(dtime<1.0) {
-        alpha=0xFF;
-    } else if(dtime<1.25) {
-        alpha=(hgeU8)((1.0f-(dtime-1.0f)*4)*0xFF);
-    } else {
+    if (dtime < 0.25) {
+        alpha = static_cast<hgeU8>((dtime * 4) * 0xFF);
+    }
+    else if (dtime < 1.0) {
+        alpha = 0xFF;
+    }
+    else if (dtime < 1.25) {
+        alpha = static_cast<hgeU8>((1.0f - (dtime - 1.0f) * 4) * 0xFF);
+    }
+    else {
         return true;
     }
 
-    col=0xFFFFFF | (alpha<<24);
-    dquad.v[0].col=col;
-    dquad.v[1].col=col;
-    dquad.v[2].col=col;
-    dquad.v[3].col=col;
+    hgeU32 col = 0xFFFFFF | (alpha << 24);
+    dquad.v[0].col = col;
+    dquad.v[1].col = col;
+    dquad.v[2].col = col;
+    dquad.v[3].col = col;
 
     pHGE->Gfx_BeginScene();
     pHGE->Gfx_Clear(0);

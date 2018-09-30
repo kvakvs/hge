@@ -280,16 +280,13 @@ int ZEXPORT gzputs(file, str)
 /* -- see zlib.h -- */
 int ZEXPORTVA gzprintf (gzFile file, const char *format, ...)
 {
-    int size, len;
-    gz_statep state;
-    z_streamp strm;
     va_list va;
 
     /* get internal structure */
     if (file == NULL)
         return -1;
-    state = (gz_statep)file;
-    strm = &(state->strm);
+    gz_statep state = (gz_statep)file;
+    z_streamp strm = &(state->strm);
 
     /* check that we're writing and that there's no error */
     if (state->mode != GZ_WRITE || state->err != Z_OK)
@@ -311,7 +308,7 @@ int ZEXPORTVA gzprintf (gzFile file, const char *format, ...)
         return 0;
 
     /* do the printf() into the input buffer, put length in len */
-    size = (int)(state->size);
+    int size = (int)(state->size);
     state->in[size - 1] = 0;
     va_start(va, format);
 #ifdef NO_vsnprintf
@@ -330,7 +327,7 @@ int ZEXPORTVA gzprintf (gzFile file, const char *format, ...)
     va_end(va);
     len = strlen(state->in);
 #  else
-    len = vsnprintf((char *)(state->in), size, format, va);
+    int len = vsnprintf((char *)(state->in), size, format, va);
     va_end(va);
 #  endif
 #endif

@@ -23,14 +23,14 @@ public:
     ~hgeGUIRange();
 
     void			SetRange(int first, int last);
-    void			GetRange(int *first, int *last);
+    void			GetRange(int *first, int *last) const;
 
     virtual void	Render();
     virtual bool	MouseMove(float x, float y);
     virtual bool	MouseLButton(bool bDown);
 
 private:
-    int				calc_point(float x, float y);
+    int				calc_point(float x, float y) const;
 
     hgeSprite*		spr;
     int				nrows, ncols;

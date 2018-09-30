@@ -45,12 +45,7 @@
 
 int CRectPlacement::m_margin = 1;
 
-// --------------------------------------------------------------------------------
-// Name        :
-// Description :
-// --------------------------------------------------------------------------------
-void CRectPlacement::Init    (int w, int h)
-{
+void CRectPlacement::Init(const int w, const int h) {
     End();
 
     m_size = TRect(0, 0, w, h);
@@ -63,8 +58,7 @@ void CRectPlacement::Init    (int w, int h)
 // Name        :
 // Description :
 // --------------------------------------------------------------------------------
-void CRectPlacement::End     ()
-{
+void CRectPlacement::End() {
     m_vPositions.clear();
     m_vRects.clear();
     m_size.w = 0;
@@ -74,14 +68,13 @@ void CRectPlacement::End     ()
 // Name        : IsFree
 // Description : Check if the given rectangle is partially or totally used
 // --------------------------------------------------------------------------------
-bool CRectPlacement::IsFree (const TRect &r) const
-{
+bool CRectPlacement::IsFree(const TRect& r) const {
     if (!m_size.Contains(r)) {
         return false;
     }
     for (CRectArray::const_iterator it = m_vRects.begin();
-            it != m_vRects.end();
-            ++it)
+         it != m_vRects.end();
+         ++it)
         if (it->Intersects(r)) {
             return false;
         }
@@ -93,24 +86,22 @@ bool CRectPlacement::IsFree (const TRect &r) const
 // Name        : AddPosition
 // Description : Add new anchor point
 // --------------------------------------------------------------------------------
-void CRectPlacement::AddPosition    (const TPos &p)
-{
+void CRectPlacement::AddPosition(const TPos& p) {
     // Try to insert anchor as close as possible to the top left corner
     // So it will be tried first
     bool bFound = false;
     CPosArray::iterator it;
     for (it = m_vPositions.begin();
-            !bFound && it != m_vPositions.end();
-            ++it) {
-        if (p.x+p.y < it->x+it->y) {
+         !bFound && it != m_vPositions.end();
+         ++it) {
+        if (p.x + p.y < it->x + it->y) {
             bFound = true;
         }
     }
     if (bFound) {
         m_vPositions.insert(it, p);
-    } else
-
-    {
+    }
+    else {
         m_vPositions.push_back(p);
     }
 }
@@ -119,38 +110,36 @@ void CRectPlacement::AddPosition    (const TPos &p)
 // Name        : AddRect
 // Description : Add the given rect and updates anchor points
 // --------------------------------------------------------------------------------
-void CRectPlacement::AddRect  (const TRect &r)
-{
+void CRectPlacement::AddRect(const TRect& r) {
     m_vRects.push_back(r);
-    m_area += r.w*r.h;
+    m_area += r.w * r.h;
 
     // Add two new anchor points
-    AddPosition(TPos(r.x, r.y+r.h+m_margin));
-    AddPosition(TPos(r.x+r.w+m_margin, r.y));
+    AddPosition(TPos(r.x, r.y + r.h + m_margin));
+    AddPosition(TPos(r.x + r.w + m_margin, r.y));
 }
 
 // --------------------------------------------------------------------------------
 // Name        : AddAtEmptySpot
 // Description : Add the given rectangle
 // --------------------------------------------------------------------------------
-bool CRectPlacement::AddAtEmptySpot   (TRect &r)
-{
+bool CRectPlacement::AddAtEmptySpot(TRect& r) {
     // Find a valid spot among available anchors.
 
-    bool bFound = false;
+    auto b_found = false;
     CPosArray::iterator it;
     for (it = m_vPositions.begin();
-            !bFound && it != m_vPositions.end();
-            ++it) {
-        TRect Rect(it->x, it->y, r.w, r.h);
+         !b_found && it != m_vPositions.end();
+         ++it) {
+        const TRect Rect(it->x, it->y, r.w, r.h);
 
         if (IsFree(Rect)) {
             r = Rect;
-            bFound = true;
+            b_found = true;
             break; // Don't let the loop increase the iterator.
         }
     }
-    if (bFound) {
+    if (b_found) {
         // Remove the used anchor point
         m_vPositions.erase(it);
 
@@ -158,7 +147,7 @@ bool CRectPlacement::AddAtEmptySpot   (TRect &r)
         // due to irregular sizes of the subrects.
         // So, try to adjut it up & left as much as possible.
 
-        int x,y;
+        int x, y;
 
         for (x = 1; x <= r.x; x++)
             if (!IsFree(TRect(r.x - x, r.y, r.w, r.h))) {
@@ -169,15 +158,14 @@ bool CRectPlacement::AddAtEmptySpot   (TRect &r)
                 break;
             }
         if (y > x) {
-            r.y -= y-1;
-        } else
-
-        {
-            r.x -= x-1;
+            r.y -= y - 1;
+        }
+        else {
+            r.x -= x - 1;
         }
         AddRect(r);
     }
-    return bFound;
+    return b_found;
 }
 
 
@@ -188,65 +176,66 @@ bool CRectPlacement::AddAtEmptySpot   (TRect &r)
 //               Returns the placement of the rect in the rect's x,y coords
 // --------------------------------------------------------------------------------
 
-bool CRectPlacement::AddAtEmptySpotAutoGrow   (TRect *pRect, int maxW, int maxH)
-{
-    if (pRect->w <= 0) {
+bool CRectPlacement::AddAtEmptySpotAutoGrow(TRect* p_rect, const int max_w,
+                                            const int max_h) {
+    if (p_rect->w <= 0) {
         return true;
     }
 
-    int orgW = m_size.w;
-    int orgH = m_size.h;
+    const auto org_w = m_size.w;
+    const auto org_h = m_size.h;
 
     // Try to add it in the existing space
-    while (!AddAtEmptySpot(*pRect)) {
-        int pw = m_size.w;
-        int ph = m_size.h;
+    while (!AddAtEmptySpot(*p_rect)) {
+        const int pw = m_size.w;
+        const int ph = m_size.h;
 
         // Sanity check - if area is complete.
-        if (pw >= maxW && ph >= maxH) {
-            m_size.w = orgW;
-            m_size.h = orgH;
+        if (pw >= max_w && ph >= max_h) {
+            m_size.w = org_w;
+            m_size.h = org_h;
             return false;
         }
 
         // Try growing the smallest dim
-        if (pw < maxW && (pw < ph || ((pw == ph) && (pRect->w >= pRect->h)))) {
-            m_size.w = pw*2;
-        } else {
-            m_size.h = ph*2;
+        if (pw < max_w && (pw < ph || ((pw == ph) && (p_rect->w >= p_rect->h)))) {
+            m_size.w = pw * 2;
         }
-        if (AddAtEmptySpot(*pRect)) {
+        else {
+            m_size.h = ph * 2;
+        }
+        if (AddAtEmptySpot(*p_rect)) {
             break;
         }
 
         // Try growing the other dim instead
         if (pw != m_size.w) {
             m_size.w = pw;
-            if (ph < maxW) {
-                m_size.h = ph*2;
+            if (ph < max_w) {
+                m_size.h = ph * 2;
             }
-        } else {
+        }
+        else {
             m_size.h = ph;
-            if (pw < maxW) {
-                m_size.w = pw*2;
+            if (pw < max_w) {
+                m_size.w = pw * 2;
             }
         }
 
         if (pw != m_size.w || ph != m_size.h)
-            if (AddAtEmptySpot(*pRect)) {
+            if (AddAtEmptySpot(*p_rect)) {
                 break;
             }
 
         // Grow both if possible, and reloop.
         m_size.w = pw;
         m_size.h = ph;
-        if (pw < maxW) {
-            m_size.w = pw*2;
+        if (pw < max_w) {
+            m_size.w = pw * 2;
         }
-        if (ph < maxH) {
-            m_size.h = ph*2;
+        if (ph < max_h) {
+            m_size.h = ph * 2;
         }
     }
     return true;
 }
-

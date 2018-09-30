@@ -7,8 +7,7 @@
 */
 
 
-#ifndef HGERESOURCE_H
-#define HGERESOURCE_H
+#pragma once
 
 
 #include "hge.h"
@@ -26,60 +25,60 @@
 
 class hgeResourceManager;
 
-struct ResDesc
-{
-	char		name[MAXRESCHARS];
-	int			resgroup;
-	hgeU32		handle;
-	ResDesc*	next;
+struct ResDesc {
+    char name[MAXRESCHARS];
+    int resgroup;
+    hgeU32 handle;
+    ResDesc* next;
 
-	ResDesc()	{ hge=hgeCreate(HGE_VERSION); }
-	virtual ~ResDesc()	{ hge->Release(); }
+    ResDesc() {
+        hge = hgeCreate(HGE_VERSION);
+    }
 
-	virtual hgeU32 Get(hgeResourceManager *rm) = 0;
-	virtual void  Free() = 0;
+    virtual ~ResDesc() {
+        hge->Release();
+    }
+
+    virtual hgeU32 Get(hgeResourceManager* rm) = 0;
+    virtual void Free() = 0;
 
 protected:
-	static HGE	*hge;
+    static HGE* hge;
 };
 
 /*
 ** HGE Resource manager class
 */
-class hgeResourceManager
-{
+class hgeResourceManager {
 public:
-	hgeResourceManager(const char *scriptname=0);
-	~hgeResourceManager();
+    hgeResourceManager(const char* scriptname = nullptr);
+    ~hgeResourceManager();
 
-	void				ChangeScript(const char *scriptname=0);
-	bool				Precache(int groupid=0);
-	void				Purge(int groupid=0);
+    void ChangeScript(const char* scriptname = nullptr);
+    bool Precache(int groupid = 0);
+    void Purge(int groupid = 0);
 
-	void*				GetResource(const char *name, int resgroup=0);
-	HTEXTURE			GetTexture(const char *name, int resgroup=0);
-	HEFFECT				GetEffect(const char *name, int resgroup=0);
-	HMUSIC				GetMusic(const char *name, int resgroup=0);
-	HSTREAM				GetStream(const char *name, int resgroup=0);
-	HTARGET				GetTarget(const char *name);
+    void* GetResource(const char* name, int resgroup = 0);
+    HTEXTURE GetTexture(const char* name, int resgroup = 0);
+    HEFFECT GetEffect(const char* name, int resgroup = 0);
+    HMUSIC GetMusic(const char* name, int resgroup = 0);
+    HSTREAM GetStream(const char* name, int resgroup = 0);
+    HTARGET GetTarget(const char* name);
 
-	hgeSprite*			GetSprite(const char *name);
-	hgeAnimation*		GetAnimation(const char *name);
-	hgeFont*			GetFont(const char *name);
-	hgeParticleSystem*	GetParticleSystem(const char *name);
-	hgeDistortionMesh*	GetDistortionMesh(const char *name);
-	hgeStringTable*		GetStringTable(const char *name, int resgroup=0);
+    hgeSprite* GetSprite(const char* name);
+    hgeAnimation* GetAnimation(const char* name);
+    hgeFont* GetFont(const char* name);
+    hgeParticleSystem* GetParticleSystem(const char* name);
+    hgeDistortionMesh* GetDistortionMesh(const char* name);
+    hgeStringTable* GetStringTable(const char* name, int resgroup = 0);
 
-	ResDesc*			res[RESTYPES];
+    ResDesc* res[RESTYPES];
 
 private:
-	hgeResourceManager(const hgeResourceManager &);
-	hgeResourceManager&	operator= (const hgeResourceManager&);
-	void				_remove_all();
-	void				_parse_script(const char *scriptname=0);
+    hgeResourceManager(const hgeResourceManager&);
+    hgeResourceManager& operator=(const hgeResourceManager&);
+    void _remove_all();
+    void _parse_script(const char* scriptname = nullptr);
 
-	static HGE			*hge;
+    static HGE* hge;
 };
-
-
-#endif
