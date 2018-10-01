@@ -11,6 +11,8 @@
 #include <windows.h>
 #include <stdio.h>
 #include <string>
+#include "hgeguictrls.h"
+#include "hgeguirange.h"
 
 using namespace std;
 
@@ -108,7 +110,7 @@ void cmdGenerateFont() {
                            state.nPadLft,
                            state.nPadRgt, state.bBold, state.bItalic, state.bAntialias, &state.sr,
                            1);
-    sprFont = new hgeSprite(texFont, 0.0f, 0.0f, 
+    sprFont = new hgeSprite(texFont, 0.0f, 0.0f,
                             static_cast<float>(hge->Texture_GetWidth(texFont)),
                             static_cast<float>(hge->Texture_GetHeight(texFont)));
 }

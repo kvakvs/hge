@@ -9,6 +9,9 @@
 
 #include "fonted.h"
 #include <stdio.h>
+#include "fontlist.h"
+#include "hgeguictrls.h"
+#include "hgeguirange.h"
 
 
 HGE* hge = nullptr;

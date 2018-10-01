@@ -11,8 +11,8 @@
 
 
 CFontList::CFontList() {
-    nFonts = 0;
-    pFonts = nullptr;
+    fonts_ = 0;
+    p_fonts_ = nullptr;
 }
 
 CFontList::~CFontList() {
@@ -38,13 +38,13 @@ void CFontList::BuildList() {
     lf.lfFaceName[0] = '\0';
     lf.lfPitchAndFamily = 0;
 
-    EnumFontFamiliesEx(hdc, &lf, reinterpret_cast<FONTENUMPROC>(EnumFontFamExProc), 
-        reinterpret_cast<LPARAM>(this), 0);
+    EnumFontFamiliesEx(hdc, &lf, reinterpret_cast<FONTENUMPROC>(EnumFontFamExProc),
+                       reinterpret_cast<LPARAM>(this), 0);
     DeleteDC(hdc);
 }
 
 void CFontList::ClearList() {
-    CFontListItem* pItem = pFonts;
+    CFontListItem* pItem = p_fonts_;
 
     while (pItem) {
         CFontListItem* pNext = pItem->next;
@@ -52,11 +52,11 @@ void CFontList::ClearList() {
         pItem = pNext;
     }
 
-    nFonts = 0;
+    fonts_ = 0;
 }
 
 char* CFontList::GetFontByIdx(const int n) {
-    CFontListItem* pItem = pFonts;
+    CFontListItem* pItem = p_fonts_;
 
     if (n < 0 || n >= GetNumFonts()) {
         return nullptr;
@@ -70,7 +70,7 @@ char* CFontList::GetFontByIdx(const int n) {
 }
 
 void CFontList::FindSortAdd(char* family) {
-    CFontListItem *pItem = pFonts, *pPrev = nullptr, *pNew;
+    CFontListItem *pItem = p_fonts_, *pPrev = nullptr, *pNew;
 
     while (pItem) {
         const int cmp = strcmp(pItem->family, family);
@@ -85,9 +85,9 @@ void CFontList::FindSortAdd(char* family) {
                 pPrev->next = pNew;
             }
             else {
-                pFonts = pNew;
+                p_fonts_ = pNew;
             }
-            nFonts++;
+            fonts_++;
             return;
         }
         pPrev = pItem;
@@ -101,7 +101,7 @@ void CFontList::FindSortAdd(char* family) {
         pPrev->next = pNew;
     }
     else {
-        pFonts = pNew;
+        p_fonts_ = pNew;
     }
-    nFonts++;
+    fonts_++;
 }

@@ -7,17 +7,12 @@
 */
 
 
-#ifndef FONTED_H
-#define FONTED_H
+#pragma once
 
 
-#include "..\..\include\hge.h"
-#include "..\..\include\hgefont.h"
-#include "..\..\include\hgegui.h"
-#include "..\..\include\hgeguictrls.h"
-
-#include "fontlist.h"
-#include "hgeguirange.h"
+#include "../../include/hge.h"
+#include "../../include/hgefont.h"
+#include "../../include/hgegui.h"
 
 
 #define ButtonGetState(id)		((hgeGUIButton*)gui->GetCtrl(id))->GetState()
@@ -41,8 +36,8 @@
 
 
 struct CSymbolRange {
-    unsigned short	First;
-    unsigned short	Last;
+    unsigned short First;
+    unsigned short Last;
 };
 
 struct CHAR_DESC {
@@ -56,49 +51,49 @@ extern CHAR_DESC vChars[256];
 bool cmdSaveFont();
 void cmdGenerateFont();
 
-extern HGE *hge;
+extern HGE* hge;
 
 struct FEditorState {
-    bool				bHelp;
-    bool				bBBox;
-    bool				bDrag;
-    float				nDragXOffset, nDragYOffset;
-    float				nDragOldX, nDragOldY;
-    float				mx, my;
+    bool bHelp;
+    bool bBBox;
+    bool bDrag;
+    float nDragXOffset, nDragYOffset;
+    float nDragOldX, nDragOldY;
+    float mx, my;
 
-    char				*FontFamily;
-    int					nSize;
-    int					nPadTop, nPadBtm, nPadLft, nPadRgt;
-    bool				bBold;
-    bool				bItalic;
-    bool				bAntialias;
-    CSymbolRange		sr;
+    char* FontFamily;
+    int nSize;
+    int nPadTop, nPadBtm, nPadLft, nPadRgt;
+    bool bBold;
+    bool bItalic;
+    bool bAntialias;
+    CSymbolRange sr;
 };
 
-extern hgeFont		*fnt;
-extern hgeGUI		*gui;
-extern HTEXTURE		texGui, texFont;
+extern hgeFont* fnt;
+extern hgeGUI* gui;
+extern HTEXTURE texGui, texFont;
 
-extern hgeSprite	*sprLeftPane1, *sprLeftPane2;
-extern hgeSprite	*sprCursor;
-extern hgeSprite	*sprFont;
+extern hgeSprite *sprLeftPane1, *sprLeftPane2;
+extern hgeSprite* sprCursor;
+extern hgeSprite* sprFont;
 
 extern FEditorState state;
 
 
-extern float		psx, psy;
-extern float		fw2, fh2;
+extern float psx, psy;
+extern float fw2, fh2;
 
 bool HandleKeys(int key);
 bool DoCommands(int id);
-bool SavePNG(HTEXTURE tex, char *filename);
-HTEXTURE FontGenerate(char *szFontName,
+bool SavePNG(HTEXTURE tex, char* filename);
+HTEXTURE FontGenerate(char* szFontName,
                       int nSize,
                       int nPaddingTop, int nPaddingBtm, int nPaddingLft, int nPaddingRgt,
                       bool bItalic,
                       bool bBold,
                       bool bAntialias,
-                      CSymbolRange *pRanges,
+                      CSymbolRange* pRanges,
                       int nRangeCount);
 
 #define CMD_EXIT				1
@@ -114,5 +109,3 @@ HTEXTURE FontGenerate(char *szFontName,
 #define CMD_FAMILYLIST			11
 #define CMD_FAMILYSLIDER		12
 
-
-#endif

@@ -66,138 +66,138 @@ bool DFrame();
 */
 class HGE_Impl : public HGE {
 public:
-    virtual void HGE_CALL Release();
+    void HGE_CALL Release() override;
 
-    virtual bool HGE_CALL System_Initiate();
-    virtual void HGE_CALL System_Shutdown();
-    virtual bool HGE_CALL System_Start();
-    virtual void HGE_CALL System_SetStateBool(hgeBoolState state, bool value);
-    virtual void HGE_CALL System_SetStateFunc(hgeFuncState state, hgeCallback value);
-    virtual void HGE_CALL System_SetStateHwnd(hgeHwndState state, HWND value);
-    virtual void HGE_CALL System_SetStateInt(hgeIntState state, int value);
-    virtual void HGE_CALL System_SetStateString(hgeStringState state, const char* value);
-    virtual bool HGE_CALL System_GetStateBool(hgeBoolState);
-    virtual hgeCallback HGE_CALL System_GetStateFunc(hgeFuncState);
-    virtual HWND HGE_CALL System_GetStateHwnd(hgeHwndState);
-    virtual int HGE_CALL System_GetStateInt(hgeIntState);
-    virtual const char* HGE_CALL System_GetStateString(hgeStringState);
-    virtual char* HGE_CALL System_GetErrorMessage();
-    virtual void HGE_CALL System_Log(const char* format, ...);
-    virtual bool HGE_CALL System_Launch(const char* url);
-    virtual void HGE_CALL System_Snapshot(const char* filename = nullptr);
+    bool HGE_CALL System_Initiate() override;
+    void HGE_CALL System_Shutdown() override;
+    bool HGE_CALL System_Start() override;
+    void HGE_CALL System_SetStateBool(hgeBoolState state, bool value) override;
+    void HGE_CALL System_SetStateFunc(hgeFuncState state, hgeCallback value) override;
+    void HGE_CALL System_SetStateHwnd(hgeHwndState state, HWND value) override;
+    void HGE_CALL System_SetStateInt(hgeIntState state, int value) override;
+    void HGE_CALL System_SetStateString(hgeStringState state, const char* value) override;
+    bool HGE_CALL System_GetStateBool(hgeBoolState) override;
+    hgeCallback HGE_CALL System_GetStateFunc(hgeFuncState) override;
+    HWND HGE_CALL System_GetStateHwnd(hgeHwndState) override;
+    int HGE_CALL System_GetStateInt(hgeIntState) override;
+    const char* HGE_CALL System_GetStateString(hgeStringState) override;
+    char* HGE_CALL System_GetErrorMessage() override;
+    void HGE_CALL System_Log(const char* format, ...) override;
+    bool HGE_CALL System_Launch(const char* url) override;
+    void HGE_CALL System_Snapshot(const char* filename = nullptr) override;
 
-    virtual void* HGE_CALL Resource_Load(const char* filename, hgeU32* size = nullptr);
-    virtual void HGE_CALL Resource_Free(void* res);
-    virtual bool HGE_CALL Resource_AttachPack(const char* filename, const char* password = nullptr);
-    virtual void HGE_CALL Resource_RemovePack(const char* filename);
-    virtual void HGE_CALL Resource_RemoveAllPacks();
-    virtual char* HGE_CALL Resource_MakePath(const char* filename = nullptr);
-    virtual char* HGE_CALL Resource_EnumFiles(const char* wildcard = nullptr);
-    virtual char* HGE_CALL Resource_EnumFolders(const char* wildcard = nullptr);
+    void* HGE_CALL Resource_Load(const char* filename, hgeU32* size = nullptr) override;
+    void HGE_CALL Resource_Free(void* res) override;
+    bool HGE_CALL Resource_AttachPack(const char* filename, const char* password = nullptr) override;
+    void HGE_CALL Resource_RemovePack(const char* filename) override;
+    void HGE_CALL Resource_RemoveAllPacks() override;
+    char* HGE_CALL Resource_MakePath(const char* filename = nullptr) override;
+    char* HGE_CALL Resource_EnumFiles(const char* wildcard = nullptr) override;
+    char* HGE_CALL Resource_EnumFolders(const char* wildcard = nullptr) override;
 
-    virtual void HGE_CALL Ini_SetInt(const char* section, const char* name, int value);
-    virtual int HGE_CALL Ini_GetInt(const char* section, const char* name, int def_val);
-    virtual void HGE_CALL Ini_SetFloat(const char* section, const char* name, float value);
-    virtual float HGE_CALL Ini_GetFloat(const char* section, const char* name, float def_val);
-    virtual void HGE_CALL Ini_SetString(const char* section, const char* name,
-                                        const char* value);
-    virtual char* HGE_CALL Ini_GetString(const char* section, const char* name,
-                                         const char* def_val);
+    void HGE_CALL Ini_SetInt(const char* section, const char* name, int value) override;
+    int HGE_CALL Ini_GetInt(const char* section, const char* name, int def_val) override;
+    void HGE_CALL Ini_SetFloat(const char* section, const char* name, float value) override;
+    float HGE_CALL Ini_GetFloat(const char* section, const char* name, float def_val) override;
+    void HGE_CALL Ini_SetString(const char* section, const char* name,
+                                        const char* value) override;
+    char* HGE_CALL Ini_GetString(const char* section, const char* name,
+                                         const char* def_val) override;
 
-    virtual void HGE_CALL Random_Seed(int seed = 0);
-    virtual int HGE_CALL Random_Int(int min, int max);
-    virtual float HGE_CALL Random_Float(float min, float max);
+    void HGE_CALL Random_Seed(int seed = 0) override;
+    int HGE_CALL Random_Int(int min, int max) override;
+    float HGE_CALL Random_Float(float min, float max) override;
 
-    virtual float HGE_CALL Timer_GetTime();
-    virtual float HGE_CALL Timer_GetDelta();
-    virtual int HGE_CALL Timer_GetFPS();
+    float HGE_CALL Timer_GetTime() override;
+    float HGE_CALL Timer_GetDelta() override;
+    int HGE_CALL Timer_GetFPS() override;
 
-    virtual HEFFECT HGE_CALL Effect_Load(const char* filename, hgeU32 size = 0);
-    virtual void HGE_CALL Effect_Free(HEFFECT eff);
-    virtual HCHANNEL HGE_CALL Effect_Play(HEFFECT eff);
-    virtual HCHANNEL HGE_CALL Effect_PlayEx(HEFFECT eff, int volume = 100, int pan = 0,
-                                            float pitch = 1.0f, bool loop = false);
+    HEFFECT HGE_CALL Effect_Load(const char* filename, hgeU32 size = 0) override;
+    void HGE_CALL Effect_Free(HEFFECT eff) override;
+    HCHANNEL HGE_CALL Effect_Play(HEFFECT eff) override;
+    HCHANNEL HGE_CALL Effect_PlayEx(HEFFECT eff, int volume = 100, int pan = 0,
+                                            float pitch = 1.0f, bool loop = false) override;
 
-    virtual HMUSIC HGE_CALL Music_Load(const char* filename, hgeU32 size = 0);
-    virtual void HGE_CALL Music_Free(HMUSIC mus);
-    virtual HCHANNEL HGE_CALL Music_Play(HMUSIC mus, bool loop, int volume = 100, int order = 0,
-                                         int row = 0);
-    virtual void HGE_CALL Music_SetAmplification(HMUSIC music, int ampl);
-    virtual int HGE_CALL Music_GetAmplification(HMUSIC music);
-    virtual int HGE_CALL Music_GetLength(HMUSIC music);
-    virtual void HGE_CALL Music_SetPos(HMUSIC music, int order, int row);
-    virtual bool HGE_CALL Music_GetPos(HMUSIC music, int* order, int* row);
-    virtual void HGE_CALL Music_SetInstrVolume(HMUSIC music, int instr, int volume);
-    virtual int HGE_CALL Music_GetInstrVolume(HMUSIC music, int instr);
-    virtual void HGE_CALL Music_SetChannelVolume(HMUSIC music, int channel, int volume);
-    virtual int HGE_CALL Music_GetChannelVolume(HMUSIC music, int channel);
+    HMUSIC HGE_CALL Music_Load(const char* filename, hgeU32 size = 0) override;
+    void HGE_CALL Music_Free(HMUSIC mus) override;
+    HCHANNEL HGE_CALL Music_Play(HMUSIC mus, bool loop, int volume = 100, int order = 0,
+                                         int row = 0) override;
+    void HGE_CALL Music_SetAmplification(HMUSIC music, int ampl) override;
+    int HGE_CALL Music_GetAmplification(HMUSIC music) override;
+    int HGE_CALL Music_GetLength(HMUSIC music) override;
+    void HGE_CALL Music_SetPos(HMUSIC music, int order, int row) override;
+    bool HGE_CALL Music_GetPos(HMUSIC music, int* order, int* row) override;
+    void HGE_CALL Music_SetInstrVolume(HMUSIC music, int instr, int volume) override;
+    int HGE_CALL Music_GetInstrVolume(HMUSIC music, int instr) override;
+    void HGE_CALL Music_SetChannelVolume(HMUSIC music, int channel, int volume) override;
+    int HGE_CALL Music_GetChannelVolume(HMUSIC music, int channel) override;
 
-    virtual HSTREAM HGE_CALL Stream_Load(const char* filename, hgeU32 size = 0);
-    virtual void HGE_CALL Stream_Free(HSTREAM stream);
-    virtual HCHANNEL HGE_CALL Stream_Play(HSTREAM stream, bool loop, int volume = 100);
+    HSTREAM HGE_CALL Stream_Load(const char* filename, hgeU32 size = 0) override;
+    void HGE_CALL Stream_Free(HSTREAM stream) override;
+    HCHANNEL HGE_CALL Stream_Play(HSTREAM stream, bool loop, int volume = 100) override;
 
-    virtual void HGE_CALL Channel_SetPanning(HCHANNEL chn, int pan);
-    virtual void HGE_CALL Channel_SetVolume(HCHANNEL chn, int volume);
-    virtual void HGE_CALL Channel_SetPitch(HCHANNEL chn, float pitch);
-    virtual void HGE_CALL Channel_Pause(HCHANNEL chn);
-    virtual void HGE_CALL Channel_Resume(HCHANNEL chn);
-    virtual void HGE_CALL Channel_Stop(HCHANNEL chn);
-    virtual void HGE_CALL Channel_PauseAll();
-    virtual void HGE_CALL Channel_ResumeAll();
-    virtual void HGE_CALL Channel_StopAll();
-    virtual bool HGE_CALL Channel_IsPlaying(HCHANNEL chn);
-    virtual float HGE_CALL Channel_GetLength(HCHANNEL chn);
-    virtual float HGE_CALL Channel_GetPos(HCHANNEL chn);
-    virtual void HGE_CALL Channel_SetPos(HCHANNEL chn, float fSeconds);
-    virtual void HGE_CALL Channel_SlideTo(HCHANNEL channel, float time, int volume,
-                                          int pan = -101, float pitch = -1);
-    virtual bool HGE_CALL Channel_IsSliding(HCHANNEL channel);
+    void HGE_CALL Channel_SetPanning(HCHANNEL chn, int pan) override;
+    void HGE_CALL Channel_SetVolume(HCHANNEL chn, int volume) override;
+    void HGE_CALL Channel_SetPitch(HCHANNEL chn, float pitch) override;
+    void HGE_CALL Channel_Pause(HCHANNEL chn) override;
+    void HGE_CALL Channel_Resume(HCHANNEL chn) override;
+    void HGE_CALL Channel_Stop(HCHANNEL chn) override;
+    void HGE_CALL Channel_PauseAll() override;
+    void HGE_CALL Channel_ResumeAll() override;
+    void HGE_CALL Channel_StopAll() override;
+    bool HGE_CALL Channel_IsPlaying(HCHANNEL chn) override;
+    float HGE_CALL Channel_GetLength(HCHANNEL chn) override;
+    float HGE_CALL Channel_GetPos(HCHANNEL chn) override;
+    void HGE_CALL Channel_SetPos(HCHANNEL chn, float fSeconds) override;
+    void HGE_CALL Channel_SlideTo(HCHANNEL channel, float time, int volume,
+                                          int pan = -101, float pitch = -1) override;
+    bool HGE_CALL Channel_IsSliding(HCHANNEL channel) override;
 
-    virtual void HGE_CALL Input_GetMousePos(float* x, float* y);
-    virtual void HGE_CALL Input_SetMousePos(float x, float y);
-    virtual int HGE_CALL Input_GetMouseWheel();
-    virtual bool HGE_CALL Input_IsMouseOver();
-    virtual bool HGE_CALL Input_KeyDown(int key);
-    virtual bool HGE_CALL Input_KeyUp(int key);
-    virtual bool HGE_CALL Input_GetKeyState(int key);
-    virtual char* HGE_CALL Input_GetKeyName(int key);
-    virtual int HGE_CALL Input_GetKey();
-    virtual int HGE_CALL Input_GetChar();
-    virtual bool HGE_CALL Input_GetEvent(hgeInputEvent* event);
+    void HGE_CALL Input_GetMousePos(float* x, float* y) override;
+    void HGE_CALL Input_SetMousePos(float x, float y) override;
+    int HGE_CALL Input_GetMouseWheel() override;
+    bool HGE_CALL Input_IsMouseOver() override;
+    bool HGE_CALL Input_KeyDown(int key) override;
+    bool HGE_CALL Input_KeyUp(int key) override;
+    bool HGE_CALL Input_GetKeyState(int key) override;
+    char* HGE_CALL Input_GetKeyName(int key) override;
+    int HGE_CALL Input_GetKey() override;
+    int HGE_CALL Input_GetChar() override;
+    bool HGE_CALL Input_GetEvent(hgeInputEvent* event) override;
 
-    virtual bool HGE_CALL Gfx_BeginScene(HTARGET target = 0);
-    virtual void HGE_CALL Gfx_EndScene();
-    virtual void HGE_CALL Gfx_Clear(hgeU32 color);
-    virtual void HGE_CALL Gfx_RenderLine(float x1, float y1, float x2, float y2,
-                                         hgeU32 color = 0xFFFFFFFF, float z = 0.5f);
-    virtual void HGE_CALL Gfx_RenderTriple(const hgeTriple* triple);
-    virtual void HGE_CALL Gfx_RenderQuad(const hgeQuad* quad);
-    virtual hgeVertex* HGE_CALL Gfx_StartBatch(int prim_type, HTEXTURE tex, int blend,
-                                               int* max_prim);
-    virtual void HGE_CALL Gfx_FinishBatch(int nprim);
-    virtual void HGE_CALL Gfx_SetClipping(int x = 0, int y = 0, int w = 0, int h = 0);
-    virtual void HGE_CALL Gfx_SetTransform(float x = 0, float y = 0, float dx = 0, float dy = 0,
-                                           float rot = 0, float hscale = 0, float vscale = 0);
+    bool HGE_CALL Gfx_BeginScene(HTARGET target = 0) override;
+    void HGE_CALL Gfx_EndScene() override;
+    void HGE_CALL Gfx_Clear(hgeU32 color) override;
+    void HGE_CALL Gfx_RenderLine(float x1, float y1, float x2, float y2,
+                                         hgeU32 color = 0xFFFFFFFF, float z = 0.5f) override;
+    void HGE_CALL Gfx_RenderTriple(const hgeTriple* triple) override;
+    void HGE_CALL Gfx_RenderQuad(const hgeQuad* quad) override;
+    hgeVertex* HGE_CALL Gfx_StartBatch(int prim_type, HTEXTURE tex, int blend,
+                                               int* max_prim) override;
+    void HGE_CALL Gfx_FinishBatch(int nprim) override;
+    void HGE_CALL Gfx_SetClipping(int x = 0, int y = 0, int w = 0, int h = 0) override;
+    void HGE_CALL Gfx_SetTransform(float x = 0, float y = 0, float dx = 0, float dy = 0,
+                                           float rot = 0, float hscale = 0, float vscale = 0) override;
 
 #if HGE_DIRECTX_VER >= 9
-    virtual HSHADER HGE_CALL Shader_Create(const char* filename);
-    virtual void HGE_CALL Shader_Free(HSHADER shader);
-    virtual void HGE_CALL Gfx_SetShader(HSHADER shader);
+    HSHADER HGE_CALL Shader_Create(const char* filename) override;
+    void HGE_CALL Shader_Free(HSHADER shader) override;
+    void HGE_CALL Gfx_SetShader(HSHADER shader) override;
 #endif
 
-    virtual HTARGET HGE_CALL Target_Create(int width, int height, bool zbuffer);
-    virtual void HGE_CALL Target_Free(HTARGET target);
-    virtual HTEXTURE HGE_CALL Target_GetTexture(HTARGET target);
+    HTARGET HGE_CALL Target_Create(int width, int height, bool zbuffer) override;
+    void HGE_CALL Target_Free(HTARGET target) override;
+    HTEXTURE HGE_CALL Target_GetTexture(HTARGET target) override;
 
-    virtual HTEXTURE HGE_CALL Texture_Create(int width, int height);
-    virtual HTEXTURE HGE_CALL Texture_Load(const char* filename, hgeU32 size = 0,
-                                           bool bMipmap = false);
-    virtual void HGE_CALL Texture_Free(HTEXTURE tex);
-    virtual int HGE_CALL Texture_GetWidth(HTEXTURE tex, bool bOriginal = false);
-    virtual int HGE_CALL Texture_GetHeight(HTEXTURE tex, bool bOriginal = false);
-    virtual hgeU32* HGE_CALL Texture_Lock(HTEXTURE tex, bool bReadOnly = true, int left = 0,
-                                          int top = 0, int width = 0, int height = 0);
-    virtual void HGE_CALL Texture_Unlock(HTEXTURE tex);
+    HTEXTURE HGE_CALL Texture_Create(int width, int height) override;
+    HTEXTURE HGE_CALL Texture_Load(const char* filename, hgeU32 size = 0,
+                                           bool bMipmap = false) override;
+    void HGE_CALL Texture_Free(HTEXTURE tex) override;
+    int HGE_CALL Texture_GetWidth(HTEXTURE tex, bool bOriginal = false) override;
+    int HGE_CALL Texture_GetHeight(HTEXTURE tex, bool bOriginal = false) override;
+    hgeU32* HGE_CALL Texture_Lock(HTEXTURE tex, bool bReadOnly = true, int left = 0,
+                                          int top = 0, int width = 0, int height = 0) override;
+    void HGE_CALL Texture_Unlock(HTEXTURE tex) override;
 
     //////// Implementation ////////
 

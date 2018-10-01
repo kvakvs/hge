@@ -7,8 +7,7 @@
 */
 
 
-#ifndef FONTLIST_H
-#define FONTLIST_H
+#pragma once
 
 
 #include <windows.h>
@@ -16,33 +15,32 @@
 
 
 struct CFontListItem {
-    char		  family[LF_FACESIZE];
-    CFontListItem *next;
+    char family[LF_FACESIZE];
+    CFontListItem* next;
 };
 
 class CFontList {
-    friend int CALLBACK EnumFontFamExProc(ENUMLOGFONTEX *lpelfe, NEWTEXTMETRICEX *lpntme,
+    friend int CALLBACK EnumFontFamExProc(ENUMLOGFONTEX* lpelfe, NEWTEXTMETRICEX* lpntme,
                                           unsigned int FontType, LPARAM lParam);
 
 public:
     CFontList();
     ~CFontList();
 
-    void	BuildList();
-    int		GetNumFonts() {
-        return nFonts;
+    void BuildList();
+
+    int GetNumFonts() {
+        return fonts_;
     }
-    char	*GetFontByIdx(int n);
+
+    char* GetFontByIdx(int n);
 
 private:
-    void			ClearList();
-    void			FindSortAdd(char *family);
+    void ClearList();
+    void FindSortAdd(char* family);
 
-    int				nFonts;
-    CFontListItem	*pFonts;
+    int fonts_;
+    CFontListItem* p_fonts_;
 };
 
-extern CFontList	*FontList;
-
-
-#endif FONTLIST_H
+extern CFontList* FontList;

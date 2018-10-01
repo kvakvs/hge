@@ -7,11 +7,11 @@
 */
 
 
-#ifndef HGEGUIRANGE_H
-#define HGEGUIRANGE_H
+#pragma once
 
-#include "..\..\include\hgegui.h"
-#include "..\..\include\hgesprite.h"
+
+#include "../../include/hgegui.h"
+#include "../../include/hgesprite.h"
 
 
 /*
@@ -22,22 +22,22 @@ public:
     hgeGUIRange(int id, float x, float y, float w, float h, int nrows, int ncols, hgeU32 color);
     ~hgeGUIRange();
 
-    void			SetRange(int first, int last);
-    void			GetRange(int *first, int *last) const;
+    void SetRange(int first, int last);
+    void GetRange(int* first, int* last) const;
 
-    virtual void	Render();
-    virtual bool	MouseMove(float x, float y);
-    virtual bool	MouseLButton(bool bDown);
+    void Render() override;
+    bool MouseMove(float x, float y) override;
+    bool MouseLButton(bool bDown) override;
 
 private:
-    int				calc_point(float x, float y) const;
+    int calc_point(float x, float y) const;
 
-    hgeSprite*		spr;
-    int				nrows, ncols;
-    int				nfirst, nlast;
-    float			mx, my;
-    bool			bPressed;
+    hgeSprite* spr_;
+    int rows_;
+    int cols_;
+    int nfirst_;
+    int nlast_;
+    float mx_;
+    float my_;
+    bool pressed_;
 };
-
-
-#endif HGEGUIRANGE_H

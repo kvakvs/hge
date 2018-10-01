@@ -19,20 +19,20 @@ hgeGUIRange::hgeGUIRange(const int _id, const float x, const float y,
     bEnabled = true;
     rect.Set(x, y, x + w, y + h);
 
-    spr = new hgeSprite(0, 0, 0, 1, 1);
-    spr->SetColor(color);
-    nrows = _nrows;
-    ncols = _ncols;
-    nfirst = nlast = 0;
+    spr_ = new hgeSprite(0, 0, 0, 1, 1);
+    spr_->SetColor(color);
+    rows_ = _nrows;
+    cols_ = _ncols;
+    nfirst_ = nlast_ = 0;
 
-    mx = 0;
-    my = 0;
-    bPressed = false;
+    mx_ = 0;
+    my_ = 0;
+    pressed_ = false;
 }
 
 hgeGUIRange::~hgeGUIRange() {
-    if (spr) {
-        delete spr;
+    if (spr_) {
+        delete spr_;
     }
 }
 
@@ -40,52 +40,52 @@ void hgeGUIRange::SetRange(int first, int last) {
     if (first < 0) {
         first = 0;
     }
-    if (last >= nrows * ncols) {
-        last = nrows * ncols - 1;
+    if (last >= rows_ * cols_) {
+        last = rows_ * cols_ - 1;
     }
-    nfirst = first;
-    nlast = last;
+    nfirst_ = first;
+    nlast_ = last;
 }
 
 void hgeGUIRange::GetRange(int* first, int* last) const {
-    if (nlast >= nfirst) {
-        *first = nfirst;
-        *last = nlast;
+    if (nlast_ >= nfirst_) {
+        *first = nfirst_;
+        *last = nlast_;
     }
     else {
-        *first = nlast;
-        *last = nfirst;
+        *first = nlast_;
+        *last = nfirst_;
     }
 }
 
 void hgeGUIRange::Render() {
-    const auto cw = (rect.x2 - rect.x1) / ncols;
-    const auto ch = (rect.y2 - rect.y1) / nrows;
+    const auto cw = (rect.x2 - rect.x1) / cols_;
+    const auto ch = (rect.y2 - rect.y1) / rows_;
     int first, last;
 
-    if (nlast >= nfirst) {
-        first = nfirst;
-        last = nlast;
+    if (nlast_ >= nfirst_) {
+        first = nfirst_;
+        last = nlast_;
     }
     else {
-        first = nlast;
-        last = nfirst;
+        first = nlast_;
+        last = nfirst_;
     }
 
-    const auto xf = rect.x1 + cw * static_cast<float>(first % ncols);
-    const auto yf = rect.y1 + ch * static_cast<float>(first / ncols);
+    const auto xf = rect.x1 + cw * static_cast<float>(first % cols_);
+    const auto yf = rect.y1 + ch * static_cast<float>(first / cols_);
 
-    const auto xl = rect.x1 + cw * static_cast<float>(last % ncols);
-    const auto yl = rect.y1 + ch * static_cast<float>(last / ncols);
+    const auto xl = rect.x1 + cw * static_cast<float>(last % cols_);
+    const auto yl = rect.y1 + ch * static_cast<float>(last / cols_);
 
     if (yf == yl) {
-        spr->RenderStretch(xf, yf, xl + cw, yf + ch);
+        spr_->RenderStretch(xf, yf, xl + cw, yf + ch);
     }
     else {
-        spr->RenderStretch(xf, yf, rect.x2, yf + ch);
-        spr->RenderStretch(rect.x1, yl, xl + cw, yl + ch);
+        spr_->RenderStretch(xf, yf, rect.x2, yf + ch);
+        spr_->RenderStretch(rect.x1, yl, xl + cw, yl + ch);
         if (yl - yf > 1) {
-            spr->RenderStretch(rect.x1, yf + ch, rect.x2, yl);
+            spr_->RenderStretch(rect.x1, yf + ch, rect.x2, yl);
         }
     }
 
@@ -93,11 +93,11 @@ void hgeGUIRange::Render() {
 }
 
 bool hgeGUIRange::MouseMove(const float x, const float y) {
-    mx = x;
-    my = y;
+    mx_ = x;
+    my_ = y;
 
-    if (bPressed) {
-        nlast = calc_point(mx, my);
+    if (pressed_) {
+        nlast_ = calc_point(mx_, my_);
         return true;
     }
 
@@ -105,11 +105,11 @@ bool hgeGUIRange::MouseMove(const float x, const float y) {
 }
 
 bool hgeGUIRange::MouseLButton(const bool b_down) {
-    bPressed = b_down;
+    pressed_ = b_down;
 
-    if (bPressed) {
-        nfirst = calc_point(mx, my);
-        nlast = nfirst;
+    if (pressed_) {
+        nfirst_ = calc_point(mx_, my_);
+        nlast_ = nfirst_;
         return true;
     }
     return false;
@@ -133,11 +133,11 @@ int hgeGUIRange::calc_point(float x, float y) const {
         y = ch - 1;
     }
 
-    cw /= ncols;
-    ch /= nrows;
+    cw /= cols_;
+    ch /= rows_;
 
     const int xcell = int(x) / int(cw);
     const int ycell = int(y) / int(ch);
 
-    return ycell * ncols + xcell;
+    return ycell * cols_ + xcell;
 }
