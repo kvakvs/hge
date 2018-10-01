@@ -32,18 +32,18 @@ struct ResDesc {
     ResDesc* next;
 
     ResDesc() {
-        hge = hgeCreate(HGE_VERSION);
+        hge_ = hgeCreate(HGE_VERSION);
     }
 
     virtual ~ResDesc() {
-        hge->Release();
+        hge_->Release();
     }
 
     virtual hgeU32 Get(hgeResourceManager* rm) = 0;
     virtual void Free() = 0;
 
 protected:
-    static HGE* hge;
+    static HGE* hge_;
 };
 
 /*
@@ -80,5 +80,5 @@ private:
     void _remove_all();
     void _parse_script(const char* scriptname = nullptr);
 
-    static HGE* hge;
+    static HGE* hge_;
 };

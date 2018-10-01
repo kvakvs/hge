@@ -39,10 +39,11 @@ public:
     void Render() override;
 
 private:
-    hgeFont* font;
-    float tx, ty;
-    int align;
-    char text[256];
+    hgeFont* font_;
+    float tx_;
+    float ty_;
+    int align_;
+    char text_[256];
 };
 
 
@@ -91,15 +92,15 @@ public:
     virtual ~hgeGUISlider();
 
     void SetMode(const float _fMin, const float _fMax, const int _mode) {
-        fMin = _fMin;
-        fMax = _fMax;
-        mode = _mode;
+        min_ = _fMin;
+        max_ = _fMax;
+        mode_ = _mode;
     }
 
     void SetValue(float _fVal);
 
     float GetValue() const {
-        return fVal;
+        return val_;
     }
 
     void Render() override;
@@ -107,12 +108,15 @@ public:
     bool MouseLButton(bool b_down) override;
 
 private:
-    bool bPressed;
-    bool bVertical;
-    int mode;
-    float fMin, fMax, fVal;
-    float sl_w, sl_h;
-    hgeSprite* sprSlider;
+    bool pressed_;
+    bool vertical_;
+    int mode_;
+    float min_;
+    float max_;
+    float val_;
+    float sl_w_;
+    float sl_h_;
+    hgeSprite* spr_slider_;
 };
 
 
@@ -134,29 +138,29 @@ public:
     void DeleteItem(int n);
 
     int GetSelectedItem() {
-        return nSelectedItem;
+        return selected_item_;
     }
 
     void SetSelectedItem(const int n) {
-        if (n >= 0 && n < GetNumItems()) nSelectedItem = n;
+        if (n >= 0 && n < GetNumItems()) selected_item_ = n;
     }
 
     int GetTopItem() {
-        return nTopItem;
+        return top_item_;
     }
 
     void SetTopItem(const int n) {
-        if (n >= 0 && n <= GetNumItems() - GetNumRows()) nTopItem = n;
+        if (n >= 0 && n <= GetNumItems() - GetNumRows()) top_item_ = n;
     }
 
     char* GetItemText(int n);
 
     int GetNumItems() {
-        return nItems;
+        return items_;
     }
 
     int GetNumRows() {
-        return int((rect.y2 - rect.y1) / font->GetHeight());
+        return int((rect.y2 - rect.y1) / font_->GetHeight());
     }
 
     void Clear();
@@ -164,8 +168,8 @@ public:
     void Render() override;
 
     bool MouseMove(const float x, const float y) override {
-        mx = x;
-        my = y;
+        mx_ = x;
+        my_ = y;
         return false;
     }
 
@@ -174,11 +178,15 @@ public:
     bool KeyClick(int key, int chr) override;
 
 private:
-    hgeSprite* sprHighlight;
-    hgeFont* font;
-    hgeU32 textColor, texthilColor;
+    hgeSprite* spr_highlight_;
+    hgeFont* font_;
+    hgeU32 text_color_;
+    hgeU32 text_highlight_color_;
 
-    int nItems, nSelectedItem, nTopItem;
-    float mx, my;
-    hgeGUIListboxItem* pItems;
+    int items_;
+    int selected_item_;
+    int top_item_;
+    float mx_;
+    float my_;
+    hgeGUIListboxItem* items_2_;
 };

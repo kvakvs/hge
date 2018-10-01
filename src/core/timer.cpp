@@ -11,14 +11,14 @@
 
 
 float HGE_CALL HGE_Impl::Timer_GetTime() {
-    return fTime;
+    return time_;
 }
 
 float HGE_CALL HGE_Impl::Timer_GetDelta() {
-    return fDeltaTime;
+    return delta_time_;
 }
 
 
 int HGE_CALL HGE_Impl::Timer_GetFPS() {
-    return nFPS;
+    return fps_;
 }

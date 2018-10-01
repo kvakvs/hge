@@ -39,18 +39,18 @@ public:
     void SetDisplacement(int col, int row, float dx, float dy, int ref);
 
     HTEXTURE GetTexture() const {
-        return quad.tex;
+        return quad_.tex;
     }
 
     void GetTextureRect(float* x, float* y, float* w, float* h) const {
-        *x = tx;
-        *y = ty;
-        *w = width;
-        *h = height;
+        *x = tx_;
+        *y = ty_;
+        *w = width_;
+        *h = height_;
     }
 
     int GetBlendMode() const {
-        return quad.blend;
+        return quad_.blend;
     }
 
     float GetZ(int col, int row) const;
@@ -58,21 +58,26 @@ public:
     void GetDisplacement(int col, int row, float* dx, float* dy, int ref) const;
 
     int GetRows() {
-        return nRows;
+        return rows_;
     }
 
     int GetCols() {
-        return nCols;
+        return cols_;
     }
 
 private:
     hgeDistortionMesh();
 
-    static HGE* hge;
+    static HGE* hge_;
 
-    hgeVertex* disp_array;
-    int nRows, nCols;
-    float cellw, cellh;
-    float tx, ty, width, height;
-    hgeQuad quad;
+    hgeVertex* disp_array_;
+    int rows_;
+    int cols_;
+    float cellw_;
+    float cellh_;
+    float tx_;
+    float ty_;
+    float width_;
+    float height_;
+    hgeQuad quad_;
 };

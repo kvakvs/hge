@@ -10,28 +10,28 @@
 #include "..\..\include\hgegui.h"
 
 
-HGE* hgeGUI::hge = nullptr;
-HGE* hgeGUIObject::hge = nullptr;
+HGE* hgeGUI::hge_ = nullptr;
+HGE* hgeGUIObject::hge_ = nullptr;
 
 
 hgeGUI::hgeGUI() {
-    hge = hgeCreate(HGE_VERSION);
+    hge_ = hgeCreate(HGE_VERSION);
 
-    ctrls = nullptr;
-    ctrlLock = nullptr;
-    ctrlFocus = nullptr;
-    ctrlOver = nullptr;
-    navmode = HGEGUI_NONAVKEYS;
-    bLPressed = bLReleased = false;
-    bRPressed = bRReleased = false;
-    nWheel = 0;
-    mx = my = 0.0f;
-    nEnterLeave = 0;
-    sprCursor = nullptr;
+    ctrls_ = nullptr;
+    ctrl_lock_ = nullptr;
+    ctrl_focus_ = nullptr;
+    ctrl_over_ = nullptr;
+    navmode_ = HGEGUI_NONAVKEYS;
+    l_pressed_ = l_released_ = false;
+    r_pressed_ = r_released_ = false;
+    wheel_ = 0;
+    mx_ = my_ = 0.0f;
+    enter_leave_ = 0;
+    spr_cursor_ = nullptr;
 }
 
 hgeGUI::~hgeGUI() {
-    hgeGUIObject* ctrl = ctrls;
+    hgeGUIObject* ctrl = ctrls_;
 
     while (ctrl) {
         hgeGUIObject* nextctrl = ctrl->next;
@@ -39,16 +39,16 @@ hgeGUI::~hgeGUI() {
         ctrl = nextctrl;
     }
 
-    hge->Release();
+    hge_->Release();
 }
 
 void hgeGUI::AddCtrl(hgeGUIObject* ctrl) {
-    hgeGUIObject* last = ctrls;
+    hgeGUIObject* last = ctrls_;
 
     ctrl->gui = this;
 
-    if (!ctrls) {
-        ctrls = ctrl;
+    if (!ctrls_) {
+        ctrls_ = ctrl;
         ctrl->prev = nullptr;
         ctrl->next = nullptr;
     }
@@ -63,7 +63,7 @@ void hgeGUI::AddCtrl(hgeGUIObject* ctrl) {
 }
 
 void hgeGUI::DelCtrl(const int id) {
-    hgeGUIObject* ctrl = ctrls;
+    hgeGUIObject* ctrl = ctrls_;
 
     while (ctrl) {
         if (ctrl->id == id) {
@@ -71,7 +71,7 @@ void hgeGUI::DelCtrl(const int id) {
                 ctrl->prev->next = ctrl->next;
             }
             else {
-                ctrls = ctrl->next;
+                ctrls_ = ctrl->next;
             }
             if (ctrl->next) {
                 ctrl->next->prev = ctrl->prev;
@@ -84,7 +84,7 @@ void hgeGUI::DelCtrl(const int id) {
 }
 
 hgeGUIObject* hgeGUI::GetCtrl(const int id) const {
-    hgeGUIObject* ctrl = ctrls;
+    hgeGUIObject* ctrl = ctrls_;
 
     while (ctrl) {
         if (ctrl->id == id) {
@@ -113,16 +113,16 @@ void hgeGUI::EnableCtrl(const int id, const bool b_enabled) {
 }
 
 void hgeGUI::SetNavMode(const int mode) {
-    navmode = mode;
+    navmode_ = mode;
 }
 
 void hgeGUI::SetCursor(hgeSprite* spr) {
-    sprCursor = spr;
+    spr_cursor_ = spr;
 }
 
 
 void hgeGUI::SetColor(const hgeU32 color) {
-    auto ctrl = ctrls;
+    auto ctrl = ctrls_;
 
     while (ctrl) {
         ctrl->SetColor(color);
@@ -132,21 +132,21 @@ void hgeGUI::SetColor(const hgeU32 color) {
 
 
 void hgeGUI::Reset() {
-    auto ctrl = ctrls;
+    auto ctrl = ctrls_;
 
     while (ctrl) {
         ctrl->Reset();
         ctrl = ctrl->next;
     }
 
-    ctrlLock = nullptr;
-    ctrlOver = nullptr;
-    ctrlFocus = nullptr;
+    ctrl_lock_ = nullptr;
+    ctrl_over_ = nullptr;
+    ctrl_focus_ = nullptr;
 }
 
 
 void hgeGUI::Move(const float dx, const float dy) {
-    auto ctrl = ctrls;
+    auto ctrl = ctrls_;
 
     while (ctrl) {
         ctrl->rect.x1 += dx;
@@ -162,60 +162,60 @@ void hgeGUI::Move(const float dx, const float dy) {
 void hgeGUI::SetFocus(const int id) {
     auto ctrlNewFocus = GetCtrl(id);
 
-    if (ctrlNewFocus == ctrlFocus) {
+    if (ctrlNewFocus == ctrl_focus_) {
         return;
     }
     if (!ctrlNewFocus) {
-        if (ctrlFocus) {
-            ctrlFocus->Focus(false);
+        if (ctrl_focus_) {
+            ctrl_focus_->Focus(false);
         }
-        ctrlFocus = nullptr;
+        ctrl_focus_ = nullptr;
     }
     else if (!ctrlNewFocus->bStatic && ctrlNewFocus->bVisible && ctrlNewFocus->bEnabled) {
-        if (ctrlFocus) {
-            ctrlFocus->Focus(false);
+        if (ctrl_focus_) {
+            ctrl_focus_->Focus(false);
         }
         if (ctrlNewFocus) {
             ctrlNewFocus->Focus(true);
         }
-        ctrlFocus = ctrlNewFocus;
+        ctrl_focus_ = ctrlNewFocus;
     }
 }
 
 int hgeGUI::GetFocus() const {
-    if (ctrlFocus) {
-        return ctrlFocus->id;
+    if (ctrl_focus_) {
+        return ctrl_focus_->id;
     }
     return 0;
 }
 
 void hgeGUI::Enter() {
-    hgeGUIObject* ctrl = ctrls;
+    hgeGUIObject* ctrl = ctrls_;
 
     while (ctrl) {
         ctrl->Enter();
         ctrl = ctrl->next;
     }
 
-    nEnterLeave = 2;
+    enter_leave_ = 2;
 }
 
 void hgeGUI::Leave() {
-    hgeGUIObject* ctrl = ctrls;
+    hgeGUIObject* ctrl = ctrls_;
 
     while (ctrl) {
         ctrl->Leave();
         ctrl = ctrl->next;
     }
 
-    ctrlFocus = nullptr;
-    ctrlOver = nullptr;
-    ctrlLock = nullptr;
-    nEnterLeave = 1;
+    ctrl_focus_ = nullptr;
+    ctrl_over_ = nullptr;
+    ctrl_lock_ = nullptr;
+    enter_leave_ = 1;
 }
 
 void hgeGUI::Render() {
-    hgeGUIObject* ctrl = ctrls;
+    hgeGUIObject* ctrl = ctrls_;
 
     while (ctrl) {
         if (ctrl->bVisible) {
@@ -224,8 +224,8 @@ void hgeGUI::Render() {
         ctrl = ctrl->next;
     }
 
-    if (hge->Input_IsMouseOver() && sprCursor) {
-        sprCursor->Render(mx, my);
+    if (hge_->Input_IsMouseOver() && spr_cursor_) {
+        spr_cursor_->Render(mx_, my_);
     }
 }
 
@@ -233,16 +233,16 @@ int hgeGUI::Update(const float dt) {
 
     // Update the mouse variables
 
-    hge->Input_GetMousePos(&mx, &my);
-    bLPressed = hge->Input_KeyDown(HGEK_LBUTTON);
-    bLReleased = hge->Input_KeyUp(HGEK_LBUTTON);
-    bRPressed = hge->Input_KeyDown(HGEK_RBUTTON);
-    bRReleased = hge->Input_KeyUp(HGEK_RBUTTON);
-    nWheel = hge->Input_GetMouseWheel();
+    hge_->Input_GetMousePos(&mx_, &my_);
+    l_pressed_ = hge_->Input_KeyDown(HGEK_LBUTTON);
+    l_released_ = hge_->Input_KeyUp(HGEK_LBUTTON);
+    r_pressed_ = hge_->Input_KeyDown(HGEK_RBUTTON);
+    r_released_ = hge_->Input_KeyUp(HGEK_RBUTTON);
+    wheel_ = hge_->Input_GetMouseWheel();
 
     // Update all controls
 
-    hgeGUIObject* ctrl = ctrls;
+    hgeGUIObject* ctrl = ctrls_;
     while (ctrl) {
         ctrl->Update(dt);
         ctrl = ctrl->next;
@@ -250,8 +250,8 @@ int hgeGUI::Update(const float dt) {
 
     // Handle Enter/Leave
 
-    if (nEnterLeave) {
-        ctrl = ctrls;
+    if (enter_leave_) {
+        ctrl = ctrls_;
         bool bDone = true;
         while (ctrl) {
             if (!ctrl->IsDone()) {
@@ -263,53 +263,53 @@ int hgeGUI::Update(const float dt) {
         if (!bDone) {
             return 0;
         }
-        if (nEnterLeave == 1) {
+        if (enter_leave_ == 1) {
             return -1;
         }
-        nEnterLeave = 0;
+        enter_leave_ = 0;
     }
 
     // Handle keys
 
-    const int key = hge->Input_GetKey();
-    if (((navmode & HGEGUI_LEFTRIGHT) && key == HGEK_LEFT) ||
-        ((navmode & HGEGUI_UPDOWN) && key == HGEK_UP)) {
-        ctrl = ctrlFocus;
+    const int key = hge_->Input_GetKey();
+    if (((navmode_ & HGEGUI_LEFTRIGHT) && key == HGEK_LEFT) ||
+        ((navmode_ & HGEGUI_UPDOWN) && key == HGEK_UP)) {
+        ctrl = ctrl_focus_;
         if (!ctrl) {
-            ctrl = ctrls;
+            ctrl = ctrls_;
             if (!ctrl) {
                 return 0;
             }
         }
         do {
             ctrl = ctrl->prev;
-            if (!ctrl && ((navmode & HGEGUI_CYCLED) || !ctrlFocus)) {
-                ctrl = ctrls;
+            if (!ctrl && ((navmode_ & HGEGUI_CYCLED) || !ctrl_focus_)) {
+                ctrl = ctrls_;
                 while (ctrl->next) {
                     ctrl = ctrl->next;
                 }
             }
-            if (!ctrl || ctrl == ctrlFocus) {
+            if (!ctrl || ctrl == ctrl_focus_) {
                 break;
             }
         }
         while (ctrl->bStatic == true || ctrl->bVisible == false || ctrl->bEnabled == false);
 
-        if (ctrl && ctrl != ctrlFocus) {
-            if (ctrlFocus) {
-                ctrlFocus->Focus(false);
+        if (ctrl && ctrl != ctrl_focus_) {
+            if (ctrl_focus_) {
+                ctrl_focus_->Focus(false);
             }
             if (ctrl) {
                 ctrl->Focus(true);
             }
-            ctrlFocus = ctrl;
+            ctrl_focus_ = ctrl;
         }
     }
-    else if (((navmode & HGEGUI_LEFTRIGHT) && key == HGEK_RIGHT) ||
-        ((navmode & HGEGUI_UPDOWN) && key == HGEK_DOWN)) {
-        ctrl = ctrlFocus;
+    else if (((navmode_ & HGEGUI_LEFTRIGHT) && key == HGEK_RIGHT) ||
+        ((navmode_ & HGEGUI_UPDOWN) && key == HGEK_DOWN)) {
+        ctrl = ctrl_focus_;
         if (!ctrl) {
-            ctrl = ctrls;
+            ctrl = ctrls_;
             if (!ctrl) {
                 return 0;
             }
@@ -319,40 +319,40 @@ int hgeGUI::Update(const float dt) {
         }
         do {
             ctrl = ctrl->next;
-            if (!ctrl && ((navmode & HGEGUI_CYCLED) || !ctrlFocus)) {
-                ctrl = ctrls;
+            if (!ctrl && ((navmode_ & HGEGUI_CYCLED) || !ctrl_focus_)) {
+                ctrl = ctrls_;
             }
-            if (!ctrl || ctrl == ctrlFocus) {
+            if (!ctrl || ctrl == ctrl_focus_) {
                 break;
             }
         }
         while (ctrl->bStatic == true || ctrl->bVisible == false || ctrl->bEnabled == false);
 
-        if (ctrl && ctrl != ctrlFocus) {
-            if (ctrlFocus) {
-                ctrlFocus->Focus(false);
+        if (ctrl && ctrl != ctrl_focus_) {
+            if (ctrl_focus_) {
+                ctrl_focus_->Focus(false);
             }
             if (ctrl) {
                 ctrl->Focus(true);
             }
-            ctrlFocus = ctrl;
+            ctrl_focus_ = ctrl;
         }
     }
-    else if (ctrlFocus && key && key != HGEK_LBUTTON && key != HGEK_RBUTTON) {
-        if (ctrlFocus->KeyClick(key, hge->Input_GetChar())) {
-            return ctrlFocus->id;
+    else if (ctrl_focus_ && key && key != HGEK_LBUTTON && key != HGEK_RBUTTON) {
+        if (ctrl_focus_->KeyClick(key, hge_->Input_GetChar())) {
+            return ctrl_focus_->id;
         }
     }
 
     // Handle mouse
 
-    const auto b_l_down = hge->Input_GetKeyState(HGEK_LBUTTON);
-    const auto b_r_down = hge->Input_GetKeyState(HGEK_RBUTTON);
+    const auto b_l_down = hge_->Input_GetKeyState(HGEK_LBUTTON);
+    const auto b_r_down = hge_->Input_GetKeyState(HGEK_RBUTTON);
 
-    if (ctrlLock) {
-        ctrl = ctrlLock;
+    if (ctrl_lock_) {
+        ctrl = ctrl_lock_;
         if (!b_l_down && !b_r_down) {
-            ctrlLock = nullptr;
+            ctrl_lock_ = nullptr;
         }
         if (ProcessCtrl(ctrl)) {
             return ctrl->id;
@@ -361,20 +361,20 @@ int hgeGUI::Update(const float dt) {
     else {
         // Find last (topmost) control
 
-        ctrl = ctrls;
+        ctrl = ctrls_;
         if (ctrl)
             while (ctrl->next) {
                 ctrl = ctrl->next;
             }
 
         while (ctrl) {
-            if (ctrl->rect.TestPoint(mx, my) && ctrl->bEnabled) {
-                if (ctrlOver != ctrl) {
-                    if (ctrlOver) {
-                        ctrlOver->MouseOver(false);
+            if (ctrl->rect.TestPoint(mx_, my_) && ctrl->bEnabled) {
+                if (ctrl_over_ != ctrl) {
+                    if (ctrl_over_) {
+                        ctrl_over_->MouseOver(false);
                     }
                     ctrl->MouseOver(true);
-                    ctrlOver = ctrl;
+                    ctrl_over_ = ctrl;
                 }
 
                 if (ProcessCtrl(ctrl)) {
@@ -385,9 +385,9 @@ int hgeGUI::Update(const float dt) {
             ctrl = ctrl->prev;
         }
 
-        if (ctrlOver) {
-            ctrlOver->MouseOver(false);
-            ctrlOver = nullptr;
+        if (ctrl_over_) {
+            ctrl_over_->MouseOver(false);
+            ctrl_over_ = nullptr;
         }
 
     }
@@ -398,26 +398,26 @@ int hgeGUI::Update(const float dt) {
 bool hgeGUI::ProcessCtrl(hgeGUIObject* ctrl) {
     bool bResult = false;
 
-    if (bLPressed) {
-        ctrlLock = ctrl;
+    if (l_pressed_) {
+        ctrl_lock_ = ctrl;
         SetFocus(ctrl->id);
         bResult = bResult || ctrl->MouseLButton(true);
     }
-    if (bRPressed) {
-        ctrlLock = ctrl;
+    if (r_pressed_) {
+        ctrl_lock_ = ctrl;
         SetFocus(ctrl->id);
         bResult = bResult || ctrl->MouseRButton(true);
     }
-    if (bLReleased) {
+    if (l_released_) {
         bResult = bResult || ctrl->MouseLButton(false);
     }
-    if (bRReleased) {
+    if (r_released_) {
         bResult = bResult || ctrl->MouseRButton(false);
     }
-    if (nWheel) {
-        bResult = bResult || ctrl->MouseWheel(nWheel);
+    if (wheel_) {
+        bResult = bResult || ctrl->MouseWheel(wheel_);
     }
-    bResult = bResult || ctrl->MouseMove(mx - ctrl->rect.x1, my - ctrl->rect.y1);
+    bResult = bResult || ctrl->MouseMove(mx_ - ctrl->rect.x1, my_ - ctrl->rect.y1);
 
     return bResult;
 }

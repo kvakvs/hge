@@ -14,9 +14,9 @@ void HGE_CALL HGE_Impl::Ini_SetInt(const char* section, const char* name,
                                    const int value) {
     char buf[256];
 
-    if (szIniFile[0]) {
+    if (ini_file_[0]) {
         sprintf(buf, "%d", value);
-        WritePrivateProfileString(section, name, buf, szIniFile);
+        WritePrivateProfileString(section, name, buf, ini_file_);
     }
 }
 
@@ -25,8 +25,8 @@ int HGE_CALL HGE_Impl::Ini_GetInt(const char* section, const char* name,
                                   const int def_val) {
     char buf[256];
 
-    if (szIniFile[0]) {
-        if (GetPrivateProfileString(section, name, "", buf, sizeof(buf), szIniFile)) {
+    if (ini_file_[0]) {
+        if (GetPrivateProfileString(section, name, "", buf, sizeof(buf), ini_file_)) {
             return atoi(buf);
         }
     }
@@ -38,9 +38,9 @@ void HGE_CALL HGE_Impl::Ini_SetFloat(const char* section, const char* name,
                                      const float value) {
     char buf[256];
 
-    if (szIniFile[0]) {
+    if (ini_file_[0]) {
         sprintf(buf, "%f", value);
-        WritePrivateProfileString(section, name, buf, szIniFile);
+        WritePrivateProfileString(section, name, buf, ini_file_);
     }
 }
 
@@ -49,8 +49,8 @@ float HGE_CALL HGE_Impl::Ini_GetFloat(const char* section, const char* name,
                                       const float def_val) {
     char buf[256];
 
-    if (szIniFile[0]) {
-        if (GetPrivateProfileString(section, name, "", buf, sizeof(buf), szIniFile)) {
+    if (ini_file_[0]) {
+        if (GetPrivateProfileString(section, name, "", buf, sizeof(buf), ini_file_)) {
             return static_cast<float>(atof(buf));
         }
     }
@@ -60,20 +60,20 @@ float HGE_CALL HGE_Impl::Ini_GetFloat(const char* section, const char* name,
 
 void HGE_CALL HGE_Impl::Ini_SetString(const char* section, const char* name, 
                                       const char* value) {
-    if (szIniFile[0]) {
-        WritePrivateProfileString(section, name, value, szIniFile);
+    if (ini_file_[0]) {
+        WritePrivateProfileString(section, name, value, ini_file_);
     }
 }
 
 
 char* HGE_CALL HGE_Impl::Ini_GetString(const char* section, const char* name,
                                        const char* def_val) {
-    if (szIniFile[0]) {
-        GetPrivateProfileString(section, name, def_val, szIniString, sizeof(szIniString),
-                                szIniFile);
+    if (ini_file_[0]) {
+        GetPrivateProfileString(section, name, def_val, ini_string_, sizeof(ini_string_),
+                                ini_file_);
     }
     else {
-        strcpy(szIniString, def_val);
+        strcpy(ini_string_, def_val);
     }
-    return szIniString;
+    return ini_string_;
 }

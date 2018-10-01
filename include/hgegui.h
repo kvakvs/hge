@@ -28,12 +28,12 @@ class hgeGUI;
 class hgeGUIObject {
 public:
     hgeGUIObject() {
-        hge = hgeCreate(HGE_VERSION);
+        hge_ = hgeCreate(HGE_VERSION);
         color = 0xFFFFFFFF;
     }
 
     virtual ~hgeGUIObject() {
-        hge->Release();
+        hge_->Release();
     }
 
     virtual void Render() = 0;
@@ -99,7 +99,7 @@ protected:
     hgeGUIObject(const hgeGUIObject& go);
     hgeGUIObject& operator=(const hgeGUIObject& go);
 
-    static HGE* hge;
+    static HGE* hge_;
 };
 
 
@@ -138,19 +138,22 @@ private:
     hgeGUI& operator=(const hgeGUI&);
     bool ProcessCtrl(hgeGUIObject* ctrl);
 
-    static HGE* hge;
+    static HGE* hge_;
 
-    hgeGUIObject* ctrls;
-    hgeGUIObject* ctrlLock;
-    hgeGUIObject* ctrlFocus;
-    hgeGUIObject* ctrlOver;
+    hgeGUIObject* ctrls_;
+    hgeGUIObject* ctrl_lock_;
+    hgeGUIObject* ctrl_focus_;
+    hgeGUIObject* ctrl_over_;
 
-    int navmode;
-    int nEnterLeave;
-    hgeSprite* sprCursor;
+    int navmode_;
+    int enter_leave_;
+    hgeSprite* spr_cursor_;
 
-    float mx, my;
-    int nWheel;
-    bool bLPressed, bLReleased;
-    bool bRPressed, bRReleased;
+    float mx_;
+    float my_;
+    int wheel_;
+    bool l_pressed_;
+    bool l_released_;
+    bool r_pressed_;
+    bool r_released_;
 };

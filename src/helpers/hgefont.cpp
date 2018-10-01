@@ -16,8 +16,8 @@ const char FNTBITMAPTAG[] = "Bitmap";
 const char FNTCHARTAG[]   = "Char";
 
 
-HGE *hgeFont::hge=nullptr;
-char hgeFont::buffer[1024];
+HGE *hgeFont::hge_=nullptr;
+char hgeFont::buffer_[1024];
 
 
 hgeFont::hgeFont(const char *szFont, bool bMipmap)
@@ -29,27 +29,27 @@ hgeFont::hgeFont(const char *szFont, bool bMipmap)
 
     // Setup variables
 
-    hge=hgeCreate(HGE_VERSION);
+    hge_=hgeCreate(HGE_VERSION);
 
-    fHeight=0.0f;
-    fScale=1.0f;
-    fProportion=1.0f;
-    fRot=0.0f;
-    fTracking=0.0f;
-    fSpacing=1.0f;
-    hTexture=0;
+    height_=0.0f;
+    scale_=1.0f;
+    proportion_=1.0f;
+    rot_=0.0f;
+    tracking_=0.0f;
+    spacing_=1.0f;
+    texture_=0;
 
-    fZ=0.5f;
-    nBlend=BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE;
-    dwCol=0xFFFFFFFF;
+    z_=0.5f;
+    blend_=BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE;
+    col_=0xFFFFFFFF;
 
-    ZeroMemory( &letters, sizeof(letters) );
-    ZeroMemory( &pre, sizeof(letters) );
-    ZeroMemory( &post, sizeof(letters) );
+    ZeroMemory( &letters_, sizeof(letters_) );
+    ZeroMemory( &pre_, sizeof(letters_) );
+    ZeroMemory( &post_, sizeof(letters_) );
 
     // Load font description
 
-    void *data = hge->Resource_Load(szFont, &size);
+    void *data = hge_->Resource_Load(szFont, &size);
     if(!data) {
         return;
     }
@@ -57,11 +57,11 @@ hgeFont::hgeFont(const char *szFont, bool bMipmap)
     char *desc = new char[size+1];
     memcpy(desc,data,size);
     desc[size]=0;
-    hge->Resource_Free(data);
+    hge_->Resource_Free(data);
 
     char *pdesc = _get_line(desc,linebuf);
     if(strcmp(linebuf, FNTHEADERTAG)) {
-        hge->System_Log("Font %s has incorrect format.", szFont);
+        hge_->System_Log("Font %s has incorrect format.", szFont);
         delete[] desc;
         return;
     }
@@ -84,8 +84,8 @@ hgeFont::hgeFont(const char *szFont, bool bMipmap)
                 continue;
             }
 
-            hTexture=hge->Texture_Load(buf, 0, bMipmap);
-            if(!hTexture) {
+            texture_=hge_->Texture_Load(buf, 0, bMipmap);
+            if(!texture_) {
                 delete[] desc;
                 return;
             }
@@ -127,11 +127,11 @@ hgeFont::hgeFont(const char *szFont, bool bMipmap)
             }
             sscanf(pbuf, " , %d , %d , %d , %d , %d , %d", &x, &y, &w, &h, &a, &c);
 
-            letters[i] = new hgeSprite(hTexture, (float)x, (float)y, (float)w, (float)h);
-            pre[i]=(float)a;
-            post[i]=(float)c;
-            if(h>fHeight) {
-                fHeight=(float)h;
+            letters_[i] = new hgeSprite(texture_, (float)x, (float)y, (float)w, (float)h);
+            pre_[i]=(float)a;
+            post_[i]=(float)c;
+            if(h>height_) {
+                height_=(float)h;
             }
         }
     }
@@ -143,13 +143,13 @@ hgeFont::hgeFont(const char *szFont, bool bMipmap)
 hgeFont::~hgeFont()
 {
     for(int i=0; i<256; i++)
-        if(letters[i]) {
-            delete letters[i];
+        if(letters_[i]) {
+            delete letters_[i];
         }
-    if(hTexture) {
-        hge->Texture_Free(hTexture);
+    if(texture_) {
+        hge_->Texture_Free(texture_);
     }
-    hge->Release();
+    hge_->Release();
 }
 
 void hgeFont::Render(float x, float y, int align, const char *string)
@@ -166,7 +166,7 @@ void hgeFont::Render(float x, float y, int align, const char *string)
 
     while(*string) {
         if(*string=='\n') {
-            y += int(fHeight*fScale*fSpacing);
+            y += int(height_*scale_*spacing_);
             fx = x;
             if(align == HGETEXT_RIGHT) {
                 fx -= GetStringWidth(string+1, false);
@@ -176,13 +176,13 @@ void hgeFont::Render(float x, float y, int align, const char *string)
             }
         } else {
             int i = (unsigned char)*string;
-            if(!letters[i]) {
+            if(!letters_[i]) {
                 i='?';
             }
-            if(letters[i]) {
-                fx += pre[i]*fScale*fProportion;
-                letters[i]->RenderEx(fx, y, fRot, fScale*fProportion, fScale);
-                fx += (letters[i]->GetWidth()+post[i]+fTracking)*fScale*fProportion;
+            if(letters_[i]) {
+                fx += pre_[i]*scale_*proportion_;
+                letters_[i]->RenderEx(fx, y, rot_, scale_*proportion_, scale_);
+                fx += (letters_[i]->GetWidth()+post_[i]+tracking_)*scale_*proportion_;
             }
         }
         string++;
@@ -193,11 +193,11 @@ void hgeFont::printf(float x, float y, int align, const char *format, ...)
 {
     char	*pArg=(char *) &format+sizeof(format);
 
-    _vsnprintf(buffer, sizeof(buffer)-1, format, pArg);
-    buffer[sizeof(buffer)-1]=0;
+    _vsnprintf(buffer_, sizeof(buffer_)-1, format, pArg);
+    buffer_[sizeof(buffer_)-1]=0;
     //vsprintf(buffer, format, pArg);
 
-    Render(x,y,align,buffer);
+    Render(x,y,align,buffer_);
 }
 
 void hgeFont::printfb(float x, float y, float w, float h, int align, const char *format, ...)
@@ -205,12 +205,12 @@ void hgeFont::printfb(float x, float y, float w, float h, int align, const char 
     int lines=0;
     char	*pArg=(char *) &format+sizeof(format);
 
-    _vsnprintf(buffer, sizeof(buffer)-1, format, pArg);
-    buffer[sizeof(buffer)-1]=0;
+    _vsnprintf(buffer_, sizeof(buffer_)-1, format, pArg);
+    buffer_[sizeof(buffer_)-1]=0;
     //vsprintf(buffer, format, pArg);
 
-    char *linestart = buffer;
-    char *pbuf = buffer;
+    char *linestart = buffer_;
+    char *pbuf = buffer_;
     char *prevword = nullptr;
 
     for(;;) {
@@ -255,7 +255,7 @@ void hgeFont::printfb(float x, float y, float w, float h, int align, const char 
 
     float tx = x;
     float ty = y;
-    float hh = fHeight*fSpacing*fScale*lines;
+    float hh = height_*spacing_*scale_*lines;
 
     switch(align & HGETEXT_HORZMASK) {
     case HGETEXT_LEFT:
@@ -279,7 +279,7 @@ void hgeFont::printfb(float x, float y, float w, float h, int align, const char 
         break;
     }
 
-    Render(tx,ty,align,buffer);
+    Render(tx,ty,align,buffer_);
 }
 
 float hgeFont::GetStringWidth(const char *string, bool bMultiline) const
@@ -291,18 +291,18 @@ float hgeFont::GetStringWidth(const char *string, bool bMultiline) const
 
         while(*string && *string != '\n') {
             int i = (unsigned char)*string;
-            if(!letters[i]) {
+            if(!letters_[i]) {
                 i='?';
             }
-            if(letters[i]) {
-                linew += letters[i]->GetWidth() + pre[i] + post[i] + fTracking;
+            if(letters_[i]) {
+                linew += letters_[i]->GetWidth() + pre_[i] + post_[i] + tracking_;
             }
 
             string++;
         }
 
         if(!bMultiline) {
-            return linew*fScale*fProportion;
+            return linew*scale_*proportion_;
         }
 
         if(linew > w) {
@@ -314,36 +314,36 @@ float hgeFont::GetStringWidth(const char *string, bool bMultiline) const
         }
     }
 
-    return w*fScale*fProportion;
+    return w*scale_*proportion_;
 }
 
 void hgeFont::SetColor(hgeU32 col)
 {
-    dwCol = col;
+    col_ = col;
 
     for(int i=0; i<256; i++)
-        if(letters[i]) {
-            letters[i]->SetColor(col);
+        if(letters_[i]) {
+            letters_[i]->SetColor(col);
         }
 }
 
 void hgeFont::SetZ(float z)
 {
-    fZ = z;
+    z_ = z;
 
     for(int i=0; i<256; i++)
-        if(letters[i]) {
-            letters[i]->SetZ(z);
+        if(letters_[i]) {
+            letters_[i]->SetZ(z);
         }
 }
 
 void hgeFont::SetBlendMode(int blend)
 {
-    nBlend = blend;
+    blend_ = blend;
 
     for(int i=0; i<256; i++)
-        if(letters[i]) {
-            letters[i]->SetBlendMode(blend);
+        if(letters_[i]) {
+            letters_[i]->SetBlendMode(blend);
         }
 }
 

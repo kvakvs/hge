@@ -41,71 +41,71 @@ public:
     void SetBlendMode(int blend);
 
     void SetScale(const float scale) {
-        fScale = scale;
+        scale_ = scale;
     }
 
     void SetProportion(const float prop) {
-        fProportion = prop;
+        proportion_ = prop;
     }
 
     void SetRotation(const float rot) {
-        fRot = rot;
+        rot_ = rot;
     }
 
     void SetTracking(const float tracking) {
-        fTracking = tracking;
+        tracking_ = tracking;
     }
 
     void SetSpacing(const float spacing) {
-        fSpacing = spacing;
+        spacing_ = spacing;
     }
 
     hgeU32 GetColor() const {
-        return dwCol;
+        return col_;
     }
 
     float GetZ() const {
-        return fZ;
+        return z_;
     }
 
     int GetBlendMode() const {
-        return nBlend;
+        return blend_;
     }
 
     float GetScale() const {
-        return fScale;
+        return scale_;
     }
 
     float GetProportion() const {
-        return fProportion;
+        return proportion_;
     }
 
     float GetRotation() const {
-        return fRot;
+        return rot_;
     }
 
     float GetTracking() const {
-        return fTracking;
+        return tracking_;
     }
 
     float GetSpacing() const {
-        return fSpacing;
+        return spacing_;
     }
 
     hgeSprite* GetSprite(const char chr) const {
-        return letters[static_cast<unsigned char>(chr)];
+        return letters_[static_cast<unsigned char>(chr)];
     }
 
     float GetPreWidth(const char chr) const {
-        return pre[static_cast<unsigned char>(chr)];
+        return pre_[static_cast<unsigned char>(chr)];
     }
 
     float GetPostWidth(const char chr) const {
-        return post[static_cast<unsigned char>(chr)];
+        return post_[static_cast<unsigned char>(chr)];
     }
 
     float GetHeight() const {
-        return fHeight;
+        return height_;
     }
 
     float GetStringWidth(const char* string, bool bMultiline = true) const;
@@ -117,22 +117,22 @@ private:
 
     char* _get_line(char* file, char* line);
 
-    static HGE* hge;
+    static HGE* hge_;
 
-    static char buffer[1024];
+    static char buffer_[1024];
 
-    HTEXTURE hTexture;
-    hgeSprite* letters[256];
-    float pre[256];
-    float post[256];
-    float fHeight;
-    float fScale;
-    float fProportion;
-    float fRot;
-    float fTracking;
-    float fSpacing;
+    HTEXTURE texture_;
+    hgeSprite* letters_[256];
+    float pre_[256];
+    float post_[256];
+    float height_;
+    float scale_;
+    float proportion_;
+    float rot_;
+    float tracking_;
+    float spacing_;
 
-    hgeU32 dwCol;
-    float fZ;
-    int nBlend;
+    hgeU32 col_;
+    float z_;
+    int blend_;
 };

@@ -36,7 +36,7 @@ private:
     hgeStringTable(const hgeStringTable&);
     hgeStringTable& operator=(const hgeStringTable&);
 
-    NamedString* strings;
+    NamedString* strings_;
 
-    static HGE* hge;
+    static HGE* hge_;
 };

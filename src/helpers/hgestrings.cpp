@@ -14,7 +14,7 @@ const char STRHEADERTAG[]="[HGESTRINGTABLE]";
 const char STRFORMATERROR[]="String table %s has incorrect format.";
 
 
-HGE *hgeStringTable::hge=nullptr;
+HGE *hgeStringTable::hge_=nullptr;
 
 
 hgeStringTable::hgeStringTable(const char *filename)
@@ -22,11 +22,11 @@ hgeStringTable::hgeStringTable(const char *filename)
     hgeU32 size;
     char str_name[MAXSTRNAMELENGTH];
 
-    hge=hgeCreate(HGE_VERSION);
-    strings=nullptr;
+    hge_=hgeCreate(HGE_VERSION);
+    strings_=nullptr;
 
     // load string table file
-    void *data = hge->Resource_Load(filename, &size);
+    void *data = hge_->Resource_Load(filename, &size);
     if(!data) {
         return;
     }
@@ -34,11 +34,11 @@ hgeStringTable::hgeStringTable(const char *filename)
     char *desc = new char[size+1];
     memcpy(desc,data,size);
     desc[size]=0;
-    hge->Resource_Free(data);
+    hge_->Resource_Free(data);
 
     // check header
     if(memcmp(desc, STRHEADERTAG, sizeof(STRHEADERTAG)-1)) {
-        hge->System_Log(STRFORMATERROR, filename);
+        hge_->System_Log(STRFORMATERROR, filename);
         delete[] desc;
         return;
     }
@@ -86,7 +86,7 @@ hgeStringTable::hgeStringTable(const char *filename)
             pdesc++;
         }
         if(*pdesc!='=')	{
-            hge->System_Log(STRFORMATERROR, filename);
+            hge_->System_Log(STRFORMATERROR, filename);
             break;
         }
         pdesc++;
@@ -96,7 +96,7 @@ hgeStringTable::hgeStringTable(const char *filename)
             pdesc++;
         }
         if(*pdesc!='"')	{
-            hge->System_Log(STRFORMATERROR, filename);
+            hge_->System_Log(STRFORMATERROR, filename);
             break;
         }
         pdesc++;
@@ -149,8 +149,8 @@ hgeStringTable::hgeStringTable(const char *filename)
         strcpy(str->name, str_name);
         str->string=new char[strlen(str_value)+1];
         strcpy(str->string, str_value);
-        str->next=strings;
-        strings=str;
+        str->next=strings_;
+        strings_=str;
 
         if(!*pdesc) {
             break;
@@ -165,7 +165,7 @@ hgeStringTable::hgeStringTable(const char *filename)
 hgeStringTable::~hgeStringTable()
 {
 
-    NamedString *str = strings;
+    NamedString *str = strings_;
     while(str) {
         NamedString *strnext = str->next;
         delete[] str->string;
@@ -173,12 +173,12 @@ hgeStringTable::~hgeStringTable()
         str=strnext;
     }
 
-    hge->Release();
+    hge_->Release();
 }
 
 char *hgeStringTable::GetString(const char *name)
 {
-    NamedString *str=strings;
+    NamedString *str=strings_;
 
     while(str) {
         if(!strcmp(name, str->name)) {

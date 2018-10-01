@@ -12,10 +12,10 @@
 
 
 void hgeRect::Encapsulate(const float x, const float y) {
-    if (bClean) {
+    if (is_clean_) {
         x1 = x2 = x;
         y1 = y2 = y;
-        bClean = false;
+        is_clean_ = false;
     }
     else {
         if (x < x1) {

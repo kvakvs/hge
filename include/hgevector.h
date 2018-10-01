@@ -14,14 +14,12 @@
 #include <math.h>
 
 
-/*
-** Fast 1.0/sqrtf(float) routine
-*/
-float InvSqrt(float x);
-
 class hgeVector {
 public:
     float x, y;
+
+    // Fast 1.0/sqrtf(float) routine
+    static float InvSqrt(float x);
 
     hgeVector(const float _x, const float _y) {
         x = _x;

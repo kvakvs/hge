@@ -19,10 +19,10 @@
 HEFFECT HGE_CALL HGE_Impl::Effect_Load(const char* filename, const hgeU32 size) {
     hgeU32 _size;
     BASS_CHANNELINFO info;
-    void*data;
+    void* data;
 
     if (hBass) {
-        if (bSilent) {
+        if (is_silent_) {
             return 1;
         }
 
@@ -50,7 +50,7 @@ HEFFECT HGE_CALL HGE_Impl::Effect_Load(const char* filename, const hgeU32 size) 
                 if ((info.flags & BASS_SAMPLE_8BITS) == 0) {
                     samples >>= 1;
                 }
-                void *buffer = BASS_SampleCreate(samples, info.freq, 2, 4,
+                void* buffer = BASS_SampleCreate(samples, info.freq, 2, 4,
                                                  info.flags | BASS_SAMPLE_OVER_VOL);
                 if (!buffer) {
                     BASS_StreamFree(hstrm);
@@ -247,7 +247,7 @@ HSTREAM HGE_CALL HGE_Impl::Stream_Load(const char* filename, hgeU32 size) {
     hgeU32 _size;
 
     if (hBass) {
-        if (bSilent) {
+        if (is_silent_) {
             return 1;
         }
 
@@ -270,11 +270,11 @@ HSTREAM HGE_CALL HGE_Impl::Stream_Load(const char* filename, hgeU32 size) {
             return 0;
         }
         if (!size) {
-            CStreamList * stmItem = new CStreamList;
+            CStreamList* stmItem = new CStreamList;
             stmItem->hstream = hs;
             stmItem->data = data;
-            stmItem->next = streams;
-            streams = stmItem;
+            stmItem->next = sound_streams_;
+            sound_streams_ = stmItem;
         }
         return hs;
     }
@@ -282,7 +282,7 @@ HSTREAM HGE_CALL HGE_Impl::Stream_Load(const char* filename, hgeU32 size) {
 }
 
 void HGE_CALL HGE_Impl::Stream_Free(HSTREAM stream) {
-    CStreamList *stmItem = streams, *stmPrev = nullptr;
+    CStreamList *stmItem = sound_streams_, *stmPrev = nullptr;
 
     if (hBass) {
         while (stmItem) {
@@ -291,7 +291,7 @@ void HGE_CALL HGE_Impl::Stream_Free(HSTREAM stream) {
                     stmPrev->next = stmItem->next;
                 }
                 else {
-                    streams = stmItem->next;
+                    sound_streams_ = stmItem->next;
                 }
                 Resource_Free(stmItem->data);
                 delete stmItem;
@@ -441,7 +441,7 @@ bool HGE_CALL HGE_Impl::Channel_IsSliding(HCHANNEL channel) {
 
 
 bool HGE_Impl::_SoundInit() {
-    if (!bUseSound || hBass) {
+    if (!use_sound_ || hBass) {
         return true;
     }
 
@@ -501,29 +501,29 @@ bool HGE_Impl::_SoundInit() {
     LOADBASSFUNCTION(BASS_ChannelSeconds2Bytes);
     LOADBASSFUNCTION(BASS_ChannelBytes2Seconds);
 
-    bSilent = false;
-    if (!BASS_Init(-1, nSampleRate, 0, hwnd, nullptr)) {
+    is_silent_ = false;
+    if (!BASS_Init(-1, sample_rate_, 0, hwnd_, nullptr)) {
         System_Log("BASS Init failed, using no sound");
-        BASS_Init(0, nSampleRate, 0, hwnd, nullptr);
-        bSilent = true;
+        BASS_Init(0, sample_rate_, 0, hwnd_, nullptr);
+        is_silent_ = true;
     }
     else {
         System_Log("Sound Device: %s", BASS_GetDeviceDescription(1));
-        System_Log("Sample rate: %ld\n", nSampleRate);
+        System_Log("Sample rate: %ld\n", sample_rate_);
     }
 
     //BASS_SetConfig(BASS_CONFIG_BUFFER, 5000);
     //BASS_SetConfig(BASS_CONFIG_UPDATEPERIOD, 50);
 
-    _SetFXVolume(nFXVolume);
-    _SetMusVolume(nMusVolume);
-    _SetStreamVolume(nStreamVolume);
+    _SetFXVolume(fx_volume_);
+    _SetMusVolume(mus_volume_);
+    _SetStreamVolume(stream_volume_);
 
     return true;
 }
 
 void HGE_Impl::_SoundDone() {
-    CStreamList *stmItem = streams;
+    CStreamList* stmItem = sound_streams_;
 
     if (hBass) {
         BASS_Stop();
@@ -535,12 +535,12 @@ void HGE_Impl::_SoundDone() {
         hBass = nullptr;
 
         while (stmItem) {
-            CStreamList *stmNext = stmItem->next;
+            CStreamList* stmNext = stmItem->next;
             Resource_Free(stmItem->data);
             delete stmItem;
             stmItem = stmNext;
         }
-        streams = nullptr;
+        sound_streams_ = nullptr;
     }
 }
 

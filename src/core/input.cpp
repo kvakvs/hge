@@ -49,10 +49,10 @@ static char* g_key_names[] = {
 
 bool HGE_CALL HGE_Impl::Input_GetEvent(hgeInputEvent* event) {
 
-    if (queue) {
-        auto eptr = queue;
+    if (ev_queue_) {
+        auto eptr = ev_queue_;
         memcpy(event, &eptr->event, sizeof(hgeInputEvent));
-        queue = eptr->next;
+        ev_queue_ = eptr->next;
         delete eptr;
         return true;
     }
@@ -61,8 +61,8 @@ bool HGE_CALL HGE_Impl::Input_GetEvent(hgeInputEvent* event) {
 }
 
 void HGE_CALL HGE_Impl::Input_GetMousePos(float* x, float* y) {
-    *x = Xpos;
-    *y = Ypos;
+    *x = xpos_;
+    *y = ypos_;
 }
 
 
@@ -70,16 +70,16 @@ void HGE_CALL HGE_Impl::Input_SetMousePos(const float x, const float y) {
     POINT pt;
     pt.x = static_cast<long>(x);
     pt.y = static_cast<long>(y);
-    ClientToScreen(hwnd, &pt);
+    ClientToScreen(hwnd_, &pt);
     SetCursorPos(pt.x, pt.y);
 }
 
 int HGE_CALL HGE_Impl::Input_GetMouseWheel() {
-    return Zpos;
+    return zpos_;
 }
 
 bool HGE_CALL HGE_Impl::Input_IsMouseOver() {
-    return bMouseOver;
+    return mouse_over_;
 }
 
 bool HGE_CALL HGE_Impl::Input_GetKeyState(const int key) {
@@ -87,11 +87,11 @@ bool HGE_CALL HGE_Impl::Input_GetKeyState(const int key) {
 }
 
 bool HGE_CALL HGE_Impl::Input_KeyDown(const int key) {
-    return (keyz[key] & 1) != 0;
+    return (key_table_[key] & 1) != 0;
 }
 
 bool HGE_CALL HGE_Impl::Input_KeyUp(const int key) {
-    return (keyz[key] & 2) != 0;
+    return (key_table_[key] & 2) != 0;
 }
 
 char* HGE_CALL HGE_Impl::Input_GetKeyName(const int key) {
@@ -99,11 +99,11 @@ char* HGE_CALL HGE_Impl::Input_GetKeyName(const int key) {
 }
 
 int HGE_CALL HGE_Impl::Input_GetKey() {
-    return VKey;
+    return v_key_;
 }
 
 int HGE_CALL HGE_Impl::Input_GetChar() {
-    return Char;
+    return input_char_;
 }
 
 
@@ -113,11 +113,11 @@ int HGE_CALL HGE_Impl::Input_GetChar() {
 void HGE_Impl::_InputInit() {
     POINT pt;
     GetCursorPos(&pt);
-    ScreenToClient(hwnd, &pt);
-    Xpos = static_cast<float>(pt.x);
-    Ypos = static_cast<float>(pt.y);
+    ScreenToClient(hwnd_, &pt);
+    xpos_ = static_cast<float>(pt.x);
+    ypos_ = static_cast<float>(pt.y);
 
-    memset(&keyz, 0, sizeof(keyz));
+    memset(&key_table_, 0, sizeof(key_table_));
 }
 
 void HGE_Impl::_UpdateMouse() {
@@ -125,14 +125,14 @@ void HGE_Impl::_UpdateMouse() {
     RECT rc;
 
     GetCursorPos(&pt);
-    GetClientRect(hwnd, &rc);
-    MapWindowPoints(hwnd, nullptr, reinterpret_cast<LPPOINT>(&rc), 2);
+    GetClientRect(hwnd_, &rc);
+    MapWindowPoints(hwnd_, nullptr, reinterpret_cast<LPPOINT>(&rc), 2);
 
-    if (bCaptured || (PtInRect(&rc, pt) && WindowFromPoint(pt) == hwnd)) {
-        bMouseOver = true;
+    if (is_captured_ || (PtInRect(&rc, pt) && WindowFromPoint(pt) == hwnd_)) {
+        mouse_over_ = true;
     }
     else {
-        bMouseOver = false;
+        mouse_over_ = false;
     }
 }
 
@@ -150,20 +150,20 @@ void HGE_Impl::_BuildEvent(const int type, const int key, const int scan,
     GetKeyboardState(kbstate);
     if (type == INPUT_KEYDOWN) {
         if ((flags & HGEINP_REPEAT) == 0) {
-            keyz[key] |= 1;
+            key_table_[key] |= 1;
         }
         ToAscii(key, scan, kbstate,
                 reinterpret_cast<unsigned short *>(&eptr->event.chr), 0);
     }
     if (type == INPUT_KEYUP) {
-        keyz[key] |= 2;
+        key_table_[key] |= 2;
         ToAscii(key, scan, kbstate,
                 reinterpret_cast<unsigned short *>(&eptr->event.chr), 0);
     }
     if (type == INPUT_MOUSEWHEEL) {
         eptr->event.key = 0;
         eptr->event.wheel = key;
-        ScreenToClient(hwnd, &pt);
+        ScreenToClient(hwnd_, &pt);
     }
     else {
         eptr->event.key = key;
@@ -171,17 +171,17 @@ void HGE_Impl::_BuildEvent(const int type, const int key, const int scan,
     }
 
     if (type == INPUT_MBUTTONDOWN) {
-        keyz[key] |= 1;
-        SetCapture(hwnd);
-        bCaptured = true;
+        key_table_[key] |= 1;
+        SetCapture(hwnd_);
+        is_captured_ = true;
     }
     if (type == INPUT_MBUTTONUP) {
-        keyz[key] |= 2;
+        key_table_[key] |= 2;
         ReleaseCapture();
-        Input_SetMousePos(Xpos, Ypos);
-        pt.x = static_cast<int>(Xpos);
-        pt.y = static_cast<int>(Ypos);
-        bCaptured = false;
+        Input_SetMousePos(xpos_, ypos_);
+        pt.x = static_cast<int>(xpos_);
+        pt.y = static_cast<int>(ypos_);
+        is_captured_ = false;
     }
 
     if (kbstate[VK_SHIFT] & 0x80) {
@@ -205,8 +205,8 @@ void HGE_Impl::_BuildEvent(const int type, const int key, const int scan,
     eptr->event.flags = flags;
 
     if (pt.x == -1) {
-        eptr->event.x = Xpos;
-        eptr->event.y = Ypos;
+        eptr->event.x = xpos_;
+        eptr->event.y = ypos_;
     }
     else {
         if (pt.x < 0) {
@@ -215,11 +215,11 @@ void HGE_Impl::_BuildEvent(const int type, const int key, const int scan,
         if (pt.y < 0) {
             pt.y = 0;
         }
-        if (pt.x >= nScreenWidth) {
-            pt.x = nScreenWidth - 1;
+        if (pt.x >= screen_width_) {
+            pt.x = screen_width_ - 1;
         }
-        if (pt.y >= nScreenHeight) {
-            pt.y = nScreenHeight - 1;
+        if (pt.y >= screen_height_) {
+            pt.y = screen_height_ - 1;
         }
 
         eptr->event.x = static_cast<float>(pt.x);
@@ -228,11 +228,11 @@ void HGE_Impl::_BuildEvent(const int type, const int key, const int scan,
 
     eptr->next = nullptr;
 
-    if (!queue) {
-        queue = eptr;
+    if (!ev_queue_) {
+        ev_queue_ = eptr;
     }
     else {
-        auto last = queue;
+        auto last = ev_queue_;
         while (last->next) {
             last = last->next;
         }
@@ -240,22 +240,22 @@ void HGE_Impl::_BuildEvent(const int type, const int key, const int scan,
     }
 
     if (eptr->event.type == INPUT_KEYDOWN || eptr->event.type == INPUT_MBUTTONDOWN) {
-        VKey = eptr->event.key;
-        Char = eptr->event.chr;
+        v_key_ = eptr->event.key;
+        input_char_ = eptr->event.chr;
     }
     else if (eptr->event.type == INPUT_MOUSEMOVE) {
-        Xpos = eptr->event.x;
-        Ypos = eptr->event.y;
+        xpos_ = eptr->event.x;
+        ypos_ = eptr->event.y;
     }
     else if (eptr->event.type == INPUT_MOUSEWHEEL) {
-        Zpos += eptr->event.wheel;
+        zpos_ += eptr->event.wheel;
     }
 }
 
 void HGE_Impl::_ClearQueue() {
-    auto eptr = queue;
+    auto eptr = ev_queue_;
 
-    memset(&keyz, 0, sizeof(keyz));
+    memset(&key_table_, 0, sizeof(key_table_));
 
     while (eptr) {
         const auto nexteptr = eptr->next;
@@ -263,8 +263,8 @@ void HGE_Impl::_ClearQueue() {
         eptr = nexteptr;
     }
 
-    queue = nullptr;
-    VKey = 0;
-    Char = 0;
-    Zpos = 0;
+    ev_queue_ = nullptr;
+    v_key_ = 0;
+    input_char_ = 0;
+    zpos_ = 0;
 }

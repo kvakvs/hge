@@ -13,15 +13,15 @@
 hgeAnimation::hgeAnimation(HTEXTURE tex, int nframes, float FPS, float x, float y, float w, float h)
     : hgeSprite(tex, x, y, w, h)
 {
-    orig_width = hge->Texture_GetWidth(tex, true);
+    orig_width_ = hge_->Texture_GetWidth(tex, true);
 
-    fSinceLastFrame=-1.0f;
-    fSpeed=1.0f/FPS;
-    bPlaying=false;
-    nFrames=nframes;
+    since_last_frame_=-1.0f;
+    speed_=1.0f/FPS;
+    is_playing_=false;
+    frames_=nframes;
 
-    Mode=HGEANIM_FWD | HGEANIM_LOOP;
-    nDelta=1;
+    mode_=HGEANIM_FWD | HGEANIM_LOOP;
+    delta_=1;
     SetFrame(0);
 }
 
@@ -29,25 +29,25 @@ hgeAnimation::hgeAnimation(const hgeAnimation & anim)
     : hgeSprite(anim)
 {
     // Copy hgeAnimation parameters:
-    this->orig_width	  = anim.orig_width;
-    this->bPlaying        = anim.bPlaying;
-    this->fSpeed          = anim.fSpeed;
-    this->fSinceLastFrame = anim.fSinceLastFrame;
-    this->Mode            = anim.Mode;
-    this->nDelta          = anim.nDelta;
-    this->nFrames         = anim.nFrames;
-    this->nCurFrame       = anim.nCurFrame;
+    this->orig_width_	  = anim.orig_width_;
+    this->is_playing_        = anim.is_playing_;
+    this->speed_          = anim.speed_;
+    this->since_last_frame_ = anim.since_last_frame_;
+    this->mode_            = anim.mode_;
+    this->delta_          = anim.delta_;
+    this->frames_         = anim.frames_;
+    this->cur_frame_       = anim.cur_frame_;
 }
 
 void hgeAnimation::SetMode(int mode)
 {
-    Mode=mode;
+    mode_=mode;
 
     if(mode & HGEANIM_REV) {
-        nDelta = -1;
-        SetFrame(nFrames-1);
+        delta_ = -1;
+        SetFrame(frames_-1);
     } else {
-        nDelta = 1;
+        delta_ = 1;
         SetFrame(0);
     }
 }
@@ -55,13 +55,13 @@ void hgeAnimation::SetMode(int mode)
 
 void hgeAnimation::Play()
 {
-    bPlaying=true;
-    fSinceLastFrame=-1.0f;
-    if(Mode & HGEANIM_REV) {
-        nDelta = -1;
-        SetFrame(nFrames-1);
+    is_playing_=true;
+    since_last_frame_=-1.0f;
+    if(mode_ & HGEANIM_REV) {
+        delta_ = -1;
+        SetFrame(frames_-1);
     } else {
-        nDelta = 1;
+        delta_ = 1;
         SetFrame(0);
     }
 }
@@ -69,96 +69,96 @@ void hgeAnimation::Play()
 
 void hgeAnimation::Update(float fDeltaTime)
 {
-    if(!bPlaying) {
+    if(!is_playing_) {
         return;
     }
 
-    if(fSinceLastFrame == -1.0f) {
-        fSinceLastFrame=0.0f;
+    if(since_last_frame_ == -1.0f) {
+        since_last_frame_=0.0f;
     } else {
-        fSinceLastFrame += fDeltaTime;
+        since_last_frame_ += fDeltaTime;
     }
 
-    while(fSinceLastFrame >= fSpeed) {
-        fSinceLastFrame -= fSpeed;
+    while(since_last_frame_ >= speed_) {
+        since_last_frame_ -= speed_;
 
-        if(nCurFrame + nDelta == nFrames) {
-            switch(Mode) {
+        if(cur_frame_ + delta_ == frames_) {
+            switch(mode_) {
             case HGEANIM_FWD:
             case HGEANIM_REV | HGEANIM_PINGPONG:
-                bPlaying = false;
+                is_playing_ = false;
                 break;
 
             case HGEANIM_FWD | HGEANIM_PINGPONG:
             case HGEANIM_FWD | HGEANIM_PINGPONG | HGEANIM_LOOP:
             case HGEANIM_REV | HGEANIM_PINGPONG | HGEANIM_LOOP:
-                nDelta = -nDelta;
+                delta_ = -delta_;
                 break;
             }
-        } else if(nCurFrame + nDelta < 0) {
-            switch(Mode) {
+        } else if(cur_frame_ + delta_ < 0) {
+            switch(mode_) {
             case HGEANIM_REV:
             case HGEANIM_FWD | HGEANIM_PINGPONG:
-                bPlaying = false;
+                is_playing_ = false;
                 break;
 
             case HGEANIM_REV | HGEANIM_PINGPONG:
             case HGEANIM_REV | HGEANIM_PINGPONG | HGEANIM_LOOP:
             case HGEANIM_FWD | HGEANIM_PINGPONG | HGEANIM_LOOP:
-                nDelta = -nDelta;
+                delta_ = -delta_;
                 break;
             }
         }
 
-        if(bPlaying) {
-            SetFrame(nCurFrame+nDelta);
+        if(is_playing_) {
+            SetFrame(cur_frame_+delta_);
         }
     }
 }
 
 void hgeAnimation::SetFrame(int n)
 {
-    int ncols = int(orig_width) / int(width);
+    int ncols = int(orig_width_) / int(width_);
 
 
-    n = n % nFrames;
+    n = n % frames_;
     if(n < 0) {
-        n = nFrames + n;
+        n = frames_ + n;
     }
-    nCurFrame = n;
+    cur_frame_ = n;
 
     // calculate texture coords for frame n
-    float ty1 = ty;
-    float tx1 = tx + n*width;
+    float ty1 = ty_;
+    float tx1 = tx_ + n*width_;
 
-    if(tx1 > orig_width-width) {
-        n -= int(orig_width-tx) / int(width);
-        tx1 = width * (n%ncols);
-        ty1 += height * (1 + n/ncols);
+    if(tx1 > orig_width_-width_) {
+        n -= int(orig_width_-tx_) / int(width_);
+        tx1 = width_ * (n%ncols);
+        ty1 += height_ * (1 + n/ncols);
     }
 
-    float tx2 = tx1 + width;
-    float ty2 = ty1 + height;
+    float tx2 = tx1 + width_;
+    float ty2 = ty1 + height_;
 
-    tx1 /= tex_width;
-    ty1 /= tex_height;
-    tx2 /= tex_width;
-    ty2 /= tex_height;
+    tx1 /= tex_width_;
+    ty1 /= tex_height_;
+    tx2 /= tex_width_;
+    ty2 /= tex_height_;
 
-    quad.v[0].tx=tx1;
-    quad.v[0].ty=ty1;
-    quad.v[1].tx=tx2;
-    quad.v[1].ty=ty1;
-    quad.v[2].tx=tx2;
-    quad.v[2].ty=ty2;
-    quad.v[3].tx=tx1;
-    quad.v[3].ty=ty2;
+    quad_.v[0].tx=tx1;
+    quad_.v[0].ty=ty1;
+    quad_.v[1].tx=tx2;
+    quad_.v[1].ty=ty1;
+    quad_.v[2].tx=tx2;
+    quad_.v[2].ty=ty2;
+    quad_.v[3].tx=tx1;
+    quad_.v[3].ty=ty2;
 
-    bool bX = bXFlip;
-    bool bY = bYFlip;
-    bool bHS = bHSFlip;
-    bXFlip=false;
-    bYFlip=false;
+    bool bX = x_flip_;
+    bool bY = y_flip_;
+    bool bHS = hs_flip_;
+    x_flip_=false;
+    y_flip_=false;
     SetFlip(bX,bY,bHS);
 }
 

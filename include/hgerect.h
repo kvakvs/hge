@@ -19,19 +19,19 @@ public:
         y1 = _y1;
         x2 = _x2;
         y2 = _y2;
-        bClean = false;
+        is_clean_ = false;
     }
 
     hgeRect() {
-        bClean = true;
+        is_clean_ = true;
     }
 
     void Clear() {
-        bClean = true;
+        is_clean_ = true;
     }
 
     bool IsClean() const {
-        return bClean;
+        return is_clean_;
     }
 
     void Set(const float _x1, const float _y1, const float _x2, const float _y2) {
@@ -39,7 +39,7 @@ public:
         x2 = _x2;
         y1 = _y1;
         y2 = _y2;
-        bClean = false;
+        is_clean_ = false;
     }
 
     void SetRadius(const float x, const float y, const float r) {
@@ -47,7 +47,7 @@ public:
         x2 = x + r;
         y1 = y - r;
         y2 = y + r;
-        bClean = false;
+        is_clean_ = false;
     }
 
     void Encapsulate(float x, float y);
@@ -55,5 +55,5 @@ public:
     bool Intersect(const hgeRect* rect) const;
 
 private:
-    bool bClean;
+    bool is_clean_;
 };

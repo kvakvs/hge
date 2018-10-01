@@ -88,7 +88,7 @@ public:
     hgeParticleSystem(const hgeParticleSystem& ps);
 
     ~hgeParticleSystem() {
-        hge->Release();
+        hge_->Release();
     }
 
     hgeParticleSystem& operator=(const hgeParticleSystem& ps);
@@ -102,38 +102,38 @@ public:
     void MoveTo(float x, float y, bool bMoveParticles = false);
 
     void Transpose(const float x, const float y) {
-        fTx = x;
-        fTy = y;
+        tx_ = x;
+        ty_ = y;
     }
 
     void SetScale(const float scale) {
-        fScale = scale;
+        scale_ = scale;
     }
 
     void TrackBoundingBox(const bool bTrack) {
-        bUpdateBoundingBox = bTrack;
+        update_bounding_box_ = bTrack;
     }
 
     int GetParticlesAlive() const {
-        return nParticlesAlive;
+        return particles_alive_;
     }
 
     float GetAge() const {
-        return fAge;
+        return age_;
     }
 
     void GetPosition(float* x, float* y) const {
-        *x = vecLocation.x;
-        *y = vecLocation.y;
+        *x = location_.x;
+        *y = location_.y;
     }
 
     void GetTransposition(float* x, float* y) const {
-        *x = fTx;
-        *y = fTy;
+        *x = tx_;
+        *y = ty_;
     }
 
     float GetScale() const {
-        return fScale;
+        return scale_;
     }
 
     hgeRect* GetBoundingBox(hgeRect* rect) const;
@@ -141,21 +141,22 @@ public:
 private:
     hgeParticleSystem();
 
-    static HGE* hge;
+    static HGE* hge_;
 
-    float fAge;
-    float fEmissionResidue;
+    float age_;
+    float emission_residue_;
 
-    hgeVector vecPrevLocation;
-    hgeVector vecLocation;
-    float fTx, fTy;
-    float fScale;
+    hgeVector prev_location_;
+    hgeVector location_;
+    float tx_;
+    float ty_;
+    float scale_;
 
-    int nParticlesAlive;
-    hgeRect rectBoundingBox;
-    bool bUpdateBoundingBox;
+    int particles_alive_;
+    hgeRect bounding_box_;
+    bool update_bounding_box_;
 
-    hgeParticle particles[MAX_PARTICLES];
+    hgeParticle particles_[MAX_PARTICLES];
 };
 
 class hgeParticleManager {
@@ -171,8 +172,8 @@ public:
     void Transpose(float x, float y);
 
     void GetTransposition(float* dx, float* dy) const {
-        *dx = tX;
-        *dy = tY;
+        *dx = x_;
+        *dy = y_;
     }
 
     void KillPS(hgeParticleSystem* ps);
@@ -182,8 +183,8 @@ private:
     hgeParticleManager(const hgeParticleManager&);
     hgeParticleManager& operator=(const hgeParticleManager&);
 
-    int nPS;
-    float tX;
-    float tY;
-    hgeParticleSystem* psList[MAX_PSYSTEMS];
+    int ps_;
+    float x_;
+    float y_;
+    hgeParticleSystem* list_[MAX_PSYSTEMS];
 };

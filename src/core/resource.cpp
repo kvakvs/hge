@@ -15,7 +15,7 @@
 
 
 bool HGE_CALL HGE_Impl::Resource_AttachPack(const char* filename, const char* password) {
-    auto res_item = res;
+    auto res_item = res_list_;
 
     const auto sz_name = Resource_MakePath(filename);
     strupr(sz_name);
@@ -41,14 +41,14 @@ bool HGE_CALL HGE_Impl::Resource_AttachPack(const char* filename, const char* pa
     else {
         res_item->password[0] = 0;
     }
-    res_item->next = res;
-    res = res_item;
+    res_item->next = res_list_;
+    res_list_ = res_item;
 
     return true;
 }
 
 void HGE_CALL HGE_Impl::Resource_RemovePack(const char* filename) {
-    auto res_item = res;
+    auto res_item = res_list_;
     CResourceList* res_prev = nullptr;
 
     const auto sz_name = Resource_MakePath(filename);
@@ -60,7 +60,7 @@ void HGE_CALL HGE_Impl::Resource_RemovePack(const char* filename) {
                 res_prev->next = res_item->next;
             }
             else {
-                res = res_item->next;
+                res_list_ = res_item->next;
             }
             delete res_item;
             break;
@@ -72,7 +72,7 @@ void HGE_CALL HGE_Impl::Resource_RemovePack(const char* filename) {
 }
 
 void HGE_CALL HGE_Impl::Resource_RemoveAllPacks() {
-    auto res_item = res;
+    auto res_item = res_list_;
 
     while (res_item) {
         const auto res_next_item = res_item->next;
@@ -80,13 +80,13 @@ void HGE_CALL HGE_Impl::Resource_RemoveAllPacks() {
         res_item = res_next_item;
     }
 
-    res = nullptr;
+    res_list_ = nullptr;
 }
 
 void* HGE_CALL HGE_Impl::Resource_Load(const char* filename, hgeU32* size) {
     static char* res_err = "Can't load resource: %s";
 
-    auto res_item = res;
+    auto res_item = res_list_;
     char sz_name[_MAX_PATH];
     char sz_zip_name[_MAX_PATH];
     unz_file_info file_info;
@@ -206,88 +206,88 @@ void HGE_CALL HGE_Impl::Resource_Free(void* res) {
 
 char* HGE_CALL HGE_Impl::Resource_MakePath(const char* filename) {
     if (!filename) {
-        strcpy(szTmpFilename, szAppPath);
+        strcpy(tmp_filename_, app_path_);
     }
     else if (filename[0] == '\\' || filename[0] == '/' || filename[1] == ':') {
-        strcpy(szTmpFilename, filename);
+        strcpy(tmp_filename_, filename);
     }
     else {
-        strcpy(szTmpFilename, szAppPath);
+        strcpy(tmp_filename_, app_path_);
         if (filename) {
-            strcat(szTmpFilename, filename);
+            strcat(tmp_filename_, filename);
         }
     }
 
-    for (auto i = 0; szTmpFilename[i]; i++) {
-        if (szTmpFilename[i] == '/') {
-            szTmpFilename[i] = '\\';
+    for (auto i = 0; tmp_filename_[i]; i++) {
+        if (tmp_filename_[i] == '/') {
+            tmp_filename_[i] = '\\';
         }
     }
-    return szTmpFilename;
+    return tmp_filename_;
 }
 
 char* HGE_CALL HGE_Impl::Resource_EnumFiles(const char* wildcard) {
     if (wildcard) {
-        if (hSearch) {
-            FindClose(hSearch);
-            hSearch = nullptr;
+        if (h_search_) {
+            FindClose(h_search_);
+            h_search_ = nullptr;
         }
-        hSearch = FindFirstFile(Resource_MakePath(wildcard), &SearchData);
-        if (hSearch == INVALID_HANDLE_VALUE) {
-            hSearch = nullptr;
+        h_search_ = FindFirstFile(Resource_MakePath(wildcard), &search_data_);
+        if (h_search_ == INVALID_HANDLE_VALUE) {
+            h_search_ = nullptr;
             return nullptr;
         }
 
-        if (!(SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-            return SearchData.cFileName;
+        if (!(search_data_.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+            return search_data_.cFileName;
         }
         return Resource_EnumFiles();
     }
-    if (!hSearch) {
+    if (!h_search_) {
         return nullptr;
     }
     for (;;) {
-        if (!FindNextFile(hSearch, &SearchData)) {
-            FindClose(hSearch);
-            hSearch = nullptr;
+        if (!FindNextFile(h_search_, &search_data_)) {
+            FindClose(h_search_);
+            h_search_ = nullptr;
             return nullptr;
         }
-        if (!(SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-            return SearchData.cFileName;
+        if (!(search_data_.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+            return search_data_.cFileName;
         }
     }
 }
 
 char* HGE_CALL HGE_Impl::Resource_EnumFolders(const char* wildcard) {
     if (wildcard) {
-        if (hSearch) {
-            FindClose(hSearch);
-            hSearch = nullptr;
+        if (h_search_) {
+            FindClose(h_search_);
+            h_search_ = nullptr;
         }
-        hSearch = FindFirstFile(Resource_MakePath(wildcard), &SearchData);
-        if (hSearch == INVALID_HANDLE_VALUE) {
-            hSearch = nullptr;
+        h_search_ = FindFirstFile(Resource_MakePath(wildcard), &search_data_);
+        if (h_search_ == INVALID_HANDLE_VALUE) {
+            h_search_ = nullptr;
             return nullptr;
         }
 
-        if ((SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-            strcmp(SearchData.cFileName, ".") && strcmp(SearchData.cFileName, "..")) {
-            return SearchData.cFileName;
+        if ((search_data_.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
+            strcmp(search_data_.cFileName, ".") && strcmp(search_data_.cFileName, "..")) {
+            return search_data_.cFileName;
         }
         return Resource_EnumFolders();
     }
-    if (!hSearch) {
+    if (!h_search_) {
         return nullptr;
     }
     for (;;) {
-        if (!FindNextFile(hSearch, &SearchData)) {
-            FindClose(hSearch);
-            hSearch = nullptr;
+        if (!FindNextFile(h_search_, &search_data_)) {
+            FindClose(h_search_);
+            h_search_ = nullptr;
             return nullptr;
         }
-        if ((SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-            strcmp(SearchData.cFileName, ".") && strcmp(SearchData.cFileName, "..")) {
-            return SearchData.cFileName;
+        if ((search_data_.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
+            strcmp(search_data_.cFileName, ".") && strcmp(search_data_.cFileName, "..")) {
+            return search_data_.cFileName;
         }
     }
 }

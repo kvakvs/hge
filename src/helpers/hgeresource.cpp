@@ -12,11 +12,11 @@
 #include "resources.h"
 
 
-HGE* hgeResourceManager::hge = nullptr;
+HGE* hgeResourceManager::hge_ = nullptr;
 
 
 hgeResourceManager::hgeResourceManager(const char* scriptname) {
-    hge = hgeCreate(HGE_VERSION);
+    hge_ = hgeCreate(HGE_VERSION);
 
     for (auto i = 0; i < RESTYPES; i++) {
         res[i] = nullptr;
@@ -26,7 +26,7 @@ hgeResourceManager::hgeResourceManager(const char* scriptname) {
 
 hgeResourceManager::~hgeResourceManager() {
     _remove_all();
-    hge->Release();
+    hge_->Release();
 }
 
 void hgeResourceManager::_parse_script(const char* scriptname) {
@@ -96,7 +96,7 @@ void* hgeResourceManager::GetResource(const char* name, const int resgroup) {
     if (res) {
         return reinterpret_cast<void *>(res->Get(this));
     }
-    void* reshandle = hge->Resource_Load(name);
+    void* reshandle = hge_->Resource_Load(name);
     if (reshandle) {
         const auto resource = new RResource();
         resource->handle = reinterpret_cast<hgeU32>(reshandle);
@@ -116,7 +116,7 @@ HTEXTURE hgeResourceManager::GetTexture(const char* name, const int resgroup) {
     if (res) {
         return static_cast<HTEXTURE>(res->Get(this));
     }
-    const auto reshandle = hge->Texture_Load(name);
+    const auto reshandle = hge_->Texture_Load(name);
     if (reshandle) {
         const auto resource = new RTexture();
         resource->handle = reshandle;
@@ -137,7 +137,7 @@ HEFFECT hgeResourceManager::GetEffect(const char* name, const int resgroup) {
     if (res) {
         return static_cast<HEFFECT>(res->Get(this));
     }
-    const auto reshandle = hge->Effect_Load(name);
+    const auto reshandle = hge_->Effect_Load(name);
     if (reshandle) {
         REffect* resource = new REffect();
         resource->handle = reshandle;
@@ -157,7 +157,7 @@ HMUSIC hgeResourceManager::GetMusic(const char* name, const int resgroup) {
     if (res) {
         return static_cast<HMUSIC>(res->Get(this));
     }
-    const auto reshandle = hge->Music_Load(name);
+    const auto reshandle = hge_->Music_Load(name);
     if (reshandle) {
         RMusic* resource = new RMusic();
         resource->handle = reshandle;
@@ -177,7 +177,7 @@ HSTREAM hgeResourceManager::GetStream(const char* name, const int resgroup) {
     if (res) {
         return static_cast<HSTREAM>(res->Get(this));
     }
-    const auto reshandle = hge->Stream_Load(name);
+    const auto reshandle = hge_->Stream_Load(name);
     if (reshandle) {
         const auto resource = new RStream();
         resource->handle = reshandle;

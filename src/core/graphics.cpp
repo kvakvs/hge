@@ -14,20 +14,20 @@
 
 
 void HGE_CALL HGE_Impl::Gfx_Clear(const hgeU32 color) {
-    if (pCurTarget) {
-        if (pCurTarget->pDepth) {
-            pD3DDevice->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, color, 1.0f, 0);
+    if (cur_target_) {
+        if (cur_target_->pDepth) {
+            d3d_device_->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, color, 1.0f, 0);
         }
         else {
-            pD3DDevice->Clear(0, nullptr, D3DCLEAR_TARGET, color, 1.0f, 0);
+            d3d_device_->Clear(0, nullptr, D3DCLEAR_TARGET, color, 1.0f, 0);
         }
     }
     else {
-        if (bZBuffer) {
-            pD3DDevice->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, color, 1.0f, 0);
+        if (z_buffer_) {
+            d3d_device_->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, color, 1.0f, 0);
         }
         else {
-            pD3DDevice->Clear(0, nullptr, D3DCLEAR_TARGET, color, 1.0f, 0);
+            d3d_device_->Clear(0, nullptr, D3DCLEAR_TARGET, color, 1.0f, 0);
         }
     }
 }
@@ -36,13 +36,13 @@ void HGE_CALL HGE_Impl::Gfx_SetClipping(int x, int y, int w, int h) {
     hgeGAPIViewport vp;
     int scr_width, scr_height;
 
-    if (!pCurTarget) {
+    if (!cur_target_) {
         scr_width = pHGE->System_GetStateInt(HGE_SCREENWIDTH);
         scr_height = pHGE->System_GetStateInt(HGE_SCREENHEIGHT);
     }
     else {
-        scr_width = Texture_GetWidth(reinterpret_cast<HTEXTURE>(pCurTarget->pTex));
-        scr_height = Texture_GetHeight(reinterpret_cast<HTEXTURE>(pCurTarget->pTex));
+        scr_width = Texture_GetWidth(reinterpret_cast<HTEXTURE>(cur_target_->pTex));
+        scr_height = Texture_GetHeight(reinterpret_cast<HTEXTURE>(cur_target_->pTex));
     }
 
     if (!w) {
@@ -78,12 +78,12 @@ void HGE_CALL HGE_Impl::Gfx_SetClipping(int x, int y, int w, int h) {
     vp.MaxZ = 1.0f;
 
     _render_batch();
-    pD3DDevice->SetViewport(&vp);
+    d3d_device_->SetViewport(&vp);
 
     D3DXMATRIX tmp;
-    D3DXMatrixScaling(&matProj, 1.0f, -1.0f, 1.0f);
+    D3DXMatrixScaling(&proj_matrix_, 1.0f, -1.0f, 1.0f);
     D3DXMatrixTranslation(&tmp, -0.5f, +0.5f, 0.0f);
-    D3DXMatrixMultiply(&matProj, &matProj, &tmp);
+    D3DXMatrixMultiply(&proj_matrix_, &proj_matrix_, &tmp);
     D3DXMatrixOrthoOffCenterLH(
         &tmp,
         static_cast<float>(vp.X),
@@ -92,8 +92,8 @@ void HGE_CALL HGE_Impl::Gfx_SetClipping(int x, int y, int w, int h) {
         -static_cast<float>(vp.Y),
         vp.MinZ, vp.MaxZ
     );
-    D3DXMatrixMultiply(&matProj, &matProj, &tmp);
-    pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
+    D3DXMatrixMultiply(&proj_matrix_, &proj_matrix_, &tmp);
+    d3d_device_->SetTransform(D3DTS_PROJECTION, &proj_matrix_);
 }
 
 void HGE_CALL HGE_Impl::Gfx_SetTransform(const float x, const float y,
@@ -103,20 +103,20 @@ void HGE_CALL HGE_Impl::Gfx_SetTransform(const float x, const float y,
     D3DXMATRIX tmp;
 
     if (vscale == 0.0f) {
-        D3DXMatrixIdentity(&matView);
+        D3DXMatrixIdentity(&view_matrix_);
     }
     else {
-        D3DXMatrixTranslation(&matView, -x, -y, 0.0f);
+        D3DXMatrixTranslation(&view_matrix_, -x, -y, 0.0f);
         D3DXMatrixScaling(&tmp, hscale, vscale, 1.0f);
-        D3DXMatrixMultiply(&matView, &matView, &tmp);
+        D3DXMatrixMultiply(&view_matrix_, &view_matrix_, &tmp);
         D3DXMatrixRotationZ(&tmp, -rot);
-        D3DXMatrixMultiply(&matView, &matView, &tmp);
+        D3DXMatrixMultiply(&view_matrix_, &view_matrix_, &tmp);
         D3DXMatrixTranslation(&tmp, x + dx, y + dy, 0.0f);
-        D3DXMatrixMultiply(&matView, &matView, &tmp);
+        D3DXMatrixMultiply(&view_matrix_, &view_matrix_, &tmp);
     }
 
     _render_batch();
-    pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
+    d3d_device_->SetTransform(D3DTS_VIEW, &view_matrix_);
 }
 
 bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
@@ -128,24 +128,24 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
     D3DDISPLAYMODE Mode;
     CRenderTargetList* target = reinterpret_cast<CRenderTargetList *>(targ);
 
-    const HRESULT hr = pD3DDevice->TestCooperativeLevel();
+    const HRESULT hr = d3d_device_->TestCooperativeLevel();
     if (hr == D3DERR_DEVICELOST) {
         return false;
     }
     if (hr == D3DERR_DEVICENOTRESET) {
-        if (bWindowed) {
-            if (FAILED(pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode)) || Mode.Format ==
+        if (windowed_) {
+            if (FAILED(d3d_->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode)) || Mode.Format ==
                 D3DFMT_UNKNOWN) {
                 _PostError("Can't determine desktop video mode");
                 return false;
             }
 
-            d3dppW.BackBufferFormat = Mode.Format;
+            d3dpp_windowed_.BackBufferFormat = Mode.Format;
             if (_format_id(Mode.Format) < 4) {
-                nScreenBPP = 16;
+                screen_bpp_ = 16;
             }
             else {
-                nScreenBPP = 32;
+                screen_bpp_ = 32;
             }
         }
 
@@ -154,12 +154,12 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
         }
     }
 
-    if (VertArray) {
+    if (vert_array_) {
         _PostError("Gfx_BeginScene: Scene is already being rendered");
         return false;
     }
 
-    if (target != pCurTarget) {
+    if (target != cur_target_) {
         if (target) {
             target->pTex->GetSurfaceLevel(0, &p_surf);
 #if HGE_DIRECTX_VER == 8
@@ -167,7 +167,7 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
 #endif
         }
         else {
-            p_surf = pScreenSurf;
+            p_surf = screen_surf_;
 #if HGE_DIRECTX_VER == 8
             p_depth = pScreenDepth;
 #endif
@@ -176,7 +176,7 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
         if(FAILED(pD3DDevice->SetRenderTarget(pSurf, p_depth)))
 #endif
 #if HGE_DIRECTX_VER == 9
-        if (FAILED(pD3DDevice->SetRenderTarget(0, p_surf)))
+        if (FAILED(d3d_device_->SetRenderTarget(0, p_surf)))
 #endif
         {
             if (target) {
@@ -188,146 +188,146 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
         if (target) {
             p_surf->Release();
             if (target->pDepth) {
-                pD3DDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+                d3d_device_->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
             }
             else {
-                pD3DDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+                d3d_device_->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
             }
             _SetProjectionMatrix(target->width, target->height);
         }
         else {
-            if (bZBuffer) {
-                pD3DDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+            if (z_buffer_) {
+                d3d_device_->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
             }
             else {
-                pD3DDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+                d3d_device_->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
             }
-            _SetProjectionMatrix(nScreenWidth, nScreenHeight);
+            _SetProjectionMatrix(screen_width_, screen_height_);
         }
 
-        pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
-        D3DXMatrixIdentity(&matView);
-        pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
+        d3d_device_->SetTransform(D3DTS_PROJECTION, &proj_matrix_);
+        D3DXMatrixIdentity(&view_matrix_);
+        d3d_device_->SetTransform(D3DTS_VIEW, &view_matrix_);
 
-        pCurTarget = target;
+        cur_target_ = target;
     }
 
-    pD3DDevice->BeginScene();
+    d3d_device_->BeginScene();
 #if HGE_DIRECTX_VER == 8
     pVB->Lock( 0, 0, (hgeU8**)&VertArray, D3DLOCK_DISCARD );
 #endif
 #if HGE_DIRECTX_VER == 9
-    pVB->Lock(0, 0, reinterpret_cast<void **>(&VertArray), D3DLOCK_DISCARD);
+    vertex_buf_->Lock(0, 0, reinterpret_cast<void **>(&vert_array_), D3DLOCK_DISCARD);
 #endif
     return true;
 }
 
 void HGE_CALL HGE_Impl::Gfx_EndScene() {
     _render_batch(true);
-    pD3DDevice->EndScene();
-    if (!pCurTarget) {
-        pD3DDevice->Present(nullptr, nullptr, nullptr, nullptr);
+    d3d_device_->EndScene();
+    if (!cur_target_) {
+        d3d_device_->Present(nullptr, nullptr, nullptr, nullptr);
     }
 }
 
 void HGE_CALL HGE_Impl::Gfx_RenderLine(const float x1, const float y1,
                                        const float x2, const float y2,
                                        const hgeU32 color, const float z) {
-    if (VertArray) {
-        if (CurPrimType != HGEPRIM_LINES 
-            || nPrim >= VERTEX_BUFFER_SIZE / HGEPRIM_LINES 
-            || CurTexture || CurBlendMode != BLEND_DEFAULT) {
+    if (vert_array_) {
+        if (cur_prim_type_ != HGEPRIM_LINES 
+            || n_prim_ >= VERTEX_BUFFER_SIZE / HGEPRIM_LINES 
+            || cur_texture_ || cur_blend_mode_ != BLEND_DEFAULT) {
             _render_batch();
 
-            CurPrimType = HGEPRIM_LINES;
-            if (CurBlendMode != BLEND_DEFAULT) {
+            cur_prim_type_ = HGEPRIM_LINES;
+            if (cur_blend_mode_ != BLEND_DEFAULT) {
                 _SetBlendMode(BLEND_DEFAULT);
             }
-            if (CurTexture) {
-                pD3DDevice->SetTexture(0, nullptr);
-                CurTexture = 0;
+            if (cur_texture_) {
+                d3d_device_->SetTexture(0, nullptr);
+                cur_texture_ = 0;
             }
         }
 
-        const int i = nPrim * HGEPRIM_LINES;
-        VertArray[i].x = x1;
-        VertArray[i + 1].x = x2;
-        VertArray[i].y = y1;
-        VertArray[i + 1].y = y2;
-        VertArray[i].z = VertArray[i + 1].z = z;
-        VertArray[i].col = VertArray[i + 1].col = color;
-        VertArray[i].tx = VertArray[i + 1].tx =
-                VertArray[i].ty = VertArray[i + 1].ty = 0.0f;
+        const int i = n_prim_ * HGEPRIM_LINES;
+        vert_array_[i].x = x1;
+        vert_array_[i + 1].x = x2;
+        vert_array_[i].y = y1;
+        vert_array_[i + 1].y = y2;
+        vert_array_[i].z = vert_array_[i + 1].z = z;
+        vert_array_[i].col = vert_array_[i + 1].col = color;
+        vert_array_[i].tx = vert_array_[i + 1].tx =
+                vert_array_[i].ty = vert_array_[i + 1].ty = 0.0f;
 
-        nPrim++;
+        n_prim_++;
     }
 }
 
 void HGE_CALL HGE_Impl::Gfx_RenderTriple(const hgeTriple* triple) {
-    if (VertArray) {
-        if (CurPrimType != HGEPRIM_TRIPLES || nPrim >= VERTEX_BUFFER_SIZE / HGEPRIM_TRIPLES
-            || CurTexture != triple->tex || CurBlendMode != triple->blend) {
+    if (vert_array_) {
+        if (cur_prim_type_ != HGEPRIM_TRIPLES || n_prim_ >= VERTEX_BUFFER_SIZE / HGEPRIM_TRIPLES
+            || cur_texture_ != triple->tex || cur_blend_mode_ != triple->blend) {
             _render_batch();
 
-            CurPrimType = HGEPRIM_TRIPLES;
-            if (CurBlendMode != triple->blend) {
+            cur_prim_type_ = HGEPRIM_TRIPLES;
+            if (cur_blend_mode_ != triple->blend) {
                 _SetBlendMode(triple->blend);
             }
-            if (triple->tex != CurTexture) {
-                pD3DDevice->SetTexture(0, reinterpret_cast<hgeGAPITexture *>(triple->tex));
-                CurTexture = triple->tex;
+            if (triple->tex != cur_texture_) {
+                d3d_device_->SetTexture(0, reinterpret_cast<hgeGAPITexture *>(triple->tex));
+                cur_texture_ = triple->tex;
             }
         }
 
-        memcpy(&VertArray[nPrim * HGEPRIM_TRIPLES], triple->v, sizeof(hgeVertex) * HGEPRIM_TRIPLES);
-        nPrim++;
+        memcpy(&vert_array_[n_prim_ * HGEPRIM_TRIPLES], triple->v, sizeof(hgeVertex) * HGEPRIM_TRIPLES);
+        n_prim_++;
     }
 }
 
 void HGE_CALL HGE_Impl::Gfx_RenderQuad(const hgeQuad* quad) {
-    if (VertArray) {
-        if (CurPrimType != HGEPRIM_QUADS || nPrim >= VERTEX_BUFFER_SIZE / HGEPRIM_QUADS ||
-            CurTexture != quad->tex
-            || CurBlendMode != quad->blend) {
+    if (vert_array_) {
+        if (cur_prim_type_ != HGEPRIM_QUADS || n_prim_ >= VERTEX_BUFFER_SIZE / HGEPRIM_QUADS ||
+            cur_texture_ != quad->tex
+            || cur_blend_mode_ != quad->blend) {
             _render_batch();
 
-            CurPrimType = HGEPRIM_QUADS;
-            if (CurBlendMode != quad->blend) {
+            cur_prim_type_ = HGEPRIM_QUADS;
+            if (cur_blend_mode_ != quad->blend) {
                 _SetBlendMode(quad->blend);
             }
-            if (quad->tex != CurTexture) {
-                pD3DDevice->SetTexture(0, reinterpret_cast<hgeGAPITexture *>(quad->tex));
-                CurTexture = quad->tex;
+            if (quad->tex != cur_texture_) {
+                d3d_device_->SetTexture(0, reinterpret_cast<hgeGAPITexture *>(quad->tex));
+                cur_texture_ = quad->tex;
             }
         }
 
-        memcpy(&VertArray[nPrim * HGEPRIM_QUADS], quad->v, sizeof(hgeVertex) * HGEPRIM_QUADS);
-        nPrim++;
+        memcpy(&vert_array_[n_prim_ * HGEPRIM_QUADS], quad->v, sizeof(hgeVertex) * HGEPRIM_QUADS);
+        n_prim_++;
     }
 }
 
 hgeVertex* HGE_CALL HGE_Impl::
 Gfx_StartBatch(const int prim_type, const HTEXTURE tex, const int blend, int* max_prim) {
-    if (VertArray) {
+    if (vert_array_) {
         _render_batch();
 
-        CurPrimType = prim_type;
-        if (CurBlendMode != blend) {
+        cur_prim_type_ = prim_type;
+        if (cur_blend_mode_ != blend) {
             _SetBlendMode(blend);
         }
-        if (tex != CurTexture) {
-            pD3DDevice->SetTexture(0, reinterpret_cast<hgeGAPITexture *>(tex));
-            CurTexture = tex;
+        if (tex != cur_texture_) {
+            d3d_device_->SetTexture(0, reinterpret_cast<hgeGAPITexture *>(tex));
+            cur_texture_ = tex;
         }
 
         *max_prim = VERTEX_BUFFER_SIZE / prim_type;
-        return VertArray;
+        return vert_array_;
     }
     return nullptr;
 }
 
 void HGE_CALL HGE_Impl::Gfx_FinishBatch(const int nprim) {
-    nPrim = nprim;
+    n_prim_ = nprim;
 }
 
 HTARGET HGE_CALL HGE_Impl::Target_Create(int width, int height, 
@@ -339,8 +339,8 @@ HTARGET HGE_CALL HGE_Impl::Target_Create(int width, int height,
     pTarget->pTex = nullptr;
     pTarget->pDepth = nullptr;
 
-    if (FAILED(D3DXCreateTexture(pD3DDevice, width, height, 1, D3DUSAGE_RENDERTARGET,
-        d3dpp->BackBufferFormat, D3DPOOL_DEFAULT, &pTarget->pTex))) {
+    if (FAILED(D3DXCreateTexture(d3d_device_, width, height, 1, D3DUSAGE_RENDERTARGET,
+        d3dpp_->BackBufferFormat, D3DPOOL_DEFAULT, &pTarget->pTex))) {
         _PostError("Can't create render target texture");
         delete pTarget;
         return 0;
@@ -356,7 +356,7 @@ HTARGET HGE_CALL HGE_Impl::Target_Create(int width, int height,
                   D3DFMT_D16, D3DMULTISAMPLE_NONE, &pTarget->pDepth)))
 #endif
 #if HGE_DIRECTX_VER == 9
-        if (FAILED(pD3DDevice->CreateDepthStencilSurface(width, height,
+        if (FAILED(d3d_device_->CreateDepthStencilSurface(width, height,
             D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, false, &pTarget->pDepth, nullptr)))
 #endif
         {
@@ -367,14 +367,14 @@ HTARGET HGE_CALL HGE_Impl::Target_Create(int width, int height,
         }
     }
 
-    pTarget->next = pTargets;
-    pTargets = pTarget;
+    pTarget->next = targets_;
+    targets_ = pTarget;
 
     return reinterpret_cast<HTARGET>(pTarget);
 }
 
 void HGE_CALL HGE_Impl::Target_Free(const HTARGET target) {
-    CRenderTargetList *p_target = pTargets;
+    CRenderTargetList *p_target = targets_;
     CRenderTargetList *p_prev_target = nullptr;
 
     while (p_target) {
@@ -383,7 +383,7 @@ void HGE_CALL HGE_Impl::Target_Free(const HTARGET target) {
                 p_prev_target->next = p_target->next;
             }
             else {
-                pTargets = p_target->next;
+                targets_ = p_target->next;
             }
 
             if (p_target->pTex) {
@@ -413,7 +413,7 @@ HTEXTURE HGE_CALL HGE_Impl::Target_GetTexture(const HTARGET target) {
 HTEXTURE HGE_CALL HGE_Impl::Texture_Create(int width, int height) {
     hgeGAPITexture* pTex;
 
-    if (FAILED( D3DXCreateTexture( pD3DDevice, width, height,
+    if (FAILED( D3DXCreateTexture( d3d_device_, width, height,
         1, // Mip levels
         0, // Usage
         D3DFMT_A8R8G8B8, // Format
@@ -456,7 +456,7 @@ HTEXTURE HGE_CALL HGE_Impl::Texture_Load(const char* filename,
     }
 
     //  if( FAILED( D3DXCreateTextureFromFileInMemory( pD3DDevice, data, _size, &pTex ) ) ) pTex=NULL;
-    if (FAILED( D3DXCreateTextureFromFileInMemoryEx( pD3DDevice, data, _size,
+    if (FAILED( D3DXCreateTextureFromFileInMemoryEx( d3d_device_, data, _size,
         D3DX_DEFAULT, D3DX_DEFAULT,
         bMipmap ? 0:1, // Mip levels
         0, // Usage
@@ -468,7 +468,7 @@ HTEXTURE HGE_CALL HGE_Impl::Texture_Load(const char* filename,
         &info, NULL,
         &pTex ) ))
 
-        if (FAILED( D3DXCreateTextureFromFileInMemoryEx( pD3DDevice, data, _size,
+        if (FAILED( D3DXCreateTextureFromFileInMemoryEx( d3d_device_, data, _size,
             D3DX_DEFAULT, D3DX_DEFAULT,
             bMipmap ? 0:1, // Mip levels
             0, // Usage
@@ -494,15 +494,15 @@ HTEXTURE HGE_CALL HGE_Impl::Texture_Load(const char* filename,
     tex_item->tex = reinterpret_cast<HTEXTURE>(pTex);
     tex_item->width = info.Width;
     tex_item->height = info.Height;
-    tex_item->next = textures;
-    textures = tex_item;
+    tex_item->next = textures_;
+    textures_ = tex_item;
 
     return reinterpret_cast<HTEXTURE>(pTex);
 }
 
 void HGE_CALL HGE_Impl::Texture_Free(const HTEXTURE tex) {
     hgeGAPITexture* pTex = reinterpret_cast<hgeGAPITexture *>(tex);
-    CTextureList *tex_item = textures;
+    CTextureList *tex_item = textures_;
     CTextureList *tex_prev = nullptr;
 
     while (tex_item) {
@@ -511,7 +511,7 @@ void HGE_CALL HGE_Impl::Texture_Free(const HTEXTURE tex) {
                 tex_prev->next = tex_item->next;
             }
             else {
-                textures = tex_item->next;
+                textures_ = tex_item->next;
             }
             delete tex_item;
             break;
@@ -528,7 +528,7 @@ int HGE_CALL HGE_Impl::Texture_GetWidth(const HTEXTURE tex,
                                         const bool b_original) {
     D3DSURFACE_DESC TDesc;
     hgeGAPITexture* pTex = reinterpret_cast<hgeGAPITexture *>(tex);
-    CTextureList* texItem = textures;
+    CTextureList* texItem = textures_;
 
     if (b_original) {
         while (texItem) {
@@ -550,7 +550,7 @@ int HGE_CALL HGE_Impl::Texture_GetHeight(const HTEXTURE tex,
                                          const bool bOriginal) {
     D3DSURFACE_DESC TDesc;
     hgeGAPITexture* pTex = reinterpret_cast<hgeGAPITexture *>(tex);
-    CTextureList* texItem = textures;
+    CTextureList* texItem = textures_;
 
     if (bOriginal) {
         while (texItem) {
@@ -620,35 +620,35 @@ void HGE_CALL HGE_Impl::Texture_Unlock(const HTEXTURE tex) {
 //////// Implementation ////////
 
 void HGE_Impl::_render_batch(const bool b_end_scene) {
-    if (VertArray) {
-        pVB->Unlock();
+    if (vert_array_) {
+        vertex_buf_->Unlock();
 
-        if (nPrim) {
-            switch (CurPrimType) {
+        if (n_prim_) {
+            switch (cur_prim_type_) {
             case HGEPRIM_QUADS:
 #if HGE_DIRECTX_VER == 8
                 pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, nPrim<<2, 0, nPrim<<1);
 #endif
 #if HGE_DIRECTX_VER == 9
-                pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, nPrim << 2, 0,
-                                                 nPrim << 1);
+                d3d_device_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, n_prim_ << 2, 0,
+                                                 n_prim_ << 1);
 #endif
                 break;
 
             case HGEPRIM_TRIPLES:
-                pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, nPrim);
+                d3d_device_->DrawPrimitive(D3DPT_TRIANGLELIST, 0, n_prim_);
                 break;
 
             case HGEPRIM_LINES:
-                pD3DDevice->DrawPrimitive(D3DPT_LINELIST, 0, nPrim);
+                d3d_device_->DrawPrimitive(D3DPT_LINELIST, 0, n_prim_);
                 break;
             }
 
-            nPrim = 0;
+            n_prim_ = 0;
         }
 
         if (b_end_scene) {
-            VertArray = nullptr;
+            vert_array_ = nullptr;
         }
 #if HGE_DIRECTX_VER == 8
         else {
@@ -657,7 +657,7 @@ void HGE_Impl::_render_batch(const bool b_end_scene) {
 #endif
 #if HGE_DIRECTX_VER == 9
         else {
-            pVB->Lock(0, 0, reinterpret_cast<void **>(&VertArray), D3DLOCK_DISCARD);
+            vertex_buf_->Lock(0, 0, reinterpret_cast<void **>(&vert_array_), D3DLOCK_DISCARD);
         }
 #endif
     }
@@ -688,7 +688,7 @@ void HGE_Impl::_render_batch(const bool b_end_scene) {
 void HGE_Impl::_SetBlendMode(const int blend) {
     int d = -1;
 
-    if ((blend & BLEND_ALPHABLEND) != (CurBlendMode & BLEND_ALPHABLEND)) {
+    if ((blend & BLEND_ALPHABLEND) != (cur_blend_mode_ & BLEND_ALPHABLEND)) {
         if (blend & BLEND_ALPHABLEND) {
             d = D3DBLEND_INVSRCALPHA;
         }
@@ -697,13 +697,13 @@ void HGE_Impl::_SetBlendMode(const int blend) {
         }
     }
 
-    if ((blend & BLEND_DARKEN) != (CurBlendMode & BLEND_DARKEN)) {
+    if ((blend & BLEND_DARKEN) != (cur_blend_mode_ & BLEND_DARKEN)) {
         if (blend & BLEND_DARKEN) {
-            pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ZERO);
+            d3d_device_->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ZERO);
             d = D3DBLEND_SRCCOLOR;
         }
         else {
-            pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+            d3d_device_->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
             if (blend & BLEND_ALPHABLEND) {
                 d = D3DBLEND_INVSRCALPHA;
             }
@@ -714,42 +714,42 @@ void HGE_Impl::_SetBlendMode(const int blend) {
     }
 
     if (d != -1) {
-        pD3DDevice->SetRenderState(D3DRS_DESTBLEND, d);
+        d3d_device_->SetRenderState(D3DRS_DESTBLEND, d);
     }
 
-    if ((blend & BLEND_ZWRITE) != (CurBlendMode & BLEND_ZWRITE)) {
+    if ((blend & BLEND_ZWRITE) != (cur_blend_mode_ & BLEND_ZWRITE)) {
         if (blend & BLEND_ZWRITE) {
-            pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+            d3d_device_->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
         }
         else {
-            pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+            d3d_device_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
         }
     }
 
-    if ((blend & (BLEND_COLORADD + BLEND_DARKEN)) != (CurBlendMode & (BLEND_COLORADD + BLEND_DARKEN)
+    if ((blend & (BLEND_COLORADD + BLEND_DARKEN)) != (cur_blend_mode_ & (BLEND_COLORADD + BLEND_DARKEN)
     )) {
         if (blend & BLEND_COLORADD) {
-            pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_ADD);
+            d3d_device_->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_ADD);
         }
         else if (blend & BLEND_DARKEN) {
-            pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_BLENDCURRENTALPHA);
+            d3d_device_->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_BLENDCURRENTALPHA);
         }
         else {
-            pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+            d3d_device_->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
         }
     }
 
-    CurBlendMode = blend;
+    cur_blend_mode_ = blend;
 }
 
 void HGE_Impl::_SetProjectionMatrix(const int width, const int height) {
     D3DXMATRIX tmp;
-    D3DXMatrixScaling(&matProj, 1.0f, -1.0f, 1.0f);
+    D3DXMatrixScaling(&proj_matrix_, 1.0f, -1.0f, 1.0f);
     D3DXMatrixTranslation(&tmp, -0.5f, height + 0.5f, 0.0f);
-    D3DXMatrixMultiply(&matProj, &matProj, &tmp);
+    D3DXMatrixMultiply(&proj_matrix_, &proj_matrix_, &tmp);
     D3DXMatrixOrthoOffCenterLH(&tmp, 0, static_cast<float>(width), 
                                0, static_cast<float>(height), 0.0f, 1.0f);
-    D3DXMatrixMultiply(&matProj, &matProj, &tmp);
+    D3DXMatrixMultiply(&proj_matrix_, &proj_matrix_, &tmp);
 }
 
 bool HGE_Impl::_GfxInit() {
@@ -765,9 +765,9 @@ bool HGE_Impl::_GfxInit() {
     pD3D=Direct3DCreate8(120); // D3D_SDK_VERSION
 #endif
 #if HGE_DIRECTX_VER == 9
-    pD3D = Direct3DCreate9(D3D_SDK_VERSION); // D3D_SDK_VERSION
+    d3d_ = Direct3DCreate9(D3D_SDK_VERSION); // D3D_SDK_VERSION
 #endif
-    if (pD3D == nullptr) {
+    if (d3d_ == nullptr) {
         _PostError("Can't create D3D interface");
         return false;
     }
@@ -778,7 +778,7 @@ bool HGE_Impl::_GfxInit() {
     pD3D->GetAdapterIdentifier(D3DADAPTER_DEFAULT, D3DENUM_NO_WHQL_LEVEL, &AdID);
 #endif
 #if HGE_DIRECTX_VER == 9
-    pD3D->GetAdapterIdentifier(D3DADAPTER_DEFAULT, 0, &AdID);
+    d3d_->GetAdapterIdentifier(D3DADAPTER_DEFAULT, 0, &AdID);
 #endif
     System_Log("D3D Driver: %s", AdID.Driver);
     System_Log("Description: %s", AdID.Description);
@@ -790,23 +790,23 @@ bool HGE_Impl::_GfxInit() {
 
     // Set up Windowed presentation parameters
 
-    if (FAILED(pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode)) || Mode.Format ==
+    if (FAILED(d3d_->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode)) || Mode.Format ==
         D3DFMT_UNKNOWN) {
         _PostError("Can't determine desktop video mode");
-        if (bWindowed) {
+        if (windowed_) {
             return false;
         }
     }
 
-    ZeroMemory(&d3dppW, sizeof(d3dppW));
+    ZeroMemory(&d3dpp_windowed_, sizeof(d3dpp_windowed_));
 
-    d3dppW.BackBufferWidth = nScreenWidth;
-    d3dppW.BackBufferHeight = nScreenHeight;
-    d3dppW.BackBufferFormat = Mode.Format;
-    d3dppW.BackBufferCount = 1;
-    d3dppW.MultiSampleType = D3DMULTISAMPLE_NONE;
-    d3dppW.hDeviceWindow = hwnd;
-    d3dppW.Windowed = TRUE;
+    d3dpp_windowed_.BackBufferWidth = screen_width_;
+    d3dpp_windowed_.BackBufferHeight = screen_height_;
+    d3dpp_windowed_.BackBufferFormat = Mode.Format;
+    d3dpp_windowed_.BackBufferCount = 1;
+    d3dpp_windowed_.MultiSampleType = D3DMULTISAMPLE_NONE;
+    d3dpp_windowed_.hDeviceWindow = hwnd_;
+    d3dpp_windowed_.Windowed = TRUE;
 
 #if HGE_DIRECTX_VER == 8
     if(nHGEFPS==HGEFPS_VSYNC) {
@@ -816,19 +816,19 @@ bool HGE_Impl::_GfxInit() {
     }
 #endif
 #if HGE_DIRECTX_VER == 9
-    if (nHGEFPS == HGEFPS_VSYNC) {
-        d3dppW.SwapEffect = D3DSWAPEFFECT_COPY;
-        d3dppW.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+    if (hgefps_ == HGEFPS_VSYNC) {
+        d3dpp_windowed_.SwapEffect = D3DSWAPEFFECT_COPY;
+        d3dpp_windowed_.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
     }
     else {
-        d3dppW.SwapEffect = D3DSWAPEFFECT_COPY;
-        d3dppW.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+        d3dpp_windowed_.SwapEffect = D3DSWAPEFFECT_COPY;
+        d3dpp_windowed_.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
     }
 #endif
 
-    if (bZBuffer) {
-        d3dppW.EnableAutoDepthStencil = TRUE;
-        d3dppW.AutoDepthStencilFormat = D3DFMT_D16;
+    if (z_buffer_) {
+        d3dpp_windowed_.EnableAutoDepthStencil = TRUE;
+        d3dpp_windowed_.AutoDepthStencilFormat = D3DFMT_D16;
     }
 
     // Set up Full Screen presentation parameters
@@ -837,7 +837,7 @@ bool HGE_Impl::_GfxInit() {
     nModes=pD3D->GetAdapterModeCount(D3DADAPTER_DEFAULT);
 #endif
 #if HGE_DIRECTX_VER == 9
-    const UINT n_modes = pD3D->GetAdapterModeCount(D3DADAPTER_DEFAULT, Mode.Format);
+    const UINT n_modes = d3d_->GetAdapterModeCount(D3DADAPTER_DEFAULT, Mode.Format);
 #endif
 
     for (UINT i = 0; i < n_modes; i++) {
@@ -845,14 +845,14 @@ bool HGE_Impl::_GfxInit() {
         pD3D->EnumAdapterModes(D3DADAPTER_DEFAULT, i, &Mode);
 #endif
 #if HGE_DIRECTX_VER == 9
-        pD3D->EnumAdapterModes(D3DADAPTER_DEFAULT, Mode.Format, i, &Mode);
+        d3d_->EnumAdapterModes(D3DADAPTER_DEFAULT, Mode.Format, i, &Mode);
 #endif
 
-        if (Mode.Width != static_cast<UINT>(nScreenWidth) 
-            || Mode.Height != static_cast<UINT>(nScreenHeight)) {
+        if (Mode.Width != static_cast<UINT>(screen_width_) 
+            || Mode.Height != static_cast<UINT>(screen_height_)) {
             continue;
         }
-        if (nScreenBPP == 16 && (_format_id(Mode.Format) > _format_id(D3DFMT_A1R5G5B5))) {
+        if (screen_bpp_ == 16 && (_format_id(Mode.Format) > _format_id(D3DFMT_A1R5G5B5))) {
             continue;
         }
         if (_format_id(Mode.Format) > _format_id(Format)) {
@@ -862,23 +862,23 @@ bool HGE_Impl::_GfxInit() {
 
     if (Format == D3DFMT_UNKNOWN) {
         _PostError("Can't find appropriate full screen video mode");
-        if (!bWindowed) {
+        if (!windowed_) {
             return false;
         }
     }
 
-    ZeroMemory(&d3dppFS, sizeof(d3dppFS));
+    ZeroMemory(&d3dpp_fullscreen_, sizeof(d3dpp_fullscreen_));
 
-    d3dppFS.BackBufferWidth = nScreenWidth;
-    d3dppFS.BackBufferHeight = nScreenHeight;
-    d3dppFS.BackBufferFormat = Format;
-    d3dppFS.BackBufferCount = 1;
-    d3dppFS.MultiSampleType = D3DMULTISAMPLE_NONE;
-    d3dppFS.hDeviceWindow = hwnd;
-    d3dppFS.Windowed = FALSE;
+    d3dpp_fullscreen_.BackBufferWidth = screen_width_;
+    d3dpp_fullscreen_.BackBufferHeight = screen_height_;
+    d3dpp_fullscreen_.BackBufferFormat = Format;
+    d3dpp_fullscreen_.BackBufferCount = 1;
+    d3dpp_fullscreen_.MultiSampleType = D3DMULTISAMPLE_NONE;
+    d3dpp_fullscreen_.hDeviceWindow = hwnd_;
+    d3dpp_fullscreen_.Windowed = FALSE;
 
-    d3dppFS.SwapEffect = D3DSWAPEFFECT_FLIP;
-    d3dppFS.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+    d3dpp_fullscreen_.SwapEffect = D3DSWAPEFFECT_FLIP;
+    d3dpp_fullscreen_.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
 #if HGE_DIRECTX_VER == 8
     if(nHGEFPS==HGEFPS_VSYNC) {
@@ -888,25 +888,25 @@ bool HGE_Impl::_GfxInit() {
     }
 #endif
 #if HGE_DIRECTX_VER == 9
-    if (nHGEFPS == HGEFPS_VSYNC) {
-        d3dppFS.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+    if (hgefps_ == HGEFPS_VSYNC) {
+        d3dpp_fullscreen_.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
     }
     else {
-        d3dppFS.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+        d3dpp_fullscreen_.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
     }
 #endif
-    if (bZBuffer) {
-        d3dppFS.EnableAutoDepthStencil = TRUE;
-        d3dppFS.AutoDepthStencilFormat = D3DFMT_D16;
+    if (z_buffer_) {
+        d3dpp_fullscreen_.EnableAutoDepthStencil = TRUE;
+        d3dpp_fullscreen_.AutoDepthStencilFormat = D3DFMT_D16;
     }
 
-    d3dpp = bWindowed ? &d3dppW : &d3dppFS;
+    d3dpp_ = windowed_ ? &d3dpp_windowed_ : &d3dpp_fullscreen_;
 
-    if (_format_id(d3dpp->BackBufferFormat) < 4) {
-        nScreenBPP = 16;
+    if (_format_id(d3dpp_->BackBufferFormat) < 4) {
+        screen_bpp_ = 16;
     }
     else {
-        nScreenBPP = 32;
+        screen_bpp_ = 32;
     }
 
     // Create D3D Device
@@ -921,7 +921,7 @@ bool HGE_Impl::_GfxInit() {
     // #endif
     // #if HGE_DIRECTX_VER == 9
     hgeGAPICaps caps;
-    pD3D->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
+    d3d_->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
     hgeU32 vp;
     if ((caps.VertexShaderVersion < D3DVS_VERSION(1,1))
         || !(caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)) {
@@ -932,8 +932,8 @@ bool HGE_Impl::_GfxInit() {
         System_Log("Hardware Vertex-processing device selected");
         vp = D3DCREATE_HARDWARE_VERTEXPROCESSING;
     }
-    if (FAILED( pD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, vp, d3dpp,
-        &pD3DDevice ) )) {
+    if (FAILED( d3d_->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd_, vp, d3dpp_,
+        &d3d_device_ ) )) {
         _PostError("Can't create D3D device");
         return false;
     }
@@ -941,17 +941,17 @@ bool HGE_Impl::_GfxInit() {
 
     _AdjustWindow();
 
-    System_Log("Mode: %d x %d x %s\n", nScreenWidth, nScreenHeight, szFormats[_format_id(Format)]);
+    System_Log("Mode: %d x %d x %s\n", screen_width_, screen_height_, szFormats[_format_id(Format)]);
 
     // Create vertex batch buffer
 
-    VertArray = nullptr;
-    textures = nullptr;
+    vert_array_ = nullptr;
+    textures_ = nullptr;
 
     // Init all stuff that can be lost
 
-    _SetProjectionMatrix(nScreenWidth, nScreenHeight);
-    D3DXMatrixIdentity(&matView);
+    _SetProjectionMatrix(screen_width_, screen_height_);
+    D3DXMatrixIdentity(&view_matrix_);
 
     if (!_init_lost()) {
         return false;
@@ -983,41 +983,41 @@ void HGE_Impl::_AdjustWindow() {
     RECT* rc;
     LONG style;
 
-    if (bWindowed) {
-        rc = &rectW;
-        style = styleW;
+    if (windowed_) {
+        rc = &rect_windowed_;
+        style = style_windowed_;
     }
     else {
-        rc = &rectFS;
-        style = styleFS;
+        rc = &rect_fullscreen_;
+        style = style_fullscreen_;
     }
-    SetWindowLong(hwnd, GWL_STYLE, style);
+    SetWindowLong(hwnd_, GWL_STYLE, style);
 
-    style = GetWindowLong(hwnd, GWL_EXSTYLE);
-    if (bWindowed) {
-        SetWindowLong(hwnd, GWL_EXSTYLE, style & (~WS_EX_TOPMOST));
-        SetWindowPos(hwnd, HWND_NOTOPMOST, rc->left, rc->top, rc->right - rc->left,
+    style = GetWindowLong(hwnd_, GWL_EXSTYLE);
+    if (windowed_) {
+        SetWindowLong(hwnd_, GWL_EXSTYLE, style & (~WS_EX_TOPMOST));
+        SetWindowPos(hwnd_, HWND_NOTOPMOST, rc->left, rc->top, rc->right - rc->left,
                      rc->bottom - rc->top,
                      SWP_FRAMECHANGED);
     }
     else {
-        SetWindowLong(hwnd, GWL_EXSTYLE, style | WS_EX_TOPMOST);
-        SetWindowPos(hwnd, HWND_TOPMOST, rc->left, rc->top, rc->right - rc->left,
+        SetWindowLong(hwnd_, GWL_EXSTYLE, style | WS_EX_TOPMOST);
+        SetWindowPos(hwnd_, HWND_TOPMOST, rc->left, rc->top, rc->right - rc->left,
                      rc->bottom - rc->top,
                      SWP_FRAMECHANGED);
     }
 }
 
 void HGE_Impl::_Resize(const int width, const int height) {
-    if (hwndParent) {
+    if (hwnd_parent_) {
         //if(procFocusLostFunc) procFocusLostFunc();
 
-        d3dppW.BackBufferWidth = width;
-        d3dppW.BackBufferHeight = height;
-        nScreenWidth = width;
-        nScreenHeight = height;
+        d3dpp_windowed_.BackBufferWidth = width;
+        d3dpp_windowed_.BackBufferHeight = height;
+        screen_width_ = width;
+        screen_height_ = height;
 
-        _SetProjectionMatrix(nScreenWidth, nScreenHeight);
+        _SetProjectionMatrix(screen_width_, screen_height_);
         _GfxRestore();
 
         //if(procFocusGainFunc) procFocusGainFunc();
@@ -1025,19 +1025,19 @@ void HGE_Impl::_Resize(const int width, const int height) {
 }
 
 void HGE_Impl::_GfxDone() {
-    auto target = pTargets;
+    auto target = targets_;
 
-    while (textures) {
-        Texture_Free(textures->tex);
+    while (textures_) {
+        Texture_Free(textures_->tex);
     }
 
-    if (pScreenSurf) {
-        pScreenSurf->Release();
-        pScreenSurf = nullptr;
+    if (screen_surf_) {
+        screen_surf_->Release();
+        screen_surf_ = nullptr;
     }
-    if (pScreenDepth) {
-        pScreenDepth->Release();
-        pScreenDepth = nullptr;
+    if (screen_depth_) {
+        screen_depth_->Release();
+        screen_depth_ = nullptr;
     }
 
     while (target) {
@@ -1051,54 +1051,54 @@ void HGE_Impl::_GfxDone() {
         delete target;
         target = next_target;
     }
-    pTargets = nullptr;
+    targets_ = nullptr;
 
-    if (pIB && pD3DDevice) {
+    if (index_buf_ && d3d_device_) {
 #if HGE_DIRECTX_VER == 8
         pD3DDevice->SetIndices(NULL,0);
 #endif
 #if HGE_DIRECTX_VER == 9
-        pD3DDevice->SetIndices(nullptr);
+        d3d_device_->SetIndices(nullptr);
 #endif
-        pIB->Release();
-        pIB = nullptr;
+        index_buf_->Release();
+        index_buf_ = nullptr;
     }
-    if (pVB && pD3DDevice) {
-        if (VertArray) {
-            pVB->Unlock();
-            VertArray = nullptr;
+    if (vertex_buf_ && d3d_device_) {
+        if (vert_array_) {
+            vertex_buf_->Unlock();
+            vert_array_ = nullptr;
         }
 #if HGE_DIRECTX_VER == 8
         pD3DDevice->SetStreamSource( 0, NULL, sizeof(hgeVertex) );
 #endif
 #if HGE_DIRECTX_VER == 9
-        pD3DDevice->SetStreamSource(0, nullptr, 0, sizeof(hgeVertex));
+        d3d_device_->SetStreamSource(0, nullptr, 0, sizeof(hgeVertex));
 #endif
-        pVB->Release();
-        pVB = nullptr;
+        vertex_buf_->Release();
+        vertex_buf_ = nullptr;
     }
-    if (pD3DDevice) {
-        pD3DDevice->Release();
-        pD3DDevice = nullptr;
+    if (d3d_device_) {
+        d3d_device_->Release();
+        d3d_device_ = nullptr;
     }
-    if (pD3D) {
-        pD3D->Release();
-        pD3D = nullptr;
+    if (d3d_) {
+        d3d_->Release();
+        d3d_ = nullptr;
     }
 }
 
 
 bool HGE_Impl::_GfxRestore() {
-    CRenderTargetList* target = pTargets;
+    CRenderTargetList* target = targets_;
 
     //if(!pD3DDevice) return false;
     //if(pD3DDevice->TestCooperativeLevel() == D3DERR_DEVICELOST) return;
 
-    if (pScreenSurf) {
-        pScreenSurf->Release();
+    if (screen_surf_) {
+        screen_surf_->Release();
     }
-    if (pScreenDepth) {
-        pScreenDepth->Release();
+    if (screen_depth_) {
+        screen_depth_->Release();
     }
 
     while (target) {
@@ -1111,33 +1111,33 @@ bool HGE_Impl::_GfxRestore() {
         target = target->next;
     }
 
-    if (pIB) {
+    if (index_buf_) {
 #if HGE_DIRECTX_VER == 8
         pD3DDevice->SetIndices(NULL,0);
 #endif
 #if HGE_DIRECTX_VER == 9
-        pD3DDevice->SetIndices(nullptr);
+        d3d_device_->SetIndices(nullptr);
 #endif
-        pIB->Release();
+        index_buf_->Release();
     }
-    if (pVB) {
+    if (vertex_buf_) {
 #if HGE_DIRECTX_VER == 8
         pD3DDevice->SetStreamSource( 0, NULL, sizeof(hgeVertex) );
 #endif
 #if HGE_DIRECTX_VER == 9
-        pD3DDevice->SetStreamSource(0, nullptr, 0, sizeof(hgeVertex));
+        d3d_device_->SetStreamSource(0, nullptr, 0, sizeof(hgeVertex));
 #endif
-        pVB->Release();
+        vertex_buf_->Release();
     }
 
-    pD3DDevice->Reset(d3dpp);
+    d3d_device_->Reset(d3dpp_);
 
     if (!_init_lost()) {
         return false;
     }
 
-    if (procGfxRestoreFunc) {
-        return procGfxRestoreFunc();
+    if (proc_gfx_restore_func_) {
+        return proc_gfx_restore_func_();
     }
 
     return true;
@@ -1145,25 +1145,25 @@ bool HGE_Impl::_GfxRestore() {
 
 
 bool HGE_Impl::_init_lost() {
-    CRenderTargetList* target = pTargets;
+    CRenderTargetList* target = targets_;
 
     // Store render target
 
-    pScreenSurf = nullptr;
-    pScreenDepth = nullptr;
+    screen_surf_ = nullptr;
+    screen_depth_ = nullptr;
 
 #if HGE_DIRECTX_VER == 8
     pD3DDevice->GetRenderTarget(&pScreenSurf);
 #endif
 #if HGE_DIRECTX_VER == 9
-    pD3DDevice->GetRenderTarget(0, &pScreenSurf);
+    d3d_device_->GetRenderTarget(0, &screen_surf_);
 #endif
-    pD3DDevice->GetDepthStencilSurface(&pScreenDepth);
+    d3d_device_->GetDepthStencilSurface(&screen_depth_);
 
     while (target) {
         if (target->pTex)
-            D3DXCreateTexture(pD3DDevice, target->width, target->height, 1, D3DUSAGE_RENDERTARGET,
-                              d3dpp->BackBufferFormat, D3DPOOL_DEFAULT, &target->pTex);
+            D3DXCreateTexture(d3d_device_, target->width, target->height, 1, D3DUSAGE_RENDERTARGET,
+                              d3dpp_->BackBufferFormat, D3DPOOL_DEFAULT, &target->pTex);
         if (target->pDepth)
 #if HGE_DIRECTX_VER == 8
             pD3DDevice->CreateDepthStencilSurface(
@@ -1171,7 +1171,7 @@ bool HGE_Impl::_init_lost() {
                 &target->pDepth);
 #endif
 #if HGE_DIRECTX_VER == 9
-            pD3DDevice->CreateDepthStencilSurface(
+            d3d_device_->CreateDepthStencilSurface(
                 target->width, target->height, D3DFMT_D16, D3DMULTISAMPLE_NONE, 
                 0, false, &target->pDepth, nullptr);
 #endif
@@ -1186,11 +1186,11 @@ bool HGE_Impl::_init_lost() {
                 D3DPOOL_DEFAULT, &pVB )))
 #endif
 #if HGE_DIRECTX_VER == 9
-    if (FAILED (pD3DDevice->CreateVertexBuffer(VERTEX_BUFFER_SIZE*sizeof(hgeVertex),
+    if (FAILED (d3d_device_->CreateVertexBuffer(VERTEX_BUFFER_SIZE*sizeof(hgeVertex),
         D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY,
         D3DFVF_HGEVERTEX,
         D3DPOOL_DEFAULT,
-        &pVB,
+        &vertex_buf_,
         NULL)))
 #endif
     {
@@ -1203,9 +1203,9 @@ bool HGE_Impl::_init_lost() {
     pD3DDevice->SetStreamSource( 0, pVB, sizeof(hgeVertex) );
 #endif
 #if HGE_DIRECTX_VER == 9
-    pD3DDevice->SetVertexShader(nullptr);
-    pD3DDevice->SetFVF(D3DFVF_HGEVERTEX);
-    pD3DDevice->SetStreamSource(0, pVB, 0, sizeof(hgeVertex));
+    d3d_device_->SetVertexShader(nullptr);
+    d3d_device_->SetFVF(D3DFVF_HGEVERTEX);
+    d3d_device_->SetStreamSource(0, vertex_buf_, 0, sizeof(hgeVertex));
 #endif
 
     // Create and setup Index buffer
@@ -1217,11 +1217,11 @@ bool HGE_Impl::_init_lost() {
                 D3DPOOL_DEFAULT, &pIB ) ) )
 #endif
 #if HGE_DIRECTX_VER == 9
-    if (FAILED( pD3DDevice->CreateIndexBuffer(VERTEX_BUFFER_SIZE*6/4*sizeof(hgeU16),
+    if (FAILED( d3d_device_->CreateIndexBuffer(VERTEX_BUFFER_SIZE*6/4*sizeof(hgeU16),
         D3DUSAGE_WRITEONLY,
         D3DFMT_INDEX16,
         D3DPOOL_DEFAULT,
-        &pIB,
+        &index_buf_,
         NULL) ))
 #endif
     {
@@ -1234,7 +1234,7 @@ bool HGE_Impl::_init_lost() {
     if( FAILED( pIB->Lock( 0, 0, (hgeU8**)&pIndices, 0 ) ) )
 #endif
 #if HGE_DIRECTX_VER == 9
-    if (FAILED( pIB->Lock( 0, 0, (VOID**)&pIndices, 0 ) ))
+    if (FAILED( index_buf_->Lock( 0, 0, (VOID**)&pIndices, 0 ) ))
 #endif
     {
         _PostError("Can't lock D3D index buffer");
@@ -1251,35 +1251,35 @@ bool HGE_Impl::_init_lost() {
         n += 4;
     }
 
-    pIB->Unlock();
+    index_buf_->Unlock();
 #if HGE_DIRECTX_VER == 8
     pD3DDevice->SetIndices(pIB,0);
 #endif
 #if HGE_DIRECTX_VER == 9
-    pD3DDevice->SetIndices(pIB);
+    d3d_device_->SetIndices(index_buf_);
 #endif
 
     // Set common render states
 
     //pD3DDevice->SetRenderState( D3DRS_LASTPIXEL, FALSE );
-    pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-    pD3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+    d3d_device_->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+    d3d_device_->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-    pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-    pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-    pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+    d3d_device_->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+    d3d_device_->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+    d3d_device_->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-    pD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-    pD3DDevice->SetRenderState(D3DRS_ALPHAREF, 0x01);
-    pD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+    d3d_device_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+    d3d_device_->SetRenderState(D3DRS_ALPHAREF, 0x01);
+    d3d_device_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 
-    pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-    pD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-    pD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+    d3d_device_->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    d3d_device_->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+    d3d_device_->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
 
-    pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-    pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-    pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+    d3d_device_->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    d3d_device_->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+    d3d_device_->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
 #if HGE_DIRECTX_VER == 8
     pD3DDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_POINT);
@@ -1292,32 +1292,32 @@ bool HGE_Impl::_init_lost() {
     }
 #endif
 #if HGE_DIRECTX_VER == 9
-    pD3DDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
-    if (bTextureFilter) {
-        pD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-        pD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+    d3d_device_->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
+    if (texture_filter_) {
+        d3d_device_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+        d3d_device_->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
     }
     else {
-        pD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-        pD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+        d3d_device_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+        d3d_device_->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
     }
 #endif
-    nPrim = 0;
-    CurPrimType = HGEPRIM_QUADS;
+    n_prim_ = 0;
+    cur_prim_type_ = HGEPRIM_QUADS;
 
-    CurBlendMode = BLEND_DEFAULT;
+    cur_blend_mode_ = BLEND_DEFAULT;
     // Reset default DirectX Zbuffer write to false
-    if (false == bZBuffer) {
-        pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+    if (false == z_buffer_) {
+        d3d_device_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
     }
 
-    CurTexture = NULL;
+    cur_texture_ = NULL;
 #if HGE_DIRECTX_VER >= 9
-    CurShader = NULL;
+    cur_shader_ = NULL;
 #endif
 
-    pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
-    pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
+    d3d_device_->SetTransform(D3DTS_VIEW, &view_matrix_);
+    d3d_device_->SetTransform(D3DTS_PROJECTION, &proj_matrix_);
 
     return true;
 }
@@ -1342,7 +1342,7 @@ HSHADER HGE_CALL HGE_Impl::Shader_Create(const char* filename) {
         return NULL;
     }
 
-    pD3DDevice->CreatePixelShader(static_cast<DWORD *>(code->GetBufferPointer()), 
+    d3d_device_->CreatePixelShader(static_cast<DWORD *>(code->GetBufferPointer()), 
                                   &pixelShader);
     code->Release();
     return reinterpret_cast<HSHADER>(pixelShader);
@@ -1351,10 +1351,10 @@ HSHADER HGE_CALL HGE_Impl::Shader_Create(const char* filename) {
 
 #if HGE_DIRECTX_VER >= 9
 void HGE_CALL HGE_Impl::Gfx_SetShader(const HSHADER shader) {
-    if (CurShader != shader) {
+    if (cur_shader_ != shader) {
         _render_batch();
-        CurShader = shader;
-        pD3DDevice->SetPixelShader(reinterpret_cast<LPDIRECT3DPIXELSHADER9>(shader));
+        cur_shader_ = shader;
+        d3d_device_->SetPixelShader(reinterpret_cast<LPDIRECT3DPIXELSHADER9>(shader));
     }
 }
 #endif

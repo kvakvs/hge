@@ -23,7 +23,7 @@ public:
     hgeSprite(const hgeSprite& spr);
 
     ~hgeSprite() {
-        hge->Release();
+        hge_->Release();
     }
 
 
@@ -38,60 +38,60 @@ public:
     void SetZ(float z, int i = -1);
 
     void SetBlendMode(const int blend) {
-        quad.blend = blend;
+        quad_.blend = blend;
     }
 
     void SetHotSpot(const float x, const float y) {
-        hotX = x;
-        hotY = y;
+        hot_x_ = x;
+        hot_y_ = y;
     }
 
     void SetFlip(bool bX, bool bY, bool bHotSpot = false);
 
     HTEXTURE GetTexture() const {
-        return quad.tex;
+        return quad_.tex;
     }
 
     void GetTextureRect(float* x, float* y, float* w, float* h) const {
-        *x = tx;
-        *y = ty;
-        *w = width;
-        *h = height;
+        *x = tx_;
+        *y = ty_;
+        *w = width_;
+        *h = height_;
     }
 
     hgeU32 GetColor(const int i = 0) const {
-        return quad.v[i].col;
+        return quad_.v[i].col;
     }
 
     float GetZ(const int i = 0) const {
-        return quad.v[i].z;
+        return quad_.v[i].z;
     }
 
     int GetBlendMode() const {
-        return quad.blend;
+        return quad_.blend;
     }
 
     void GetHotSpot(float* x, float* y) const {
-        *x = hotX;
-        *y = hotY;
+        *x = hot_x_;
+        *y = hot_y_;
     }
 
     void GetFlip(bool* bX, bool* bY) const {
-        *bX = bXFlip;
-        *bY = bYFlip;
+        *bX = x_flip_;
+        *bY = y_flip_;
     }
 
     float GetWidth() const {
-        return width;
+        return width_;
     }
 
     float GetHeight() const {
-        return height;
+        return height_;
     }
 
     hgeRect* GetBoundingBox(const float x, const float y, 
                             hgeRect* rect) const {
-        rect->Set(x - hotX, y - hotY, x - hotX + width, y - hotY + height);
+        rect->Set(x - hot_x_, y - hot_y_, x - hot_x_ + width_, y - hot_y_ + height_);
         return rect;
     }
 
@@ -100,11 +100,18 @@ public:
 
 protected:
     hgeSprite();
-    static HGE* hge;
+    static HGE* hge_;
 
-    hgeQuad quad;
-    float tx, ty, width, height;
-    float tex_width, tex_height;
-    float hotX, hotY;
-    bool bXFlip, bYFlip, bHSFlip;
+    hgeQuad quad_;
+    float tx_;
+    float ty_;
+    float width_;
+    float height_;
+    float tex_width_;
+    float tex_height_;
+    float hot_x_;
+    float hot_y_;
+    bool x_flip_;
+    bool y_flip_;
+    bool hs_flip_;
 };

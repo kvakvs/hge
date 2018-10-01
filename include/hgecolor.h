@@ -9,9 +9,7 @@
 
 #pragma once
 
-
 #include "hge.h"
-
 
 #define hgeColor hgeColorRGB
 
