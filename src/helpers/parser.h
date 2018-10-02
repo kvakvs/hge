@@ -94,7 +94,7 @@ public:
     RScriptParser(char* name, char* scr);
 
     ~RScriptParser() {
-        hge->Release();
+        hge_->Release();
     }
 
     int get_token();
@@ -138,7 +138,7 @@ public:
     int line;
 
 private:
-    bool strtkcmp(char* str, char* mem);
+    bool strtkcmp(const char* str, const char* mem);
 
-    static HGE* hge;
+    static HGE* hge_;
 };
