@@ -10,7 +10,7 @@
 #include "hge_impl.h"
 
 
-void HGE_Impl::_InitPowerStatus() {
+void HGE_Impl::init_power_status() {
     krnl32_ = LoadLibrary("kernel32.dll");
 
     if (krnl32_ != nullptr) {
@@ -18,11 +18,11 @@ void HGE_Impl::_InitPowerStatus() {
             GetProcAddress(krnl32_, "GetSystemPowerStatus"));
     }
 
-    _UpdatePowerStatus();
+    update_power_status();
 }
 
 
-void HGE_Impl::_UpdatePowerStatus() {
+void HGE_Impl::update_power_status() {
     SYSTEM_POWER_STATUS ps;
 
     if (get_system_power_status_ != nullptr && get_system_power_status_(&ps)) {
@@ -42,7 +42,7 @@ void HGE_Impl::_UpdatePowerStatus() {
 }
 
 
-void HGE_Impl::_DonePowerStatus() const {
+void HGE_Impl::done_power_status() const {
     if (krnl32_ != nullptr) {
         FreeLibrary(krnl32_);
     }

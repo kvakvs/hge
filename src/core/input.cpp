@@ -110,7 +110,7 @@ int HGE_CALL HGE_Impl::Input_GetChar() {
 //////// Implementation ////////
 
 
-void HGE_Impl::_InputInit() {
+void HGE_Impl::input_init() {
     POINT pt;
     GetCursorPos(&pt);
     ScreenToClient(hwnd_, &pt);
@@ -120,7 +120,7 @@ void HGE_Impl::_InputInit() {
     memset(&key_table_, 0, sizeof(key_table_));
 }
 
-void HGE_Impl::_UpdateMouse() {
+void HGE_Impl::update_mouse() {
     POINT pt;
     RECT rc;
 
@@ -136,7 +136,7 @@ void HGE_Impl::_UpdateMouse() {
     }
 }
 
-void HGE_Impl::_BuildEvent(const int type, const int key, const int scan,
+void HGE_Impl::build_event(const int type, const int key, const int scan,
                            int flags, const int x, const int y) {
     auto eptr = new CInputEventList;
     unsigned char kbstate[256];
@@ -252,7 +252,7 @@ void HGE_Impl::_BuildEvent(const int type, const int key, const int scan,
     }
 }
 
-void HGE_Impl::_ClearQueue() {
+void HGE_Impl::clear_queue() {
     auto eptr = ev_queue_;
 
     memset(&key_table_, 0, sizeof(key_table_));

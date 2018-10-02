@@ -125,7 +125,7 @@ void* HGE_CALL HGE_Impl::Resource_Load(const char* filename, uint32_t* size) {
                     UNZ_OK) {
                     unzClose(zip);
                     sprintf(sz_name, res_err, filename);
-                    _PostError(sz_name);
+                    post_error(sz_name);
                     return nullptr;
                 }
 
@@ -134,7 +134,7 @@ void* HGE_CALL HGE_Impl::Resource_Load(const char* filename, uint32_t* size) {
                     unzCloseCurrentFile(zip);
                     unzClose(zip);
                     sprintf(sz_name, res_err, filename);
-                    _PostError(sz_name);
+                    post_error(sz_name);
                     return nullptr;
                 }
 
@@ -143,7 +143,7 @@ void* HGE_CALL HGE_Impl::Resource_Load(const char* filename, uint32_t* size) {
                     unzClose(zip);
                     free(ptr);
                     sprintf(sz_name, res_err, filename);
-                    _PostError(sz_name);
+                    post_error(sz_name);
                     return nullptr;
                 }
                 unzCloseCurrentFile(zip);
@@ -169,7 +169,7 @@ _fromfile:
                                 nullptr);
     if (h_f == INVALID_HANDLE_VALUE) {
         sprintf(sz_name, res_err, filename);
-        _PostError(sz_name);
+        post_error(sz_name);
         return nullptr;
     }
     file_info.uncompressed_size = GetFileSize(h_f, nullptr);
@@ -177,7 +177,7 @@ _fromfile:
     if (!ptr) {
         CloseHandle(h_f);
         sprintf(sz_name, res_err, filename);
-        _PostError(sz_name);
+        post_error(sz_name);
         return nullptr;
     }
     if (ReadFile(h_f, ptr, file_info.uncompressed_size, &file_info.uncompressed_size,
@@ -185,7 +185,7 @@ _fromfile:
         CloseHandle(h_f);
         free(ptr);
         sprintf(sz_name, res_err, filename);
-        _PostError(sz_name);
+        post_error(sz_name);
         return nullptr;
     }
 

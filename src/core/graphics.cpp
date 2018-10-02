@@ -77,7 +77,7 @@ void HGE_CALL HGE_Impl::Gfx_SetClipping(int x, int y, int w, int h) {
     vp.MinZ = 0.0f;
     vp.MaxZ = 1.0f;
 
-    _render_batch();
+    render_batch();
     d3d_device_->SetViewport(&vp);
 
     D3DXMATRIX tmp;
@@ -115,7 +115,7 @@ void HGE_CALL HGE_Impl::Gfx_SetTransform(const float x, const float y,
         D3DXMatrixMultiply(&view_matrix_, &view_matrix_, &tmp);
     }
 
-    _render_batch();
+    render_batch();
     d3d_device_->SetTransform(D3DTS_VIEW, &view_matrix_);
 }
 
@@ -136,12 +136,12 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
         if (windowed_) {
             if (FAILED(d3d_->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode)) || Mode.Format ==
                 D3DFMT_UNKNOWN) {
-                _PostError("Can't determine desktop video mode");
+                post_error("Can't determine desktop video mode");
                 return false;
             }
 
             d3dpp_windowed_.BackBufferFormat = Mode.Format;
-            if (_format_id(Mode.Format) < 4) {
+            if (format_id(Mode.Format) < 4) {
                 screen_bpp_ = 16;
             }
             else {
@@ -149,13 +149,13 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
             }
         }
 
-        if (!_GfxRestore()) {
+        if (!gfx_restore()) {
             return false;
         }
     }
 
     if (vert_array_) {
-        _PostError("Gfx_BeginScene: Scene is already being rendered");
+        post_error("Gfx_BeginScene: Scene is already being rendered");
         return false;
     }
 
@@ -182,7 +182,7 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
             if (target) {
                 p_surf->Release();
             }
-            _PostError("Gfx_BeginScene: Can't set render target");
+            post_error("Gfx_BeginScene: Can't set render target");
             return false;
         }
         if (target) {
@@ -193,7 +193,7 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
             else {
                 d3d_device_->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
             }
-            _SetProjectionMatrix(target->width, target->height);
+            set_projection_matrix(target->width, target->height);
         }
         else {
             if (z_buffer_) {
@@ -202,7 +202,7 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
             else {
                 d3d_device_->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
             }
-            _SetProjectionMatrix(screen_width_, screen_height_);
+            set_projection_matrix(screen_width_, screen_height_);
         }
 
         d3d_device_->SetTransform(D3DTS_PROJECTION, &proj_matrix_);
@@ -223,7 +223,7 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
 }
 
 void HGE_CALL HGE_Impl::Gfx_EndScene() {
-    _render_batch(true);
+    render_batch(true);
     d3d_device_->EndScene();
     if (!cur_target_) {
         d3d_device_->Present(nullptr, nullptr, nullptr, nullptr);
@@ -237,11 +237,11 @@ void HGE_CALL HGE_Impl::Gfx_RenderLine(const float x1, const float y1,
         if (cur_prim_type_ != HGEPRIM_LINES 
             || n_prim_ >= VERTEX_BUFFER_SIZE / HGEPRIM_LINES 
             || cur_texture_ || cur_blend_mode_ != BLEND_DEFAULT) {
-            _render_batch();
+            render_batch();
 
             cur_prim_type_ = HGEPRIM_LINES;
             if (cur_blend_mode_ != BLEND_DEFAULT) {
-                _SetBlendMode(BLEND_DEFAULT);
+                set_blend_mode(BLEND_DEFAULT);
             }
             if (cur_texture_) {
                 d3d_device_->SetTexture(0, nullptr);
@@ -267,11 +267,11 @@ void HGE_CALL HGE_Impl::Gfx_RenderTriple(const hgeTriple* triple) {
     if (vert_array_) {
         if (cur_prim_type_ != HGEPRIM_TRIPLES || n_prim_ >= VERTEX_BUFFER_SIZE / HGEPRIM_TRIPLES
             || cur_texture_ != triple->tex || cur_blend_mode_ != triple->blend) {
-            _render_batch();
+            render_batch();
 
             cur_prim_type_ = HGEPRIM_TRIPLES;
             if (cur_blend_mode_ != triple->blend) {
-                _SetBlendMode(triple->blend);
+                set_blend_mode(triple->blend);
             }
             if (triple->tex != cur_texture_) {
                 d3d_device_->SetTexture(0, reinterpret_cast<hgeGAPITexture *>(triple->tex));
@@ -289,11 +289,11 @@ void HGE_CALL HGE_Impl::Gfx_RenderQuad(const hgeQuad* quad) {
         if (cur_prim_type_ != HGEPRIM_QUADS || n_prim_ >= VERTEX_BUFFER_SIZE / HGEPRIM_QUADS ||
             cur_texture_ != quad->tex
             || cur_blend_mode_ != quad->blend) {
-            _render_batch();
+            render_batch();
 
             cur_prim_type_ = HGEPRIM_QUADS;
             if (cur_blend_mode_ != quad->blend) {
-                _SetBlendMode(quad->blend);
+                set_blend_mode(quad->blend);
             }
             if (quad->tex != cur_texture_) {
                 d3d_device_->SetTexture(0, reinterpret_cast<hgeGAPITexture *>(quad->tex));
@@ -309,11 +309,11 @@ void HGE_CALL HGE_Impl::Gfx_RenderQuad(const hgeQuad* quad) {
 hgeVertex* HGE_CALL HGE_Impl::
 Gfx_StartBatch(const int prim_type, const HTEXTURE tex, const int blend, int* max_prim) {
     if (vert_array_) {
-        _render_batch();
+        render_batch();
 
         cur_prim_type_ = prim_type;
         if (cur_blend_mode_ != blend) {
-            _SetBlendMode(blend);
+            set_blend_mode(blend);
         }
         if (tex != cur_texture_) {
             d3d_device_->SetTexture(0, reinterpret_cast<hgeGAPITexture *>(tex));
@@ -341,7 +341,7 @@ HTARGET HGE_CALL HGE_Impl::Target_Create(int width, int height,
 
     if (FAILED(D3DXCreateTexture(d3d_device_, width, height, 1, D3DUSAGE_RENDERTARGET,
         d3dpp_->BackBufferFormat, D3DPOOL_DEFAULT, &pTarget->pTex))) {
-        _PostError("Can't create render target texture");
+        post_error("Can't create render target texture");
         delete pTarget;
         return 0;
     }
@@ -361,7 +361,7 @@ HTARGET HGE_CALL HGE_Impl::Target_Create(int width, int height,
 #endif
         {
             pTarget->pTex->Release();
-            _PostError("Can't create render target depth buffer");
+            post_error("Can't create render target depth buffer");
             delete pTarget;
             return 0;
         }
@@ -419,7 +419,7 @@ HTEXTURE HGE_CALL HGE_Impl::Texture_Create(int width, int height) {
         D3DFMT_A8R8G8B8, // Format
         D3DPOOL_MANAGED, // Memory pool
         &pTex ) )) {
-        _PostError("Can't create texture");
+        post_error("Can't create texture");
         return 0;
     }
 
@@ -479,7 +479,7 @@ HTEXTURE HGE_CALL HGE_Impl::Texture_Load(const char* filename,
             0, // Color key
             &info, NULL,
             &pTex ) )) {
-            _PostError("Can't create texture");
+            post_error("Can't create texture");
             if (!size) {
                 Resource_Free(data);
             }
@@ -604,7 +604,7 @@ uint32_t* HGE_CALL HGE_Impl::Texture_Lock(const HTEXTURE tex,
     }
 
     if (FAILED(pTex->LockRect(0, &TRect, prec, flags))) {
-        _PostError("Can't lock texture");
+        post_error("Can't lock texture");
         return nullptr;
     }
 
@@ -619,7 +619,7 @@ void HGE_CALL HGE_Impl::Texture_Unlock(const HTEXTURE tex) {
 
 //////// Implementation ////////
 
-void HGE_Impl::_render_batch(const bool b_end_scene) {
+void HGE_Impl::render_batch(const bool b_end_scene) {
     if (vert_array_) {
         vertex_buf_->Unlock();
 
@@ -685,7 +685,7 @@ void HGE_Impl::_render_batch(const bool b_end_scene) {
 //
 //    CurBlendMode = blend;
 //}
-void HGE_Impl::_SetBlendMode(const int blend) {
+void HGE_Impl::set_blend_mode(const int blend) {
     int d = -1;
 
     if ((blend & BLEND_ALPHABLEND) != (cur_blend_mode_ & BLEND_ALPHABLEND)) {
@@ -742,7 +742,7 @@ void HGE_Impl::_SetBlendMode(const int blend) {
     cur_blend_mode_ = blend;
 }
 
-void HGE_Impl::_SetProjectionMatrix(const int width, const int height) {
+void HGE_Impl::set_projection_matrix(const int width, const int height) {
     D3DXMATRIX tmp;
     D3DXMatrixScaling(&proj_matrix_, 1.0f, -1.0f, 1.0f);
     D3DXMatrixTranslation(&tmp, -0.5f, height + 0.5f, 0.0f);
@@ -752,7 +752,7 @@ void HGE_Impl::_SetProjectionMatrix(const int width, const int height) {
     D3DXMatrixMultiply(&proj_matrix_, &proj_matrix_, &tmp);
 }
 
-bool HGE_Impl::_GfxInit() {
+bool HGE_Impl::gfx_init() {
     static const char* szFormats[] = {
         "UNKNOWN", "R5G6B5", "X1R5G5B5", "A1R5G5B5", "X8R8G8B8", "A8R8G8B8"
     };
@@ -768,7 +768,7 @@ bool HGE_Impl::_GfxInit() {
     d3d_ = Direct3DCreate9(D3D_SDK_VERSION); // D3D_SDK_VERSION
 #endif
     if (d3d_ == nullptr) {
-        _PostError("Can't create D3D interface");
+        post_error("Can't create D3D interface");
         return false;
     }
 
@@ -792,7 +792,7 @@ bool HGE_Impl::_GfxInit() {
 
     if (FAILED(d3d_->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode)) || Mode.Format ==
         D3DFMT_UNKNOWN) {
-        _PostError("Can't determine desktop video mode");
+        post_error("Can't determine desktop video mode");
         if (windowed_) {
             return false;
         }
@@ -852,16 +852,16 @@ bool HGE_Impl::_GfxInit() {
             || Mode.Height != static_cast<UINT>(screen_height_)) {
             continue;
         }
-        if (screen_bpp_ == 16 && (_format_id(Mode.Format) > _format_id(D3DFMT_A1R5G5B5))) {
+        if (screen_bpp_ == 16 && (format_id(Mode.Format) > format_id(D3DFMT_A1R5G5B5))) {
             continue;
         }
-        if (_format_id(Mode.Format) > _format_id(Format)) {
+        if (format_id(Mode.Format) > format_id(Format)) {
             Format = Mode.Format;
         }
     }
 
     if (Format == D3DFMT_UNKNOWN) {
-        _PostError("Can't find appropriate full screen video mode");
+        post_error("Can't find appropriate full screen video mode");
         if (!windowed_) {
             return false;
         }
@@ -902,7 +902,7 @@ bool HGE_Impl::_GfxInit() {
 
     d3dpp_ = windowed_ ? &d3dpp_windowed_ : &d3dpp_fullscreen_;
 
-    if (_format_id(d3dpp_->BackBufferFormat) < 4) {
+    if (format_id(d3dpp_->BackBufferFormat) < 4) {
         screen_bpp_ = 16;
     }
     else {
@@ -934,14 +934,14 @@ bool HGE_Impl::_GfxInit() {
     }
     if (FAILED( d3d_->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd_, vp, d3dpp_,
         &d3d_device_ ) )) {
-        _PostError("Can't create D3D device");
+        post_error("Can't create D3D device");
         return false;
     }
     // #endif
 
-    _AdjustWindow();
+    adjust_window();
 
-    System_Log("Mode: %d x %d x %s\n", screen_width_, screen_height_, szFormats[_format_id(Format)]);
+    System_Log("Mode: %d x %d x %s\n", screen_width_, screen_height_, szFormats[format_id(Format)]);
 
     // Create vertex batch buffer
 
@@ -950,10 +950,10 @@ bool HGE_Impl::_GfxInit() {
 
     // Init all stuff that can be lost
 
-    _SetProjectionMatrix(screen_width_, screen_height_);
+    set_projection_matrix(screen_width_, screen_height_);
     D3DXMatrixIdentity(&view_matrix_);
 
-    if (!_init_lost()) {
+    if (!init_lost()) {
         return false;
     }
 
@@ -962,7 +962,7 @@ bool HGE_Impl::_GfxInit() {
     return true;
 }
 
-int HGE_Impl::_format_id(const D3DFORMAT fmt) {
+int HGE_Impl::format_id(const D3DFORMAT fmt) {
     switch (fmt) {
     case D3DFMT_R5G6B5:
         return 1;
@@ -979,7 +979,7 @@ int HGE_Impl::_format_id(const D3DFORMAT fmt) {
     }
 }
 
-void HGE_Impl::_AdjustWindow() {
+void HGE_Impl::adjust_window() {
     RECT* rc;
     LONG style;
 
@@ -1008,7 +1008,7 @@ void HGE_Impl::_AdjustWindow() {
     }
 }
 
-void HGE_Impl::_Resize(const int width, const int height) {
+void HGE_Impl::resize(const int width, const int height) {
     if (hwnd_parent_) {
         //if(procFocusLostFunc) procFocusLostFunc();
 
@@ -1017,14 +1017,14 @@ void HGE_Impl::_Resize(const int width, const int height) {
         screen_width_ = width;
         screen_height_ = height;
 
-        _SetProjectionMatrix(screen_width_, screen_height_);
-        _GfxRestore();
+        set_projection_matrix(screen_width_, screen_height_);
+        gfx_restore();
 
         //if(procFocusGainFunc) procFocusGainFunc();
     }
 }
 
-void HGE_Impl::_GfxDone() {
+void HGE_Impl::gfx_done() {
     auto target = targets_;
 
     while (textures_) {
@@ -1088,7 +1088,7 @@ void HGE_Impl::_GfxDone() {
 }
 
 
-bool HGE_Impl::_GfxRestore() {
+bool HGE_Impl::gfx_restore() {
     CRenderTargetList* target = targets_;
 
     //if(!pD3DDevice) return false;
@@ -1132,7 +1132,7 @@ bool HGE_Impl::_GfxRestore() {
 
     d3d_device_->Reset(d3dpp_);
 
-    if (!_init_lost()) {
+    if (!init_lost()) {
         return false;
     }
 
@@ -1144,7 +1144,7 @@ bool HGE_Impl::_GfxRestore() {
 }
 
 
-bool HGE_Impl::_init_lost() {
+bool HGE_Impl::init_lost() {
     CRenderTargetList* target = targets_;
 
     // Store render target
@@ -1194,7 +1194,7 @@ bool HGE_Impl::_init_lost() {
         NULL)))
 #endif
     {
-        _PostError("Can't create D3D vertex buffer");
+        post_error("Can't create D3D vertex buffer");
         return false;
     }
 
@@ -1225,7 +1225,7 @@ bool HGE_Impl::_init_lost() {
         NULL) ))
 #endif
     {
-        _PostError("Can't create D3D index buffer");
+        post_error("Can't create D3D index buffer");
         return false;
     }
 
@@ -1237,7 +1237,7 @@ bool HGE_Impl::_init_lost() {
     if (FAILED( index_buf_->Lock( 0, 0, (VOID**)&pIndices, 0 ) ))
 #endif
     {
-        _PostError("Can't lock D3D index buffer");
+        post_error("Can't lock D3D index buffer");
         return false;
     }
 
@@ -1338,7 +1338,7 @@ HSHADER HGE_CALL HGE_Impl::Shader_Create(const char* filename) {
         nullptr); //constants
 
     if (FAILED(result)) {
-        _PostError("Can't create shader");
+        post_error("Can't create shader");
         return NULL;
     }
 
@@ -1352,7 +1352,7 @@ HSHADER HGE_CALL HGE_Impl::Shader_Create(const char* filename) {
 #if HGE_DIRECTX_VER >= 9
 void HGE_CALL HGE_Impl::Gfx_SetShader(const HSHADER shader) {
     if (cur_shader_ != shader) {
-        _render_batch();
+        render_batch();
         cur_shader_ = shader;
         d3d_device_->SetPixelShader(reinterpret_cast<LPDIRECT3DPIXELSHADER9>(shader));
     }

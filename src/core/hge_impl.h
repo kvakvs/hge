@@ -201,9 +201,9 @@ public:
 
     //////// Implementation ////////
 
-    static HGE_Impl* _Interface_Get();
-    void _FocusChange(bool bAct);
-    void _PostError(char* error);
+    static HGE_Impl* interface_get();
+    void focus_change(bool bAct);
+    void post_error(char* error);
 
 
     HINSTANCE h_instance_;
@@ -253,9 +253,9 @@ public:
     HMODULE krnl32_;
     GetSystemPowerStatusFunc get_system_power_status_;
 
-    void _InitPowerStatus();
-    void _UpdatePowerStatus();
-    void _DonePowerStatus() const;
+    void init_power_status();
+    void update_power_status();
+    void done_power_status() const;
 
 
     // Graphics
@@ -293,16 +293,16 @@ public:
     HSHADER cur_shader_;
 #endif
 
-    bool _GfxInit();
-    void _GfxDone();
-    bool _GfxRestore();
-    void _AdjustWindow();
-    void _Resize(int width, int height);
-    bool _init_lost();
-    void _render_batch(bool bEndScene = false);
-    static int _format_id(D3DFORMAT fmt);
-    void _SetBlendMode(int blend);
-    void _SetProjectionMatrix(int width, int height);
+    bool gfx_init();
+    void gfx_done();
+    bool gfx_restore();
+    void adjust_window();
+    void resize(int width, int height);
+    bool init_lost();
+    void render_batch(bool bEndScene = false);
+    static int format_id(D3DFORMAT fmt);
+    void set_blend_mode(int blend);
+    void set_projection_matrix(int width, int height);
 
 
     // Audio
@@ -310,11 +310,11 @@ public:
     bool is_silent_;
     CStreamList* sound_streams_;
 
-    bool _SoundInit();
-    void _SoundDone();
-    void _SetMusVolume(int vol);
-    void _SetStreamVolume(int vol);
-    void _SetFXVolume(int vol);
+    bool sound_init();
+    void sound_done();
+    void set_mus_volume(int vol) const;
+    void set_stream_volume(int vol) const;
+    void set_fx_volume(int vol) const;
 
 
     // Input
@@ -328,10 +328,10 @@ public:
     char key_table_[256];
     CInputEventList* ev_queue_;
 
-    void _UpdateMouse();
-    void _InputInit();
-    void _ClearQueue();
-    void _BuildEvent(int type, int key, int scan, int flags, int x, int y);
+    void update_mouse();
+    void input_init();
+    void clear_queue();
+    void build_event(int type, int key, int scan, int flags, int x, int y);
 
 
     // Resources
