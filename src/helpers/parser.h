@@ -100,42 +100,42 @@ public:
     int get_token();
 
     void put_back() {
-        script -= strlen(tokenvalue);
+        script_ -= strlen(tokenvalue_);
     }
 
     int get_line() const {
-        return line;
+        return line_;
     }
 
     char* get_name() const {
-        return scriptname;
+        return scriptname_;
     }
 
     char* tkn_string() {
-        return tokenvalue;
+        return tokenvalue_;
     }
 
     int tkn_int() const {
-        return atoi(tokenvalue);
+        return atoi(tokenvalue_);
     }
 
     float tkn_float() const {
-        return static_cast<float>(atof(tokenvalue));
+        return static_cast<float>(atof(tokenvalue_));
     }
 
     bool tkn_bool() {
-        return (tokenvalue[0] == 't' || tokenvalue[0] == 'T') ? true : false;
+        return (tokenvalue_[0] == 't' || tokenvalue_[0] == 'T') ? true : false;
     }
 
     uint32_t tkn_hex();
 
-    void ScriptPostError(char* msg1, char* msg2);
+    void script_post_error(char* msg1, char* msg2);
 
-    int tokentype;
-    char tokenvalue[128];
-    char* script;
-    char* scriptname;
-    int line;
+    int tokentype_;
+    char tokenvalue_[128];
+    char* script_;
+    char* scriptname_;
+    int line_;
 
 private:
     bool strtkcmp(const char* str, const char* mem);

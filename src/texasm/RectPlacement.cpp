@@ -54,25 +54,18 @@ void CRectPlacement::Init(const int w, const int h) {
 }
 
 
-// --------------------------------------------------------------------------------
-// Name        :
-// Description :
-// --------------------------------------------------------------------------------
 void CRectPlacement::End() {
     m_vPositions.clear();
     m_vRects.clear();
     m_size.w = 0;
 }
 
-// --------------------------------------------------------------------------------
-// Name        : IsFree
 // Description : Check if the given rectangle is partially or totally used
-// --------------------------------------------------------------------------------
 bool CRectPlacement::IsFree(const TRect& r) const {
     if (!m_size.Contains(r)) {
         return false;
     }
-    for (CRectArray::const_iterator it = m_vRects.begin();
+    for (auto it = m_vRects.begin();
          it != m_vRects.end();
          ++it)
         if (it->Intersects(r)) {
@@ -81,24 +74,20 @@ bool CRectPlacement::IsFree(const TRect& r) const {
     return true;
 }
 
-
-// --------------------------------------------------------------------------------
-// Name        : AddPosition
 // Description : Add new anchor point
-// --------------------------------------------------------------------------------
 void CRectPlacement::AddPosition(const TPos& p) {
     // Try to insert anchor as close as possible to the top left corner
     // So it will be tried first
-    bool bFound = false;
+    auto found = false;
     CPosArray::iterator it;
     for (it = m_vPositions.begin();
-         !bFound && it != m_vPositions.end();
+         !found && it != m_vPositions.end();
          ++it) {
         if (p.x + p.y < it->x + it->y) {
-            bFound = true;
+            found = true;
         }
     }
-    if (bFound) {
+    if (found) {
         m_vPositions.insert(it, p);
     }
     else {
@@ -106,10 +95,7 @@ void CRectPlacement::AddPosition(const TPos& p) {
     }
 }
 
-// --------------------------------------------------------------------------------
-// Name        : AddRect
 // Description : Add the given rect and updates anchor points
-// --------------------------------------------------------------------------------
 void CRectPlacement::AddRect(const TRect& r) {
     m_vRects.push_back(r);
     m_area += r.w * r.h;
@@ -119,10 +105,7 @@ void CRectPlacement::AddRect(const TRect& r) {
     AddPosition(TPos(r.x + r.w + m_margin, r.y));
 }
 
-// --------------------------------------------------------------------------------
-// Name        : AddAtEmptySpot
 // Description : Add the given rectangle
-// --------------------------------------------------------------------------------
 bool CRectPlacement::AddAtEmptySpot(TRect& r) {
     // Find a valid spot among available anchors.
 
@@ -169,13 +152,9 @@ bool CRectPlacement::AddAtEmptySpot(TRect& r) {
 }
 
 
-// --------------------------------------------------------------------------------
-// Name        : AddAtEmptySpotAutoGrow
 // Description : Add a rectangle of the given size, growing our area if needed
 //               Area grows only until the max given.
 //               Returns the placement of the rect in the rect's x,y coords
-// --------------------------------------------------------------------------------
-
 bool CRectPlacement::AddAtEmptySpotAutoGrow(TRect* p_rect, const int max_w,
                                             const int max_h) {
     if (p_rect->w <= 0) {

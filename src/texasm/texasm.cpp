@@ -22,7 +22,7 @@ void SysLog(const char* format, ...);
 bool ParseTask(char* task, int* resgroup, char* mask, bool* inclusive);
 
 
-int main(int argc, char* argv[]) {
+int main(const int argc, char* argv[]) {
     char cwd[MAX_PATH];
 
 
@@ -104,8 +104,8 @@ int main(int argc, char* argv[]) {
 
     // parse task argument if present
 
-    int resgroup = 0;
-    bool inclusive = true;
+    auto resgroup = 0;
+    auto inclusive = true;
     char mask[256] = "";
 
     if (argc == 4)

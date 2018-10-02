@@ -28,7 +28,7 @@ struct filelist {
 filelist* files = nullptr;
 
 
-extern bool Write32BitPNGWithPitch(FILE* fp, void* pBits, bool bNeedAlpha, int nWidth, int nHeight,
+extern bool write32_bit_png_with_pitch(FILE* fp, void* pBits, bool bNeedAlpha, int nWidth, int nHeight,
                                    int nPitch);
 bool convert(char* filename);
 
@@ -167,7 +167,7 @@ bool convert(char* filename) {
         return false;
     }
 
-    if (!Write32BitPNGWithPitch(fp, buf, true, width, height, pitch)) {
+    if (!write32_bit_png_with_pitch(fp, buf, true, width, height, pitch)) {
         hge->Texture_Unlock(tex);
         fclose(fp);
         printf("Error writing data.\n");

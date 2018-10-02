@@ -126,16 +126,16 @@ bool COptimizedTexture::OptimizeAlpha() const {
         return false;
     }
 
-    CColor* buf = tex_data;
+    const auto buf = tex_data;
 
-    for (int i = 0; i < texh; i++)
-        for (int j = 0; j < texw; j++)
+    for (auto i = 0; i < texh; i++) {
+        for (auto j = 0; j < texw; j++) {
             if (!buf[i * pitch + j].a) {
-                int count = 0;
-                int r = g = b = 0;
+                auto count = 0;
+                auto r = g = b = 0;
 
-                for (int k = -1; k <= 1; k++)
-                    for (int l = -1; l <= 1; l++)
+                for (auto k = -1; k <= 1; k++)
+                    for (auto l = -1; l <= 1; l++)
                         if (i + k >= 0 && i + k < texh &&
                             j + l >= 0 && j + l < texw &&
                             buf[(i + k) * pitch + (j + l)].a) {
@@ -151,6 +151,8 @@ bool COptimizedTexture::OptimizeAlpha() const {
                     buf[i * pitch + j].b = unsigned char(b / count);
                 }
             }
+        }
+    }
 
     return true;
 }
@@ -162,13 +164,13 @@ bool COptimizedTexture::Save(char* filename) const {
         return false;
     }
 
-    FILE* fp = fopen(filename, "wb");
+    const auto fp = fopen(filename, "wb");
     if (!fp) {
         SysLog("Can't create texture file: %s\n", filename);
         return false;
     }
 
-    if (!Write32BitPNGWithPitch(fp, tex_data, true, texw, texh, pitch)) {
+    if (!write32_bit_png_with_pitch(fp, tex_data, true, texw, texh, pitch)) {
         fclose(fp);
         SysLog("Error writing data: %s\n", filename);
         return false;
@@ -187,7 +189,7 @@ bool COptimizedTexture::SaveDescriptions(char* resfile, char* texfile, char* tex
     }
 
     // create resource file
-    FILE* fp = fopen(resfile, "w");
+    const auto fp = fopen(resfile, "w");
     if (!fp) {
         SysLog("Can't create description file: %s\n", resfile);
         return false;
@@ -203,10 +205,10 @@ bool COptimizedTexture::SaveDescriptions(char* resfile, char* texfile, char* tex
     }
 
     // save object descriptions
-    for (GfxObjIterator it = obj_list.begin(); it != obj_list.end(); ++it) {
-        if (!(*it)->SaveDescription(fp, texname)) {
+    for (auto &it: obj_list) {
+        if (!it->SaveDescription(fp, texname)) {
             fclose(fp);
-            SysLog("Error writing description: %s\n", (*it)->GetName());
+            SysLog("Error writing description: %s\n", it->GetName());
             return false;
         }
 

@@ -29,7 +29,7 @@ public:
     bool GenerateTextures(char* wildcard);
 
 private:
-    bool CheckMask(char* name, char* mask_set, bool bMaskInclusive);
+    static bool CheckMask(char* name, char* mask_set, bool bMaskInclusive);
     CGfxObject* FindObj(GfxObjList objlist, char* name);
 
     GfxObjList obj_list;

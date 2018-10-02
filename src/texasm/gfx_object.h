@@ -4,7 +4,6 @@
 #include "texasm.h"
 #include <list>
 
-using namespace std;
 
 class CGfxObject {
 public:
@@ -57,7 +56,7 @@ protected:
 // sorting predicate
 #include <functional>
 
-struct ByLargestDimensionDescending : public greater<CGfxObject *> {
+struct ByLargestDimensionDescending : public std::greater<CGfxObject *> {
     bool operator()(CGfxObject* & a, CGfxObject* & b) const {
         return (a->GetWidth() < b->GetWidth() && a->GetWidth() > b->GetHeight()) ||
                 (a->GetHeight() > b->GetWidth() && a->GetHeight() > b->GetHeight());
@@ -67,5 +66,5 @@ struct ByLargestDimensionDescending : public greater<CGfxObject *> {
 
 // list and iterator
 
-typedef list<CGfxObject *> GfxObjList;
-typedef list<CGfxObject *>::iterator GfxObjIterator;
+typedef std::list<CGfxObject *> GfxObjList;
+typedef std::list<CGfxObject *>::iterator GfxObjIterator;

@@ -42,31 +42,31 @@ bool ScriptSkipToNextParameter(RScriptParser* sp, const bool ignore) {
 
     for (;;) {
         sp->get_token();
-        if (sp->tokentype == TTCLOSEBLOCK) {
+        if (sp->tokentype_ == TTCLOSEBLOCK) {
             if (ignore) {
                 sp->put_back();
                 return true;
             }
             return false;
         }
-        if (sp->tokentype > TTRES__FIRST && sp->tokentype < TTRES__LAST || sp->tokentype == TTEND
+        if (sp->tokentype_ > TTRES__FIRST && sp->tokentype_ < TTRES__LAST || sp->tokentype_ == TTEND
         ) {
             sp->put_back();
             if (ignore) {
                 return true;
             }
-            sp->ScriptPostError("'}' missed, ", " encountered.");
+            sp->script_post_error("'}' missed, ", " encountered.");
             return false;
         }
-        if ((sp->tokentype <= TTPAR__FIRST && sp->tokentype >= TTPAR__LAST) || to_be_ignored) {
+        if ((sp->tokentype_ <= TTPAR__FIRST && sp->tokentype_ >= TTPAR__LAST) || to_be_ignored) {
             to_be_ignored = false;
-            sp->ScriptPostError("Unsupported resource parameter ", ".");
+            sp->script_post_error("Unsupported resource parameter ", ".");
             do {
                 sp->get_token();
             }
-            while ((sp->tokentype <= TTPAR__FIRST || sp->tokentype >= TTPAR__LAST) &&
-                (sp->tokentype <= TTRES__FIRST || sp->tokentype >= TTRES__LAST) &&
-                sp->tokentype != TTCLOSEBLOCK && sp->tokentype != TTEND);
+            while ((sp->tokentype_ <= TTPAR__FIRST || sp->tokentype_ >= TTPAR__LAST) &&
+                (sp->tokentype_ <= TTRES__FIRST || sp->tokentype_ >= TTRES__LAST) &&
+                sp->tokentype_ != TTCLOSEBLOCK && sp->tokentype_ != TTEND);
             sp->put_back();
         }
         else {
@@ -93,7 +93,7 @@ void ScriptParseFileResource(hgeResourceManager* rm, RScriptParser* sp, const ch
     strcpy(rc->name, name);
 
     while (ScriptSkipToNextParameter(sp, false)) {
-        switch (sp->tokentype) {
+        switch (sp->tokentype_) {
         case TTPAR_FILENAME:
             sp->get_token();
             sp->get_token();
@@ -118,7 +118,7 @@ void ScriptParseFileResource(hgeResourceManager* rm, RScriptParser* sp, const ch
 void ScriptParseBlendMode(RScriptParser* sp, int* blend) {
     for (;;) {
         sp->get_token();
-        if (sp->tokentype != TTEQUALS && sp->tokentype != TTSEPARATOR) {
+        if (sp->tokentype_ != TTEQUALS && sp->tokentype_ != TTSEPARATOR) {
             sp->put_back();
             return;
         }
@@ -149,7 +149,7 @@ void ScriptParseBlendMode(RScriptParser* sp, int* blend) {
             break;
 
         default:
-            sp->ScriptPostError("Unsupported value ", ".");
+            sp->script_post_error("Unsupported value ", ".");
             break;
         }
     }
@@ -157,7 +157,7 @@ void ScriptParseBlendMode(RScriptParser* sp, int* blend) {
 
 void ScriptParseSpriteAnim(RScriptParser* sp, RSprite* rc, const bool anim) {
     while (ScriptSkipToNextParameter(sp, false)) {
-        switch (sp->tokentype) {
+        switch (sp->tokentype_) {
         case TTPAR_TEXTURE:
             sp->get_token();
             sp->get_token();
@@ -239,7 +239,7 @@ void ScriptParseSpriteAnim(RScriptParser* sp, RSprite* rc, const bool anim) {
             if (anim) {
                 for (;;) {
                     sp->get_token();
-                    if (sp->tokentype != TTEQUALS && sp->tokentype != TTSEPARATOR) {
+                    if (sp->tokentype_ != TTEQUALS && sp->tokentype_ != TTSEPARATOR) {
                         sp->put_back();
                         break;
                     }
@@ -270,7 +270,7 @@ void ScriptParseSpriteAnim(RScriptParser* sp, RSprite* rc, const bool anim) {
                         break;
 
                     default:
-                        sp->ScriptPostError("Unsupported value ", ".");
+                        sp->script_post_error("Unsupported value ", ".");
                         break;
                     }
                 }
@@ -299,7 +299,7 @@ void RScript::Parse(hgeResourceManager* rm, RScriptParser* sp, const char* sname
         void* data = hge_->Resource_Load(sname, &size);
         if (!data) {
             if (sp) {
-                sp->ScriptPostError("Script ", " not found.");
+                sp->script_post_error("Script ", " not found.");
             }
             else {
                 hge_->System_Log("Script '%s' not found.", sname);
@@ -318,23 +318,23 @@ void RScript::Parse(hgeResourceManager* rm, RScriptParser* sp, const char* sname
 
         for (;;) {
             np->get_token();
-            if (np->tokentype == TTEND) {
+            if (np->tokentype_ == TTEND) {
                 break;
             }
-            if (np->tokentype == TTRES_INCLUDE) {
+            if (np->tokentype_ == TTRES_INCLUDE) {
                 np->get_token();
                 RScript::Parse(rm, np, np->tkn_string(), nullptr);
             }
 
-            else if (np->tokentype > TTRES__FIRST && np->tokentype < TTRES__LAST) {
-                const auto restype = np->tokentype - TTRES__FIRST - 1;
+            else if (np->tokentype_ > TTRES__FIRST && np->tokentype_ < TTRES__LAST) {
+                const auto restype = np->tokentype_ - TTRES__FIRST - 1;
                 lname[0] = basename[0] = 0;
 
                 np->get_token();
                 if (FindRes(rm, restype, np->tkn_string())) {
-                    np->ScriptPostError("Resource ", " of the same type already has been defined.");
-                    while ((np->tokentype <= TTRES__FIRST || np->tokentype >= TTRES__LAST) && np->
-                        tokentype != TTEND) {
+                    np->script_post_error("Resource ", " of the same type already has been defined.");
+                    while ((np->tokentype_ <= TTRES__FIRST || np->tokentype_ >= TTRES__LAST) && np->
+                        tokentype_ != TTEND) {
                         np->get_token();
                     }
                     np->put_back();
@@ -344,10 +344,10 @@ void RScript::Parse(hgeResourceManager* rm, RScriptParser* sp, const char* sname
 
                 np->get_token();
 
-                if (np->tokentype == TTBASED) {
+                if (np->tokentype_ == TTBASED) {
                     np->get_token();
                     if (!FindRes(rm, restype, np->tkn_string())) {
-                        np->ScriptPostError("Base resource ", " is not defined.");
+                        np->script_post_error("Base resource ", " is not defined.");
                     }
                     else {
                         strcpy(basename, np->tkn_string());
@@ -355,7 +355,7 @@ void RScript::Parse(hgeResourceManager* rm, RScriptParser* sp, const char* sname
                     np->get_token();
                 }
 
-                if (np->tokentype == TTOPENBLOCK) {
+                if (np->tokentype_ == TTOPENBLOCK) {
                     switch (restype) {
                     case RES_RESOURCE:
                         RResource::Parse(rm, np, lname, basename);
@@ -396,9 +396,9 @@ void RScript::Parse(hgeResourceManager* rm, RScriptParser* sp, const char* sname
                     }
                 }
                 else {
-                    np->ScriptPostError("Illegal resource syntax, ", " found; '{' expected.");
-                    while ((np->tokentype <= TTRES__FIRST || np->tokentype >= TTRES__LAST) && np->
-                        tokentype != TTEND) {
+                    np->script_post_error("Illegal resource syntax, ", " found; '{' expected.");
+                    while ((np->tokentype_ <= TTRES__FIRST || np->tokentype_ >= TTRES__LAST) && np->
+                        tokentype_ != TTEND) {
                         np->get_token();
                     }
                     np->put_back();
@@ -406,9 +406,9 @@ void RScript::Parse(hgeResourceManager* rm, RScriptParser* sp, const char* sname
             }
 
             else {
-                np->ScriptPostError("Unrecognized resource specificator ", ".");
-                while ((np->tokentype <= TTRES__FIRST || np->tokentype >= TTRES__LAST) && np->
-                    tokentype != TTEND) {
+                np->script_post_error("Unrecognized resource specificator ", ".");
+                while ((np->tokentype_ <= TTRES__FIRST || np->tokentype_ >= TTRES__LAST) && np->
+                    tokentype_ != TTEND) {
                     np->get_token();
                 }
                 np->put_back();
@@ -420,7 +420,7 @@ void RScript::Parse(hgeResourceManager* rm, RScriptParser* sp, const char* sname
         delete[] script;
     }
     else {
-        sp->ScriptPostError("Script ", " already has been parsed.");
+        sp->script_post_error("Script ", " already has been parsed.");
     }
 }
 
@@ -463,7 +463,7 @@ void RTexture::Parse(hgeResourceManager* rm, RScriptParser* sp, const char* name
     strcpy(rc->name, name);
 
     while (ScriptSkipToNextParameter(sp, false)) {
-        switch (sp->tokentype) {
+        switch (sp->tokentype_) {
         case TTPAR_FILENAME:
             sp->get_token();
             sp->get_token();
@@ -546,7 +546,7 @@ void RMusic::Parse(hgeResourceManager* rm, RScriptParser* sp, const char* name,
     strcpy(rc->name, name);
 
     while (ScriptSkipToNextParameter(sp, false)) {
-        switch (sp->tokentype) {
+        switch (sp->tokentype_) {
         case TTPAR_FILENAME:
             sp->get_token();
             sp->get_token();
@@ -630,7 +630,7 @@ void RTarget::Parse(hgeResourceManager* rm, RScriptParser* sp, const char* name,
     strcpy(rc->name, name);
 
     while (ScriptSkipToNextParameter(sp, false)) {
-        switch (sp->tokentype) {
+        switch (sp->tokentype_) {
         case TTPAR_SIZE:
             sp->get_token();
             sp->get_token();
@@ -817,7 +817,7 @@ void RFont::Parse(hgeResourceManager* rm, RScriptParser* sp, const char* name,
     strcpy(rc->name, name);
 
     while (ScriptSkipToNextParameter(sp, false)) {
-        switch (sp->tokentype) {
+        switch (sp->tokentype_) {
         case TTPAR_FILENAME:
             sp->get_token();
             sp->get_token();
@@ -934,7 +934,7 @@ void RParticle::Parse(hgeResourceManager* rm, RScriptParser* sp, const char* nam
     strcpy(rc->name, name);
 
     while (ScriptSkipToNextParameter(sp, false)) {
-        switch (sp->tokentype) {
+        switch (sp->tokentype_) {
         case TTPAR_FILENAME:
             sp->get_token();
             sp->get_token();
@@ -1001,7 +1001,7 @@ void RDistort::Parse(hgeResourceManager* rm, RScriptParser* sp, const char* name
     strcpy(rc->name, name);
 
     while (ScriptSkipToNextParameter(sp, false)) {
-        switch (sp->tokentype) {
+        switch (sp->tokentype_) {
         case TTPAR_TEXTURE:
             sp->get_token();
             sp->get_token();

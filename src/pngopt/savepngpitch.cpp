@@ -16,9 +16,9 @@ void ErrorCallback(png_structp png_ptr,
     throw PNGError();
 }
 
-bool Write32BitPNGWithPitch(FILE* fp, void* p_bits, const bool b_need_alpha,
+bool write32_bit_png_with_pitch(FILE* fp, void* p_bits, const bool b_need_alpha,
                             const int n_width, const int n_height,
-                            const int nPitch) {
+                            const int pitch) {
     png_structp png_ptr = nullptr;
     png_infop info_ptr = nullptr;
     try {
@@ -63,8 +63,8 @@ bool Write32BitPNGWithPitch(FILE* fp, void* p_bits, const bool b_need_alpha,
         png_set_bgr(png_ptr); //	switch to little-endian notation
 
         //	writing
-        unsigned char* pSrc = static_cast<unsigned char*>(p_bits);
-        for (int i = 0; i < n_height; i++, pSrc += nPitch * 4) {
+        auto pSrc = static_cast<unsigned char*>(p_bits);
+        for (auto i = 0; i < n_height; i++, pSrc += pitch * 4) {
             png_write_row(png_ptr, pSrc);
         }
 

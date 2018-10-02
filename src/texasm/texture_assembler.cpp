@@ -6,7 +6,7 @@
 
 void CTextureAssembler::ClearResources() {
 
-    for (GfxObjIterator it = obj_list.begin(); it != obj_list.end(); ++it) {
+    for (auto it = obj_list.begin(); it != obj_list.end(); ++it) {
         delete *it;
     }
 
@@ -14,24 +14,25 @@ void CTextureAssembler::ClearResources() {
 }
 
 
-bool CTextureAssembler::CheckMask(char* name, char* mask_set, bool bMaskInclusive) {
+bool CTextureAssembler::CheckMask(char* name, char* mask_set, 
+                                  const bool mask_inclusive) {
 
     if (!mask_set || !*mask_set) {
         return true;
     }
 
-    char* mask = mask_set;
-    int name_len = strlen(name);
+    auto mask = mask_set;
+    const int name_len = strlen(name);
 
     while (*mask) {
-        int mask_len = strlen(mask);
+        const int mask_len = strlen(mask);
 
-        bool match = (name_len >= mask_len) && !memcmp(name, mask, mask_len);
+        const auto match = (name_len >= mask_len) && !memcmp(name, mask, mask_len);
 
-        if (match && bMaskInclusive) {
+        if (match && mask_inclusive) {
             return true;
         }
-        if (!match && !bMaskInclusive) {
+        if (!match && !mask_inclusive) {
             return true;
         }
 
@@ -44,28 +45,30 @@ bool CTextureAssembler::CheckMask(char* name, char* mask_set, bool bMaskInclusiv
 
 CGfxObject* CTextureAssembler::FindObj(GfxObjList objlist, char* name) {
 
-    for (GfxObjIterator it = obj_list.begin(); it != obj_list.end(); it++)
+    for (auto it = obj_list.begin(); it != obj_list.end(); ++it)
         if (!strcmp((*it)->GetName(), name)) {
             return *it;
         }
-
     return nullptr;
 }
 
 
-void CTextureAssembler::AccumulateRMResources(hgeResourceManager* rm, int resgroup, char* mask_set,
-                                              bool bMaskInclusive) {
-
+void CTextureAssembler::AccumulateRMResources(hgeResourceManager* rm,
+                                              const int resgroup, char* mask_set,
+                                              const bool mask_inclusive) {
     // RES_SPRITE
-    ResDesc* resdesc = rm->res[7];
+    auto resdesc = rm->res[7];
 
     while (resdesc) {
         if (!resgroup || resdesc->resgroup == resgroup)
-            if (CheckMask(resdesc->name, mask_set, bMaskInclusive))
+            if (CheckMask(resdesc->name, mask_set, mask_inclusive))
                 if (!FindObj(obj_list, resdesc->name)) {
-                    obj_list.push_back(new CSpriteObject((hgeSprite *)resdesc->Get(rm),
-                                                         resdesc->name,
-                                                         resdesc->resgroup, false));
+                    const auto spr = new CSpriteObject(
+                        reinterpret_cast<hgeSprite *>(resdesc->Get(rm)),
+                        resdesc->name,
+                        resdesc->resgroup, false
+                    );
+                    obj_list.push_back(spr);
                 }
 
         resdesc = resdesc->next;
@@ -73,17 +76,18 @@ void CTextureAssembler::AccumulateRMResources(hgeResourceManager* rm, int resgro
 }
 
 
-void CTextureAssembler::AccumulateFileResources(char* wildcard, int resgroup, char* mask_set,
-                                                bool bMaskInclusive) {
-    WIN32_FIND_DATA SearchData;
+void CTextureAssembler::AccumulateFileResources(char* wildcard, const int resgroup, 
+                                                char* mask_set,
+                                                const bool mask_inclusive) {
+    WIN32_FIND_DATA search_data;
     char filename[MAX_PATH];
     char temp[MAX_PATH];
     char* buf;
 
 
-    HANDLE hSearch = FindFirstFile(wildcard, &SearchData);
+    const auto h_search = FindFirstFile(wildcard, &search_data);
 
-    if (hSearch == INVALID_HANDLE_VALUE) {
+    if (h_search == INVALID_HANDLE_VALUE) {
         SysLog("Can't find the path: %s\n", wildcard);
         return;
     }
@@ -91,8 +95,8 @@ void CTextureAssembler::AccumulateFileResources(char* wildcard, int resgroup, ch
     do {
         // recurse subfolders
 
-        if (SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-            if (SearchData.cFileName[0] == '.') {
+        if (search_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+            if (search_data.cFileName[0] == '.') {
                 continue;
             }
 
@@ -106,18 +110,18 @@ void CTextureAssembler::AccumulateFileResources(char* wildcard, int resgroup, ch
             }
 
             strcpy(temp, buf);
-            strcpy(buf, SearchData.cFileName);
+            strcpy(buf, search_data.cFileName);
             strcat(filename, "\\");
             strcat(filename, temp);
 
-            AccumulateFileResources(filename, resgroup, mask_set, bMaskInclusive);
+            AccumulateFileResources(filename, resgroup, mask_set, mask_inclusive);
         }
 
             // process a file
 
         else {
-            if (CheckMask(SearchData.cFileName, mask_set, bMaskInclusive))
-                if (!FindObj(obj_list, SearchData.cFileName)) {
+            if (CheckMask(search_data.cFileName, mask_set, mask_inclusive))
+                if (!FindObj(obj_list, search_data.cFileName)) {
                     strcpy(filename, wildcard);
                     buf = strrchr(filename, '\\');
                     if (!buf) {
@@ -126,29 +130,31 @@ void CTextureAssembler::AccumulateFileResources(char* wildcard, int resgroup, ch
                     else {
                         buf++;
                     }
-                    strcpy(buf, SearchData.cFileName);
+                    strcpy(buf, search_data.cFileName);
 
-                    HTEXTURE tex = hge->Texture_Load(filename);
+                    const auto tex = hge->Texture_Load(filename);
                     if (!tex) {
                         SysLog("Can't load texture: %s\n", filename);
                         continue;
                     }
 
-                    hgeSprite* spr = new hgeSprite(tex, 0, 0,
-                                                   (float)hge->Texture_GetWidth(tex, true),
-                                                   (float)hge->Texture_GetHeight(tex, true));
+                    const auto spr = new hgeSprite(
+                        tex, 0, 0,
+                        static_cast<float>(hge->Texture_GetWidth(tex, true)),
+                        static_cast<float>(hge->Texture_GetHeight(tex, true))
+                    );
 
-                    buf = new char[strlen(SearchData.cFileName) + 1];
-                    strcpy(buf, SearchData.cFileName);
+                    buf = new char[strlen(search_data.cFileName) + 1];
+                    strcpy(buf, search_data.cFileName);
 
                     obj_list.push_back(new CSpriteObject(spr, buf, resgroup, true));
                 }
         }
 
     }
-    while (FindNextFile(hSearch, &SearchData));
+    while (FindNextFile(h_search, &search_data));
 
-    FindClose(hSearch);
+    FindClose(h_search);
 }
 
 
@@ -170,7 +176,7 @@ bool CTextureAssembler::GenerateTextures(char* wildcard) {
         name = wildcard;
     }
 
-    int pathlen = name - wildcard;
+    const auto pathlen = name - wildcard;
 
     if (!strlen(name)) {
         SysLog("Invalid wildcard: %s\n", wildcard);
@@ -192,7 +198,7 @@ bool CTextureAssembler::GenerateTextures(char* wildcard) {
 
     texture.Reset();
 
-    for (it = obj_list.begin(); it != obj_list.end(); it++)
+    for (it = obj_list.begin(); it != obj_list.end(); ++it)
         if (!(*it)->GetTexture()) {
             texture.AddNoTextureObject(*it);
         }
@@ -216,7 +222,7 @@ bool CTextureAssembler::GenerateTextures(char* wildcard) {
     for (;;) {
         texture.Reset();
 
-        for (it = obj_list.begin(); it != obj_list.end(); it++)
+        for (it = obj_list.begin(); it != obj_list.end(); ++it)
             if (!(*it)->IsPlaced()) {
                 texture.PlaceObject(*it);
             }

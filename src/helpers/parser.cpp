@@ -86,11 +86,11 @@ Keyword keytable[] = {
 RScriptParser::RScriptParser(char* name, char* scr) {
     hge_ = hgeCreate(HGE_VERSION);
 
-    scriptname = name;
-    script = scr;
-    tokenvalue[0] = 0;
-    tokentype = TTNONE;
-    line = 1;
+    scriptname_ = name;
+    script_ = scr;
+    tokenvalue_[0] = 0;
+    tokentype_ = TTNONE;
+    line_ = 1;
 }
 
 int RScriptParser::get_token() {
@@ -99,15 +99,15 @@ int RScriptParser::get_token() {
     // Skip whitespaces and comments
 
     for (;;) {
-        while (*script == ' ' || *script == '\t' || *script == '\n' || *script == '\r') {
-            if (*script == '\n') {
-                line++;
+        while (*script_ == ' ' || *script_ == '\t' || *script_ == '\n' || *script_ == '\r') {
+            if (*script_ == '\n') {
+                line_++;
             }
-            script++;
+            script_++;
         }
-        if (*script == ';')
-            while (*script && *script != '\n' && *script != '\r') {
-                script++;
+        if (*script_ == ';')
+            while (*script_ && *script_ != '\n' && *script_ != '\r') {
+                script_++;
             }
         else {
             break;
@@ -116,69 +116,69 @@ int RScriptParser::get_token() {
 
     // End of script
 
-    if (!*script) {
-        tokentype = TTEND;
-        tokenvalue[0] = 0;
-        return tokentype;
+    if (!*script_) {
+        tokentype_ = TTEND;
+        tokenvalue_[0] = 0;
+        return tokentype_;
     }
 
     // Number
 
-    if ((*script >= '0' && *script <= '9') || *script == '.' || *script == '-') {
-        tokentype = TTNUMBER;
-        for (i = 0; (*script >= '0' && *script <= '9') || *script == '.' || *script == '-'; i++) {
-            tokenvalue[i] = *script++;
+    if ((*script_ >= '0' && *script_ <= '9') || *script_ == '.' || *script_ == '-') {
+        tokentype_ = TTNUMBER;
+        for (i = 0; (*script_ >= '0' && *script_ <= '9') || *script_ == '.' || *script_ == '-'; i++) {
+            tokenvalue_[i] = *script_++;
         }
 
         // Hexadecimal number starting with decimal digit
 
-        if ((*script >= 'A' && *script <= 'F') || (*script >= 'a' && *script <= 'f')) {
-            tokentype = TTSTRING;
-            for (; (*script >= 'A' && *script <= 'F') || (*script >= 'a' && *script <= 'f'); i++) {
-                tokenvalue[i] = *script++;
+        if ((*script_ >= 'A' && *script_ <= 'F') || (*script_ >= 'a' && *script_ <= 'f')) {
+            tokentype_ = TTSTRING;
+            for (; (*script_ >= 'A' && *script_ <= 'F') || (*script_ >= 'a' && *script_ <= 'f'); i++) {
+                tokenvalue_[i] = *script_++;
             }
         }
 
-        tokenvalue[i] = 0;
-        return tokentype;
+        tokenvalue_[i] = 0;
+        return tokentype_;
     }
 
     // Quoted string
 
-    if (*script == '"') {
-        tokentype = TTSTRING;
-        script++;
-        for (i = 0; *script && *script != '"' && *script != '\n' && *script != '\r'; i++) {
-            tokenvalue[i] = *script++;
+    if (*script_ == '"') {
+        tokentype_ = TTSTRING;
+        script_++;
+        for (i = 0; *script_ && *script_ != '"' && *script_ != '\n' && *script_ != '\r'; i++) {
+            tokenvalue_[i] = *script_++;
         }
-        tokenvalue[i] = 0;
-        if (*script) {
-            script++;
+        tokenvalue_[i] = 0;
+        if (*script_) {
+            script_++;
         }
-        return tokentype;
+        return tokentype_;
     }
 
     // Keyword
 
     for (i = 0; keytable[i].word_; i++)
-        if (!strtkcmp(keytable[i].word_, script)) {
-            tokentype = keytable[i].code_;
-            strcpy(tokenvalue, keytable[i].word_);
-            script += strlen(keytable[i].word_);
-            return tokentype;
+        if (!strtkcmp(keytable[i].word_, script_)) {
+            tokentype_ = keytable[i].code_;
+            strcpy(tokenvalue_, keytable[i].word_);
+            script_ += strlen(keytable[i].word_);
+            return tokentype_;
         }
 
     // Unquoted string or hexadecimal number
 
-    tokentype = TTSTRING;
+    tokentype_ = TTSTRING;
     for (i = 0;
-         *script && *script != ' ' && *script != '\t' && *script != '\n' && *script != '\r'
-         && *script != ',' && *script != '=' && *script != '{' && *script != '}' && *script != ':';
+         *script_ && *script_ != ' ' && *script_ != '\t' && *script_ != '\n' && *script_ != '\r'
+         && *script_ != ',' && *script_ != '=' && *script_ != '{' && *script_ != '}' && *script_ != ':';
          i++) {
-        tokenvalue[i] = *script++;
+        tokenvalue_[i] = *script_++;
     }
-    tokenvalue[i] = 0;
-    return tokentype;
+    tokenvalue_[i] = 0;
+    return tokentype_;
 }
 
 bool RScriptParser::strtkcmp(const char* str, const char* mem) {
@@ -196,8 +196,8 @@ bool RScriptParser::strtkcmp(const char* str, const char* mem) {
 
 uint32_t RScriptParser::tkn_hex() {
     uint32_t dw = 0;
-    for (auto i = 0; tokenvalue[i]; i++) {
-        auto chr = tokenvalue[i];
+    for (auto i = 0; tokenvalue_[i]; i++) {
+        auto chr = tokenvalue_[i];
         if (chr >= 'a') {
             chr -= 'a' - ':';
         }
@@ -213,7 +213,7 @@ uint32_t RScriptParser::tkn_hex() {
     return dw;
 }
 
-void RScriptParser::ScriptPostError(char* msg1, char* msg2) {
+void RScriptParser::script_post_error(char* msg1, char* msg2) {
     hge_->System_Log("%s, line %d: %s'%s'%s",
-                    get_name(), get_line(), msg1, tokenvalue[0] ? tkn_string() : "<EOF>", msg2);
+                    get_name(), get_line(), msg1, tokenvalue_[0] ? tkn_string() : "<EOF>", msg2);
 }
