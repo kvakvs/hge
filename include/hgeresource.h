@@ -28,7 +28,7 @@ class hgeResourceManager;
 struct ResDesc {
     char name[MAXRESCHARS];
     int resgroup;
-    hgeU32 handle;
+    uint32_t handle;
     ResDesc* next;
 
     ResDesc() {
@@ -39,7 +39,7 @@ struct ResDesc {
         hge_->Release();
     }
 
-    virtual hgeU32 Get(hgeResourceManager* rm) = 0;
+    virtual uint32_t Get(hgeResourceManager* rm) = 0;
     virtual void Free() = 0;
 
 protected:

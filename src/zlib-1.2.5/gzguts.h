@@ -50,7 +50,7 @@
 /* get errno and strerror definition */
 #if defined UNDER_CE
 #  include <windows.h>
-#  define zstrerror() gz_strwinerror((hgeU32)GetLastError())
+#  define zstrerror() gz_strwinerror((uint32_t)GetLastError())
 #else
 #  ifdef STDC
 #    include <errno.h>
@@ -118,7 +118,7 @@ typedef gz_state FAR *gz_statep;
 /* shared functions */
 void ZLIB_INTERNAL gz_error OF((gz_statep, int, const char *));
 #if defined UNDER_CE
-char ZLIB_INTERNAL *gz_strwinerror OF((hgeU32 error));
+char ZLIB_INTERNAL *gz_strwinerror OF((uint32_t error));
 #endif
 
 /* GT_OFF(x), where x is an unsigned value, is true if x > maximum z_off64_t

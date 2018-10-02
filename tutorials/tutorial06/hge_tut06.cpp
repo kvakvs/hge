@@ -37,7 +37,7 @@ hgeFont* fnt;
 hgeSprite* spr;
 
 
-bool FrameFunc() {
+bool frame_func() {
     const auto dt = hge->Timer_GetDelta();
     static float t = 0.0f;
     static int lastid = 0;
@@ -87,7 +87,7 @@ bool FrameFunc() {
 }
 
 
-bool RenderFunc() {
+bool render_func() {
     // Render graphics
     hge->Gfx_BeginScene();
     hge->Gfx_RenderQuad(&quad);
@@ -104,8 +104,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     hge = hgeCreate(HGE_VERSION);
 
     hge->System_SetState(HGE_LOGFILE, "hge_tut06.log");
-    hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
-    hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
+    hge->System_SetState(HGE_FRAMEFUNC, frame_func);
+    hge->System_SetState(HGE_RENDERFUNC, render_func);
     hge->System_SetState(HGE_TITLE, "HGE Tutorial 06 - Creating menus");
     hge->System_SetState(HGE_WINDOWED, true);
     hge->System_SetState(HGE_SCREENWIDTH, 800);

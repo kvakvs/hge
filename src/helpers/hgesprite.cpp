@@ -326,7 +326,7 @@ void hgeSprite::SetTextureRect(const float x, const float y,
 }
 
 
-void hgeSprite::SetColor(const hgeU32 col, const int i) {
+void hgeSprite::SetColor(const uint32_t col, const int i) {
     if (i != -1) {
         quad_.v[i].col = col;
     }

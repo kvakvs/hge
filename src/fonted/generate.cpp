@@ -3,7 +3,7 @@
 CHAR_DESC vChars[256];
 
 
-bool PlaceSymbols(const int n_width, const int n_height,
+bool place_symbols(const int n_width, const int n_height,
                   CSymbolRange* p_ranges, const int n_range_count) {
     auto x = 1;
     auto y = 1;
@@ -30,19 +30,19 @@ bool PlaceSymbols(const int n_width, const int n_height,
     return true;
 }
 
-HTEXTURE FontGenerate(char* sz_font_name, const int n_size,
-                      const int n_padding_top, const int n_padding_btm,
-                      const int n_padding_lft, const int n_padding_rgt,
-                      const bool b_bold, const bool b_italic,
-                      const bool b_antialias, CSymbolRange* p_ranges,
-                      const int n_range_count) {
+HTEXTURE generate_font(char* sz_font_name, const int n_size,
+                       const int n_padding_top, const int n_padding_btm,
+                       const int n_padding_lft, const int n_padding_rgt,
+                       const bool b_bold, const bool b_italic,
+                       const bool b_antialias, CSymbolRange* p_ranges,
+                       const int n_range_count) {
     int i, j;
 
     BITMAPINFO bmi;
     ABCFLOAT abc;
     TEXTMETRIC tTextMetrics;
 
-    hgeU32* pPixels;
+    uint32_t* pPixels;
 
     // create font
     const auto h_font = CreateFont(
@@ -85,7 +85,7 @@ HTEXTURE FontGenerate(char* sz_font_name, const int n_size,
     auto n_height = 32;
 
     for (;;) {
-        if (PlaceSymbols(n_width, n_height, p_ranges, n_range_count)) {
+        if (place_symbols(n_width, n_height, p_ranges, n_range_count)) {
             break;
         }
 
@@ -150,11 +150,11 @@ HTEXTURE FontGenerate(char* sz_font_name, const int n_size,
 
     // transfer DC bitmap onto HGE texture with alpha channel
     const auto tex = hge->Texture_Create(n_width, n_height);
-    hgeU32* pTexData = hge->Texture_Lock(tex, false);
+    uint32_t* pTexData = hge->Texture_Lock(tex, false);
 
     for (i = 0; i < n_height; i++) {
         for (j = 0; j < n_width; j++) {
-            hgeU32 dwPixel = pPixels[i * n_width + j];
+            uint32_t dwPixel = pPixels[i * n_width + j];
             dwPixel = 0xFFFFFF | ((dwPixel & 0xFF) << 24);
             pTexData[i * n_width + j] = dwPixel;
         }

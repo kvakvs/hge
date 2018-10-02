@@ -15,11 +15,11 @@
 #include "../../include/hgegui.h"
 
 
-#define ButtonGetState(id)		((hgeGUIButton*)gui->GetCtrl(id))->GetState()
-#define ButtonSetState(id,b)	((hgeGUIButton*)gui->GetCtrl(id))->SetState(b)
-#define SliderGetValue(id)		((hgeGUISlider*)gui->GetCtrl(id))->GetValue()
-#define SliderSetValue(id,f)	((hgeGUISlider*)gui->GetCtrl(id))->SetValue(f)
-#define GetTextCtrl(id)			((hgeGUIText*)gui->GetCtrl(id))
+#define BUTTON_GET_STATE(id)    ((hgeGUIButton*)gui->GetCtrl(id))->GetState()
+#define BUTTON_SET_STATE(id,b)  ((hgeGUIButton*)gui->GetCtrl(id))->SetState(b)
+#define SLIDER_GET_VALUE(id)    ((hgeGUISlider*)gui->GetCtrl(id))->GetValue()
+#define SLIDER_SET_VALUE(id,f)  ((hgeGUISlider*)gui->GetCtrl(id))->SetValue(f)
+#define GET_TEXT_CTRL(id)       ((hgeGUIText*)gui->GetCtrl(id))
 
 
 #define MAX_TEXTURE_SIZE 1024
@@ -48,35 +48,41 @@ struct CHAR_DESC {
 extern CHAR_DESC vChars[256];
 
 
-bool cmdSaveFont();
-void cmdGenerateFont();
+bool cmd_save_font();
+void cmd_generate_font();
 
 extern HGE* hge;
 
 struct FEditorState {
-    bool bHelp;
-    bool bBBox;
-    bool bDrag;
-    float nDragXOffset, nDragYOffset;
-    float nDragOldX, nDragOldY;
-    float mx, my;
+    bool help_;
+    bool b_box_;
+    bool drag_;
+    float drag_x_offset_;
+    float drag_y_offset_;
+    float drag_old_x_;
+    float drag_old_y_;
+    float mx_;
+    float my_;
 
-    char* FontFamily;
-    int nSize;
-    int nPadTop, nPadBtm, nPadLft, nPadRgt;
-    bool bBold;
-    bool bItalic;
-    bool bAntialias;
-    CSymbolRange sr;
+    char* font_family_;
+    int size_;
+    int pad_top_;
+    int pad_btm_;
+    int pad_lft_;
+    int pad_rgt_;
+    bool bold_;
+    bool italic_;
+    bool antialias_;
+    CSymbolRange sr_;
 };
 
 extern hgeFont* fnt;
 extern hgeGUI* gui;
-extern HTEXTURE texGui, texFont;
+extern HTEXTURE tex_gui, tex_font;
 
-extern hgeSprite *sprLeftPane1, *sprLeftPane2;
-extern hgeSprite* sprCursor;
-extern hgeSprite* sprFont;
+extern hgeSprite *spr_left_pane1, *spr_left_pane2;
+extern hgeSprite* spr_cursor;
+extern hgeSprite* spr_font;
 
 extern FEditorState state;
 
@@ -84,17 +90,13 @@ extern FEditorState state;
 extern float psx, psy;
 extern float fw2, fh2;
 
-bool HandleKeys(int key);
-bool DoCommands(int id);
-bool SavePNG(HTEXTURE tex, char* filename);
-HTEXTURE FontGenerate(char* szFontName,
-                      int nSize,
-                      int nPaddingTop, int nPaddingBtm, int nPaddingLft, int nPaddingRgt,
-                      bool bItalic,
-                      bool bBold,
-                      bool bAntialias,
-                      CSymbolRange* pRanges,
-                      int nRangeCount);
+bool handle_keys(int key);
+bool do_commands(int id);
+bool save_png(HTEXTURE tex, char* filename);
+HTEXTURE generate_font(char* font_name, int size,
+                       int padding_top, int padding_btm, int padding_lft,
+                       int padding_rgt, bool italic, bool bold,
+                       bool antialias, CSymbolRange* ranges, int range_count);
 
 #define CMD_EXIT				1
 #define CMD_HELP				2
@@ -108,4 +110,3 @@ HTEXTURE FontGenerate(char* szFontName,
 #define CMD_TFONTSIZE			10
 #define CMD_FAMILYLIST			11
 #define CMD_FAMILYSLIDER		12
-

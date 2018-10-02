@@ -197,24 +197,24 @@ void DDone() {
 }
 
 bool DFrame() {
-    hgeU8 alpha;
+    uint8_t alpha;
 
     dtime += pHGE->Timer_GetDelta();
 
     if (dtime < 0.25) {
-        alpha = static_cast<hgeU8>((dtime * 4) * 0xFF);
+        alpha = static_cast<uint8_t>((dtime * 4) * 0xFF);
     }
     else if (dtime < 1.0) {
         alpha = 0xFF;
     }
     else if (dtime < 1.25) {
-        alpha = static_cast<hgeU8>((1.0f - (dtime - 1.0f) * 4) * 0xFF);
+        alpha = static_cast<uint8_t>((1.0f - (dtime - 1.0f) * 4) * 0xFF);
     }
     else {
         return true;
     }
 
-    hgeU32 col = 0xFFFFFF | (alpha << 24);
+    uint32_t col = 0xFFFFFF | (alpha << 24);
     dquad.v[0].col = col;
     dquad.v[1].col = col;
     dquad.v[2].col = col;

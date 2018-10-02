@@ -249,8 +249,8 @@ bool hgeGUISlider::MouseMove(float x, float y) {
 
 hgeGUIListbox::hgeGUIListbox(const int _id, const float x, const float y,
                              const float w, const float h, hgeFont* fnt,
-                             const hgeU32 tColor, const hgeU32 thColor,
-                             const hgeU32 hColor) {
+                             const uint32_t tColor, const uint32_t thColor,
+                             const uint32_t hColor) {
     id = _id;
     bStatic = false;
     bVisible = true;

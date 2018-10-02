@@ -43,4 +43,4 @@ private:
     CFontListItem* p_fonts_;
 };
 
-extern CFontList* FontList;
+extern CFontList* font_list;

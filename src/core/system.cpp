@@ -23,7 +23,7 @@ int nRef = 0;
 HGE_Impl* pHGE = nullptr;
 
 
-BOOL APIENTRY DllMain(HANDLE, hgeU32, LPVOID) {
+BOOL APIENTRY DllMain(HANDLE, uint32_t, LPVOID) {
     return TRUE;
 }
 
@@ -756,7 +756,7 @@ void HGE_CALL HGE_Impl::System_Log(const char* szFormat, ...) {
 }
 
 bool HGE_CALL HGE_Impl::System_Launch(const char* url) {
-    const auto shell_execute = reinterpret_cast<hgeU32>(
+    const auto shell_execute = reinterpret_cast<uint32_t>(
         ShellExecute(pHGE->hwnd_, nullptr, url, nullptr, nullptr, SW_SHOWMAXIMIZED)
     );
     if (shell_execute > 32) {
@@ -796,8 +796,9 @@ void HGE_CALL HGE_Impl::System_Snapshot(const char* filename) {
 
 
 HGE_Impl::HGE_Impl()
-    : style_windowed_(0), style_fullscreen_(0), n_prim_(0), cur_prim_type_(0), cur_blend_mode_(0), cur_texture_(0),
-      cur_shader_(0), t0_(0), t0_fps_(0), dt_(0), cfps_(0) {
+    : style_windowed_(0), style_fullscreen_(0), n_prim_(0), cur_prim_type_(0),
+      cur_blend_mode_(0), cur_texture_(0), cur_shader_(0), t0_(0), t0_fps_(0),
+      dt_(0), cfps_(0) {
     h_instance_ = GetModuleHandle(nullptr);
     hwnd_ = nullptr;
     active_ = false;

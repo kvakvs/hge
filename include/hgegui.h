@@ -80,7 +80,7 @@ public:
         return false;
     }
 
-    virtual void SetColor(const hgeU32 _color) {
+    virtual void SetColor(const uint32_t _color) {
         color = _color;
     }
 
@@ -89,7 +89,7 @@ public:
     bool bVisible;
     bool bEnabled;
     hgeRect rect;
-    hgeU32 color;
+    uint32_t color;
 
     hgeGUI* gui;
     hgeGUIObject* next;
@@ -121,7 +121,7 @@ public:
 
     void SetNavMode(int mode);
     void SetCursor(hgeSprite* spr);
-    void SetColor(const hgeU32 color);
+    void SetColor(const uint32_t color);
     void SetFocus(int id);
     int GetFocus() const;
 

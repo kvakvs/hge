@@ -7,40 +7,40 @@
 */
 
 
-#include "..\..\include\hgecolor.h"
+#include "../../include/hgecolor.h"
 #include <math.h>
 
 
-void hgeColorHSV::SetHWColor(hgeU32 col)
-{
-    float r, g, b;
+void hgeColorHSV::SetHWColor(uint32_t col) {
+    a = (col >> 24) / 255.0f;
+    auto r = ((col >> 16) & 0xFF) / 255.0f;
+    auto g = ((col >> 8) & 0xFF) / 255.0f;
+    auto b = (col & 0xFF) / 255.0f;
 
-    a = (col>>24) / 255.0f;
-    r = ((col>>16) & 0xFF) / 255.0f;
-    g = ((col>>8)  & 0xFF) / 255.0f;
-    b = (col       & 0xFF) / 255.0f;
-
-    float minv = min(min(r, g), b);
-    float maxv = max(max(r, g), b);
-    float delta = maxv - minv;
+    const auto minv = min(min(r, g), b);
+    const auto maxv = max(max(r, g), b);
+    const auto delta = maxv - minv;
 
     v = maxv;
 
     if (delta == 0) {
         h = 0;
         s = 0;
-    } else {
+    }
+    else {
         s = delta / maxv;
-        float del_R = (((maxv - r) / 6) + (delta / 2)) / delta;
-        float del_G = (((maxv - g) / 6) + (delta / 2)) / delta;
-        float del_B = (((maxv - b) / 6) + (delta / 2)) / delta;
+        const auto del_r = (((maxv - r) / 6) + (delta / 2)) / delta;
+        const auto del_g = (((maxv - g) / 6) + (delta / 2)) / delta;
+        const auto del_b = (((maxv - b) / 6) + (delta / 2)) / delta;
 
-        if      (r == maxv) {
-            h = del_B - del_G;
-        } else if (g == maxv) {
-            h = (1.0f / 3.0f) + del_R - del_B;
-        } else if (b == maxv) {
-            h = (2.0f / 3.0f) + del_G - del_R;
+        if (r == maxv) {
+            h = del_b - del_g;
+        }
+        else if (g == maxv) {
+            h = (1.0f / 3.0f) + del_r - del_b;
+        }
+        else if (b == maxv) {
+            h = (2.0f / 3.0f) + del_g - del_r;
         }
 
         if (h < 0) {
@@ -52,51 +52,60 @@ void hgeColorHSV::SetHWColor(hgeU32 col)
     }
 }
 
-hgeU32 hgeColorHSV::GetHWColor() const
-{
-    float r, g, b;
+uint32_t hgeColorHSV::GetHWColor() const {
+    float r;
+    float g;
+    float b;
 
     if (s == 0) {
         r = v;
         g = v;
         b = v;
-    } else {
-        float xh = h * 6;
-        if(xh == 6) {
-            xh=0;
+    }
+    else {
+        auto xh = h * 6;
+        if (xh == 6) {
+            xh = 0;
         }
-        float i = floorf(xh);
-        float p1 = v * (1 - s);
-        float p2 = v * (1 - s * (xh - i));
-        float p3 = v * (1 - s * (1 - (xh - i)));
+        const auto i = floorf(xh);
+        const auto p1 = v * (1 - s);
+        const auto p2 = v * (1 - s * (xh - i));
+        const auto p3 = v * (1 - s * (1 - (xh - i)));
 
-        if      (i == 0) {
+        if (i == 0) {
             r = v;
             g = p3;
             b = p1;
-        } else if (i == 1) {
+        }
+        else if (i == 1) {
             r = p2;
             g = v;
             b = p1;
-        } else if (i == 2) {
+        }
+        else if (i == 2) {
             r = p1;
             g = v;
             b = p3;
-        } else if (i == 3) {
+        }
+        else if (i == 3) {
             r = p1;
             g = p2;
             b = v;
-        } else if (i == 4) {
+        }
+        else if (i == 4) {
             r = p3;
             g = p1;
             b = v;
-        } else			 {
+        }
+        else {
             r = v;
             g = p1;
             b = p2;
         }
     }
 
-    return (hgeU32(a*255.0f)<<24) + (hgeU32(r*255.0f)<<16) + (hgeU32(g*255.0f)<<8) + hgeU32(b*255.0f);
+    return (uint32_t(a * 255.0f) << 24)
+            + (uint32_t(r * 255.0f) << 16)
+            + (uint32_t(g * 255.0f) << 8)
+            + uint32_t(b * 255.0f);
 }
-

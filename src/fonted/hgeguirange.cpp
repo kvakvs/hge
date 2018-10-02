@@ -12,7 +12,7 @@
 
 hgeGUIRange::hgeGUIRange(const int _id, const float x, const float y, 
                          const float w, const float h, const int _nrows,
-                         const int _ncols, const hgeU32 color) {
+                         const int _ncols, const uint32_t color) {
     id = _id;
     bStatic = false;
     bVisible = true;

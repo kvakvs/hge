@@ -121,7 +121,7 @@ void hgeGUI::SetCursor(hgeSprite* spr) {
 }
 
 
-void hgeGUI::SetColor(const hgeU32 color) {
+void hgeGUI::SetColor(const uint32_t color) {
     auto ctrl = ctrls_;
 
     while (ctrl) {

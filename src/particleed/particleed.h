@@ -20,11 +20,11 @@
 
 #define PARTICLE_SIZE			32
 
-#define ButtonGetState(id)		((hgeGUIButton*)gui->GetCtrl(id))->GetState()
-#define ButtonSetState(id,b)	((hgeGUIButton*)gui->GetCtrl(id))->SetState(b)
-#define SliderGetValue(id)		((hgeGUISlider*)gui->GetCtrl(id))->GetValue()
-#define SliderSetValue(id,f)	((hgeGUISlider*)gui->GetCtrl(id))->SetValue(f)
-#define GetTextCtrl(id)			((hgeGUIText*)gui->GetCtrl(id))
+#define BUTTON_GET_STATE(id)		((hgeGUIButton*)gui->GetCtrl(id))->GetState()
+#define BUTTON_SET_STATE(id,b)	((hgeGUIButton*)gui->GetCtrl(id))->SetState(b)
+#define SLIDER_GET_VALUE(id)		((hgeGUISlider*)gui->GetCtrl(id))->GetValue()
+#define SLIDER_SET_VALUE(id,f)	((hgeGUISlider*)gui->GetCtrl(id))->SetValue(f)
+#define GET_TEXT_CTRL(id)			((hgeGUIText*)gui->GetCtrl(id))
 
 
 extern HGE* hge;
@@ -42,16 +42,16 @@ struct PEditorState {
 
 extern hgeFont* fnt;
 extern hgeGUI* gui;
-extern HTEXTURE texGui, texParticle;
+extern HTEXTURE tex_gui, texParticle;
 
-extern hgeSprite *sprLeftPane1, *sprLeftPane2, *sprRightPane1, *sprRightPane2;
-extern hgeSprite *sprCursor, *sprColor, *sprBBox;
+extern hgeSprite *spr_left_pane1, *spr_left_pane2, *sprRightPane1, *sprRightPane2;
+extern hgeSprite *spr_cursor, *sprColor, *sprBBox;
 extern hgeAnimation* sprParticles;
 
 extern PEditorState state;
 
-bool HandleKeys(int key);
-bool DoCommands(int id);
+bool handle_keys(int key);
+bool do_commands(int id);
 
 void cmdChangePreset(int n);
 void cmdSavePreset(int n);

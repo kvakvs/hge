@@ -14,7 +14,7 @@ HGE* hge = nullptr;
 // This function will be called by HGE once per frame.
 // Put your game loop code here. In this example we
 // just check whether ESC key has been pressed.
-bool FrameFunc() {
+bool frame_func() {
     // By returning "true" we tell HGE
     // to stop running the application.
     if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
@@ -32,7 +32,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     hge = hgeCreate(HGE_VERSION);
 
     // Set our frame function
-    hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
+    hge->System_SetState(HGE_FRAMEFUNC, frame_func);
 
     // Set the window title
     hge->System_SetState(HGE_TITLE, "HGE Tutorial 01 - Minimal HGE application");

@@ -41,7 +41,7 @@ void boom() {
     hge->Effect_PlayEx(snd, 100, pan, pitch);
 }
 
-bool FrameFunc() {
+bool frame_func() {
     // Get the time elapsed since last call of FrameFunc().
     // This will help us to synchronize on different
     // machines and video modes.
@@ -97,7 +97,7 @@ bool FrameFunc() {
 // This function will be called by HGE when
 // the application window should be redrawn.
 // Put your rendering code here.
-bool RenderFunc() {
+bool render_func() {
     // Begin rendering quads.
     // This function must be called
     // before any actual rendering.
@@ -124,8 +124,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     // Set up log file, frame function, render function and window title
     hge->System_SetState(HGE_LOGFILE, "hge_tut02.log");
-    hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
-    hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
+    hge->System_SetState(HGE_FRAMEFUNC, frame_func);
+    hge->System_SetState(HGE_RENDERFUNC, render_func);
     hge->System_SetState(HGE_TITLE, "HGE Tutorial 02 - Using input, sound and rendering");
 
     // Set up video mode

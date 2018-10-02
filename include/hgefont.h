@@ -36,7 +36,7 @@ public:
     void printf(float x, float y, int align, const char* format, ...);
     void printfb(float x, float y, float w, float h, int align, const char* format, ...);
 
-    void SetColor(hgeU32 col);
+    void SetColor(uint32_t col);
     void SetZ(float z);
     void SetBlendMode(int blend);
 
@@ -60,7 +60,7 @@ public:
         spacing_ = spacing;
     }
 
-    hgeU32 GetColor() const {
+    uint32_t GetColor() const {
         return col_;
     }
 
@@ -132,7 +132,7 @@ private:
     float tracking_;
     float spacing_;
 
-    hgeU32 col_;
+    uint32_t col_;
     float z_;
     int blend_;
 };

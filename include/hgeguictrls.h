@@ -130,8 +130,8 @@ struct hgeGUIListboxItem {
 
 class hgeGUIListbox : public hgeGUIObject {
 public:
-    hgeGUIListbox(int id, float x, float y, float w, float h, hgeFont* fnt, hgeU32 tColor,
-                  hgeU32 thColor, hgeU32 hColor);
+    hgeGUIListbox(int id, float x, float y, float w, float h, hgeFont* fnt, uint32_t tColor,
+                  uint32_t thColor, uint32_t hColor);
     virtual ~hgeGUIListbox();
 
     int AddItem(char* item);
@@ -180,8 +180,8 @@ public:
 private:
     hgeSprite* spr_highlight_;
     hgeFont* font_;
-    hgeU32 text_color_;
-    hgeU32 text_highlight_color_;
+    uint32_t text_color_;
+    uint32_t text_highlight_color_;
 
     int items_;
     int selected_item_;

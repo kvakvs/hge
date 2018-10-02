@@ -13,7 +13,7 @@
 #include "hge_gapi.h"
 
 
-void HGE_CALL HGE_Impl::Gfx_Clear(const hgeU32 color) {
+void HGE_CALL HGE_Impl::Gfx_Clear(const uint32_t color) {
     if (cur_target_) {
         if (cur_target_->pDepth) {
             d3d_device_->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, color, 1.0f, 0);
@@ -214,7 +214,7 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
 
     d3d_device_->BeginScene();
 #if HGE_DIRECTX_VER == 8
-    pVB->Lock( 0, 0, (hgeU8**)&VertArray, D3DLOCK_DISCARD );
+    pVB->Lock( 0, 0, (uint8_t**)&VertArray, D3DLOCK_DISCARD );
 #endif
 #if HGE_DIRECTX_VER == 9
     vertex_buf_->Lock(0, 0, reinterpret_cast<void **>(&vert_array_), D3DLOCK_DISCARD);
@@ -232,7 +232,7 @@ void HGE_CALL HGE_Impl::Gfx_EndScene() {
 
 void HGE_CALL HGE_Impl::Gfx_RenderLine(const float x1, const float y1,
                                        const float x2, const float y2,
-                                       const hgeU32 color, const float z) {
+                                       const uint32_t color, const float z) {
     if (vert_array_) {
         if (cur_prim_type_ != HGEPRIM_LINES 
             || n_prim_ >= VERTEX_BUFFER_SIZE / HGEPRIM_LINES 
@@ -427,9 +427,9 @@ HTEXTURE HGE_CALL HGE_Impl::Texture_Create(int width, int height) {
 }
 
 HTEXTURE HGE_CALL HGE_Impl::Texture_Load(const char* filename, 
-                                         const hgeU32 size, bool bMipmap) {
+                                         const uint32_t size, bool bMipmap) {
     void* data;
-    hgeU32 _size;
+    uint32_t _size;
     D3DFORMAT fmt1, fmt2;
     hgeGAPITexture* pTex;
     D3DXIMAGE_INFO info;
@@ -445,7 +445,7 @@ HTEXTURE HGE_CALL HGE_Impl::Texture_Load(const char* filename,
         }
     }
 
-    if (*static_cast<hgeU32*>(data) == 0x20534444) {
+    if (*static_cast<uint32_t*>(data) == 0x20534444) {
         // Compressed DDS format magic number
         fmt1 = D3DFMT_UNKNOWN;
         fmt2 = D3DFMT_A8R8G8B8;
@@ -570,7 +570,7 @@ int HGE_CALL HGE_Impl::Texture_GetHeight(const HTEXTURE tex,
 }
 
 
-hgeU32* HGE_CALL HGE_Impl::Texture_Lock(const HTEXTURE tex,
+uint32_t* HGE_CALL HGE_Impl::Texture_Lock(const HTEXTURE tex,
                                         const bool b_read_only,
                                         const int left, const int top,
                                         const int width, const int height) {
@@ -608,7 +608,7 @@ hgeU32* HGE_CALL HGE_Impl::Texture_Lock(const HTEXTURE tex,
         return nullptr;
     }
 
-    return static_cast<hgeU32 *>(TRect.pBits);
+    return static_cast<uint32_t *>(TRect.pBits);
 }
 
 
@@ -652,7 +652,7 @@ void HGE_Impl::_render_batch(const bool b_end_scene) {
         }
 #if HGE_DIRECTX_VER == 8
         else {
-            pVB->Lock( 0, 0, (hgeU8**)&VertArray, D3DLOCK_DISCARD );
+            pVB->Lock( 0, 0, (uint8_t**)&VertArray, D3DLOCK_DISCARD );
         }
 #endif
 #if HGE_DIRECTX_VER == 9
@@ -922,7 +922,7 @@ bool HGE_Impl::_GfxInit() {
     // #if HGE_DIRECTX_VER == 9
     hgeGAPICaps caps;
     d3d_->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
-    hgeU32 vp;
+    uint32_t vp;
     if ((caps.VertexShaderVersion < D3DVS_VERSION(1,1))
         || !(caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)) {
         System_Log("Software Vertex-processing device selected");
@@ -1211,13 +1211,13 @@ bool HGE_Impl::_init_lost() {
     // Create and setup Index buffer
 
 #if HGE_DIRECTX_VER == 8
-    if( FAILED( pD3DDevice->CreateIndexBuffer(VERTEX_BUFFER_SIZE*6/4*sizeof(hgeU16),
+    if( FAILED( pD3DDevice->CreateIndexBuffer(VERTEX_BUFFER_SIZE*6/4*sizeof(uint16_t),
                 D3DUSAGE_WRITEONLY,
                 D3DFMT_INDEX16,
                 D3DPOOL_DEFAULT, &pIB ) ) )
 #endif
 #if HGE_DIRECTX_VER == 9
-    if (FAILED( d3d_device_->CreateIndexBuffer(VERTEX_BUFFER_SIZE*6/4*sizeof(hgeU16),
+    if (FAILED( d3d_device_->CreateIndexBuffer(VERTEX_BUFFER_SIZE*6/4*sizeof(uint16_t),
         D3DUSAGE_WRITEONLY,
         D3DFMT_INDEX16,
         D3DPOOL_DEFAULT,
@@ -1229,9 +1229,9 @@ bool HGE_Impl::_init_lost() {
         return false;
     }
 
-    hgeU16 *pIndices, n = 0;
+    uint16_t *pIndices, n = 0;
 #if HGE_DIRECTX_VER == 8
-    if( FAILED( pIB->Lock( 0, 0, (hgeU8**)&pIndices, 0 ) ) )
+    if( FAILED( pIB->Lock( 0, 0, (uint8_t**)&pIndices, 0 ) ) )
 #endif
 #if HGE_DIRECTX_VER == 9
     if (FAILED( index_buf_->Lock( 0, 0, (VOID**)&pIndices, 0 ) ))

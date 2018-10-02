@@ -19,56 +19,60 @@ HGE* hge = nullptr;
 
 hgeFont* fnt;
 hgeGUI* gui;
-HTEXTURE texGui;
-HTEXTURE texFont = 0;
+HTEXTURE tex_gui;
+HTEXTURE tex_font = 0;
 
-hgeSprite *sprFont = nullptr, *sprBlack;
-hgeSprite *sprLeftPane1, *sprLeftPane2;
-hgeSprite* sprCursor;
+hgeSprite *spr_font = nullptr;
+hgeSprite *spr_black;
+hgeSprite *spr_left_pane1;
+hgeSprite *spr_left_pane2;
+hgeSprite* spr_cursor;
 
-CFontList* FontList = nullptr;
+CFontList* font_list = nullptr;
 FEditorState state;
 
-float psx = 484, psy = 300;
-float fw2, fh2;
+float psx = 484;
+float psy = 300;
+float fw2;
+float fh2;
 
-void InitEditor();
-void DoneEditor();
-void CreateGUI();
+void init_editor();
+void done_editor();
+void create_gui();
 
-HTEXTURE FontGenerate();
+HTEXTURE generate_font();
 
 
-bool FrameFunc() {
+bool frame_func() {
     const auto dt = hge->Timer_GetDelta();
 
     // Update
 
-    fw2 = sprFont->GetWidth() / 2;
-    fh2 = sprFont->GetHeight() / 2;
+    fw2 = spr_font->GetWidth() / 2;
+    fh2 = spr_font->GetHeight() / 2;
 
-    hge->Input_GetMousePos(&state.mx, &state.my);
+    hge->Input_GetMousePos(&state.mx_, &state.my_);
     if (hge->Input_GetKeyState(HGEK_LBUTTON)) {
-        if (state.bDrag) {
-            psx = state.nDragOldX + (state.mx - state.nDragXOffset);
-            psy = state.nDragOldY + (state.my - state.nDragYOffset);
+        if (state.drag_) {
+            psx = state.drag_old_x_ + (state.mx_ - state.drag_x_offset_);
+            psy = state.drag_old_y_ + (state.my_ - state.drag_y_offset_);
         }
     }
     else {
-        state.bDrag = false;
+        state.drag_ = false;
     }
 
-    if (HandleKeys(hge->Input_GetKey())) {
+    if (handle_keys(hge->Input_GetKey())) {
         return true;
     }
-    if (DoCommands(gui->Update(dt))) {
+    if (do_commands(gui->Update(dt))) {
         return true;
     }
 
     return false;
 }
 
-bool RenderFunc() {
+bool render_func() {
     int i;
     char szTemp[128];
 
@@ -77,14 +81,14 @@ bool RenderFunc() {
     hge->Gfx_BeginScene();
     hge->Gfx_Clear(0xFF404040);
 
-    sprBlack->SetTextureRect(0, 0, sprFont->GetWidth(), sprFont->GetHeight());
-    sprBlack->Render(psx - fw2, psy - fh2);
-    sprFont->Render(psx - fw2, psy - fh2);
+    spr_black->SetTextureRect(0, 0, spr_font->GetWidth(), spr_font->GetHeight());
+    spr_black->Render(psx - fw2, psy - fh2);
+    spr_font->Render(psx - fw2, psy - fh2);
 
     float u0, v0, u1, v1;
 
-    if (state.bBBox)
-        for (i = state.sr.First; i <= state.sr.Last; i++) {
+    if (state.b_box_)
+        for (i = state.sr_.First; i <= state.sr_.Last; i++) {
             u0 = static_cast<float>(vChars[i].x) + psx - fw2;
             u1 = u0 + vChars[i].w;
             v0 = static_cast<float>(vChars[i].y) + psy - fh2;
@@ -97,19 +101,19 @@ bool RenderFunc() {
         }
 
     sprintf(szTemp, "Texture size: %dx%d",
-            static_cast<int>(sprFont->GetWidth()),
-            static_cast<int>(sprFont->GetHeight()));
+            static_cast<int>(spr_font->GetWidth()),
+            static_cast<int>(spr_font->GetHeight()));
     fnt->SetColor(0xFF808080);
     fnt->Render(176, 580, HGETEXT_LEFT, szTemp);
 
-    for (i = state.sr.First; i <= state.sr.Last; i++) {
+    for (i = state.sr_.First; i <= state.sr_.Last; i++) {
         u0 = static_cast<float>(vChars[i].x) + psx - fw2;
         u1 = u0 + vChars[i].w;
         v0 = static_cast<float>(vChars[i].y) + psy - fh2;
         v1 = v0 + vChars[i].h;
 
-        if (state.mx >= u0 && state.mx < u1 &&
-            state.my >= v0 && state.my < v1) {
+        if (state.mx_ >= u0 && state.mx_ < u1 &&
+            state.my_ >= v0 && state.my_ < v1) {
             hge->Gfx_RenderLine(u0 + 0.5f, v0 + 0.5f, u1, v0 + 0.5f, 0xFFFF0000);
             hge->Gfx_RenderLine(u1, v0 + 0.5f, u1, v1, 0xFFFF0000);
             hge->Gfx_RenderLine(u1, v1, u0 + 0.5f, v1, 0xFFFF0000);
@@ -129,12 +133,12 @@ bool RenderFunc() {
         }
     }
 
-    sprLeftPane1->Render(0, 0);
-    sprLeftPane2->Render(0, 512);
+    spr_left_pane1->Render(0, 0);
+    spr_left_pane2->Render(0, 512);
 
     gui->Render();
 
-    if (state.bHelp) {
+    if (state.help_) {
         fnt->SetColor(0xFFFFFFFF);
         fnt->Render(189, 18, HGETEXT_LEFT, "Left mouse button - drag font texture\n"
                     "Typefaces listbox - use Up/Down arrows, Mouse wheel\n"
@@ -145,7 +149,7 @@ bool RenderFunc() {
                     "Edit FONTED.INI file to run in fullscreen");
     }
     if (hge->Input_IsMouseOver()) {
-        sprCursor->Render(state.mx, state.my);
+        spr_cursor->Render(state.mx_, state.my_);
     }
 
     hge->Gfx_EndScene();
@@ -158,8 +162,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     hge->System_SetState(HGE_INIFILE, "fonted.ini");
     hge->System_SetState(HGE_LOGFILE, "fonted.log");
-    hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
-    hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
+    hge->System_SetState(HGE_FRAMEFUNC, frame_func);
+    hge->System_SetState(HGE_RENDERFUNC, render_func);
     hge->System_SetState(HGE_TITLE, "HGE Bitmap Font Builder");
     hge->System_SetState(HGE_SCREENWIDTH, 800);
     hge->System_SetState(HGE_SCREENHEIGHT, 600);
@@ -174,9 +178,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     }
 
     if (hge->System_Initiate()) {
-        InitEditor();
+        init_editor();
         hge->System_Start();
-        DoneEditor();
+        done_editor();
     }
     else {
         MessageBox(nullptr, hge->System_GetErrorMessage(), "Error",
@@ -188,113 +192,113 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     return 0;
 }
 
-void InitEditor() {
+void init_editor() {
     hge->Resource_AttachPack("fonted.paq");
 
     fnt = new hgeFont("font3.fnt");
 
-    state.bHelp = false;
-    state.bBBox = false;
-    state.bDrag = false;
+    state.help_ = false;
+    state.b_box_ = false;
+    state.drag_ = false;
 
-    FontList = new CFontList();
-    FontList->BuildList();
+    font_list = new CFontList();
+    font_list->BuildList();
 
-    state.FontFamily = FontList->GetFontByIdx(0);
-    state.nSize = 20;
-    state.nPadTop = hge->Ini_GetInt("HGE", "PaddingTop", 0);
-    state.nPadBtm = hge->Ini_GetInt("HGE", "PaddingBottom", 0);
-    state.nPadLft = hge->Ini_GetInt("HGE", "PaddingLeft", 0);
-    state.nPadRgt = hge->Ini_GetInt("HGE", "PaddingRight", 0);
-    state.bBold = false;
-    state.bItalic = false;
-    state.bAntialias = true;
-    state.sr.First = 32;
-    state.sr.Last = 126;
+    state.font_family_ = font_list->GetFontByIdx(0);
+    state.size_ = 20;
+    state.pad_top_ = hge->Ini_GetInt("HGE", "PaddingTop", 0);
+    state.pad_btm_ = hge->Ini_GetInt("HGE", "PaddingBottom", 0);
+    state.pad_lft_ = hge->Ini_GetInt("HGE", "PaddingLeft", 0);
+    state.pad_rgt_ = hge->Ini_GetInt("HGE", "PaddingRight", 0);
+    state.bold_ = false;
+    state.italic_ = false;
+    state.antialias_ = true;
+    state.sr_.First = 32;
+    state.sr_.Last = 126;
 
-    cmdGenerateFont();
+    cmd_generate_font();
 
-    texGui = hge->Texture_Load("fgui.png");
+    tex_gui = hge->Texture_Load("fgui.png");
 
-    sprCursor = new hgeSprite(texGui, 487, 181, 19, 26);
-    sprBlack = new hgeSprite(0, 0, 0, 100, 100);
-    sprBlack->SetColor(0xFF000000);
+    spr_cursor = new hgeSprite(tex_gui, 487, 181, 19, 26);
+    spr_black = new hgeSprite(0, 0, 0, 100, 100);
+    spr_black->SetColor(0xFF000000);
 
-    sprLeftPane1 = new hgeSprite(texGui, 0, 0, 168, 512);
-    sprLeftPane2 = new hgeSprite(texGui, 336, 0, 168, 88);
+    spr_left_pane1 = new hgeSprite(tex_gui, 0, 0, 168, 512);
+    spr_left_pane2 = new hgeSprite(tex_gui, 336, 0, 168, 88);
 
     gui = new hgeGUI();
-    CreateGUI();
+    create_gui();
 }
 
-void DoneEditor() {
+void done_editor() {
     delete gui;
-    delete sprLeftPane1;
-    delete sprLeftPane2;
-    delete sprCursor;
+    delete spr_left_pane1;
+    delete spr_left_pane2;
+    delete spr_cursor;
     delete fnt;
-    delete sprFont;
-    delete sprBlack;
+    delete spr_font;
+    delete spr_black;
 
-    delete FontList;
+    delete font_list;
 
-    hge->Texture_Free(texFont);
-    hge->Texture_Free(texGui);
+    hge->Texture_Free(tex_font);
+    hge->Texture_Free(tex_gui);
 
     hge->Resource_RemoveAllPacks();
 }
 
-void CreateGUI() {
-
-    gui->AddCtrl(new hgeGUIButton(CMD_SAVE, 9, 485, 47, 17, texGui, 336, 338));
-    gui->AddCtrl(new hgeGUIButton(CMD_EXIT, 111, 485, 47, 17, texGui, 336, 338));
-    hgeGUIButton* button = new hgeGUIButton(CMD_HELP, 60, 485, 47, 17, texGui, 336, 338);
+void create_gui() {
+    gui->AddCtrl(new hgeGUIButton(CMD_SAVE, 9, 485, 47, 17, tex_gui, 336, 338));
+    gui->AddCtrl(new hgeGUIButton(CMD_EXIT, 111, 485, 47, 17, tex_gui, 336, 338));
+    hgeGUIButton* button = new hgeGUIButton(CMD_HELP, 60, 485, 47, 17, tex_gui, 336, 338);
     button->SetMode(true);
     gui->AddCtrl(button);
 
-    button = new hgeGUIButton(CMD_BOLD, 9, 180, 8, 8, texGui, 368, 176);
+    button = new hgeGUIButton(CMD_BOLD, 9, 180, 8, 8, tex_gui, 368, 176);
     button->SetMode(true);
-    button->SetState(state.bBold);
+    button->SetState(state.bold_);
     gui->AddCtrl(button);
-    button = new hgeGUIButton(CMD_ITALIC, 52, 180, 8, 8, texGui, 368, 176);
+    button = new hgeGUIButton(CMD_ITALIC, 52, 180, 8, 8, tex_gui, 368, 176);
     button->SetMode(true);
-    button->SetState(state.bItalic);
+    button->SetState(state.italic_);
     gui->AddCtrl(button);
-    button = new hgeGUIButton(CMD_ANTIALIAS, 97, 180, 8, 8, texGui, 368, 176);
+    button = new hgeGUIButton(CMD_ANTIALIAS, 97, 180, 8, 8, tex_gui, 368, 176);
     button->SetMode(true);
-    button->SetState(state.bAntialias);
+    button->SetState(state.antialias_);
     gui->AddCtrl(button);
 
-    button = new hgeGUIButton(CMD_BOUNDINGBOX, 9, 461, 8, 8, texGui, 368, 176);
+    button = new hgeGUIButton(CMD_BOUNDINGBOX, 9, 461, 8, 8, tex_gui, 368, 176);
     button->SetMode(true);
-    button->SetState(state.bBBox);
+    button->SetState(state.b_box_);
     gui->AddCtrl(button);
 
     hgeGUIListbox* listbox = new hgeGUIListbox(
         CMD_FAMILYLIST, 10, 44, 139, 128, fnt, 0xFF7697A4, 0xFFBBCBD2,
         0x40D4C25A);
-    for (int i = 0; i < FontList->GetNumFonts(); i++) {
-        listbox->AddItem(FontList->GetFontByIdx(i));
+    for (int i = 0; i < font_list->GetNumFonts(); i++) {
+        listbox->AddItem(font_list->GetFontByIdx(i));
     }
     gui->AddCtrl(listbox);
 
-    hgeGUISlider* slider = new hgeGUISlider(CMD_FAMILYSLIDER, 152, 44, 6, 128, texGui, 417, 177, 6,
+    hgeGUISlider* slider = new hgeGUISlider(CMD_FAMILYSLIDER, 152, 44, 6, 128, tex_gui, 417, 177, 6,
                                             6, true);
     slider->SetMode(0, static_cast<float>(listbox->GetNumItems()) - listbox->GetNumRows(),
                     HGESLIDER_BAR);
     slider->SetValue(0);
     gui->AddCtrl(slider);
 
-    hgeGUIRange* range = new hgeGUIRange(CMD_CHARRANGE, 14, 266, 144, 144, 16, 16, 0x4D99FCD2);
-    range->SetRange(state.sr.First, state.sr.Last);
+    auto range = new hgeGUIRange(CMD_CHARRANGE, 14, 266, 144, 144, 16, 16, 0x4D99FCD2);
+    range->SetRange(state.sr_.First, state.sr_.Last);
     gui->AddCtrl(range);
 
-    slider = new hgeGUISlider(CMD_FONTSIZE, 10, 219, 148, 6, texGui, 417, 177, 6, 6, false);
+    slider = new hgeGUISlider(CMD_FONTSIZE, 10, 219, 148, 6, tex_gui, 417, 177, 6, 6, false);
     slider->SetMode(5, 80, HGESLIDER_BAR);
-    slider->SetValue(static_cast<float>(state.nSize));
+    slider->SetValue(static_cast<float>(state.size_));
     gui->AddCtrl(slider);
-    hgeGUIText* text = new hgeGUIText(CMD_TFONTSIZE, 116, 205, 28, 12, fnt);
+
+    auto text = new hgeGUIText(CMD_TFONTSIZE, 116, 205, 28, 12, fnt);
     text->SetMode(HGETEXT_RIGHT);
-    text->printf("%d", state.nSize);
+    text->printf("%d", state.size_);
     gui->AddCtrl(text);
 }

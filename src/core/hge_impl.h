@@ -86,7 +86,7 @@ public:
     bool HGE_CALL System_Launch(const char* url) override;
     void HGE_CALL System_Snapshot(const char* filename = nullptr) override;
 
-    void* HGE_CALL Resource_Load(const char* filename, hgeU32* size = nullptr) override;
+    void* HGE_CALL Resource_Load(const char* filename, uint32_t* size = nullptr) override;
     void HGE_CALL Resource_Free(void* res) override;
     bool HGE_CALL Resource_AttachPack(const char* filename, const char* password = nullptr) override;
     void HGE_CALL Resource_RemovePack(const char* filename) override;
@@ -112,13 +112,13 @@ public:
     float HGE_CALL Timer_GetDelta() override;
     int HGE_CALL Timer_GetFPS() override;
 
-    HEFFECT HGE_CALL Effect_Load(const char* filename, hgeU32 size = 0) override;
+    HEFFECT HGE_CALL Effect_Load(const char* filename, uint32_t size = 0) override;
     void HGE_CALL Effect_Free(HEFFECT eff) override;
     HCHANNEL HGE_CALL Effect_Play(HEFFECT eff) override;
     HCHANNEL HGE_CALL Effect_PlayEx(HEFFECT eff, int volume = 100, int pan = 0,
                                             float pitch = 1.0f, bool loop = false) override;
 
-    HMUSIC HGE_CALL Music_Load(const char* filename, hgeU32 size = 0) override;
+    HMUSIC HGE_CALL Music_Load(const char* filename, uint32_t size = 0) override;
     void HGE_CALL Music_Free(HMUSIC mus) override;
     HCHANNEL HGE_CALL Music_Play(HMUSIC mus, bool loop, int volume = 100, int order = 0,
                                          int row = 0) override;
@@ -132,7 +132,7 @@ public:
     void HGE_CALL Music_SetChannelVolume(HMUSIC music, int channel, int volume) override;
     int HGE_CALL Music_GetChannelVolume(HMUSIC music, int channel) override;
 
-    HSTREAM HGE_CALL Stream_Load(const char* filename, hgeU32 size = 0) override;
+    HSTREAM HGE_CALL Stream_Load(const char* filename, uint32_t size = 0) override;
     void HGE_CALL Stream_Free(HSTREAM stream) override;
     HCHANNEL HGE_CALL Stream_Play(HSTREAM stream, bool loop, int volume = 100) override;
 
@@ -167,9 +167,9 @@ public:
 
     bool HGE_CALL Gfx_BeginScene(HTARGET target = 0) override;
     void HGE_CALL Gfx_EndScene() override;
-    void HGE_CALL Gfx_Clear(hgeU32 color) override;
+    void HGE_CALL Gfx_Clear(uint32_t color) override;
     void HGE_CALL Gfx_RenderLine(float x1, float y1, float x2, float y2,
-                                         hgeU32 color = 0xFFFFFFFF, float z = 0.5f) override;
+                                         uint32_t color = 0xFFFFFFFF, float z = 0.5f) override;
     void HGE_CALL Gfx_RenderTriple(const hgeTriple* triple) override;
     void HGE_CALL Gfx_RenderQuad(const hgeQuad* quad) override;
     hgeVertex* HGE_CALL Gfx_StartBatch(int prim_type, HTEXTURE tex, int blend,
@@ -190,12 +190,12 @@ public:
     HTEXTURE HGE_CALL Target_GetTexture(HTARGET target) override;
 
     HTEXTURE HGE_CALL Texture_Create(int width, int height) override;
-    HTEXTURE HGE_CALL Texture_Load(const char* filename, hgeU32 size = 0,
+    HTEXTURE HGE_CALL Texture_Load(const char* filename, uint32_t size = 0,
                                            bool bMipmap = false) override;
     void HGE_CALL Texture_Free(HTEXTURE tex) override;
     int HGE_CALL Texture_GetWidth(HTEXTURE tex, bool bOriginal = false) override;
     int HGE_CALL Texture_GetHeight(HTEXTURE tex, bool bOriginal = false) override;
-    hgeU32* HGE_CALL Texture_Lock(HTEXTURE tex, bool bReadOnly = true, int left = 0,
+    uint32_t* HGE_CALL Texture_Lock(HTEXTURE tex, bool bReadOnly = true, int left = 0,
                                           int top = 0, int width = 0, int height = 0) override;
     void HGE_CALL Texture_Unlock(HTEXTURE tex) override;
 
@@ -344,11 +344,11 @@ public:
     // Timer
     float time_;
     float delta_time_;
-    hgeU32 fixed_delta_;
+    uint32_t fixed_delta_;
     int fps_;
-    hgeU32 t0_;
-    hgeU32 t0_fps_;
-    hgeU32 dt_;
+    uint32_t t0_;
+    uint32_t t0_fps_;
+    uint32_t dt_;
     int cfps_;
 
 

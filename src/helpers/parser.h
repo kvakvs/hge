@@ -127,7 +127,7 @@ public:
         return (tokenvalue[0] == 't' || tokenvalue[0] == 'T') ? true : false;
     }
 
-    hgeU32 tkn_hex();
+    uint32_t tkn_hex();
 
     void ScriptPostError(char* msg1, char* msg2);
 

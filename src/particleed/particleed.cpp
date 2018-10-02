@@ -15,22 +15,22 @@ HGE* hge = nullptr;
 
 hgeFont* fnt;
 hgeGUI* gui;
-HTEXTURE texGui, texParticles;
+HTEXTURE tex_gui, texParticles;
 
-hgeSprite *sprLeftPane1, *sprLeftPane2, *sprRightPane1, *sprRightPane2;
-hgeSprite *sprCursor, *sprColor, *sprBBox;
+hgeSprite *spr_left_pane1, *spr_left_pane2, *sprRightPane1, *sprRightPane2;
+hgeSprite *spr_cursor, *sprColor, *sprBBox;
 hgeAnimation* sprParticles;
 
 PEditorState state;
 
 float psx = 400, psy = 300;
 
-void InitEditor();
-void DoneEditor();
-void CreateGUI();
+void init_editor();
+void done_editor();
+void create_gui();
 
 
-bool FrameFunc() {
+bool frame_func() {
     float px, py;
     const auto dt = hge->Timer_GetDelta();
 
@@ -59,23 +59,23 @@ bool FrameFunc() {
     state.ps->MoveTo(px + (psx - px) * 10 * dt, py + (psy - py) * 10 * dt);
     state.ps->Update(dt);
 
-    if (HandleKeys(hge->Input_GetKey())) {
+    if (handle_keys(hge->Input_GetKey())) {
         return true;
     }
 
     if (state.bIFace) {
-        if (DoCommands(gui->Update(dt))) {
+        if (do_commands(gui->Update(dt))) {
             return true;
         }
     }
 
-    GetTextCtrl(CMD_NPARTICLES)->printf("%d", state.ps->GetParticlesAlive());
-    GetTextCtrl(CMD_FPS)->printf("%d", hge->Timer_GetFPS());
+    GET_TEXT_CTRL(CMD_NPARTICLES)->printf("%d", state.ps->GetParticlesAlive());
+    GET_TEXT_CTRL(CMD_FPS)->printf("%d", hge->Timer_GetFPS());
 
     return false;
 }
 
-bool RenderFunc() {
+bool render_func() {
     hgeRect bbox;
 
     // Render
@@ -97,8 +97,8 @@ bool RenderFunc() {
     }
 
     if (state.bIFace) {
-        sprLeftPane1->Render(0, 0);
-        sprLeftPane2->Render(0, 512);
+        spr_left_pane1->Render(0, 0);
+        spr_left_pane2->Render(0, 512);
         sprRightPane1->Render(632, 0);
         sprRightPane2->Render(632, 512);
 
@@ -119,7 +119,7 @@ bool RenderFunc() {
     }
 
     if (hge->Input_IsMouseOver() && !hge->Input_GetKeyState(HGEK_RBUTTON)) {
-        sprCursor->Render(state.mx, state.my);
+        spr_cursor->Render(state.mx, state.my);
     }
 
     hge->Gfx_EndScene();
@@ -133,8 +133,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     hge->System_SetState(HGE_INIFILE, "particleed.ini");
     hge->System_SetState(HGE_LOGFILE, "particleed.log");
-    hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
-    hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
+    hge->System_SetState(HGE_FRAMEFUNC, frame_func);
+    hge->System_SetState(HGE_RENDERFUNC, render_func);
     hge->System_SetState(HGE_TITLE, "HGE Particle Systems Editor");
     hge->System_SetState(HGE_SCREENWIDTH, 800);
     hge->System_SetState(HGE_SCREENHEIGHT, 600);
@@ -149,9 +149,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     }
 
     if (hge->System_Initiate()) {
-        InitEditor();
+        init_editor();
         hge->System_Start();
-        DoneEditor();
+        done_editor();
     }
     else {
         MessageBox(nullptr, hge->System_GetErrorMessage(), "Error",
@@ -163,7 +163,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     return 0;
 }
 
-void InitEditor() {
+void init_editor() {
     hgeParticleSystemInfo psi;
 
     state.texBG = 0;
@@ -197,24 +197,24 @@ void InitEditor() {
     state.ps->MoveTo(psx, psy);
 
     fnt = new hgeFont("font3.fnt");
-    texGui = hge->Texture_Load("pgui.png");
+    tex_gui = hge->Texture_Load("pgui.png");
 
-    sprCursor = new hgeSprite(texGui, 487, 181, 19, 26);
-    sprColor = new hgeSprite(texGui, 466, 208, 14, 80);
-    sprBBox = new hgeSprite(texGui, 337, 209, 128, 128);
+    spr_cursor = new hgeSprite(tex_gui, 487, 181, 19, 26);
+    sprColor = new hgeSprite(tex_gui, 466, 208, 14, 80);
+    sprBBox = new hgeSprite(tex_gui, 337, 209, 128, 128);
 
-    sprLeftPane1 = new hgeSprite(texGui, 0, 0, 168, 512);
-    sprLeftPane2 = new hgeSprite(texGui, 336, 0, 168, 88);
-    sprRightPane1 = new hgeSprite(texGui, 168, 0, 168, 512);
-    sprRightPane2 = new hgeSprite(texGui, 336, 88, 168, 88);
+    spr_left_pane1 = new hgeSprite(tex_gui, 0, 0, 168, 512);
+    spr_left_pane2 = new hgeSprite(tex_gui, 336, 0, 168, 88);
+    sprRightPane1 = new hgeSprite(tex_gui, 168, 0, 168, 512);
+    sprRightPane2 = new hgeSprite(tex_gui, 336, 88, 168, 88);
 
     gui = new hgeGUI();
-    CreateGUI();
+    create_gui();
 
     cmdLoadPreset(state.nPreset);
 }
 
-void DoneEditor() {
+void done_editor() {
     cmdSavePreset(state.nPreset);
 
     if (state.sprBG) {
@@ -225,62 +225,62 @@ void DoneEditor() {
     }
 
     delete gui;
-    delete sprLeftPane1;
-    delete sprLeftPane2;
+    delete spr_left_pane1;
+    delete spr_left_pane2;
     delete sprRightPane1;
     delete sprRightPane2;
     delete sprBBox;
     delete sprColor;
-    delete sprCursor;
+    delete spr_cursor;
     delete fnt;
     delete state.ps;
     delete sprParticles;
 
     hge->Texture_Free(texParticles);
-    hge->Texture_Free(texGui);
+    hge->Texture_Free(tex_gui);
 
     hge->Resource_RemoveAllPacks();
 }
 
-void CreateGUI() {
+void create_gui() {
 
     // Presets & stuff
 
-    gui->AddCtrl(new hgeGUIButton(CMD_EXIT, 718, 484, 73, 17, texGui, 336, 191));
-    hgeGUIButton* button = new hgeGUIButton(CMD_HELP, 641, 484, 73, 17, texGui, 336, 191);
+    gui->AddCtrl(new hgeGUIButton(CMD_EXIT, 718, 484, 73, 17, tex_gui, 336, 191));
+    hgeGUIButton* button = new hgeGUIButton(CMD_HELP, 641, 484, 73, 17, tex_gui, 336, 191);
     button->SetMode(true);
     gui->AddCtrl(button);
 
-    button = new hgeGUIButton(CMD_PRESET1, 641, 389, 16, 15, texGui, 384, 176);
+    button = new hgeGUIButton(CMD_PRESET1, 641, 389, 16, 15, tex_gui, 384, 176);
     button->SetMode(true);
     button->SetState(true);
     gui->AddCtrl(button);
-    button = new hgeGUIButton(CMD_PRESET2, 657, 389, 16, 15, texGui, 384, 176);
+    button = new hgeGUIButton(CMD_PRESET2, 657, 389, 16, 15, tex_gui, 384, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    button = new hgeGUIButton(CMD_PRESET3, 673, 389, 16, 15, texGui, 384, 176);
+    button = new hgeGUIButton(CMD_PRESET3, 673, 389, 16, 15, tex_gui, 384, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    button = new hgeGUIButton(CMD_PRESET4, 689, 389, 16, 15, texGui, 384, 176);
+    button = new hgeGUIButton(CMD_PRESET4, 689, 389, 16, 15, tex_gui, 384, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    button = new hgeGUIButton(CMD_PRESET5, 705, 389, 16, 15, texGui, 384, 176);
+    button = new hgeGUIButton(CMD_PRESET5, 705, 389, 16, 15, tex_gui, 384, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    button = new hgeGUIButton(CMD_PRESET6, 721, 389, 16, 15, texGui, 384, 176);
+    button = new hgeGUIButton(CMD_PRESET6, 721, 389, 16, 15, tex_gui, 384, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    button = new hgeGUIButton(CMD_PRESET7, 737, 389, 16, 15, texGui, 384, 176);
+    button = new hgeGUIButton(CMD_PRESET7, 737, 389, 16, 15, tex_gui, 384, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    button = new hgeGUIButton(CMD_PRESET8, 753, 389, 16, 15, texGui, 384, 176);
+    button = new hgeGUIButton(CMD_PRESET8, 753, 389, 16, 15, tex_gui, 384, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    button = new hgeGUIButton(CMD_PRESET9, 769, 389, 16, 15, texGui, 384, 176);
+    button = new hgeGUIButton(CMD_PRESET9, 769, 389, 16, 15, tex_gui, 384, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
 
-    button = new hgeGUIButton(CMD_BOUNDINGBOX, 641, 417, 8, 8, texGui, 368, 176);
+    button = new hgeGUIButton(CMD_BOUNDINGBOX, 641, 417, 8, 8, tex_gui, 368, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
 
@@ -295,7 +295,7 @@ void CreateGUI() {
 
     // System parameters
 
-    hgeGUISlider* slider = new hgeGUISlider(CMD_SYS_LIFETIME, 10, 44, 149, 6, texGui, 417, 177, 6,
+    hgeGUISlider* slider = new hgeGUISlider(CMD_SYS_LIFETIME, 10, 44, 149, 6, tex_gui, 417, 177, 6,
                                             6);
     slider->SetMode(0, 10, HGESLIDER_BAR);
     slider->SetValue(5);
@@ -304,11 +304,11 @@ void CreateGUI() {
     text->SetMode(HGETEXT_RIGHT);
     text->SetText("0");
     gui->AddCtrl(text);
-    button = new hgeGUIButton(CMD_SYS_LIFECONT, 9, 55, 8, 8, texGui, 368, 176);
+    button = new hgeGUIButton(CMD_SYS_LIFECONT, 9, 55, 8, 8, tex_gui, 368, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
 
-    slider = new hgeGUISlider(CMD_SYS_EMISSION, 10, 91, 149, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_SYS_EMISSION, 10, 91, 149, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(0, 1000, HGESLIDER_BAR);
     slider->SetValue(500);
     gui->AddCtrl(slider);
@@ -317,32 +317,32 @@ void CreateGUI() {
     text->SetText("0");
     gui->AddCtrl(text);
 
-    button = new hgeGUIButton(CMD_SYS_PARLIFETIMELOCK, 144, 111, 16, 11, texGui, 336, 176);
+    button = new hgeGUIButton(CMD_SYS_PARLIFETIMELOCK, 144, 111, 16, 11, tex_gui, 336, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    slider = new hgeGUISlider(CMD_SYS_PARLIFETIMEMIN, 33, 126, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_SYS_PARLIFETIMEMIN, 33, 126, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(0, 5, HGESLIDER_BAR);
     slider->SetValue(2.5);
     gui->AddCtrl(slider);
-    slider = new hgeGUISlider(CMD_SYS_PARLIFETIMEMAX, 33, 138, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_SYS_PARLIFETIMEMAX, 33, 138, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(0, 5, HGESLIDER_BAR);
     slider->SetValue(2.5);
     gui->AddCtrl(slider);
 
-    button = new hgeGUIButton(CMD_SYS_BLENDADDITIVE, 72, 174, 8, 8, texGui, 368, 176);
+    button = new hgeGUIButton(CMD_SYS_BLENDADDITIVE, 72, 174, 8, 8, tex_gui, 368, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    button = new hgeGUIButton(CMD_SYS_BLENDBLEND, 72, 188, 8, 8, texGui, 368, 176);
+    button = new hgeGUIButton(CMD_SYS_BLENDBLEND, 72, 188, 8, 8, tex_gui, 368, 176);
     button->SetMode(true);
     button->SetState(true);
     gui->AddCtrl(button);
-    button = new hgeGUIButton(CMD_SYS_TEXTURE, 10, 173, 32, 32, texGui, 336, 338);
+    button = new hgeGUIButton(CMD_SYS_TEXTURE, 10, 173, 32, 32, tex_gui, 336, 338);
     button->SetMode(true);
     gui->AddCtrl(button);
 
     // Particle movement
 
-    slider = new hgeGUISlider(CMD_PM_DIRECTION, 9, 267, 149, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PM_DIRECTION, 9, 267, 149, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(0, 2 * M_PI, HGESLIDER_BAR);
     slider->SetValue(M_PI);
     gui->AddCtrl(slider);
@@ -350,11 +350,11 @@ void CreateGUI() {
     text->SetMode(HGETEXT_RIGHT);
     text->SetText("0");
     gui->AddCtrl(text);
-    button = new hgeGUIButton(CMD_PM_RELATIVE, 8, 278, 8, 8, texGui, 368, 176);
+    button = new hgeGUIButton(CMD_PM_RELATIVE, 8, 278, 8, 8, tex_gui, 368, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
 
-    slider = new hgeGUISlider(CMD_PM_SPREAD, 9, 314, 149, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PM_SPREAD, 9, 314, 149, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(0, 2 * M_PI, HGESLIDER_BAR);
     slider->SetValue(M_PI);
     gui->AddCtrl(slider);
@@ -363,131 +363,131 @@ void CreateGUI() {
     text->SetText("0");
     gui->AddCtrl(text);
 
-    button = new hgeGUIButton(CMD_PM_STARTSPEEDLOCK, 143, 334, 16, 11, texGui, 336, 176);
+    button = new hgeGUIButton(CMD_PM_STARTSPEEDLOCK, 143, 334, 16, 11, tex_gui, 336, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    slider = new hgeGUISlider(CMD_PM_STARTSPEEDMIN, 32, 349, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PM_STARTSPEEDMIN, 32, 349, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(-300, 300, HGESLIDER_BARRELATIVE);
     slider->SetValue(0);
     gui->AddCtrl(slider);
-    slider = new hgeGUISlider(CMD_PM_STARTSPEEDMAX, 32, 361, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PM_STARTSPEEDMAX, 32, 361, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(-300, 300, HGESLIDER_BARRELATIVE);
     slider->SetValue(0);
     gui->AddCtrl(slider);
 
-    button = new hgeGUIButton(CMD_PM_GRAVITYLOCK, 143, 381, 16, 11, texGui, 336, 176);
+    button = new hgeGUIButton(CMD_PM_GRAVITYLOCK, 143, 381, 16, 11, tex_gui, 336, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    slider = new hgeGUISlider(CMD_PM_GRAVITYMIN, 32, 396, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PM_GRAVITYMIN, 32, 396, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(-900, 900, HGESLIDER_BARRELATIVE);
     slider->SetValue(0);
     gui->AddCtrl(slider);
-    slider = new hgeGUISlider(CMD_PM_GRAVITYMAX, 32, 408, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PM_GRAVITYMAX, 32, 408, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(-900, 900, HGESLIDER_BARRELATIVE);
     slider->SetValue(0);
     gui->AddCtrl(slider);
 
-    button = new hgeGUIButton(CMD_PM_RADIALLOCK, 143, 428, 16, 11, texGui, 336, 176);
+    button = new hgeGUIButton(CMD_PM_RADIALLOCK, 143, 428, 16, 11, tex_gui, 336, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    slider = new hgeGUISlider(CMD_PM_RADIALMIN, 32, 443, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PM_RADIALMIN, 32, 443, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(-900, 900, HGESLIDER_BARRELATIVE);
     slider->SetValue(0);
     gui->AddCtrl(slider);
-    slider = new hgeGUISlider(CMD_PM_RADIALMAX, 32, 455, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PM_RADIALMAX, 32, 455, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(-900, 900, HGESLIDER_BARRELATIVE);
     slider->SetValue(0);
     gui->AddCtrl(slider);
 
-    button = new hgeGUIButton(CMD_PM_TANGENTIALLOCK, 143, 475, 16, 11, texGui, 336, 176);
+    button = new hgeGUIButton(CMD_PM_TANGENTIALLOCK, 143, 475, 16, 11, tex_gui, 336, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    slider = new hgeGUISlider(CMD_PM_TANGENTIALMIN, 32, 490, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PM_TANGENTIALMIN, 32, 490, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(-900, 900, HGESLIDER_BARRELATIVE);
     slider->SetValue(0);
     gui->AddCtrl(slider);
-    slider = new hgeGUISlider(CMD_PM_TANGENTIALMAX, 32, 502, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PM_TANGENTIALMAX, 32, 502, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(-900, 900, HGESLIDER_BARRELATIVE);
     slider->SetValue(0);
     gui->AddCtrl(slider);
 
     // Particle appearance
 
-    button = new hgeGUIButton(CMD_PA_SIZELOCK, 775, 29, 16, 11, texGui, 336, 176);
+    button = new hgeGUIButton(CMD_PA_SIZELOCK, 775, 29, 16, 11, tex_gui, 336, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    slider = new hgeGUISlider(CMD_PA_SIZESTART, 664, 44, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PA_SIZESTART, 664, 44, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(1, 100, HGESLIDER_BAR);
     slider->SetValue(32);
     gui->AddCtrl(slider);
-    slider = new hgeGUISlider(CMD_PA_SIZEEND, 664, 56, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PA_SIZEEND, 664, 56, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(1, 100, HGESLIDER_BAR);
     slider->SetValue(32);
     gui->AddCtrl(slider);
-    slider = new hgeGUISlider(CMD_PA_SIZEVAR, 664, 68, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PA_SIZEVAR, 664, 68, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(0, 1, HGESLIDER_BAR);
     slider->SetValue(0.5);
     gui->AddCtrl(slider);
 
-    button = new hgeGUIButton(CMD_PA_SPINLOCK, 775, 88, 16, 11, texGui, 336, 176);
+    button = new hgeGUIButton(CMD_PA_SPINLOCK, 775, 88, 16, 11, tex_gui, 336, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    slider = new hgeGUISlider(CMD_PA_SPINSTART, 664, 103, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PA_SPINSTART, 664, 103, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(-50, 50, HGESLIDER_BARRELATIVE);
     slider->SetValue(0);
     gui->AddCtrl(slider);
-    slider = new hgeGUISlider(CMD_PA_SPINEND, 664, 115, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PA_SPINEND, 664, 115, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(-50, 50, HGESLIDER_BARRELATIVE);
     slider->SetValue(0);
     gui->AddCtrl(slider);
-    slider = new hgeGUISlider(CMD_PA_SPINVAR, 664, 127, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PA_SPINVAR, 664, 127, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(0, 1, HGESLIDER_BAR);
     slider->SetValue(0.5);
     gui->AddCtrl(slider);
 
-    button = new hgeGUIButton(CMD_PA_ALPHALOCK, 775, 147, 16, 11, texGui, 336, 176);
+    button = new hgeGUIButton(CMD_PA_ALPHALOCK, 775, 147, 16, 11, tex_gui, 336, 176);
     button->SetMode(true);
     gui->AddCtrl(button);
-    slider = new hgeGUISlider(CMD_PA_ALPHASTART, 664, 162, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PA_ALPHASTART, 664, 162, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(0, 1, HGESLIDER_BAR);
     slider->SetValue(0.5);
     gui->AddCtrl(slider);
-    slider = new hgeGUISlider(CMD_PA_ALPHAEND, 664, 174, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PA_ALPHAEND, 664, 174, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(0, 1, HGESLIDER_BAR);
     slider->SetValue(0.5);
     gui->AddCtrl(slider);
-    slider = new hgeGUISlider(CMD_PA_ALPHAVAR, 664, 186, 126, 6, texGui, 417, 177, 6, 6);
-    slider->SetMode(0, 1, HGESLIDER_BAR);
-    slider->SetValue(0.5);
-    gui->AddCtrl(slider);
-
-    slider = new hgeGUISlider(CMD_PA_RSTART, 664, 221, 126, 6, texGui, 417, 177, 6, 6);
-    slider->SetMode(0, 1, HGESLIDER_BAR);
-    slider->SetValue(0.5);
-    gui->AddCtrl(slider);
-    slider = new hgeGUISlider(CMD_PA_GSTART, 664, 233, 126, 6, texGui, 417, 177, 6, 6);
-    slider->SetMode(0, 1, HGESLIDER_BAR);
-    slider->SetValue(0.5);
-    gui->AddCtrl(slider);
-    slider = new hgeGUISlider(CMD_PA_BSTART, 664, 245, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PA_ALPHAVAR, 664, 186, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(0, 1, HGESLIDER_BAR);
     slider->SetValue(0.5);
     gui->AddCtrl(slider);
 
-    slider = new hgeGUISlider(CMD_PA_REND, 664, 271, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PA_RSTART, 664, 221, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(0, 1, HGESLIDER_BAR);
     slider->SetValue(0.5);
     gui->AddCtrl(slider);
-    slider = new hgeGUISlider(CMD_PA_GEND, 664, 283, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PA_GSTART, 664, 233, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(0, 1, HGESLIDER_BAR);
     slider->SetValue(0.5);
     gui->AddCtrl(slider);
-    slider = new hgeGUISlider(CMD_PA_BEND, 664, 295, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PA_BSTART, 664, 245, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(0, 1, HGESLIDER_BAR);
     slider->SetValue(0.5);
     gui->AddCtrl(slider);
 
-    slider = new hgeGUISlider(CMD_PA_RGBVAR, 664, 321, 126, 6, texGui, 417, 177, 6, 6);
+    slider = new hgeGUISlider(CMD_PA_REND, 664, 271, 126, 6, tex_gui, 417, 177, 6, 6);
+    slider->SetMode(0, 1, HGESLIDER_BAR);
+    slider->SetValue(0.5);
+    gui->AddCtrl(slider);
+    slider = new hgeGUISlider(CMD_PA_GEND, 664, 283, 126, 6, tex_gui, 417, 177, 6, 6);
+    slider->SetMode(0, 1, HGESLIDER_BAR);
+    slider->SetValue(0.5);
+    gui->AddCtrl(slider);
+    slider = new hgeGUISlider(CMD_PA_BEND, 664, 295, 126, 6, tex_gui, 417, 177, 6, 6);
+    slider->SetMode(0, 1, HGESLIDER_BAR);
+    slider->SetValue(0.5);
+    gui->AddCtrl(slider);
+
+    slider = new hgeGUISlider(CMD_PA_RGBVAR, 664, 321, 126, 6, tex_gui, 417, 177, 6, 6);
     slider->SetMode(0, 1, HGESLIDER_BAR);
     slider->SetValue(0.5);
     gui->AddCtrl(slider);

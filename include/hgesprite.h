@@ -34,7 +34,7 @@ public:
 
     void SetTexture(HTEXTURE tex);
     void SetTextureRect(float x, float y, float w, float h, bool adjSize = true);
-    void SetColor(hgeU32 col, int i = -1);
+    void SetColor(uint32_t col, int i = -1);
     void SetZ(float z, int i = -1);
 
     void SetBlendMode(const int blend) {
@@ -59,7 +59,7 @@ public:
         *h = height_;
     }
 
-    hgeU32 GetColor(const int i = 0) const {
+    uint32_t GetColor(const int i = 0) const {
         return quad_.v[i].col;
     }
 

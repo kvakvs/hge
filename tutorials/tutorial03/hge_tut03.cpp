@@ -49,7 +49,7 @@ void boom() {
     hge->Effect_PlayEx(snd, 100, pan, pitch);
 }
 
-bool FrameFunc() {
+bool frame_func() {
     const auto dt = hge->Timer_GetDelta();
 
     // Process keys
@@ -94,7 +94,7 @@ bool FrameFunc() {
 }
 
 
-bool RenderFunc() {
+bool render_func() {
     // Render graphics
     hge->Gfx_BeginScene();
     hge->Gfx_Clear(0);
@@ -112,8 +112,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     hge = hgeCreate(HGE_VERSION);
 
     hge->System_SetState(HGE_LOGFILE, "hge_tut03.log");
-    hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
-    hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
+    hge->System_SetState(HGE_FRAMEFUNC, frame_func);
+    hge->System_SetState(HGE_RENDERFUNC, render_func);
     hge->System_SetState(HGE_TITLE, "HGE Tutorial 03 - Using helper classes");
     hge->System_SetState(HGE_FPS, 100);
     hge->System_SetState(HGE_WINDOWED, true);

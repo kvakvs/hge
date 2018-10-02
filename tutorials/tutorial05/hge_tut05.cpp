@@ -41,7 +41,7 @@ const float meshx = 144;
 const float meshy = 44;
 
 
-bool FrameFunc() {
+bool frame_func() {
     const auto dt = hge->Timer_GetDelta();
     static float t = 0.0f;
     static int trans = 0;
@@ -96,7 +96,7 @@ bool FrameFunc() {
 }
 
 
-bool RenderFunc() {
+bool render_func() {
     // Render graphics
     hge->Gfx_BeginScene();
     hge->Gfx_Clear(0);
@@ -113,8 +113,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     hge = hgeCreate(HGE_VERSION);
 
     hge->System_SetState(HGE_LOGFILE, "hge_tut05.log");
-    hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
-    hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
+    hge->System_SetState(HGE_FRAMEFUNC, frame_func);
+    hge->System_SetState(HGE_RENDERFUNC, render_func);
     hge->System_SetState(HGE_TITLE, "HGE Tutorial 05 - Using distortion mesh");
     hge->System_SetState(HGE_WINDOWED, true);
     hge->System_SetState(HGE_SCREENWIDTH, 800);

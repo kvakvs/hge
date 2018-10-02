@@ -57,7 +57,7 @@ bool GfxRestoreFunc() {
 }
 
 
-bool FrameFunc() {
+bool frame_func() {
     const auto dt = hge->Timer_GetDelta();
 
     // Process keys
@@ -102,7 +102,7 @@ bool FrameFunc() {
 }
 
 
-bool RenderFunc() {
+bool render_func() {
 
     // Render graphics to the texture
     hge->Gfx_BeginScene(target);
@@ -130,8 +130,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     hge = hgeCreate(HGE_VERSION);
 
     hge->System_SetState(HGE_LOGFILE, "hge_tut04.log");
-    hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
-    hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
+    hge->System_SetState(HGE_FRAMEFUNC, frame_func);
+    hge->System_SetState(HGE_RENDERFUNC, render_func);
     hge->System_SetState(HGE_GFXRESTOREFUNC, GfxRestoreFunc);
     hge->System_SetState(HGE_TITLE, "HGE Tutorial 04 - Using render targets");
     hge->System_SetState(HGE_FPS, 100);
