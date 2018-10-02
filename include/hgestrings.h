@@ -11,16 +11,12 @@
 
 
 #include "hge.h"
+#include <string>
+#include <map>
 
 
 #define MAXSTRNAMELENGTH 64
 
-
-struct NamedString {
-    char name[MAXSTRNAMELENGTH];
-    char* string;
-    NamedString* next;
-};
 
 /*
 ** HGE String table class
@@ -30,13 +26,13 @@ public:
     hgeStringTable(const char* filename);
     ~hgeStringTable();
 
-    char* GetString(const char* name);
+    const char* GetString(const char* name);
 
 private:
     hgeStringTable(const hgeStringTable&);
     hgeStringTable& operator=(const hgeStringTable&);
 
-    NamedString* strings_;
+    std::map<std::string, std::string> strings_;
 
     static HGE* hge_;
 };

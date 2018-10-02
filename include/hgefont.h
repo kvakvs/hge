@@ -38,7 +38,7 @@ public:
 
     void SetColor(uint32_t col);
     void SetZ(float z);
-    void SetBlendMode(int blend);
+    void SetBlendMode(hgeBlendMode blend);
 
     void SetScale(const float scale) {
         scale_ = scale;
@@ -134,5 +134,5 @@ private:
 
     uint32_t col_;
     float z_;
-    int blend_;
+    hgeBlendMode blend_;
 };

@@ -7,7 +7,7 @@
 */
 
 
-#include "..\..\include\hgegui.h"
+#include "../../include/hgegui.h"
 
 
 HGE* hgeGUI::hge_ = nullptr;
