@@ -120,7 +120,7 @@ bool HGE_CALL HGE_Impl::System_Initiate() {
     rect_windowed_.left = (scr_width - (rect_windowed_.right - rect_windowed_.left)) / 2;
     rect_windowed_.top = (scr_height - (rect_windowed_.bottom - rect_windowed_.top)) / 2;
     rect_windowed_.right = rect_windowed_.left + screen_width_;
-    rect_windowed_.top = rect_windowed_.top + screen_height_;
+    rect_windowed_.bottom = rect_windowed_.top + screen_height_;
 
     style_windowed_ = WS_BORDER | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | 
         WS_VISIBLE;
