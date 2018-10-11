@@ -4,15 +4,15 @@ For original readme file refer to Original_README.txt
 
 # INSTALLING
 
+DirectX8 support has ended and there will be no assistance with DirectX8 
+issues, DirectX8 code will be gradually removed.
+
 This package is configured with CMakeLists.txt for use with CMake. Once ran,
 CMake generates project files for one of known IDE's for Windows (as well as
 Linux/Unix/MacOSX but this version of HGE only builds on Windows).
 
 1. Edit CMakeLists.txt in root folder, set "DIRECTX_SDK_DIR" to where you have
-   "DirectX SDK Summer 2004" installed (for DirectX8 build) and some other DirectX SDK for
-   DirectX9 build. If you don't have it yet - visit Microsoft website or search google
-   for "DirectX SDK Summer 2004" (~230 MB download) or some fresh DirectX 9 SDK (see that
-   it comes from microsoft.com, tagged year ~2010, size ~550 MB).
+   DirectX 9 SDK (see that it comes from microsoft.com, tagged year ~2010, size ~550 MB).
 1. Run `cmake_studioNNNN.bat` (NOTE: you can create own bat file if CMake supports your IDE).
 1. Project directory will be created in `_build`, open project file (.SLN solution file)
    with your IDE and click "BUILD" in your IDE.
