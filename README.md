@@ -2,10 +2,12 @@ This is README for HGE library source reconfigured with CMake
 
 For original readme file refer to Original_README.txt
 
-# INSTALLING
+# ANNOUNCEMENT
 
-DirectX8 support has ended and there will be no assistance with DirectX8 
-issues, DirectX8 code will be gradually removed.
+DirectX8 support has ended. There will be no assistance with DirectX8 
+issues, DirectX8 code will be gradually removed. Please use DirectX9.
+
+# INSTALLING
 
 This package is configured with CMakeLists.txt for use with CMake. Once ran,
 CMake generates project files for one of known IDE's for Windows (as well as
