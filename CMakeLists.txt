@@ -7,12 +7,6 @@ cmake_minimum_required( VERSION 2.8 )
 ## Edit this to match your configuration
 ##----------------------------------------
 
-##--- set this to 8 or 9 ---
-SET( HGE_DIRECTX_VER "9" )
-##
-## NOTE: if you use HGE_DIRECTX_VER=9 here, you MUST also set same define for your whole project
-##
-
 SET( DIRECTX_SDK_DIR "E:/Dev/DX9SDK" )
 
 ##----------------------------------------
@@ -20,6 +14,8 @@ SET( DIRECTX_SDK_DIR "E:/Dev/DX9SDK" )
 ## try to minimize tampering with code below unless you know how CMake works
 ##----------------------------------------
 
+# This is always 9, version 8 is not supported and will not work
+SET( HGE_DIRECTX_VER "9" )
 
 
 
@@ -59,6 +55,6 @@ add_subdirectory( tutorials/tutorial06 )
 add_subdirectory( tutorials/tutorial07 )
 add_subdirectory( tutorials/tutorial08 )
 
-if( ${HGE_DIRECTX_VER} MATCHES "9" )
+#if( ${HGE_DIRECTX_VER} MATCHES "9" )
     add_subdirectory( tutorials/tutorial05_shaders )
-endif()
+#endif()

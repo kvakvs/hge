@@ -42,7 +42,7 @@
          typedef unsigned long u4;
 #      else
 #        if (USHRT_MAX == 0xffffffffUL)
-           typedef unsigned short u4;
+           typedef uint16_t u4;
 #        else
 #          undef BYFOUR     /* can't find a four-byte integer type! */
 #        endif

@@ -14,7 +14,7 @@
 hgeQuad dquad;
 float dtime;
 
-unsigned short hgelogo[] = {
+const static uint16_t hgelogo[] = {
     0x5089,0x474E,0x0A0D,0x0A1A,0x0000,0x0D00,0x4849,0x5244,
     0x0000,0x8000,0x0000,0x8000,0x0308,0x0000,0xF400,0x91E0,
     0x00F9,0x0000,0x6704,0x4D41,0x0041,0xAF00,0x37C8,0x8A05,
@@ -159,9 +159,9 @@ unsigned short hgelogo[] = {
     0x0000,0x4549,0x444E,0x42AE,0x8260
 };
 
-void DInit() {
-    int x = pHGE->System_GetState(HGE_SCREENWIDTH) / 2;
-    int y = pHGE->System_GetState(HGE_SCREENHEIGHT) / 2;
+void prepare_demo() {
+    const auto x = pHGE->System_GetState(HGE_SCREENWIDTH) / 2;
+    const auto y = pHGE->System_GetState(HGE_SCREENHEIGHT) / 2;
 
     dquad.tex = pHGE->Texture_Load((char *)hgelogo, sizeof(hgelogo));
     dquad.blend = BLEND_DEFAULT;
@@ -192,11 +192,11 @@ void DInit() {
     dtime = 0.0f;
 }
 
-void DDone() {
+void finish_demo() {
     pHGE->Texture_Free(dquad.tex);
 }
 
-bool DFrame() {
+bool demo_render_frame() {
     uint8_t alpha;
 
     dtime += pHGE->Timer_GetDelta();

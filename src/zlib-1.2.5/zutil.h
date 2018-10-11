@@ -20,6 +20,7 @@
 #endif
 
 #include "zlib.h"
+#include <stdint.h>
 
 #ifdef STDC
 #  if !(defined(_WIN32_WCE) && defined(_MSC_VER))
@@ -33,12 +34,6 @@
 #  define local static
 #endif
 /* compile with -Dlocal if your debugger can't find static symbols */
-
-typedef unsigned char  uch;
-typedef uch FAR uchf;
-typedef unsigned short ush;
-typedef ush FAR ushf;
-typedef unsigned long  ulg;
 
 extern const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 /* (size given to avoid silly warnings with Visual C++) */

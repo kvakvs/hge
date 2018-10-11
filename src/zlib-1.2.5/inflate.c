@@ -67,7 +67,7 @@
  * - Changed type of window in inflateBackInit() to unsigned char *
  *
  * 1.2.beta7    27 Jan 2003
- * - Changed many types to unsigned or unsigned short to avoid warnings
+ * - Changed many types to unsigned or uint16_t to avoid warnings
  * - Added inflateCopy() function
  *
  * 1.2.0        9 Mar 2003
@@ -606,7 +606,7 @@ int flush;
 #ifdef GUNZIP
     unsigned char hbuf[4];      /* buffer for gzip header crc calculation */
 #endif
-    static const unsigned short order[19] = /* permutation of code lengths */
+    static const uint16_t order[19] = /* permutation of code lengths */
         {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
 
     if (strm == Z_NULL || strm->state == Z_NULL || strm->next_out == Z_NULL ||
@@ -899,7 +899,7 @@ int flush;
         case LENLENS:
             while (state->have < state->ncode) {
                 NEEDBITS(3);
-                state->lens[order[state->have++]] = (unsigned short)BITS(3);
+                state->lens[order[state->have++]] = (uint16_t)BITS(3);
                 DROPBITS(3);
             }
             while (state->have < 19)
@@ -962,7 +962,7 @@ int flush;
                         break;
                     }
                     while (copy--)
-                        state->lens[state->have++] = (unsigned short)len;
+                        state->lens[state->have++] = (uint16_t)len;
                 }
             }
 

@@ -117,13 +117,17 @@ bool HGE_CALL HGE_Impl::System_Initiate() {
     // Take approximately center position
     const auto scr_width = GetSystemMetrics(SM_CXSCREEN);
     const auto scr_height = GetSystemMetrics(SM_CYSCREEN);
-    rect_windowed_.left = (scr_width - (rect_windowed_.right - rect_windowed_.left)) / 2;
-    rect_windowed_.top = (scr_height - (rect_windowed_.bottom - rect_windowed_.top)) / 2;
+    rect_windowed_.left = (scr_width - screen_width_) / 2;
+    rect_windowed_.top = (scr_height - screen_height_) / 2;
     rect_windowed_.right = rect_windowed_.left + screen_width_;
     rect_windowed_.bottom = rect_windowed_.top + screen_height_;
 
-    style_windowed_ = WS_BORDER | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | 
-        WS_VISIBLE;
+    style_windowed_ = WS_BORDER
+            | WS_POPUP
+            | WS_CAPTION
+            | WS_SYSMENU
+            | WS_MINIMIZEBOX
+            | WS_VISIBLE;
 
     //Fullscreen
     rect_fullscreen_.left = 0;
@@ -146,13 +150,15 @@ bool HGE_CALL HGE_Impl::System_Initiate() {
 
     if (windowed_)
         hwnd_ = CreateWindowEx(0, WINDOW_CLASS_NAME, win_title_, style_windowed_,
-                              rect_windowed_.left, rect_windowed_.top, rect_windowed_.right - rect_windowed_.left,
-                              rect_windowed_.bottom - rect_windowed_.top,
-                              hwnd_parent_, nullptr, h_instance_, nullptr);
+                               rect_windowed_.left, rect_windowed_.top,
+                               rect_windowed_.right - rect_windowed_.left,
+                               rect_windowed_.bottom - rect_windowed_.top,
+                               hwnd_parent_, nullptr, h_instance_, nullptr);
     else
-        hwnd_ = CreateWindowEx(WS_EX_TOPMOST, WINDOW_CLASS_NAME, win_title_, style_fullscreen_,
-                              0, 0, 0, 0,
-                              nullptr, nullptr, h_instance_, nullptr);
+        hwnd_ = CreateWindowEx(WS_EX_TOPMOST, WINDOW_CLASS_NAME,
+                               win_title_, style_fullscreen_,
+                               0, 0, 0, 0,
+                               nullptr, nullptr, h_instance_, nullptr);
     if (!hwnd_) {
         post_error("Can't create window");
         return false;
@@ -192,11 +198,11 @@ bool HGE_CALL HGE_Impl::System_Initiate() {
         const auto rfunc = static_cast<bool(*)()>(pHGE->System_GetStateFunc(HGE_RENDERFUNC));
         const auto hwnd_tmp = hwnd_parent_;
         hwnd_parent_ = nullptr;
-        pHGE->System_SetStateFunc(HGE_FRAMEFUNC, DFrame);
+        pHGE->System_SetStateFunc(HGE_FRAMEFUNC, demo_render_frame);
         pHGE->System_SetStateFunc(HGE_RENDERFUNC, nullptr);
-        DInit();
+        prepare_demo();
         pHGE->System_Start();
-        DDone();
+        finish_demo();
         hwnd_parent_ = hwnd_tmp;
         pHGE->System_SetStateFunc(HGE_FRAMEFUNC, func);
         pHGE->System_SetStateFunc(HGE_RENDERFUNC, rfunc);
@@ -378,7 +384,7 @@ void HGE_CALL HGE_Impl::System_SetStateBool(const hgeBoolState state, const bool
             break;
         }
         if (d3d_device_ && windowed_ != value) {
-            if (d3dpp_windowed_.BackBufferFormat == D3DFMT_UNKNOWN 
+            if (d3dpp_windowed_.BackBufferFormat == D3DFMT_UNKNOWN
                 || d3dpp_fullscreen_.BackBufferFormat == D3DFMT_UNKNOWN) {
                 break;
             }

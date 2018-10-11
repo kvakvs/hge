@@ -153,12 +153,12 @@ void HGE_Impl::build_event(const int type, const int key, const int scan,
             key_table_[key] |= 1;
         }
         ToAscii(key, scan, kbstate,
-                reinterpret_cast<unsigned short *>(&eptr->event.chr), 0);
+                reinterpret_cast<uint16_t *>(&eptr->event.chr), 0);
     }
     if (type == INPUT_KEYUP) {
         key_table_[key] |= 2;
         ToAscii(key, scan, kbstate,
-                reinterpret_cast<unsigned short *>(&eptr->event.chr), 0);
+                reinterpret_cast<uint16_t *>(&eptr->event.chr), 0);
     }
     if (type == INPUT_MOUSEWHEEL) {
         eptr->event.key = 0;

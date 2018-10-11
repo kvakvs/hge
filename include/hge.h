@@ -11,9 +11,9 @@
 */
 #pragma once
 
-#ifndef HGE_DIRECTX_VER
-    #error Please set HGE_DIRECTX_VER to 8 or 9
-#endif // not defined HGE_DIRECTX_VER
+// version 8 is not supported. Please use DirectX 9
+#undef HGE_DIRECTX_VER 
+#define HGE_DIRECTX_VER 9
 
 #include <windows.h>
 

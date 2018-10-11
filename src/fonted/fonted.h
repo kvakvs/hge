@@ -36,8 +36,8 @@
 
 
 struct CSymbolRange {
-    unsigned short First;
-    unsigned short Last;
+    uint16_t First;
+    uint16_t Last;
 };
 
 struct CHAR_DESC {

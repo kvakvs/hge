@@ -56,9 +56,9 @@ struct CInputEventList {
 };
 
 
-void DInit();
-void DDone();
-bool DFrame();
+void prepare_demo();
+void finish_demo();
+bool demo_render_frame();
 
 
 /*
