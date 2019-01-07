@@ -2,6 +2,10 @@ This is README for HGE library source reconfigured with CMake
 
 For original readme file refer to Original_README.txt
 
+# Support & Questions
+
+For those times when you absolutely need help, there is the Discord channel: https://discord.gg/TdjamHt
+
 # ANNOUNCEMENT
 
 DirectX8 support has ended. There will be no assistance with DirectX8 
