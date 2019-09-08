@@ -4,6 +4,8 @@ For original readme file refer to Original_README.txt
 
 # Support & Questions
 
+Documentation and more info http://kvakvs.github.io/hge
+
 Example game can be found here https://github.com/kvakvs/hge_skel
 
 For those times when you absolutely need help, there is the Discord channel: https://discord.gg/TdjamHt
