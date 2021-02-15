@@ -595,6 +595,10 @@ void HGE_CALL HGE_Impl::System_SetStateInt(const hgeIntState state, const int va
     }
 }
 
+#ifndef GCL_HICON
+    #define GCL_HICON -14
+#endif
+
 void HGE_CALL HGE_Impl::System_SetStateString(const hgeStringState state, const char* value) {
     switch (state) {
     case HGE_ICON:

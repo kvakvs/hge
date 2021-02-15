@@ -34,7 +34,9 @@ Linux/Unix/MacOSX but this version of HGE only builds on Windows).
 
 ## IMPORTANT
 
-1. If you are going to change any build options, please keep in mind, that this is CMake
+1. If you got a 64bit project by mistake, add "-A Win32" to CMake command line. 
+   See example in `cmake_studio2019.bat`
+1. If you are going to change any build options, please keep in mind, that this is CMake 
    generated project, editing anything inside `_build` folder will be overwritten
    next time, when you compile HGE project. If you need to add any compiler options, please
    edit main or each `CMakeLists.txt` in HGE181 and `src/*` folders (depending how big

@@ -73,9 +73,10 @@
 using HTEXTURE = size_t;
 using HTARGET = size_t;
 using HEFFECT = size_t;
-using HMUSIC = size_t;
-using HSTREAM = size_t;
-using HCHANNEL = size_t;
+
+using HMUSIC = uint32_t; // defined by bass.h
+using HSTREAM = uint32_t; // defined by bass.h
+using HCHANNEL = uint32_t; // defined by bass.h
 #if HGE_DIRECTX_VER >= 9
 using HSHADER = size_t;
 #endif
