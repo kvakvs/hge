@@ -11,6 +11,7 @@
 // added by kvakvs@yandex.ru
 
 #if HGE_DIRECTX_VER == 8
+    #error "DirectX8 support was removed, please use DirectX9"
     #include <d3d8.h>
     #include <d3dx8.h>
 #else

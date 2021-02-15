@@ -117,7 +117,7 @@ public:
     float GetStringWidth(const char *string, bool bMultiline = true) const;
 
 private:
-    hgeFont();
+    hgeFont() = default;
 
     hgeFont(const hgeFont &fnt);
 

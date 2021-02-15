@@ -82,9 +82,11 @@ private:
 /*
 ** hgeGUISlider
 */
-#define HGESLIDER_BAR                        0
-#define HGESLIDER_BARRELATIVE        1
-#define HGESLIDER_SLIDER                2
+enum {
+    HGESLIDER_BAR = 0,
+    HGESLIDER_BARRELATIVE = 1,
+    HGESLIDER_SLIDER = 2,
+};
 
 class hgeGUISlider : public hgeGUIObject {
 public:

@@ -145,7 +145,7 @@ public:
     hgeRect *GetBoundingBox(hgeRect *rect) const;
 
 private:
-    hgeParticleSystem();
+    hgeParticleSystem() = default;
 
     static HGE *hge_;
 

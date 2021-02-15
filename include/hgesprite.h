@@ -24,7 +24,6 @@ public:
       hge_->Release();
     }
 
-
     void Render(float x, float y);
 
     void RenderEx(float x, float y, float rot, float hscale = 1.0f, float vscale = 0.0f);

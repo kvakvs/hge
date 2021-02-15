@@ -302,24 +302,28 @@ struct hgeInputEvent {
 /*
 ** HGE Input Event type constants
 */
-#define INPUT_KEYDOWN       1
-#define INPUT_KEYUP         2
-#define INPUT_MBUTTONDOWN   3
-#define INPUT_MBUTTONUP     4
-#define INPUT_MOUSEMOVE     5
-#define INPUT_MOUSEWHEEL    6
+enum {
+    INPUT_KEYDOWN = 1,
+    INPUT_KEYUP = 2,
+    INPUT_MBUTTONDOWN = 3,
+    INPUT_MBUTTONUP = 4,
+    INPUT_MOUSEMOVE = 5,
+    INPUT_MOUSEWHEEL = 6,
+};
 
 
 /*
 ** HGE Input Event flags
 */
-#define HGEINP_SHIFT        1
-#define HGEINP_CTRL         2
-#define HGEINP_ALT          4
-#define HGEINP_CAPSLOCK     8
-#define HGEINP_SCROLLLOCK   16
-#define HGEINP_NUMLOCK      32
-#define HGEINP_REPEAT       64
+enum {
+    HGEINP_SHIFT = 1,
+    HGEINP_CTRL = 2,
+    HGEINP_ALT = 4,
+    HGEINP_CAPSLOCK = 8,
+    HGEINP_SCROLLLOCK = 16,
+    HGEINP_NUMLOCK = 32,
+    HGEINP_REPEAT = 64,
+};
 
 
 /*
