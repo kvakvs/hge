@@ -54,7 +54,4 @@ add_subdirectory( tutorials/tutorial05 )
 add_subdirectory( tutorials/tutorial06 )
 add_subdirectory( tutorials/tutorial07 )
 add_subdirectory( tutorials/tutorial08 )
-
-#if( ${HGE_DIRECTX_VER} MATCHES "9" )
-    add_subdirectory( tutorials/tutorial05_shaders )
-#endif()
+add_subdirectory( tutorials/tutorial05_shaders )

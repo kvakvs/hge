@@ -1,10 +1,14 @@
-/*
-** Haaf's Game Engine 1.7
-** Copyright (C) 2003-2007, Relish Games
-** hge.relishgames.com
-**
-** hgeVector helper class implementation
-*/
+/*-----------------------------------------------------------------------------
+ * Haaf's Game Engine 1.8.1
+ * Copyright (C) 2003-2007, Relish Games
+ * Maintained 2012-2021 by dmytro.lytovchenko@gmail.com (github @kvakvs)
+ * Github -- https://github.com/kvakvs/hge | Discord -- https://discord.gg/TdjamHt
+ *
+ * Old website: http://hge.relishgames.com; Old forum: http://relishgames.com/forum
+ *-----------------------------------------------------------------------------*/
+//
+// hgeVector helper class implementation
+//
 
 
 #include "../../include/hgevector.h"
@@ -13,7 +17,7 @@ float hgeVector::InvSqrt(const float x) {
     union {
         int int_part;
         float float_part;
-    } convertor;
+    } convertor{};
 
     convertor.float_part = x;
     convertor.int_part = 0x5f3759df - (convertor.int_part >> 1);

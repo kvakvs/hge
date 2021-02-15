@@ -10,8 +10,8 @@
 
 
 #include "../../include/hge.h"
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdlib>
 
 
 enum {
@@ -91,54 +91,54 @@ enum {
 
 class RScriptParser {
 public:
-    RScriptParser(char* name, char* scr);
+    RScriptParser(char *name, char *scr);
 
     ~RScriptParser() {
-        hge_->Release();
+      hge_->Release();
     }
 
     int get_token();
 
     void put_back() {
-        script_ -= strlen(tokenvalue_);
+      script_ -= strlen(tokenvalue_);
     }
 
     int get_line() const {
-        return line_;
+      return line_;
     }
 
-    char* get_name() const {
-        return scriptname_;
+    char *get_name() const {
+      return scriptname_;
     }
 
-    char* tkn_string() {
-        return tokenvalue_;
+    char *tkn_string() {
+      return tokenvalue_;
     }
 
     int tkn_int() const {
-        return atoi(tokenvalue_);
+      return atoi(tokenvalue_);
     }
 
     float tkn_float() const {
-        return static_cast<float>(atof(tokenvalue_));
+      return static_cast<float>(atof(tokenvalue_));
     }
 
     bool tkn_bool() {
-        return (tokenvalue_[0] == 't' || tokenvalue_[0] == 'T') ? true : false;
+      return (tokenvalue_[0] == 't' || tokenvalue_[0] == 'T') ? true : false;
     }
 
     uint32_t tkn_hex();
 
-    void script_post_error(char* msg1, char* msg2);
+    void script_post_error(const char *msg1, const char *msg2);
 
     int tokentype_;
-    char tokenvalue_[128];
-    char* script_;
-    char* scriptname_;
+    char tokenvalue_[128]{};
+    char *script_;
+    char *scriptname_;
     int line_;
 
 private:
-    bool strtkcmp(const char* str, const char* mem);
+    static bool strtkcmp(const char *str, const char *mem);
 
-    static HGE* hge_;
+    static HGE *hge_;
 };

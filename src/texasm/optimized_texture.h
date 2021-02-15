@@ -1,3 +1,11 @@
+/*-----------------------------------------------------------------------------
+ * Haaf's Game Engine 1.8.1
+ * Copyright (C) 2003-2007, Relish Games
+ * Maintained 2012-2021 by dmytro.lytovchenko@gmail.com (github @kvakvs)
+ * Github -- https://github.com/kvakvs/hge | Discord -- https://discord.gg/TdjamHt
+ *
+ * Old website: http://hge.relishgames.com; Old forum: http://relishgames.com/forum
+ *-----------------------------------------------------------------------------*/
 #pragma once
 
 
@@ -6,8 +14,8 @@
 #include "RectPlacement.h"
 
 
-bool write32_bit_png_with_pitch(FILE* fp, void* pBits, bool bNeedAlpha, int nWidth, int nHeight,
-                            int nPitch);
+bool write32_bit_png_with_pitch(FILE *fp, void *pBits, bool bNeedAlpha, int nWidth, int nHeight,
+                                int nPitch);
 
 
 struct CColor {
@@ -23,32 +31,37 @@ public:
     COptimizedTexture();
 
     ~COptimizedTexture() {
-        Reset();
+      Reset();
     }
 
     void Reset();
 
     void SetMaxSize(const int w, const int h) {
-        maxw = w;
-        maxh = h;
+      maxw = w;
+      maxh = h;
     }
 
     void SetMargin(const int margin) {
-        placer.SetMargin(margin);
+      placer.SetMargin(margin);
     }
 
-    bool PlaceObject(CGfxObject* obj);
-    void AddNoTextureObject(CGfxObject* obj);
+    bool PlaceObject(CGfxObject *obj);
+
+    void AddNoTextureObject(CGfxObject *obj);
 
     int GetNumPlaced() {
-        return obj_list.size();
+      return obj_list.size();
     }
 
     bool Create();
+
     bool CopyData();
+
     bool OptimizeAlpha() const;
-    bool Save(char* filename) const;
-    bool SaveDescriptions(char* resfile, char* texfile, char* texname);
+
+    bool Save(char *filename) const;
+
+    bool SaveDescriptions(char *resfile, char *texfile, char *texname);
 
 private:
     int maxw;
@@ -60,6 +73,6 @@ private:
     int texh;
 
     HTEXTURE tex;
-    CColor* tex_data;
+    CColor *tex_data;
     int pitch;
 };

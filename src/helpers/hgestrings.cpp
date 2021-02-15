@@ -1,14 +1,18 @@
-/*
-** Haaf's Game Engine 1.7
-** Copyright (C) 2003-2007, Relish Games
-** hge.relishgames.com
-**
-** hgeStringTable helper class implementation
-*/
+/*-----------------------------------------------------------------------------
+ * Haaf's Game Engine 1.8.1
+ * Copyright (C) 2003-2007, Relish Games
+ * Maintained 2012-2021 by dmytro.lytovchenko@gmail.com (github @kvakvs)
+ * Github -- https://github.com/kvakvs/hge | Discord -- https://discord.gg/TdjamHt
+ *
+ * Old website: http://hge.relishgames.com; Old forum: http://relishgames.com/forum
+ *-----------------------------------------------------------------------------*/
+//
+// hgeStringTable helper class implementation
+//
 
 
 #include "../../include/hgestrings.h"
-#include <ctype.h>
+#include <cctype>
 #include <memory>
 
 const char str_header_tag[] = "[HGESTRINGTABLE]";

@@ -15,7 +15,7 @@ include_directories( ${DIRECTX_SDK_DIR}/include )
 
 #------ link directories listed ------
 link_directories( ${HGE_SOURCE_DIR}/linklib )
-link_directories( ${DIRECTX_SDK_DIR}/lib ${DIRECTX_SDK_DIR}/lib/x64 ${DIRECTX_SDK_DIR}/lib/x86 )
+link_directories( ${DIRECTX_SDK_DIR}/lib ${DIRECTX_SDK_DIR}/lib/x86 )
 link_libraries( hge )
 
 #------ target -----

@@ -1,24 +1,23 @@
-/*
-** Haaf's Game Engine 1.7
-** Copyright (C) 2003-2007, Relish Games
-** hge.relishgames.com
-**
-** hgeGUI helper classes header
-*/
-
-
+/*-----------------------------------------------------------------------------
+ * Haaf's Game Engine 1.8.1
+ * Copyright (C) 2003-2007, Relish Games
+ * Maintained 2012-2021 by dmytro.lytovchenko@gmail.com (github @kvakvs)
+ * Github -- https://github.com/kvakvs/hge | Discord -- https://discord.gg/TdjamHt
+ *
+ * Old website: http://hge.relishgames.com; Old forum: http://relishgames.com/forum
+ *-----------------------------------------------------------------------------*/
 #pragma once
-
 
 #include "hge.h"
 #include "hgesprite.h"
 #include "hgerect.h"
 
-
-#define HGEGUI_NONAVKEYS		0
-#define HGEGUI_LEFTRIGHT		1
-#define HGEGUI_UPDOWN			2
-#define HGEGUI_CYCLED			4
+enum {
+    HGEGUI_NONAVKEYS = 0,
+    HGEGUI_LEFTRIGHT = 1,
+    HGEGUI_UPDOWN = 2,
+    HGEGUI_CYCLED = 4,
+};
 
 class hgeGUI;
 
@@ -28,12 +27,12 @@ class hgeGUI;
 class hgeGUIObject {
 public:
     hgeGUIObject() {
-        hge_ = hgeCreate(HGE_VERSION);
-        color = 0xFFFFFFFF;
+      hge_ = hgeCreate(HGE_VERSION);
+      color = 0xFFFFFFFF;
     }
 
     virtual ~hgeGUIObject() {
-        hge_->Release();
+      hge_->Release();
     }
 
     virtual void Render() = 0;
@@ -51,7 +50,7 @@ public:
     }
 
     virtual bool IsDone() {
-        return true;
+      return true;
     }
 
     virtual void Focus(bool bFocused) {
@@ -61,27 +60,27 @@ public:
     }
 
     virtual bool MouseMove(float x, float y) {
-        return false;
+      return false;
     }
 
     virtual bool MouseLButton(bool bDown) {
-        return false;
+      return false;
     }
 
     virtual bool MouseRButton(bool bDown) {
-        return false;
+      return false;
     }
 
     virtual bool MouseWheel(int nNotches) {
-        return false;
+      return false;
     }
 
     virtual bool KeyClick(int key, int chr) {
-        return false;
+      return false;
     }
 
     virtual void SetColor(const uint32_t _color) {
-        color = _color;
+      color = _color;
     }
 
     int id;
@@ -91,15 +90,16 @@ public:
     hgeRect rect;
     uint32_t color;
 
-    hgeGUI* gui;
-    hgeGUIObject* next;
-    hgeGUIObject* prev;
+    hgeGUI *gui;
+    hgeGUIObject *next;
+    hgeGUIObject *prev;
 
 protected:
-    hgeGUIObject(const hgeGUIObject& go);
-    hgeGUIObject& operator=(const hgeGUIObject& go);
+    hgeGUIObject(const hgeGUIObject &go) {}
 
-    static HGE* hge_;
+    hgeGUIObject &operator=(const hgeGUIObject &go) {}
+
+    static HGE *hge_;
 };
 
 
@@ -109,45 +109,60 @@ protected:
 class hgeGUI {
 public:
     hgeGUI();
+
     ~hgeGUI();
 
-    void AddCtrl(hgeGUIObject* ctrl);
+    void AddCtrl(hgeGUIObject *ctrl);
+
     void DelCtrl(int id);
-    hgeGUIObject* GetCtrl(int id) const;
+
+    hgeGUIObject *GetCtrl(int id) const;
 
     void MoveCtrl(int id, float x, float y);
+
     void ShowCtrl(int id, bool bVisible);
+
     void EnableCtrl(int id, bool bEnabled);
 
     void SetNavMode(int mode);
-    void SetCursor(hgeSprite* spr);
+
+    void SetCursor(hgeSprite *spr);
+
     void SetColor(const uint32_t color);
+
     void SetFocus(int id);
+
     int GetFocus() const;
 
     void Enter();
+
     void Leave();
+
     void Reset();
+
     void Move(float dx, float dy);
 
     int Update(float dt);
+
     void Render();
 
 private:
-    hgeGUI(const hgeGUI&);
-    hgeGUI& operator=(const hgeGUI&);
-    bool ProcessCtrl(hgeGUIObject* ctrl);
+    hgeGUI(const hgeGUI &);
 
-    static HGE* hge_;
+    hgeGUI &operator=(const hgeGUI &);
 
-    hgeGUIObject* ctrls_;
-    hgeGUIObject* ctrl_lock_;
-    hgeGUIObject* ctrl_focus_;
-    hgeGUIObject* ctrl_over_;
+    bool ProcessCtrl(hgeGUIObject *ctrl);
+
+    static HGE *hge_;
+
+    hgeGUIObject *ctrls_;
+    hgeGUIObject *ctrl_lock_;
+    hgeGUIObject *ctrl_focus_;
+    hgeGUIObject *ctrl_over_;
 
     int navmode_;
     int enter_leave_;
-    hgeSprite* spr_cursor_;
+    hgeSprite *spr_cursor_;
 
     float mx_;
     float my_;
