@@ -14,7 +14,7 @@
 
 void CTextureAssembler::ClearResources() {
 
-  for (auto & it : obj_list) {
+  for (auto &it : obj_list) {
     delete it;
   }
 
@@ -22,7 +22,8 @@ void CTextureAssembler::ClearResources() {
 }
 
 
-bool CTextureAssembler::CheckMask(char *name, char *mask_set,
+bool CTextureAssembler::CheckMask(const std::string &name,
+                                  char *mask_set,
                                   const bool mask_inclusive) {
 
   if (!mask_set || !*mask_set) {
@@ -30,12 +31,12 @@ bool CTextureAssembler::CheckMask(char *name, char *mask_set,
   }
 
   auto mask = mask_set;
-  const int name_len = strlen(name);
+  const int name_len = name.length();
 
   while (*mask) {
     const int mask_len = strlen(mask);
 
-    const auto match = (name_len >= mask_len) && !memcmp(name, mask, mask_len);
+    const auto match = (name_len >= mask_len) && !memcmp(name.data(), mask, mask_len);
 
     if (match && mask_inclusive) {
       return true;
@@ -51,8 +52,8 @@ bool CTextureAssembler::CheckMask(char *name, char *mask_set,
 }
 
 
-CGfxObject *CTextureAssembler::FindObj(GfxObjList objlist, char *name) {
-  for (auto & it : obj_list)
+CGfxObject *CTextureAssembler::FindObj(const GfxObjList &objlist, const char *name) const {
+  for (auto &it : obj_list)
     if (!strcmp(it->GetName(), name)) {
       return it;
     }
@@ -69,11 +70,12 @@ void CTextureAssembler::AccumulateRMResources(hgeResourceManager *rm,
   while (resdesc) {
     if (!resgroup || resdesc->resgroup == resgroup)
       if (CheckMask(resdesc->name, mask_set, mask_inclusive))
-        if (!FindObj(obj_list, resdesc->name)) {
+        if (!FindObj(obj_list, resdesc->name.c_str())) {
           const auto spr = new CSpriteObject(
                   reinterpret_cast<hgeSprite *>(resdesc->Get(rm)),
-                  resdesc->name,
-                  resdesc->resgroup, false
+                  resdesc->name.c_str(),
+                  resdesc->resgroup,
+                  false
           );
           obj_list.push_back(spr);
         }

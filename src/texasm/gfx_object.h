@@ -17,13 +17,13 @@ class CGfxObject {
 public:
     virtual ~CGfxObject() = default;
 
-    CGfxObject(char *_name, const int _resgroup) : x(0), y(0) {
+    CGfxObject(const char *_name, const int _resgroup) : x(0), y(0) {
       name = _name;
       placed = false;
       resgroup = _resgroup;
     }
 
-    char *GetName() const {
+    const char *GetName() const {
       return name;
     }
 
@@ -57,7 +57,7 @@ public:
     virtual bool SaveDescription(FILE *fp, char *texname) = 0;
 
 protected:
-    char *name;
+    const char *name;
     int resgroup;
     bool placed;
     int x;

@@ -93,7 +93,7 @@ void hgeResourceManager::Purge(const int groupid) {
 }
 
 void *hgeResourceManager::GetResource(const char *name, const int resgroup) {
-  auto res1 = FindRes(this, RES_RESOURCE, name);
+  auto res1 = _hgeResources::FindRes(this, RES_RESOURCE, name);
 
   if (res1) {
     return reinterpret_cast<void *>(res1->Get(this));
@@ -103,9 +103,9 @@ void *hgeResourceManager::GetResource(const char *name, const int resgroup) {
     const auto resource = new RResource();
     resource->handle = reinterpret_cast<uint32_t>(reshandle);
     resource->resgroup = resgroup;
-    strcpy(resource->name, name);
-    strcpy(resource->filename, name);
-    AddRes(this, RES_RESOURCE, resource);
+    resource->name = name;
+    resource->filename = name;
+    _hgeResources::AddRes(this, RES_RESOURCE, resource);
 
     return reshandle;
   }
@@ -114,7 +114,7 @@ void *hgeResourceManager::GetResource(const char *name, const int resgroup) {
 }
 
 HTEXTURE hgeResourceManager::GetTexture(const char *name, const int resgroup) {
-  auto res1 = FindRes(this, RES_TEXTURE, name);
+  auto res1 = _hgeResources::FindRes(this, RES_TEXTURE, name);
   if (res1) {
     return static_cast<HTEXTURE>(res1->Get(this));
   }
@@ -124,9 +124,9 @@ HTEXTURE hgeResourceManager::GetTexture(const char *name, const int resgroup) {
     resource->handle = reshandle;
     resource->resgroup = resgroup;
     resource->mipmap = false;
-    strcpy(resource->name, name);
-    strcpy(resource->filename, name);
-    AddRes(this, RES_TEXTURE, resource);
+    resource->name = name;
+    resource->filename = name;
+    _hgeResources::AddRes(this, RES_TEXTURE, resource);
 
     return reshandle;
   }
@@ -135,7 +135,7 @@ HTEXTURE hgeResourceManager::GetTexture(const char *name, const int resgroup) {
 }
 
 HEFFECT hgeResourceManager::GetEffect(const char *name, const int resgroup) {
-  auto res1 = FindRes(this, RES_EFFECT, name);
+  auto res1 = _hgeResources::FindRes(this, RES_EFFECT, name);
   if (res1) {
     return static_cast<HEFFECT>(res1->Get(this));
   }
@@ -144,9 +144,9 @@ HEFFECT hgeResourceManager::GetEffect(const char *name, const int resgroup) {
     auto *resource = new REffect();
     resource->handle = reshandle;
     resource->resgroup = resgroup;
-    strcpy(resource->name, name);
-    strcpy(resource->filename, name);
-    AddRes(this, RES_EFFECT, resource);
+    resource->name = name;
+    resource->filename = name;
+    _hgeResources::AddRes(this, RES_EFFECT, resource);
 
     return reshandle;
   }
@@ -155,7 +155,7 @@ HEFFECT hgeResourceManager::GetEffect(const char *name, const int resgroup) {
 }
 
 HMUSIC hgeResourceManager::GetMusic(const char *name, const int resgroup) {
-  auto res1 = FindRes(this, RES_MUSIC, name);
+  auto res1 = _hgeResources::FindRes(this, RES_MUSIC, name);
   if (res1) {
     return static_cast<HMUSIC>(res1->Get(this));
   }
@@ -164,9 +164,9 @@ HMUSIC hgeResourceManager::GetMusic(const char *name, const int resgroup) {
     auto *resource = new RMusic();
     resource->handle = reshandle;
     resource->resgroup = resgroup;
-    strcpy(resource->name, name);
-    strcpy(resource->filename, name);
-    AddRes(this, RES_MUSIC, resource);
+    resource->name = name;
+    resource->filename = name;
+    _hgeResources::AddRes(this, RES_MUSIC, resource);
 
     return reshandle;
   }
@@ -175,7 +175,7 @@ HMUSIC hgeResourceManager::GetMusic(const char *name, const int resgroup) {
 }
 
 HSTREAM hgeResourceManager::GetStream(const char *name, const int resgroup) {
-  auto res1 = FindRes(this, RES_STREAM, name);
+  auto res1 = _hgeResources::FindRes(this, RES_STREAM, name);
   if (res1) {
     return static_cast<HSTREAM>(res1->Get(this));
   }
@@ -184,9 +184,9 @@ HSTREAM hgeResourceManager::GetStream(const char *name, const int resgroup) {
     const auto resource = new RStream();
     resource->handle = reshandle;
     resource->resgroup = resgroup;
-    strcpy(resource->name, name);
-    strcpy(resource->filename, name);
-    AddRes(this, RES_STREAM, resource);
+    resource->name = name;
+    resource->filename = name;
+    _hgeResources::AddRes(this, RES_STREAM, resource);
 
     return reshandle;
   }
@@ -195,7 +195,7 @@ HSTREAM hgeResourceManager::GetStream(const char *name, const int resgroup) {
 }
 
 HTARGET hgeResourceManager::GetTarget(const char *name) {
-  auto res1 = FindRes(this, RES_TARGET, name);
+  auto res1 = _hgeResources::FindRes(this, RES_TARGET, name);
   if (res1) {
     return static_cast<HTARGET>(res1->Get(this));
   }
@@ -203,7 +203,7 @@ HTARGET hgeResourceManager::GetTarget(const char *name) {
 }
 
 hgeSprite *hgeResourceManager::GetSprite(const char *name) {
-  auto res1 = FindRes(this, RES_SPRITE, name);
+  auto res1 = _hgeResources::FindRes(this, RES_SPRITE, name);
   if (res1) {
     return reinterpret_cast<hgeSprite *>(res1->Get(this));
   }
@@ -211,7 +211,7 @@ hgeSprite *hgeResourceManager::GetSprite(const char *name) {
 }
 
 hgeAnimation *hgeResourceManager::GetAnimation(const char *name) {
-  auto res1 = FindRes(this, RES_ANIMATION, name);
+  auto res1 = _hgeResources::FindRes(this, RES_ANIMATION, name);
   if (res1) {
     return reinterpret_cast<hgeAnimation *>(res1->Get(this));
   }
@@ -219,7 +219,7 @@ hgeAnimation *hgeResourceManager::GetAnimation(const char *name) {
 }
 
 hgeFont *hgeResourceManager::GetFont(const char *name) {
-  auto res1 = FindRes(this, RES_FONT, name);
+  auto res1 = _hgeResources::FindRes(this, RES_FONT, name);
   if (res1) {
     return reinterpret_cast<hgeFont *>(res1->Get(this));
   }
@@ -227,7 +227,7 @@ hgeFont *hgeResourceManager::GetFont(const char *name) {
 }
 
 hgeParticleSystem *hgeResourceManager::GetParticleSystem(const char *name) {
-  auto res1 = FindRes(this, RES_PARTICLE, name);
+  auto res1 = _hgeResources::FindRes(this, RES_PARTICLE, name);
   if (res1) {
     return reinterpret_cast<hgeParticleSystem *>(res1->Get(this));
   }
@@ -235,7 +235,7 @@ hgeParticleSystem *hgeResourceManager::GetParticleSystem(const char *name) {
 }
 
 hgeDistortionMesh *hgeResourceManager::GetDistortionMesh(const char *name) {
-  auto res1 = FindRes(this, RES_DISTORT, name);
+  auto res1 = _hgeResources::FindRes(this, RES_DISTORT, name);
   if (res1) {
     return reinterpret_cast<hgeDistortionMesh *>(res1->Get(this));
   }
@@ -244,7 +244,7 @@ hgeDistortionMesh *hgeResourceManager::GetDistortionMesh(const char *name) {
 
 hgeStringTable *hgeResourceManager::GetStringTable(const char *name,
                                                    const int resgroup) {
-  auto res1 = FindRes(this, RES_STRTABLE, name);
+  auto res1 = _hgeResources::FindRes(this, RES_STRTABLE, name);
   if (res1) {
     return reinterpret_cast<hgeStringTable *>(res1->Get(this));
   }
@@ -252,9 +252,9 @@ hgeStringTable *hgeResourceManager::GetStringTable(const char *name,
   const auto resource = new RStringTable();
   resource->handle = reinterpret_cast<uint32_t>(strtable);
   resource->resgroup = resgroup;
-  strcpy(resource->name, name);
-  strcpy(resource->filename, name);
-  AddRes(this, RES_STRTABLE, resource);
+  resource->name = name;
+  resource->filename = name;
+  _hgeResources::AddRes(this, RES_STRTABLE, resource);
 
   return strtable;
 }

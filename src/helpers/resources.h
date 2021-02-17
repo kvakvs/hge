@@ -33,12 +33,6 @@ enum {
     RES_STRTABLE = 12,
 };
 
-
-void AddRes(hgeResourceManager *rm, int type, ResDesc *resource);
-
-ResDesc *FindRes(hgeResourceManager *rm, int type, const char *name);
-
-
 struct RScript : public ResDesc {
     static void Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                       const char *basename);
@@ -52,8 +46,14 @@ struct RScript : public ResDesc {
 };
 
 struct RResource : public ResDesc {
-    char filename[MAXRESCHARS];
+protected:
+    friend class hgeResourceManager;
 
+    friend class _hgeResources;
+
+    std::string filename;
+
+public:
     static void Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                       const char *basename);
 
@@ -63,9 +63,13 @@ struct RResource : public ResDesc {
 };
 
 struct RTexture : public ResDesc {
-    char filename[MAXRESCHARS];
+protected:
+    friend class hgeResourceManager;
+
+    std::string filename;
     bool mipmap;
 
+public:
     static void Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                       const char *basename);
 
@@ -75,8 +79,12 @@ struct RTexture : public ResDesc {
 };
 
 struct REffect : public ResDesc {
-    char filename[MAXRESCHARS];
+protected:
+    friend class hgeResourceManager;
 
+    std::string filename;
+
+public:
     static void Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                       const char *basename);
 
@@ -86,9 +94,13 @@ struct REffect : public ResDesc {
 };
 
 struct RMusic : public ResDesc {
-    char filename[MAXRESCHARS];
+protected:
+    friend class hgeResourceManager;
+
+    std::string filename;
     int amplify;
 
+public:
     static void Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                       const char *basename);
 
@@ -98,8 +110,12 @@ struct RMusic : public ResDesc {
 };
 
 struct RStream : public ResDesc {
-    char filename[MAXRESCHARS];
+protected:
+    friend class hgeResourceManager;
 
+    std::string filename;
+
+public:
     static void Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                       const char *basename);
 
@@ -143,9 +159,9 @@ struct RSprite : public ResDesc {
 };
 
 struct RAnimation : public RSprite {
-    int frames;
-    float fps;
-    int mode;
+    int frames{};
+    float fps{};
+    int mode{};
 
     static void Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                       const char *basename);
@@ -205,12 +221,32 @@ struct RDistort : public ResDesc {
 
 
 struct RStringTable : public ResDesc {
-    char filename[MAXRESCHARS];
+protected:
+    friend class hgeResourceManager;
 
+    std::string filename;
+
+public:
     static void Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                       const char *basename);
 
     uint32_t Get(hgeResourceManager *rm) override;
 
     void Free() override;
+};
+
+
+class _hgeResources {
+public:
+    static void AddRes(hgeResourceManager *rm, int type, ResDesc *resource);
+
+    static ResDesc *FindRes(hgeResourceManager *rm, int type, const char *name);
+
+
+    static void ScriptParseFileResource(hgeResourceManager *rm, RScriptParser *sp, const char *name,
+                                        const char *basename, ResDesc *rr, int restype);
+
+    static bool ScriptSkipToNextParameter(RScriptParser *sp, bool ignore);
+
+    static void ScriptParseSpriteAnim(RScriptParser *sp, RSprite *rc, bool anim);
 };

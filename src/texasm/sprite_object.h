@@ -14,7 +14,7 @@
 
 class CSpriteObject : public CGfxObject {
 public:
-    CSpriteObject(hgeSprite *_spr, char *_name, int _resgroup, bool _owned);
+    CSpriteObject(hgeSprite *_spr, const char *_name, int _resgroup, bool _owned);
 
     ~CSpriteObject();
 

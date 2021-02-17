@@ -87,7 +87,7 @@ Keyword keytable[] = {
         {nullptr,       TTNONE}
 };
 
-RScriptParser::RScriptParser(char *name, char *scr) {
+RScriptParser::RScriptParser(const std::string &name, const char *scr) {
   hge_ = hgeCreate(HGE_VERSION);
 
   scriptname_ = name;

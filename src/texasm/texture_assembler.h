@@ -39,9 +39,9 @@ public:
     bool GenerateTextures(char *wildcard);
 
 private:
-    static bool CheckMask(char *name, char *mask_set, bool bMaskInclusive);
+    static bool CheckMask(const std::string &name, char *mask_set, bool bMaskInclusive);
 
-    CGfxObject *FindObj(GfxObjList objlist, char *name);
+    CGfxObject *FindObj(const GfxObjList& objlist, const char *name) const;
 
     GfxObjList obj_list;
     COptimizedTexture texture;

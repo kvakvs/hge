@@ -22,11 +22,17 @@
 class hgeResourceManager;
 
 struct ResDesc {
-    char name[MAXRESCHARS];
+protected:
+    friend class hgeResourceManager;
+    friend class _hgeResources;
+    friend class CTextureAssembler;
+
+    std::string name;
     int resgroup;
     uint32_t handle;
     ResDesc *next;
 
+public:
     ResDesc() {
       hge_ = hgeCreate(HGE_VERSION);
     }

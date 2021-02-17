@@ -46,16 +46,6 @@ link_libraries( d3d9 d3dx9 )
 link_libraries( winmm )
 link_libraries( zlib hgehelpers )
 
-#------ precompiled headers support (not done for now) ------
-## if (MSVC)
-##     set( PRECOMP_FILENAME "precompiled_headers" )
-##     set_source_files_properties( ${PRECOMP_FILENAME}.cpp PROPERTIES COMPILE_FLAGS "/Yc${PRECOMP_FILENAME}.h" )
-##     foreach( src_file ${HGECORE_SRC} )
-##         set_source_files_properties( ${src_file} PROPERTIES COMPILE_FLAGS "/Yu${PRECOMP_FILENAME}.h" )
-##     endforeach( src_file ${HGECORE_SRC} )
-##     list( APPEND HGECORE_SRC ${PRECOMP_FILENAME}.cpp ${PRECOMP_FILENAME}.h )
-## endif (MSVC)
-
 #------ target (for creating HGE.DLL) -----
 add_library( hge SHARED ${HGECORE_SRC} )
 add_dependencies( hge zlib )

@@ -12,6 +12,7 @@
 #include "../../include/hge.h"
 #include <cstring>
 #include <cstdlib>
+#include <string>
 
 
 enum {
@@ -91,7 +92,7 @@ enum {
 
 class RScriptParser {
 public:
-    RScriptParser(char *name, char *scr);
+    RScriptParser(const std::string &name, const char *scr);
 
     ~RScriptParser() {
       hge_->Release();
@@ -107,7 +108,7 @@ public:
       return line_;
     }
 
-    char *get_name() const {
+    const std::string &get_name() const {
       return scriptname_;
     }
 
@@ -133,8 +134,8 @@ public:
 
     int tokentype_;
     char tokenvalue_[128]{};
-    char *script_;
-    char *scriptname_;
+    const char *script_;
+    std::string scriptname_;
     int line_;
 
 private:

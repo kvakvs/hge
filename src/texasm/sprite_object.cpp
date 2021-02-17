@@ -8,7 +8,7 @@
  *-----------------------------------------------------------------------------*/
 #include "sprite_object.h"
 
-CSpriteObject::CSpriteObject(hgeSprite *_spr, char *_name, const int _resgroup,
+CSpriteObject::CSpriteObject(hgeSprite *_spr, const char *_name, const int _resgroup,
                              const bool _owned)
         : CGfxObject(_name, _resgroup) {
   owned = _owned;
