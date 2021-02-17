@@ -43,8 +43,8 @@ struct CTextureList {
 };
 
 struct CResourceList {
-    char filename[_MAX_PATH];
-    char password[64];
+    std::string filename;
+    std::string password;
     CResourceList *next;
 };
 

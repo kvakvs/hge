@@ -27,7 +27,7 @@ bool HGE_CALL HGE_Impl::Resource_AttachPack(const char *filename, const char *pa
   strupr(sz_name);
 
   while (res_item) {
-    if (!strcmp(sz_name, res_item->filename)) {
+    if (res_item->filename == sz_name) {
       return false;
     }
     res_item = res_item->next;
@@ -40,9 +40,9 @@ bool HGE_CALL HGE_Impl::Resource_AttachPack(const char *filename, const char *pa
   unzClose(zip);
 
   res_item = new CResourceList;
-  strcpy(res_item->filename, sz_name);
+  res_item->filename = sz_name;
   if (password) {
-    strcpy(res_item->password, password);
+    res_item->password = password;
   } else {
     res_item->password[0] = 0;
   }
@@ -61,7 +61,7 @@ void HGE_CALL HGE_Impl::Resource_RemovePack(const char *filename) {
   strupr(sz_name);
 
   while (res_item) {
-    if (!strcmp(sz_name, res_item->filename)) {
+    if (res_item->filename == sz_name) {
       if (res_prev) {
         res_prev->next = res_item->next;
       } else {
@@ -114,7 +114,7 @@ void *HGE_CALL HGE_Impl::Resource_Load(const char *filename, uint32_t *size) {
   }
 
   while (res_item) {
-    const auto zip = unzOpen(res_item->filename);
+    const auto zip = unzOpen(res_item->filename.c_str());
     auto done = unzGoToFirstFile(zip);
     while (done == UNZ_OK) {
       unzGetCurrentFileInfo(zip, &file_info, sz_zip_name, sizeof(sz_zip_name), nullptr, 0,
@@ -126,9 +126,9 @@ void *HGE_CALL HGE_Impl::Resource_Load(const char *filename, uint32_t *size) {
         }
       }
       if (!strcmp(sz_name, sz_zip_name)) {
-        if (unzOpenCurrentFilePassword(zip, res_item->password[0] ? res_item->password : nullptr)
-            !=
-            UNZ_OK) {
+        if (unzOpenCurrentFilePassword(
+                zip, res_item->password.empty() ? nullptr : res_item->password.c_str()
+        ) != UNZ_OK) {
           unzClose(zip);
           sprintf(sz_name, res_err, filename);
           post_error(sz_name);
