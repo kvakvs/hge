@@ -285,15 +285,11 @@ public:
     void HGE_CALL Gfx_SetTransform(float x = 0, float y = 0, float dx = 0, float dy = 0,
                                    float rot = 0, float hscale = 0, float vscale = 0) override;
 
-#if HGE_DIRECTX_VER >= 9
-
     HSHADER HGE_CALL Shader_Create(const char *filename) override;
 
     void HGE_CALL Shader_Free(HSHADER shader) override;
 
     void HGE_CALL Gfx_SetShader(HSHADER shader) override;
-
-#endif
 
     HTARGET HGE_CALL Target_Create(int width, int height, bool zbuffer) override;
 
@@ -420,9 +416,7 @@ public:
     int cur_prim_type_;
     int cur_blend_mode_;
     HTEXTURE cur_texture_;
-#if HGE_DIRECTX_VER >= 9
     HSHADER cur_shader_;
-#endif
 
     bool gfx_init();
 

@@ -120,9 +120,6 @@ void HGE_CALL HGE_Impl::Gfx_SetTransform(const float x, const float y,
 // NOLINTNEXTLINE
 bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
   hgeGAPISurface *p_surf = nullptr;
-#if HGE_DIRECTX_VER == 8
-  hgeGAPISurface *p_depth = nullptr;
-#endif
 
   D3DDISPLAYMODE Mode;
   auto *target = reinterpret_cast<CRenderTargetList *>(targ);
@@ -160,22 +157,10 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
   if (target != cur_target_) {
     if (target) {
       target->pTex->GetSurfaceLevel(0, &p_surf);
-#if HGE_DIRECTX_VER == 8
-      p_depth = target->pDepth;
-#endif
     } else {
       p_surf = screen_surf_;
-#if HGE_DIRECTX_VER == 8
-      p_depth = pScreenDepth;
-#endif
     }
-#if HGE_DIRECTX_VER == 8
-    if(FAILED(pD3DDevice->SetRenderTarget(pSurf, p_depth)))
-#endif
-#if HGE_DIRECTX_VER == 9
-    if (FAILED(d3d_device_->SetRenderTarget(0, p_surf)))
-#endif
-    {
+    if (FAILED(d3d_device_->SetRenderTarget(0, p_surf))) {
       if (target) {
         p_surf->Release();
       }
@@ -207,12 +192,7 @@ bool HGE_CALL HGE_Impl::Gfx_BeginScene(const HTARGET targ) {
   }
 
   d3d_device_->BeginScene();
-#if HGE_DIRECTX_VER == 8
-  pVB->Lock( 0, 0, (uint8_t**)&VertArray, D3DLOCK_DISCARD );
-#endif
-#if HGE_DIRECTX_VER == 9
   vertex_buf_->Lock(0, 0, reinterpret_cast<void **>(&vert_array_), D3DLOCK_DISCARD);
-#endif
   return true;
 }
 
@@ -351,16 +331,9 @@ HTARGET HGE_CALL HGE_Impl::Target_Create(int width, int height,
   pTarget->height = TDesc.Height;
 
   if (zbuffer) {
-#if HGE_DIRECTX_VER == 8
-    if(FAILED(pD3DDevice->CreateDepthStencilSurface(pTarget->width, pTarget->height,
-              D3DFMT_D16, D3DMULTISAMPLE_NONE, &pTarget->pDepth)))
-#endif
-#if HGE_DIRECTX_VER == 9
     if (FAILED(d3d_device_->CreateDepthStencilSurface(width, height,
                                                       D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, false,
-                                                      &pTarget->pDepth, nullptr)))
-#endif
-    {
+                                                      &pTarget->pDepth, nullptr))) {
       pTarget->pTex->Release();
       post_error("Can't create render target depth buffer");
       delete pTarget;
@@ -624,14 +597,8 @@ void HGE_Impl::render_batch(const bool b_end_scene) {
     if (n_prim_) {
       switch (cur_prim_type_) {
         case HGEPRIM_QUADS:
-#if HGE_DIRECTX_VER == 8
-          pD3DDevice->DrawIndexedPrimitive(
-              D3DPT_TRIANGLELIST, 0, nPrim<<2, 0, nPrim<<1);
-#endif
-#if HGE_DIRECTX_VER == 9
           d3d_device_->DrawIndexedPrimitive(
                   D3DPT_TRIANGLELIST, 0, 0, n_prim_ << 2, 0, n_prim_ << 1);
-#endif
           break;
 
         case HGEPRIM_TRIPLES:
@@ -648,18 +615,10 @@ void HGE_Impl::render_batch(const bool b_end_scene) {
 
     if (b_end_scene) {
       vert_array_ = nullptr;
-    }
-#if HGE_DIRECTX_VER == 8
-      else {
-          pVB->Lock( 0, 0, (uint8_t**)&VertArray, D3DLOCK_DISCARD );
-      }
-#endif
-#if HGE_DIRECTX_VER == 9
-    else {
+    } else {
       vertex_buf_->Lock(0, 0, reinterpret_cast<void **>(&vert_array_),
                         D3DLOCK_DISCARD);
     }
-#endif
   }
 }
 
@@ -733,12 +692,7 @@ bool HGE_Impl::gfx_init() {
   auto d3dfmt = D3DFMT_UNKNOWN;
 
   // Init D3D
-#if HGE_DIRECTX_VER == 8
-  pD3D=Direct3DCreate8(120); // D3D_SDK_VERSION
-#endif
-#if HGE_DIRECTX_VER == 9
   d3d_ = Direct3DCreate9(D3D_SDK_VERSION); // D3D_SDK_VERSION
-#endif
   if (d3d_ == nullptr) {
     post_error("Can't create D3D interface");
     return false;
@@ -746,12 +700,7 @@ bool HGE_Impl::gfx_init() {
 
   // Get adapter info
 
-#if HGE_DIRECTX_VER == 8
-  pD3D->GetAdapterIdentifier(D3DADAPTER_DEFAULT, D3DENUM_NO_WHQL_LEVEL, &AdID);
-#endif
-#if HGE_DIRECTX_VER == 9
   d3d_->GetAdapterIdentifier(D3DADAPTER_DEFAULT, 0, &ad_id);
-#endif
   System_Log("D3D Driver: %s", ad_id.Driver);
   System_Log("Description: %s", ad_id.Description);
   System_Log("Version: %d.%d.%d.%d",
@@ -780,14 +729,6 @@ bool HGE_Impl::gfx_init() {
   d3dpp_windowed_.hDeviceWindow = hwnd_;
   d3dpp_windowed_.Windowed = TRUE;
 
-#if HGE_DIRECTX_VER == 8
-  if(nHGEFPS==HGEFPS_VSYNC) {
-      d3dppW.SwapEffect = D3DSWAPEFFECT_COPY_VSYNC;
-  } else {
-      d3dppW.SwapEffect = D3DSWAPEFFECT_COPY;
-  }
-#endif
-#if HGE_DIRECTX_VER == 9
   if (hgefps_ == HGEFPS_VSYNC) {
     d3dpp_windowed_.SwapEffect = D3DSWAPEFFECT_COPY;
     d3dpp_windowed_.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
@@ -795,7 +736,6 @@ bool HGE_Impl::gfx_init() {
     d3dpp_windowed_.SwapEffect = D3DSWAPEFFECT_COPY;
     d3dpp_windowed_.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
   }
-#endif
 
   if (z_buffer_) {
     d3dpp_windowed_.EnableAutoDepthStencil = TRUE;
@@ -804,20 +744,10 @@ bool HGE_Impl::gfx_init() {
 
   // Set up Full Screen presentation parameters
 
-#if HGE_DIRECTX_VER == 8
-  nModes=pD3D->GetAdapterModeCount(D3DADAPTER_DEFAULT);
-#endif
-#if HGE_DIRECTX_VER == 9
   const UINT n_modes = d3d_->GetAdapterModeCount(D3DADAPTER_DEFAULT, disp_mode.Format);
-#endif
 
   for (UINT i = 0; i < n_modes; i++) {
-#if HGE_DIRECTX_VER == 8
-    pD3D->EnumAdapterModes(D3DADAPTER_DEFAULT, i, &Mode);
-#endif
-#if HGE_DIRECTX_VER == 9
     d3d_->EnumAdapterModes(D3DADAPTER_DEFAULT, disp_mode.Format, i, &disp_mode);
-#endif
 
     if (disp_mode.Width != static_cast<UINT>(screen_width_)
         || disp_mode.Height != static_cast<UINT>(screen_height_)) {
@@ -851,20 +781,12 @@ bool HGE_Impl::gfx_init() {
   d3dpp_fullscreen_.SwapEffect = D3DSWAPEFFECT_FLIP;
   d3dpp_fullscreen_.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
-#if HGE_DIRECTX_VER == 8
-  if(nHGEFPS==HGEFPS_VSYNC) {
-      d3dppFS.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_ONE;
-  } else {
-      d3dppFS.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-  }
-#endif
-#if HGE_DIRECTX_VER == 9
   if (hgefps_ == HGEFPS_VSYNC) {
     d3dpp_fullscreen_.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
   } else {
     d3dpp_fullscreen_.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
   }
-#endif
+
   if (z_buffer_) {
     d3dpp_fullscreen_.EnableAutoDepthStencil = TRUE;
     d3dpp_fullscreen_.AutoDepthStencilFormat = D3DFMT_D16;
@@ -879,16 +801,6 @@ bool HGE_Impl::gfx_init() {
   }
 
   // Create D3D Device
-  // #if HGE_DIRECTX_VER == 8
-  //     if( FAILED( pD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
-  //                                   D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-  //                                   d3dpp, &pD3DDevice ) ) )
-  //     {
-  //         _PostError("Can't create D3D8 device");
-  //         return false;
-  //     }
-  // #endif
-  // #if HGE_DIRECTX_VER == 9
   hgeGAPICaps caps;
   d3d_->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
   uint32_t vp;
@@ -905,7 +817,6 @@ bool HGE_Impl::gfx_init() {
     post_error("Can't create D3D device");
     return false;
   }
-  // #endif
 
   adjust_window();
 
@@ -1020,12 +931,7 @@ void HGE_Impl::gfx_done() {
   targets_ = nullptr;
 
   if (index_buf_ && d3d_device_) {
-#if HGE_DIRECTX_VER == 8
-    pD3DDevice->SetIndices(NULL,0);
-#endif
-#if HGE_DIRECTX_VER == 9
     d3d_device_->SetIndices(nullptr);
-#endif
     index_buf_->Release();
     index_buf_ = nullptr;
   }
@@ -1034,12 +940,7 @@ void HGE_Impl::gfx_done() {
       vertex_buf_->Unlock();
       vert_array_ = nullptr;
     }
-#if HGE_DIRECTX_VER == 8
-    pD3DDevice->SetStreamSource( 0, NULL, sizeof(hgeVertex) );
-#endif
-#if HGE_DIRECTX_VER == 9
     d3d_device_->SetStreamSource(0, nullptr, 0, sizeof(hgeVertex));
-#endif
     vertex_buf_->Release();
     vertex_buf_ = nullptr;
   }
@@ -1078,21 +979,11 @@ bool HGE_Impl::gfx_restore() {
   }
 
   if (index_buf_) {
-#if HGE_DIRECTX_VER == 8
-    pD3DDevice->SetIndices(NULL,0);
-#endif
-#if HGE_DIRECTX_VER == 9
     d3d_device_->SetIndices(nullptr);
-#endif
     index_buf_->Release();
   }
   if (vertex_buf_) {
-#if HGE_DIRECTX_VER == 8
-    pD3DDevice->SetStreamSource( 0, NULL, sizeof(hgeVertex) );
-#endif
-#if HGE_DIRECTX_VER == 9
     d3d_device_->SetStreamSource(0, nullptr, 0, sizeof(hgeVertex));
-#endif
     vertex_buf_->Release();
   }
 
@@ -1118,12 +1009,7 @@ bool HGE_Impl::init_lost() {
   screen_surf_ = nullptr;
   screen_depth_ = nullptr;
 
-#if HGE_DIRECTX_VER == 8
-  pD3DDevice->GetRenderTarget(&pScreenSurf);
-#endif
-#if HGE_DIRECTX_VER == 9
   d3d_device_->GetRenderTarget(0, &screen_surf_);
-#endif
   d3d_device_->GetDepthStencilSurface(&screen_depth_);
 
   while (target) {
@@ -1131,78 +1017,41 @@ bool HGE_Impl::init_lost() {
       D3DXCreateTexture(d3d_device_, target->width, target->height, 1, D3DUSAGE_RENDERTARGET,
                         d3dpp_->BackBufferFormat, D3DPOOL_DEFAULT, &target->pTex);
     if (target->pDepth)
-#if HGE_DIRECTX_VER == 8
-      pD3DDevice->CreateDepthStencilSurface(
-          target->width, target->height, D3DFMT_D16, D3DMULTISAMPLE_NONE,
-          &target->pDepth);
-#endif
-#if HGE_DIRECTX_VER == 9
       d3d_device_->CreateDepthStencilSurface(
               target->width, target->height, D3DFMT_D16, D3DMULTISAMPLE_NONE,
               0, false, &target->pDepth, nullptr);
-#endif
     target = target->next;
   }
 
   // Create Vertex buffer
-#if HGE_DIRECTX_VER == 8
-  if( FAILED (pD3DDevice->CreateVertexBuffer(VERTEX_BUFFER_SIZE*sizeof(hgeVertex),
-              D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY,
-              D3DFVF_HGEVERTEX,
-              D3DPOOL_DEFAULT, &pVB )))
-#endif
-#if HGE_DIRECTX_VER == 9
   if (FAILED (d3d_device_->CreateVertexBuffer(VERTEX_BUFFER_SIZE * sizeof(hgeVertex),
                                               D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY,
                                               D3DFVF_HGEVERTEX,
                                               D3DPOOL_DEFAULT,
                                               &vertex_buf_,
-                                              nullptr)))
-#endif
-  {
+                                              nullptr))) {
     post_error("Can't create D3D vertex buffer");
     return false;
   }
 
-#if HGE_DIRECTX_VER == 8
-  pD3DDevice->SetVertexShader( D3DFVF_HGEVERTEX );
-  pD3DDevice->SetStreamSource( 0, pVB, sizeof(hgeVertex) );
-#endif
-#if HGE_DIRECTX_VER == 9
   d3d_device_->SetVertexShader(nullptr);
   d3d_device_->SetFVF(D3DFVF_HGEVERTEX);
   d3d_device_->SetStreamSource(0, vertex_buf_, 0, sizeof(hgeVertex));
-#endif
 
   // Create and setup Index buffer
 
-#if HGE_DIRECTX_VER == 8
-  if( FAILED( pD3DDevice->CreateIndexBuffer(VERTEX_BUFFER_SIZE*6/4*sizeof(uint16_t),
-              D3DUSAGE_WRITEONLY,
-              D3DFMT_INDEX16,
-              D3DPOOL_DEFAULT, &pIB ) ) )
-#endif
-#if HGE_DIRECTX_VER == 9
   if (FAILED(d3d_device_->CreateIndexBuffer(VERTEX_BUFFER_SIZE * 6 / 4 * sizeof(uint16_t),
                                             D3DUSAGE_WRITEONLY,
                                             D3DFMT_INDEX16,
                                             D3DPOOL_DEFAULT,
                                             &index_buf_,
-                                            nullptr)))
-#endif
-  {
+                                            nullptr))) {
     post_error("Can't create D3D index buffer");
     return false;
   }
 
   uint16_t *pIndices, n = 0;
-#if HGE_DIRECTX_VER == 8
-  if( FAILED( pIB->Lock( 0, 0, (uint8_t**)&pIndices, 0 ) ) )
-#endif
-#if HGE_DIRECTX_VER == 9
-  if (FAILED(index_buf_->Lock(0, 0, (VOID * *) & pIndices, 0)))
-#endif
-  {
+  if (FAILED(index_buf_->Lock(0, 0, (VOID * *) & pIndices, 0))) {
     post_error("Can't lock D3D index buffer");
     return false;
   }
@@ -1218,12 +1067,7 @@ bool HGE_Impl::init_lost() {
   }
 
   index_buf_->Unlock();
-#if HGE_DIRECTX_VER == 8
-  pD3DDevice->SetIndices(pIB,0);
-#endif
-#if HGE_DIRECTX_VER == 9
   d3d_device_->SetIndices(index_buf_);
-#endif
 
   // Set common render states
 
@@ -1247,17 +1091,6 @@ bool HGE_Impl::init_lost() {
   d3d_device_->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
   d3d_device_->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
-#if HGE_DIRECTX_VER == 8
-  pD3DDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_POINT);
-  if(bTextureFilter) {
-      pD3DDevice->SetTextureStageState(0,D3DTSS_MAGFILTER,D3DTEXF_LINEAR);
-      pD3DDevice->SetTextureStageState(0,D3DTSS_MINFILTER,D3DTEXF_LINEAR);
-  } else {
-      pD3DDevice->SetTextureStageState(0,D3DTSS_MAGFILTER,D3DTEXF_POINT);
-      pD3DDevice->SetTextureStageState(0,D3DTSS_MINFILTER,D3DTEXF_POINT);
-  }
-#endif
-#if HGE_DIRECTX_VER == 9
   d3d_device_->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
   if (texture_filter_) {
     d3d_device_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -1266,7 +1099,7 @@ bool HGE_Impl::init_lost() {
     d3d_device_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
     d3d_device_->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
   }
-#endif
+
   n_prim_ = 0;
   cur_prim_type_ = HGEPRIM_QUADS;
 
@@ -1277,17 +1110,13 @@ bool HGE_Impl::init_lost() {
   }
 
   cur_texture_ = NULL;
-#if HGE_DIRECTX_VER >= 9
   cur_shader_ = NULL;
-#endif
 
   d3d_device_->SetTransform(D3DTS_VIEW, &view_matrix_);
   d3d_device_->SetTransform(D3DTS_PROJECTION, &proj_matrix_);
 
   return true;
 }
-
-#if HGE_DIRECTX_VER >= 9
 
 HSHADER HGE_CALL HGE_Impl::Shader_Create(const char *filename) {
   LPD3DXBUFFER code = nullptr;
@@ -1314,10 +1143,6 @@ HSHADER HGE_CALL HGE_Impl::Shader_Create(const char *filename) {
   return reinterpret_cast<HSHADER>(pixelShader);
 }
 
-#endif
-
-#if HGE_DIRECTX_VER >= 9
-
 void HGE_CALL HGE_Impl::Gfx_SetShader(const HSHADER shader) {
   if (cur_shader_ != shader) {
     render_batch();
@@ -1326,12 +1151,6 @@ void HGE_CALL HGE_Impl::Gfx_SetShader(const HSHADER shader) {
   }
 }
 
-#endif
-
-#if HGE_DIRECTX_VER >= 9
-
 void HGE_CALL HGE_Impl::Shader_Free(const HSHADER shader) {
   reinterpret_cast<LPDIRECT3DPIXELSHADER9>(shader)->Release();
 }
-
-#endif

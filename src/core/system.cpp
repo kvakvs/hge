@@ -426,23 +426,11 @@ void HGE_CALL HGE_Impl::System_SetStateBool(const hgeBoolState state, const bool
       if (d3d_device_) {
         render_batch();
         if (texture_filter_) {
-#if HGE_DIRECTX_VER == 8
-          pD3DDevice->SetTextureStageState(0,D3DTSS_MAGFILTER,D3DTEXF_LINEAR);
-          pD3DDevice->SetTextureStageState(0,D3DTSS_MINFILTER,D3DTEXF_LINEAR);
-#endif
-#if HGE_DIRECTX_VER == 9
           d3d_device_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
           d3d_device_->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-#endif
         } else {
-#if HGE_DIRECTX_VER == 8
-          pD3DDevice->SetTextureStageState(0,D3DTSS_MAGFILTER,D3DTEXF_POINT);
-          pD3DDevice->SetTextureStageState(0,D3DTSS_MINFILTER,D3DTEXF_POINT);
-#endif
-#if HGE_DIRECTX_VER == 9
           d3d_device_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
           d3d_device_->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-#endif
         }
       }
       break;
@@ -561,23 +549,12 @@ void HGE_CALL HGE_Impl::System_SetStateInt(const hgeIntState state, const int va
       if (d3d_device_) {
         if ((hgefps_ >= 0 && value < 0) || (hgefps_ < 0 && value >= 0)) {
           if (value == HGEFPS_VSYNC) {
-#if HGE_DIRECTX_VER == 8
-            d3dppW.SwapEffect = D3DSWAPEFFECT_COPY_VSYNC;
-            d3dppFS.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_ONE;
-#endif
-#if HGE_DIRECTX_VER == 9
             d3dpp_windowed_.SwapEffect = D3DSWAPEFFECT_COPY;
             d3dpp_windowed_.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
             d3dpp_fullscreen_.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
-#endif
           } else {
             d3dpp_windowed_.SwapEffect = D3DSWAPEFFECT_COPY;
-#if HGE_DIRECTX_VER == 8
-            d3dppFS.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-#endif
-#if HGE_DIRECTX_VER == 9
             d3dpp_fullscreen_.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-#endif
           }
           //if(procFocusLostFunc) procFocusLostFunc();
           gfx_restore();
@@ -793,12 +770,7 @@ void HGE_CALL HGE_Impl::System_Snapshot(const char *filename) {
   }
 
   if (d3d_device_) {
-#if HGE_DIRECTX_VER == 8
-    pD3DDevice->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &pSurf);
-#endif
-#if HGE_DIRECTX_VER == 9
     d3d_device_->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pSurf);
-#endif
     D3DXSaveSurfaceToFile(filename, D3DXIFF_BMP, pSurf, nullptr, nullptr);
     pSurf->Release();
   }

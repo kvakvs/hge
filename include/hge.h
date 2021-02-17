@@ -8,10 +8,6 @@
  *-----------------------------------------------------------------------------*/
 #pragma once
 
-// version 8 is not supported. Please use DirectX 9
-#undef HGE_DIRECTX_VER
-#define HGE_DIRECTX_VER 9
-
 #include <windows.h>
 
 #define HGE_VERSION 0x181
@@ -48,17 +44,17 @@
 /*
 ** Common data types; use uint?_t, int?_t, size_t
 */
-#include <stdint.h>
+#include <cstdint>
 
 /*
 ** Common math constants
 */
 #ifndef M_PI
-#define M_PI    3.14159265358979323846f
-#define M_PI_2  1.57079632679489661923f
-#define M_PI_4  0.785398163397448309616f
-#define M_1_PI  0.318309886183790671538f
-#define M_2_PI  0.636619772367581343076f
+#   define M_PI    3.14159265358979323846f
+#   define M_PI_2  1.57079632679489661923f
+#   define M_PI_4  0.785398163397448309616f
+#   define M_1_PI  0.318309886183790671538f
+#   define M_2_PI  0.636619772367581343076f
 #endif
 
 
@@ -74,9 +70,7 @@ using HEFFECT = size_t;
 using HMUSIC = uint32_t; // defined by bass.h
 using HSTREAM = uint32_t; // defined by bass.h
 using HCHANNEL = uint32_t; // defined by bass.h
-#if HGE_DIRECTX_VER >= 9
 using HSHADER = size_t;
-#endif
 
 using hgeBlendMode = uint32_t;
 
@@ -577,15 +571,11 @@ public:
     virtual void HGE_CALL Gfx_SetTransform(float x = 0, float y = 0, float dx = 0, float dy = 0,
                                            float rot = 0, float hscale = 0, float vscale = 0) = 0;
 
-#if HGE_DIRECTX_VER >= 9
-
     virtual HSHADER HGE_CALL Shader_Create(const char *filename) = 0;
 
     virtual void HGE_CALL Shader_Free(HSHADER shader) = 0;
 
     virtual void HGE_CALL Gfx_SetShader(HSHADER shader) = 0;
-
-#endif
 
     virtual HTARGET HGE_CALL Target_Create(int width, int height, bool zbuffer) = 0;
 

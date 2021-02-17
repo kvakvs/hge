@@ -5,10 +5,6 @@
 **
 ** hge_tut05 - Using distortion mesh
 */
-#if HGE_DIRECTX_VER < 9
-#error Shaders example requires HGE built with DirectX 9
-#endif
-
 // Copy the files "particles.png", "menu.wav",
 // "font1.fnt", "font1.png" and "trail.psi" from
 // the folder "precompiled" to the folder with
@@ -20,7 +16,7 @@
 #include "../../include/hgefont.h"
 #include "../../include/hgedistort.h"
 
-#include <math.h>
+#include <cmath>
 
 
 // Pointer to the HGE interface.
