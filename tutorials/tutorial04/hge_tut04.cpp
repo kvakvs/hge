@@ -18,10 +18,10 @@
 // to the same folder.
 
 
-#include "../../include/hge.h"
-#include "../../include/hgesprite.h"
-#include "../../include/hgefont.h"
-#include "../../include/hgeparticle.h"
+#include <hge.h>
+#include <hgesprite.h>
+#include <hgefont.h>
+#include <hgeparticle.h>
 
 
 HGE *hge = nullptr;

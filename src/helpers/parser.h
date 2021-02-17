@@ -9,7 +9,7 @@
 #pragma once
 
 
-#include "../../include/hge.h"
+#include <hge.h>
 #include <cstring>
 #include <cstdlib>
 #include <string>

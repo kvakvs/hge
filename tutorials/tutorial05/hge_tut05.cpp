@@ -18,9 +18,9 @@
 // to the same folder.
 
 
-#include "../../include/hge.h"
-#include "../../include/hgefont.h"
-#include "../../include/hgedistort.h"
+#include <hge.h>
+#include <hgefont.h>
+#include <hgedistort.h>
 
 #include <math.h>
 

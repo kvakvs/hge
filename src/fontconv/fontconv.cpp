@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <windows.h>
 
-#include "../../include/hge.h"
+#include <hge.h>
 
 HGE *hge = nullptr;
 

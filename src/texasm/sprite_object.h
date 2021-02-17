@@ -9,7 +9,7 @@
 #pragma once
 
 #include "gfx_object.h"
-#include "../../include/hgesprite.h"
+#include <hgesprite.h>
 
 
 class CSpriteObject : public CGfxObject {

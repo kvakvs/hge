@@ -9,7 +9,7 @@
 #pragma once
 
 #include <string>
-#include "hge.h"
+#include <hge.h>
 #include "hgesprite.h"
 #include "hgefont.h"
 #include "hgerect.h"

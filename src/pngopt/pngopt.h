@@ -8,7 +8,7 @@
  *-----------------------------------------------------------------------------*/
 #include <cstdio>
 
-#include "../../include/hge.h"
+#include <hge.h>
 
 extern HGE *hge;
 

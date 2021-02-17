@@ -9,7 +9,7 @@
 #pragma once
 
 #include <vector>
-#include "hge.h"
+#include <hge.h>
 
 enum {
     HGEDISP_NODE = 0,

@@ -11,7 +11,7 @@
 //
 
 
-#include "../../include/hgevector.h"
+#include <hgevector.h>
 
 float hgeVector::InvSqrt(const float x) {
   union {

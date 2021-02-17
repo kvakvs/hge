@@ -8,7 +8,7 @@
  *-----------------------------------------------------------------------------*/
 #pragma once
 
-#include "hge.h"
+#include <hge.h>
 #include <math.h>
 
 class hgeVector {

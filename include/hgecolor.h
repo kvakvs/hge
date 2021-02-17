@@ -8,7 +8,7 @@
  *-----------------------------------------------------------------------------*/
 #pragma once
 
-#include "hge.h"
+#include <hge.h>
 
 inline void ColorClamp(float &x) {
   if (x < 0.0f) x = 0.0f;

@@ -11,7 +11,7 @@
 //
 
 
-#include "../../include/hge.h"
+#include <hge.h>
 
 HGE *hge = nullptr;
 

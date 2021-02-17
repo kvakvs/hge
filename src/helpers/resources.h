@@ -13,7 +13,7 @@
 #pragma once
 
 
-#include "../../include/hgeresource.h"
+#include <hgeresource.h>
 #include "parser.h"
 
 

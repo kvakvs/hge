@@ -16,13 +16,13 @@
 // and bass.dll to the same folder.
 
 
-#include "../../include/hge.h"
-#include "../../include/hgefont.h"
-#include "../../include/hgegui.h"
+#include <hge.h>
+#include <hgefont.h>
+#include <hgegui.h>
 
 #include "menuitem.h"
 
-#include <math.h>
+#include <cmath>
 
 
 // Pointer to the HGE interface.

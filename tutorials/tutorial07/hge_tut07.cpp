@@ -17,8 +17,8 @@
 
 
 #include <vector>
-#include "../../include/hge.h"
-#include "../../include/hgefont.h"
+#include <hge.h>
+#include <hgefont.h>
 
 
 #define SCREEN_WIDTH  800

@@ -11,9 +11,9 @@
 
 
 #include <string>
-#include "../../include/hge.h"
-#include "../../include/hgefont.h"
-#include "../../include/hgegui.h"
+#include <hge.h>
+#include <hgefont.h>
+#include <hgegui.h>
 
 
 #define BUTTON_GET_STATE(id)    ((hgeGUIButton*)gui->GetCtrl(id))->GetState()

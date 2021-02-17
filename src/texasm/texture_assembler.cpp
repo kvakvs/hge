@@ -9,7 +9,7 @@
 #include "texture_assembler.h"
 #include "sprite_object.h"
 
-#include "hgesprite.h"
+#include <hgesprite.h>
 
 
 void CTextureAssembler::ClearResources() {
