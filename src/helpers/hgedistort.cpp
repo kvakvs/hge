@@ -26,9 +26,11 @@ hgeDistortionMesh::hgeDistortionMesh(const int cols, const int rows) {
   cellw_ = cellh_ = 0;
   quad_.tex = 0;
   quad_.blend = BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_ZWRITE;
-  disp_array_ = new hgeVertex[rows * cols];
 
-  for (int i = 0; i < rows * cols; i++) {
+  size_t array_size = rows * cols;
+  disp_array_.resize(array_size);
+
+  for (size_t i = 0; i < array_size; i++) {
     disp_array_[i].x = 0.0f;
     disp_array_[i].y = 0.0f;
     disp_array_[i].tx = 0.0f;
@@ -52,12 +54,13 @@ hgeDistortionMesh::hgeDistortionMesh(const hgeDistortionMesh &dm) {
   height_ = dm.height_;
   quad_ = dm.quad_;
 
-  disp_array_ = new hgeVertex[rows_ * cols_];
-  memcpy(disp_array_, dm.disp_array_, sizeof(hgeVertex) * rows_ * cols_);
+  disp_array_.resize(rows_ * cols_);
+  memcpy(disp_array_.data(),
+         dm.disp_array_.data(),
+         sizeof(hgeVertex) * rows_ * cols_);
 }
 
 hgeDistortionMesh::~hgeDistortionMesh() {
-  delete[] disp_array_;
   hge_->Release();
 }
 
@@ -73,9 +76,10 @@ hgeDistortionMesh &hgeDistortionMesh::operator=(const hgeDistortionMesh &dm) {
     height_ = dm.height_;
     quad_ = dm.quad_;
 
-    delete[] disp_array_;
-    disp_array_ = new hgeVertex[rows_ * cols_];
-    memcpy(disp_array_, dm.disp_array_, sizeof(hgeVertex) * rows_ * cols_);
+    disp_array_.resize(rows_ * cols_);
+    memcpy(disp_array_.data(),
+           dm.disp_array_.data(),
+           sizeof(hgeVertex) * rows_ * cols_);
   }
 
   return *this;
@@ -103,16 +107,16 @@ void hgeDistortionMesh::SetTextureRect(const float x, const float y,
     th = h;
   }
 
-  cellw_ = w / (cols_ - 1);
-  cellh_ = h / (rows_ - 1);
+  cellw_ = w / (float)(cols_ - 1);
+  cellh_ = h / (float)(rows_ - 1);
 
   for (int j = 0; j < rows_; j++)
     for (int i = 0; i < cols_; i++) {
-      disp_array_[j * cols_ + i].tx = (x + i * cellw_) / tw;
-      disp_array_[j * cols_ + i].ty = (y + j * cellh_) / th;
+      disp_array_[j * cols_ + i].tx = (x + (float)i * cellw_) / tw;
+      disp_array_[j * cols_ + i].ty = (y + (float)j * cellh_) / th;
 
-      disp_array_[j * cols_ + i].x = i * cellw_;
-      disp_array_[j * cols_ + i].y = j * cellh_;
+      disp_array_[j * cols_ + i].x = (float)i * cellw_;
+      disp_array_[j * cols_ + i].y = (float)j * cellh_;
     }
 }
 
@@ -223,18 +227,21 @@ void hgeDistortionMesh::GetDisplacement(const int col, const int row,
   if (row < rows_ && col < cols_) {
     switch (ref) {
       case HGEDISP_NODE:
-        *dx = disp_array_[row * cols_ + col].x - col * cellw_;
-        *dy = disp_array_[row * cols_ + col].y - row * cellh_;
+        *dx = disp_array_[row * cols_ + col].x - (float)col * cellw_;
+        *dy = disp_array_[row * cols_ + col].y - (float)row * cellh_;
         break;
 
       case HGEDISP_CENTER:
-        *dx = disp_array_[row * cols_ + col].x - cellw_ * (cols_ - 1) / 2;
-        *dy = disp_array_[row * cols_ + col].x - cellh_ * (rows_ - 1) / 2;
+        *dx = disp_array_[row * cols_ + col].x - cellw_ * (float)(cols_ - 1) / 2;
+        *dy = disp_array_[row * cols_ + col].x - cellh_ * (float)(rows_ - 1) / 2;
         break;
 
       case HGEDISP_TOPLEFT:
         *dx = disp_array_[row * cols_ + col].x;
         *dy = disp_array_[row * cols_ + col].y;
+        break;
+        
+      default:
         break;
     }
   }

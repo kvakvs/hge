@@ -8,6 +8,7 @@
  *-----------------------------------------------------------------------------*/
 #pragma once
 
+#include <vector>
 #include "hge.h"
 
 enum {
@@ -79,7 +80,7 @@ private:
 
     static HGE *hge_;
 
-    hgeVertex *disp_array_;
+    std::vector<hgeVertex> disp_array_;
     int rows_;
     int cols_;
     float cellw_;
@@ -88,5 +89,5 @@ private:
     float ty_;
     float width_;
     float height_;
-    hgeQuad quad_;
+    hgeQuad quad_{};
 };
