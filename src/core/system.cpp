@@ -594,22 +594,22 @@ void HGE_CALL HGE_Impl::System_SetStateString(const hgeStringState state, const 
       break;
     case HGE_INIFILE:
       if (value) {
-        strcpy(ini_file_, Resource_MakePath(value));
+        ini_file_ = Resource_MakePath(value);
       } else {
-        ini_file_[0] = 0;
+        ini_file_.clear();
       }
       break;
     case HGE_LOGFILE:
       if (value) {
-        strcpy(log_file_, Resource_MakePath(value));
-        FILE *hf = fopen(log_file_, "w");
+        log_file_ = Resource_MakePath(value);
+        FILE *hf = fopen(log_file_.c_str(), "w");
         if (!hf) {
-          log_file_[0] = 0;
+          log_file_.clear();
         } else {
           fclose(hf);
         }
       } else {
-        log_file_[0] = 0;
+        log_file_.clear();
       }
       break;
   }
@@ -701,14 +701,14 @@ const char *HGE_CALL HGE_Impl::System_GetStateString(const hgeStringState state)
     case HGE_TITLE:
       return win_title_.c_str();
     case HGE_INIFILE: {
-      if (ini_file_[0]) {
-        return ini_file_;
+      if (!ini_file_.empty()) {
+        return ini_file_.c_str();
       }
       return nullptr;
     }
     case HGE_LOGFILE: {
-      if (log_file_[0]) {
-        return log_file_;
+      if (!log_file_.empty()) {
+        return log_file_.c_str();
       }
       return nullptr;
     }
@@ -725,11 +725,11 @@ const char *HGE_CALL HGE_Impl::System_GetErrorMessage() const {
 void HGE_CALL HGE_Impl::System_Log(const char *szFormat, ...) {
   va_list ap;
 
-  if (!log_file_[0]) {
+  if (log_file_.empty()) {
     return;
   }
 
-  FILE *hf = fopen(log_file_, "a");
+  FILE *hf = fopen(log_file_.c_str(), "a");
   if (!hf) {
     return;
   }
@@ -832,8 +832,6 @@ HGE_Impl::HGE_Impl()
   windowed_ = false;
   z_buffer_ = false;
   texture_filter_ = true;
-  log_file_[0] = 0;
-  ini_file_[0] = 0;
   use_sound_ = true;
   sample_rate_ = 44100;
   fx_volume_ = 100;

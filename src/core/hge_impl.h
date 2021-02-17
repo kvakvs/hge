@@ -357,8 +357,12 @@ public:
     bool windowed_;
     bool z_buffer_;
     bool texture_filter_;
-    char ini_file_[_MAX_PATH];
-    char log_file_[_MAX_PATH];
+
+    // Path to INI file if not empty, otherwise returns default value on INI operations
+    std::string ini_file_;
+
+    std::string log_file_;
+
     bool use_sound_;
     int sample_rate_;
     int fx_volume_;
