@@ -153,13 +153,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     }
 
     // Set up quad which we will use for rendering sprite
-    quad.blend = BLEND_ALPHAADD | BLEND_COLORMUL | BLEND_ZWRITE;
+    quad.blend = (hgeBlendMode) (BLEND_ALPHAADD | BLEND_COLORMUL | BLEND_ZWRITE);
 
-    for (int i = 0; i < 4; i++) {
+    for (auto &i : quad.v) {
       // Set up z-coordinate of vertices
-      quad.v[i].z = 0.5f;
+      i.z = 0.5f;
       // Set up color. The format of DWORD col is 0xAARRGGBB
-      quad.v[i].col = 0xFFFFA000;
+      i.col = 0xFFFFA000;
     }
 
     // Set up quad's texture coordinates.

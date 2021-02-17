@@ -132,13 +132,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     }
 
     // Set up the quad we will use for background animation
-    quad.blend = BLEND_ALPHABLEND | BLEND_COLORMUL | BLEND_NOZWRITE;
+    quad.blend = (hgeBlendMode) (BLEND_ALPHABLEND | BLEND_COLORMUL | BLEND_NOZWRITE);
 
-    for (int i = 0; i < 4; i++) {
+    for (auto & i : quad.v) {
       // Set up z-coordinate of vertices
-      quad.v[i].z = 0.5f;
+      i.z = 0.5f;
       // Set up color. The format of DWORD col is 0xAARRGGBB
-      quad.v[i].col = 0xFFFFFFFF;
+      i.col = 0xFFFFFFFF;
     }
 
     quad.v[0].x = 0;

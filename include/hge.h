@@ -10,7 +10,7 @@
 
 #include <windows.h>
 
-#define HGE_VERSION 0x181
+#define HGE_VERSION 0x190
 
 // CMake adds PROJECTNAME_EXPORTS when compiles DLL
 #ifdef hge_EXPORTS
@@ -62,14 +62,12 @@
 // FIXME: Won't compile in 64-bit mode due to handles (4 bytes) holding a pointer (8 bytes)
 using HTEXTURE = size_t;
 using HTARGET = size_t;
+using HSHADER = size_t;
 using HEFFECT = size_t;
 
 using HMUSIC = uint32_t; // defined by bass.h
 using HSTREAM = uint32_t; // defined by bass.h
 using HCHANNEL = uint32_t; // defined by bass.h
-using HSHADER = size_t;
-
-using hgeBlendMode = uint32_t;
 
 
 /*
@@ -119,7 +117,7 @@ static uint32_t SETB(const uint32_t col, const uint8_t b) {
 /*
 ** HGE Blending constants
 */
-enum {
+enum hgeBlendMode: uint32_t {
     BLEND_COLORADD = 1,
     BLEND_COLORMUL = 0,
     BLEND_ALPHABLEND = 2,
@@ -558,7 +556,7 @@ public:
 
     virtual void HGE_CALL Gfx_RenderQuad(const hgeQuad *quad) = 0;
 
-    virtual hgeVertex *HGE_CALL Gfx_StartBatch(int prim_type, HTEXTURE tex, int blend,
+    virtual hgeVertex *HGE_CALL Gfx_StartBatch(int prim_type, HTEXTURE tex, hgeBlendMode blend,
                                                int *max_prim) = 0;
 
     virtual void HGE_CALL Gfx_FinishBatch(int nprim) = 0;

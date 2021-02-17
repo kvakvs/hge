@@ -274,7 +274,7 @@ public:
 
     void HGE_CALL Gfx_RenderQuad(const hgeQuad *quad) override;
 
-    hgeVertex *HGE_CALL Gfx_StartBatch(int prim_type, HTEXTURE tex, int blend,
+    hgeVertex *HGE_CALL Gfx_StartBatch(int prim_type, HTEXTURE tex, hgeBlendMode blend,
                                        int *max_prim) override;
 
     void HGE_CALL Gfx_FinishBatch(int nprim) override;
@@ -439,7 +439,7 @@ public:
 
     static int format_id(D3DFORMAT fmt);
 
-    void set_blend_mode(int blend);
+    void set_blend_mode(hgeBlendMode blend);
 
     void set_projection_matrix(int width, int height);
 

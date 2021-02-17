@@ -137,13 +137,15 @@ bool do_commands(const int id) {
     case CMD_SYS_BLENDADDITIVE:
       BUTTON_SET_STATE(CMD_SYS_BLENDADDITIVE, true);
       BUTTON_SET_STATE(CMD_SYS_BLENDBLEND, false);
-      state.ps->info.sprite->SetBlendMode(BLEND_COLORMUL | BLEND_ALPHAADD | BLEND_ZWRITE);
+      state.ps->info.sprite->SetBlendMode(
+              (hgeBlendMode) (BLEND_COLORMUL | BLEND_ALPHAADD | BLEND_ZWRITE));
       break;
 
     case CMD_SYS_BLENDBLEND:
       BUTTON_SET_STATE(CMD_SYS_BLENDADDITIVE, false);
       BUTTON_SET_STATE(CMD_SYS_BLENDBLEND, true);
-      state.ps->info.sprite->SetBlendMode(BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_ZWRITE);
+      state.ps->info.sprite->SetBlendMode(
+              (hgeBlendMode) (BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_ZWRITE));
       break;
 
       // Particle movement
@@ -412,7 +414,7 @@ void cmdLoadPreset(const int n) {
   ReadFile(h_f, &state.ps->info, sizeof(hgeParticleSystemInfo), &size, nullptr);
   CloseHandle(h_f);
   sprParticles->SetFrame(reinterpret_cast<uint32_t>(state.ps->info.sprite) & 0xFFFF);
-  sprParticles->SetBlendMode(reinterpret_cast<uint32_t>(state.ps->info.sprite) >> 16);
+  sprParticles->SetBlendMode((hgeBlendMode)(reinterpret_cast<uint32_t>(state.ps->info.sprite) >> 16));
   state.ps->info.sprite = sprParticles;
 
   // System parameters

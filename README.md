@@ -1,6 +1,8 @@
-This is README for HGE library source reconfigured with CMake
+# Change notes for 1.9
 
-For original readme file refer to Original_README.txt
+*  Multiple API calls changed some types from `char*` to `const char*`, also blending mode is now using 
+   `hgeBlendMode` enum - use type cast like so:
+   `spt->SetBlendMode((hgeBlendMode)(BLEND_COLORMUL | BLEND_ALPHAADD | BLEND_NOZWRITE));`
 
 # Support & Questions
 

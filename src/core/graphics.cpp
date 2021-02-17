@@ -287,7 +287,7 @@ void HGE_CALL HGE_Impl::Gfx_RenderQuad(const hgeQuad *quad) {
 }
 
 hgeVertex *HGE_CALL HGE_Impl::
-Gfx_StartBatch(const int prim_type, const HTEXTURE tex, const int blend, int *max_prim) {
+Gfx_StartBatch(const int prim_type, const HTEXTURE tex, const hgeBlendMode blend, int *max_prim) {
   if (vert_array_) {
     render_batch();
 
@@ -622,7 +622,7 @@ void HGE_Impl::render_batch(const bool b_end_scene) {
   }
 }
 
-void HGE_Impl::set_blend_mode(const int blend) {
+void HGE_Impl::set_blend_mode(const hgeBlendMode blend) {
   auto d = -1;
 
   if ((blend & BLEND_ALPHABLEND) != (cur_blend_mode_ & BLEND_ALPHABLEND)) {

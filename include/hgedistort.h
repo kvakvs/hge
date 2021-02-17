@@ -38,7 +38,7 @@ public:
 
     void SetTextureRect(float x, float y, float w, float h);
 
-    void SetBlendMode(int blend);
+    void SetBlendMode(hgeBlendMode blend);
 
     void SetZ(int col, int row, float z);
 

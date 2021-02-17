@@ -43,7 +43,7 @@ hgeFont::hgeFont(const char *font, const bool mipmap) {
   texture_ = 0;
 
   z_ = 0.5f;
-  blend_ = BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE;
+  blend_ = (hgeBlendMode)(BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE);
   col_ = 0xFFFFFFFF;
 
   ZeroMemory(&letters_, sizeof(letters_));

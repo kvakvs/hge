@@ -32,14 +32,14 @@ hgeFont *fnt = nullptr;
 
 // Simulation constants
 
-#define SCREEN_WIDTH        800
-#define SCREEN_HEIGHT        600
-#define NUM_STARS                100
-#define SEA_SUBDIVISION 16
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
+const int NUM_STARS = 100;
+const int SEA_SUBDIVISION = 16;
 
-#define SKY_HEIGHT                (SCREEN_HEIGHT*0.6f)
-#define STARS_HEIGHT        (SKY_HEIGHT*0.9f)
-#define ORBITS_RADIUS        (SCREEN_WIDTH*0.43f)
+constexpr float SKY_HEIGHT = (SCREEN_HEIGHT * 0.6f);
+constexpr float STARS_HEIGHT = (SKY_HEIGHT * 0.9f);
+constexpr float ORBITS_RADIUS = (SCREEN_WIDTH * 0.43f);
 
 uint32_t skyTopColors[] = {0xFF15092A, 0xFF6C6480, 0xFF89B9D0};
 uint32_t skyBtmColors[] = {0xFF303E57, 0xFFAC7963, 0xFFCAD7DB};
@@ -247,10 +247,10 @@ bool InitSimulation() {
 
   glow = new hgeSprite(texObjects, 128, 128, 128, 128);
   glow->SetHotSpot(64, 64);
-  glow->SetBlendMode(BLEND_COLORADD | BLEND_ALPHABLEND | BLEND_NOZWRITE);
+  glow->SetBlendMode((hgeBlendMode) (BLEND_COLORADD | BLEND_ALPHABLEND | BLEND_NOZWRITE));
   seaglow = new hgeSprite(texObjects, 128, 224, 128, 32);
   seaglow->SetHotSpot(64, 0);
-  seaglow->SetBlendMode(BLEND_COLORADD | BLEND_ALPHAADD | BLEND_NOZWRITE);
+  seaglow->SetBlendMode((hgeBlendMode) (BLEND_COLORADD | BLEND_ALPHAADD | BLEND_NOZWRITE));
 
   // Initialize simulation state
 

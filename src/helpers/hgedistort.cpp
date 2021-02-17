@@ -25,7 +25,7 @@ hgeDistortionMesh::hgeDistortionMesh(const int cols, const int rows) {
   cols_ = cols;
   cellw_ = cellh_ = 0;
   quad_.tex = 0;
-  quad_.blend = BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_ZWRITE;
+  quad_.blend = (hgeBlendMode)(BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_ZWRITE);
 
   size_t array_size = rows * cols;
   disp_array_.resize(array_size);
@@ -120,7 +120,7 @@ void hgeDistortionMesh::SetTextureRect(const float x, const float y,
     }
 }
 
-void hgeDistortionMesh::SetBlendMode(const int blend) {
+void hgeDistortionMesh::SetBlendMode(const hgeBlendMode blend) {
   quad_.blend = blend;
 }
 

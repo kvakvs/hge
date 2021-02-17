@@ -169,7 +169,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     fnt = new hgeFont("font1.fnt");
 
     spt = new hgeSprite(tex, 32, 32, 32, 32);
-    spt->SetBlendMode(BLEND_COLORMUL | BLEND_ALPHAADD | BLEND_NOZWRITE);
+    spt->SetBlendMode((hgeBlendMode) (BLEND_COLORMUL | BLEND_ALPHAADD | BLEND_NOZWRITE));
     spt->SetHotSpot(16, 16);
     par = new hgeParticleSystem("trail.psi", spt);
     par->Fire();
@@ -177,7 +177,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // Create a render target and a sprite for it
     target = hge->Target_Create(512, 512, false);
     tar = new hgeSprite(hge->Target_GetTexture(target), 0, 0, 512, 512);
-    tar->SetBlendMode(BLEND_COLORMUL | BLEND_ALPHAADD | BLEND_NOZWRITE);
+    tar->SetBlendMode((hgeBlendMode) (BLEND_COLORMUL | BLEND_ALPHAADD | BLEND_NOZWRITE));
 
     // Let's rock now!
     hge->System_Start();

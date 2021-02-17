@@ -118,37 +118,37 @@ _hgeResources::ScriptParseFileResource(hgeResourceManager *rm, RScriptParser *sp
   AddRes(rm, restype, rc);
 }
 
-void ScriptParseBlendMode(RScriptParser *sp, int *blend) {
+hgeBlendMode ScriptParseBlendMode(RScriptParser *sp, hgeBlendMode blend) {
   for (;;) {
     sp->get_token();
     if (sp->tokentype_ != TTEQUALS && sp->tokentype_ != TTSEPARATOR) {
       sp->put_back();
-      return;
+      return blend;
     }
 
     switch (sp->get_token()) {
       case TTCON_COLORMUL:
-        *blend &= ~BLEND_COLORADD;
+        return (hgeBlendMode) (blend & ~BLEND_COLORADD);
         break;
 
       case TTCON_COLORADD:
-        *blend |= BLEND_COLORADD;
+        return (hgeBlendMode) (blend | BLEND_COLORADD);
         break;
 
       case TTCON_ALPHABLND:
-        *blend |= BLEND_ALPHABLEND;
+        return (hgeBlendMode) (blend | BLEND_ALPHABLEND);
         break;
 
       case TTCON_ALPHAADD:
-        *blend &= ~BLEND_ALPHABLEND;
+        return (hgeBlendMode) (blend & ~BLEND_ALPHABLEND);
         break;
 
       case TTCON_ZWRITE:
-        *blend |= BLEND_ZWRITE;
+        return (hgeBlendMode) (blend | BLEND_ZWRITE);
         break;
 
       case TTCON_NOZWRITE:
-        *blend &= ~BLEND_ZWRITE;
+        return (hgeBlendMode) (blend & ~BLEND_ZWRITE);
         break;
 
       default:
@@ -192,7 +192,7 @@ void _hgeResources::ScriptParseSpriteAnim(RScriptParser *sp, RSprite *rc, const 
         break;
 
       case TTPAR_BLENDMODE:
-        ScriptParseBlendMode(sp, &rc->blend);
+        rc->blend = ScriptParseBlendMode(sp, rc->blend);
         break;
 
       case TTPAR_COLOR:
@@ -310,7 +310,7 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *sname
       delete res_script;
       return;
     }
-    std::string script((const char *)data, size);
+    std::string script((const char *) data, size);
     hge_->Resource_Free(data);
 
     res_script->name = sname;
@@ -678,7 +678,7 @@ void RSprite::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
     rc->tx = rc->ty = 0;
     rc->w = rc->h = 0;
     rc->hotx = rc->hoty = 0;
-    rc->blend = BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE;
+    rc->blend = (hgeBlendMode) (BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE);
     rc->color = 0xFFFFFFFF;
     rc->z = 0.5f;
     rc->bXFlip = false;
@@ -728,7 +728,7 @@ void RAnimation::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *na
     rc->tx = rc->ty = 0;
     rc->w = rc->h = 0;
     rc->hotx = rc->hoty = 0;
-    rc->blend = BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE;
+    rc->blend = (hgeBlendMode) (BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE);
     rc->color = 0xFFFFFFFF;
     rc->z = 0.5f;
     rc->bXFlip = false;
@@ -788,7 +788,7 @@ void RFont::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
     rc->resgroup = 0;
     rc->mipmap = false;
     rc->filename[0] = 0;
-    rc->blend = BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE;
+    rc->blend = (hgeBlendMode) (BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE);
     rc->color = 0xFFFFFFFF;
     rc->z = 0.5f;
     rc->scale = 1.0f;
@@ -809,7 +809,7 @@ void RFont::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
         break;
 
       case TTPAR_BLENDMODE:
-        ScriptParseBlendMode(sp, &rc->blend);
+        rc->blend = ScriptParseBlendMode(sp, rc->blend);
         break;
 
       case TTPAR_COLOR:
@@ -975,7 +975,7 @@ void RDistort::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name
     rc->tx = rc->ty = 0;
     rc->w = rc->h = 0;
     rc->cols = rc->rows = 2;
-    rc->blend = BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE;
+    rc->blend = (hgeBlendMode) (BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE);
     rc->color = 0xFFFFFFFF;
     rc->z = 0.5f;
   }
@@ -1015,7 +1015,7 @@ void RDistort::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name
         break;
 
       case TTPAR_BLENDMODE:
-        ScriptParseBlendMode(sp, &rc->blend);
+        rc->blend = ScriptParseBlendMode(sp, rc->blend);
         break;
 
       case TTPAR_COLOR:

@@ -40,7 +40,7 @@ public:
 
     void SetZ(float z, int i = -1);
 
-    void SetBlendMode(const int blend) {
+    void SetBlendMode(const hgeBlendMode blend) {
       quad_.blend = blend;
     }
 
