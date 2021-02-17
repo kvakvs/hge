@@ -12,6 +12,7 @@
 
 #include "../../include/hgefont.h"
 #include <cstdio>
+#include <string>
 
 const char fnt_header_tag[] = "[HGEFONT]";
 const char fnt_bitmap_tag[] = "Bitmap";
@@ -56,15 +57,12 @@ hgeFont::hgeFont(const char *font, const bool mipmap) {
     return;
   }
 
-  char *desc = new char[size + 1];
-  memcpy(desc, data, size);
-  desc[size] = 0;
+  std::string desc((const char *)data, size);
   hge_->Resource_Free(data);
 
-  auto pdesc = _get_line(desc, linebuf);
+  auto pdesc = _get_line(desc.c_str(), linebuf);
   if (strcmp(linebuf, fnt_header_tag) != 0) {
     hge_->System_Log("Font %s has incorrect format.", font);
-    delete[] desc;
     return;
   }
 
@@ -88,7 +86,6 @@ hgeFont::hgeFont(const char *font, const bool mipmap) {
 
       texture_ = hge_->Texture_Load(buf, 0, mipmap);
       if (!texture_) {
-        delete[] desc;
         return;
       }
     } else if (!strncmp(linebuf, fnt_char_tag, sizeof(fnt_char_tag) - 1)) {
@@ -141,8 +138,6 @@ hgeFont::hgeFont(const char *font, const bool mipmap) {
       }
     }
   }
-
-  delete[] desc;
 }
 
 

@@ -44,7 +44,6 @@ hgeStringTable::hgeStringTable(const char *filename) {
   // check header
   if (memcmp(desc, str_header_tag, sizeof(str_header_tag) - 1)) {
     hge_->System_Log(str_format_error, filename);
-    delete[] desc;
     return;
   }
 

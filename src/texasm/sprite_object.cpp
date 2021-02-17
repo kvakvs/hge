@@ -18,7 +18,6 @@ CSpriteObject::CSpriteObject(hgeSprite *_spr, const char *_name, const int _resg
 CSpriteObject::~CSpriteObject() {
   if (owned) {
     hge->Texture_Free(CSpriteObject::GetTexture());
-    delete[] name;
     delete spr;
   }
 }
@@ -35,7 +34,7 @@ void CSpriteObject::GetSourcePos(int *_x, int *_y) {
 
 
 bool CSpriteObject::SaveDescription(FILE *fp, char *texname) {
-  fprintf(fp, "Sprite %s\n", name);
+  fprintf(fp, "Sprite %s\n", name.c_str());
   fprintf(fp, "{\n");
 
   if (GetTexture() && texname) {

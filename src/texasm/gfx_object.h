@@ -11,6 +11,7 @@
 
 #include "texasm.h"
 #include <list>
+#include <string>
 
 
 class CGfxObject {
@@ -24,7 +25,7 @@ public:
     }
 
     const char *GetName() const {
-      return name;
+      return name.c_str();
     }
 
     void Place(const int _x, const int _y) {
@@ -57,7 +58,7 @@ public:
     virtual bool SaveDescription(FILE *fp, char *texname) = 0;
 
 protected:
-    const char *name;
+    std::string name;
     int resgroup;
     bool placed;
     int x;

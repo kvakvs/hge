@@ -21,19 +21,19 @@ class hgeColorRGB {
 public:
     float r, g, b, a;
 
-    hgeColorRGB(const float _r, const float _g, const float _b, const float _a) {
+    hgeColorRGB(const float _r, const float _g, const float _b, const float _a) noexcept {
       r = _r;
       g = _g;
       b = _b;
       a = _a;
     }
 
-    hgeColorRGB(const uint32_t col) {
+    hgeColorRGB(const uint32_t col) noexcept {
       SetHWColor(col);
     }
 
-    hgeColorRGB() {
-      r = g = b = a = 0;
+    hgeColorRGB() noexcept {
+      r = g = b = a = 0.0f;
     }
 
     hgeColorRGB operator-(const hgeColorRGB &c) const {

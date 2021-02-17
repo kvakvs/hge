@@ -11,6 +11,7 @@
 //
 
 
+#include <memory>
 #include "../../include/hgeresource.h"
 #include "parser.h"
 #include "resources.h"
@@ -309,14 +310,12 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *sname
       delete res_script;
       return;
     }
-    char *script = new char[size + 1];
-    memcpy(script, data, size);
-    script[size] = 0;
+    std::string script((const char *)data, size);
     hge_->Resource_Free(data);
 
     res_script->name = sname;
     _hgeResources::AddRes(rm, RES_SCRIPT, res_script);
-    RScriptParser *np = new RScriptParser(res_script->name, script);
+    std::unique_ptr<RScriptParser> np(new RScriptParser(res_script->name, script.c_str()));
 
     for (;;) {
       np->get_token();
@@ -325,7 +324,7 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *sname
       }
       if (np->tokentype_ == TTRES_INCLUDE) {
         np->get_token();
-        RScript::Parse(rm, np, np->tkn_string(), nullptr);
+        RScript::Parse(rm, np.get(), np->tkn_string(), nullptr);
       } else if (np->tokentype_ > TTRES__FIRST && np->tokentype_ < TTRES__LAST) {
         const auto restype = np->tokentype_ - TTRES__FIRST - 1;
         lname[0] = basename[0] = 0;
@@ -357,40 +356,40 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *sname
         if (np->tokentype_ == TTOPENBLOCK) {
           switch (restype) {
             case RES_RESOURCE:
-              RResource::Parse(rm, np, lname, basename);
+              RResource::Parse(rm, np.get(), lname, basename);
               break;
             case RES_TEXTURE:
-              RTexture::Parse(rm, np, lname, basename);
+              RTexture::Parse(rm, np.get(), lname, basename);
               break;
             case RES_EFFECT:
-              REffect::Parse(rm, np, lname, basename);
+              REffect::Parse(rm, np.get(), lname, basename);
               break;
             case RES_MUSIC:
-              RMusic::Parse(rm, np, lname, basename);
+              RMusic::Parse(rm, np.get(), lname, basename);
               break;
             case RES_STREAM:
-              RStream::Parse(rm, np, lname, basename);
+              RStream::Parse(rm, np.get(), lname, basename);
               break;
             case RES_TARGET:
-              RTarget::Parse(rm, np, lname, basename);
+              RTarget::Parse(rm, np.get(), lname, basename);
               break;
             case RES_SPRITE:
-              RSprite::Parse(rm, np, lname, basename);
+              RSprite::Parse(rm, np.get(), lname, basename);
               break;
             case RES_ANIMATION:
-              RAnimation::Parse(rm, np, lname, basename);
+              RAnimation::Parse(rm, np.get(), lname, basename);
               break;
             case RES_FONT:
-              RFont::Parse(rm, np, lname, basename);
+              RFont::Parse(rm, np.get(), lname, basename);
               break;
             case RES_PARTICLE:
-              RParticle::Parse(rm, np, lname, basename);
+              RParticle::Parse(rm, np.get(), lname, basename);
               break;
             case RES_DISTORT:
-              RDistort::Parse(rm, np, lname, basename);
+              RDistort::Parse(rm, np.get(), lname, basename);
               break;
             case RES_STRTABLE:
-              RStringTable::Parse(rm, np, lname, basename);
+              RStringTable::Parse(rm, np.get(), lname, basename);
               break;
           }
         } else {
@@ -411,9 +410,6 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *sname
       }
 
     }
-
-    delete np;
-    delete[] script;
   } else {
     sp->script_post_error("Script ", " already has been parsed.");
   }
@@ -609,7 +605,7 @@ void RStream::Free() {
 void RTarget::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                     const char *basename) {
   const auto rc = new RTarget();
-  const auto base = static_cast<RTarget *>(_hgeResources::FindRes(rm, RES_TARGET, basename));
+  const auto base = dynamic_cast<RTarget *>(_hgeResources::FindRes(rm, RES_TARGET, basename));
   if (base) {
     *rc = *base;
   } else {
@@ -673,7 +669,7 @@ void RSprite::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                     const char *basename) {
 
   const auto rc = new RSprite();
-  const auto base = static_cast<RSprite *>(_hgeResources::FindRes(rm, RES_SPRITE, basename));
+  const auto base = dynamic_cast<RSprite *>(_hgeResources::FindRes(rm, RES_SPRITE, basename));
   if (base) {
     *rc = *base;
   } else {
@@ -723,7 +719,7 @@ void RAnimation::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *na
                        const char *basename) {
 
   const auto rc = new RAnimation();
-  const auto base = static_cast<RAnimation *>(_hgeResources::FindRes(rm, RES_ANIMATION, basename));
+  const auto base = dynamic_cast<RAnimation *>(_hgeResources::FindRes(rm, RES_ANIMATION, basename));
   if (base) {
     *rc = *base;
   } else {
@@ -755,8 +751,7 @@ void RAnimation::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *na
 
 uint32_t RAnimation::Get(hgeResourceManager *rm) {
   if (!handle) {
-    hgeAnimation *spr = new hgeAnimation(rm->GetTexture(texname, resgroup), frames, fps, tx, ty,
-                                         w, h);
+    auto *spr = new hgeAnimation(rm->GetTexture(texname, resgroup), frames, fps, tx, ty, w, h);
     spr->SetColor(color);
     spr->SetZ(z);
     spr->SetBlendMode(blend);
@@ -786,7 +781,7 @@ void RFont::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                   const char *basename) {
 
   auto rc = new RFont();
-  const auto base = static_cast<RFont *>(_hgeResources::FindRes(rm, RES_FONT, basename));
+  const auto base = dynamic_cast<RFont *>(_hgeResources::FindRes(rm, RES_FONT, basename));
   if (base) {
     *rc = *base;
   } else {
@@ -882,7 +877,7 @@ void RFont::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
 
 uint32_t RFont::Get(hgeResourceManager *rm) {
   if (!handle) {
-    hgeFont *fnt = new hgeFont(filename, mipmap);
+    auto *fnt = new hgeFont(filename, mipmap);
     fnt->SetColor(color);
     fnt->SetZ(z);
     fnt->SetBlendMode(blend);
@@ -910,7 +905,7 @@ void RParticle::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *nam
                       const char *basename) {
 
   const auto rc = new RParticle();
-  const auto base = static_cast<RParticle *>(_hgeResources::FindRes(rm, RES_PARTICLE, basename));
+  const auto base = dynamic_cast<RParticle *>(_hgeResources::FindRes(rm, RES_PARTICLE, basename));
   if (base) {
     *rc = *base;
   } else {
@@ -971,7 +966,7 @@ void RDistort::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name
                      const char *basename) {
 
   auto rc = new RDistort();
-  const auto base = static_cast<RDistort *>(_hgeResources::FindRes(rm, RES_DISTORT, basename));
+  const auto base = dynamic_cast<RDistort *>(_hgeResources::FindRes(rm, RES_DISTORT, basename));
   if (base) {
     *rc = *base;
   } else {
@@ -1052,7 +1047,7 @@ void RDistort::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name
 
 uint32_t RDistort::Get(hgeResourceManager *rm) {
   if (!handle) {
-    hgeDistortionMesh *dis = new hgeDistortionMesh(cols, rows);
+    auto *dis = new hgeDistortionMesh(cols, rows);
     dis->SetTexture(rm->GetTexture(texname, resgroup));
     dis->SetTextureRect(tx, ty, w, h);
     dis->SetBlendMode(blend);

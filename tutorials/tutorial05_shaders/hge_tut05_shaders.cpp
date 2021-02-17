@@ -1,10 +1,14 @@
-/*
-** Haaf's Game Engine 1.8
-** Copyright (C) 2003-2007, Relish Games
-** hge.relishgames.com
-**
-** hge_tut05 - Using distortion mesh
-*/
+/*-----------------------------------------------------------------------------
+ * Haaf's Game Engine 1.9
+ * Copyright (C) 2003-2007, Relish Games
+ * Maintained 2012-2021 by dmytro.lytovchenko@gmail.com (github @kvakvs)
+ * Github -- https://github.com/kvakvs/hge | Discord -- https://discord.gg/TdjamHt
+ *
+ * Old website: http://hge.relishgames.com; Old forum: http://relishgames.com/forum
+ *-----------------------------------------------------------------------------*/
+//
+// hge_tut05 - Using distortion mesh
+//
 // Copy the files "particles.png", "menu.wav",
 // "font1.fnt", "font1.png" and "trail.psi" from
 // the folder "precompiled" to the folder with
@@ -21,7 +25,7 @@
 
 // Pointer to the HGE interface.
 // Helper classes require this to work.
-HGE* hge = nullptr;
+HGE *hge = nullptr;
 
 HTEXTURE tex;
 HSHADER shad1;
@@ -30,8 +34,8 @@ HSHADER shad3;
 HSHADER currShader = NULL;
 
 // Pointers to the HGE objects we will use
-hgeDistortionMesh* dis;
-hgeFont* fnt;
+hgeDistortionMesh *dis;
+hgeFont *fnt;
 
 // Some "gameplay" variables
 const int nRows = 16;
@@ -45,145 +49,148 @@ const float meshy = 44;
 bool use_shader = false;
 
 bool frame_func() {
-    const auto dt = hge->Timer_GetDelta();
-    static float t = 0.0f;
-    static int trans = 0;
+  const auto dt = hge->Timer_GetDelta();
+  static float t = 0.0f;
+  static int trans = 0;
 
-    int i, j, col;
+  int i, j, col;
 
-    t += dt;
+  t += dt;
 
-    // Process keys
-    switch (hge->Input_GetKey()) {
+  // Process keys
+  switch (hge->Input_GetKey()) {
     case HGEK_ESCAPE:
-        return true;
+      return true;
 
     case HGEK_SPACE:
-        if (++trans > 2) trans = 0;
-        dis->Clear(0xFF000000);
-        use_shader = false;
-        break;
+      if (++trans > 2) trans = 0;
+      dis->Clear(0xFF000000);
+      use_shader = false;
+      break;
 
     case HGEK_1:
-        currShader = NULL;
-        break;
+      currShader = NULL;
+      break;
 
     case HGEK_2:
-        currShader = shad1;
-        break;
+      currShader = shad1;
+      break;
 
     case HGEK_3:
-        currShader = shad2;
-        break;
+      currShader = shad2;
+      break;
 
     case HGEK_4:
-        currShader = shad3;
-        break;
-    }
+      currShader = shad3;
+      break;
+  }
 
-    // Calculate new displacements and coloring for one of the three effects
-    switch (trans) {
-    case 0: for (i = 1; i < nRows - 1; i++)
-            for (j = 1; j < nCols - 1; j++) {
-                dis->SetDisplacement(j, i, cosf(t * 10 + (i + j) / 2) * 5,
-                                     sinf(t * 10 + (i + j) / 2) * 5,HGEDISP_NODE);
-            }
-        break;
+  // Calculate new displacements and coloring for one of the three effects
+  switch (trans) {
+    case 0:
+      for (i = 1; i < nRows - 1; i++)
+        for (j = 1; j < nCols - 1; j++) {
+          dis->SetDisplacement(j, i, cosf(t * 10 + (i + j) / 2) * 5,
+                               sinf(t * 10 + (i + j) / 2) * 5, HGEDISP_NODE);
+        }
+      break;
 
-    case 1: for (i = 0; i < nRows; i++)
-            for (j = 1; j < nCols - 1; j++) {
-                dis->SetDisplacement(j, i, cosf(t * 5 + j / 2) * 15, 0,HGEDISP_NODE);
-                col = int((cosf(t * 5 + (i + j) / 2) + 1) * 35);
-                dis->SetColor(j, i, 0xFF << 24 | col << 16 | col << 8 | col);
-            }
-        break;
+    case 1:
+      for (i = 0; i < nRows; i++)
+        for (j = 1; j < nCols - 1; j++) {
+          dis->SetDisplacement(j, i, cosf(t * 5 + j / 2) * 15, 0, HGEDISP_NODE);
+          col = int((cosf(t * 5 + (i + j) / 2) + 1) * 35);
+          dis->SetColor(j, i, 0xFF << 24 | col << 16 | col << 8 | col);
+        }
+      break;
 
-    case 2: for (i = 0; i < nRows; i++)
-            for (j = 0; j < nCols; j++) {
-                const auto r = sqrtf(
-                    powf(j - static_cast<float>(nCols) / 2, 2) 
-                    + powf(i - static_cast<float>(nRows) / 2, 2));
-                const auto a = r * cosf(t * 2) * 0.1f;
-                const auto dx = sinf(a) * (i * cellh - 256) + cosf(a) * (j * cellw - 256);
-                const auto dy = cosf(a) * (i * cellh - 256) - sinf(a) * (j * cellw - 256);
-                dis->SetDisplacement(j, i, dx, dy,HGEDISP_CENTER);
-                col = int((cos(r + t * 4) + 1) * 40);
-                dis->SetColor(j, i, 0xFF << 24 | col << 16 | (col / 2) << 8);
-            }
-        break;
-    }
+    case 2:
+      for (i = 0; i < nRows; i++)
+        for (j = 0; j < nCols; j++) {
+          const auto r = sqrtf(
+                  powf(j - static_cast<float>(nCols) / 2, 2)
+                  + powf(i - static_cast<float>(nRows) / 2, 2));
+          const auto a = r * cosf(t * 2) * 0.1f;
+          const auto dx = sinf(a) * (i * cellh - 256) + cosf(a) * (j * cellw - 256);
+          const auto dy = cosf(a) * (i * cellh - 256) - sinf(a) * (j * cellw - 256);
+          dis->SetDisplacement(j, i, dx, dy, HGEDISP_CENTER);
+          col = int((cos(r + t * 4) + 1) * 40);
+          dis->SetColor(j, i, 0xFF << 24 | col << 16 | (col / 2) << 8);
+        }
+      break;
+  }
 
-    return false;
+  return false;
 }
 
 
 bool render_func() {
-    // Render graphics
-    hge->Gfx_BeginScene();
-    hge->Gfx_Clear(0);
-    hge->Gfx_SetShader(currShader);
-    dis->Render(meshx, meshy);
-    hge->Gfx_SetShader(NULL);
-    fnt->printf(5, 5, HGETEXT_LEFT, "dt:%.3f\nFPS:%d\n\nPress SPACE,1,2,3,4!",
-                hge->Timer_GetDelta(), hge->Timer_GetFPS());
-    hge->Gfx_EndScene();
+  // Render graphics
+  hge->Gfx_BeginScene();
+  hge->Gfx_Clear(0);
+  hge->Gfx_SetShader(currShader);
+  dis->Render(meshx, meshy);
+  hge->Gfx_SetShader(NULL);
+  fnt->printf(5, 5, HGETEXT_LEFT, "dt:%.3f\nFPS:%d\n\nPress SPACE,1,2,3,4!",
+              hge->Timer_GetDelta(), hge->Timer_GetFPS());
+  hge->Gfx_EndScene();
 
-    return false;
+  return false;
 }
 
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-    hge = hgeCreate(HGE_VERSION);
+  hge = hgeCreate(HGE_VERSION);
 
-    hge->System_SetState(HGE_LOGFILE, "hge_tut05.log");
-    hge->System_SetState(HGE_FRAMEFUNC, frame_func);
-    hge->System_SetState(HGE_RENDERFUNC, render_func);
-    hge->System_SetState(HGE_TITLE, "HGE Tutorial 05 - Using distortion mesh");
-    hge->System_SetState(HGE_WINDOWED, true);
-    hge->System_SetState(HGE_SCREENWIDTH, 800);
-    hge->System_SetState(HGE_SCREENHEIGHT, 600);
-    hge->System_SetState(HGE_SCREENBPP, 32);
-    hge->System_SetState(HGE_USESOUND, false);
+  hge->System_SetState(HGE_LOGFILE, "hge_tut05.log");
+  hge->System_SetState(HGE_FRAMEFUNC, frame_func);
+  hge->System_SetState(HGE_RENDERFUNC, render_func);
+  hge->System_SetState(HGE_TITLE, "HGE Tutorial 05 - Using distortion mesh");
+  hge->System_SetState(HGE_WINDOWED, true);
+  hge->System_SetState(HGE_SCREENWIDTH, 800);
+  hge->System_SetState(HGE_SCREENHEIGHT, 600);
+  hge->System_SetState(HGE_SCREENBPP, 32);
+  hge->System_SetState(HGE_USESOUND, false);
 
-    if (hge->System_Initiate()) {
+  if (hge->System_Initiate()) {
 
-        // Load sound and texture
-        tex = hge->Texture_Load("texture.jpg");
-        if (!tex) {
-            // If one of the data files is not found, display
-            // an error message and shutdown.
-            MessageBox(nullptr, "Can't load TEXTURE.JPG", "Error",
-                       MB_OK | MB_ICONERROR | MB_APPLMODAL);
-            hge->System_Shutdown();
-            hge->Release();
-            return 0;
-        }
-
-        shad1 = hge->Shader_Create("shader1.psh");
-        shad2 = hge->Shader_Create("shader2.psh");
-        shad3 = hge->Shader_Create("shader3.psh");
-
-        // Create a distortion mesh
-        dis = new hgeDistortionMesh(nCols, nRows);
-        dis->SetTexture(tex);
-        dis->SetTextureRect(0, 0, 512, 512);
-        dis->SetBlendMode(BLEND_COLORADD | BLEND_ALPHABLEND | BLEND_ZWRITE);
-        dis->Clear(0xFF000000);
-
-        // Load a font
-        fnt = new hgeFont("font1.fnt");
-
-        // Let's rock now!
-        hge->System_Start();
-
-        // Delete created objects and free loaded resources
-        delete fnt;
-        delete dis;
-        hge->Texture_Free(tex);
+    // Load sound and texture
+    tex = hge->Texture_Load("texture.jpg");
+    if (!tex) {
+      // If one of the data files is not found, display
+      // an error message and shutdown.
+      MessageBox(nullptr, "Can't load TEXTURE.JPG", "Error",
+                 MB_OK | MB_ICONERROR | MB_APPLMODAL);
+      hge->System_Shutdown();
+      hge->Release();
+      return 0;
     }
 
-    // Clean up and shutdown
-    hge->System_Shutdown();
-    hge->Release();
-    return 0;
+    shad1 = hge->Shader_Create("shader1.psh");
+    shad2 = hge->Shader_Create("shader2.psh");
+    shad3 = hge->Shader_Create("shader3.psh");
+
+    // Create a distortion mesh
+    dis = new hgeDistortionMesh(nCols, nRows);
+    dis->SetTexture(tex);
+    dis->SetTextureRect(0, 0, 512, 512);
+    dis->SetBlendMode(BLEND_COLORADD | BLEND_ALPHABLEND | BLEND_ZWRITE);
+    dis->Clear(0xFF000000);
+
+    // Load a font
+    fnt = new hgeFont("font1.fnt");
+
+    // Let's rock now!
+    hge->System_Start();
+
+    // Delete created objects and free loaded resources
+    delete fnt;
+    delete dis;
+    hge->Texture_Free(tex);
+  }
+
+  // Clean up and shutdown
+  hge->System_Shutdown();
+  hge->Release();
+  return 0;
 }
