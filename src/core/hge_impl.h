@@ -468,7 +468,13 @@ public:
     float ypos_;
     bool mouse_over_;
     bool is_captured_;
-    char key_table_[256];
+
+    struct KeyState {
+        bool pressed: 1;
+        bool released: 1;
+    };
+    KeyState key_table_[256];
+
     CInputEventList *ev_queue_;
 
     void update_mouse();

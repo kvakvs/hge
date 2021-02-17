@@ -857,7 +857,7 @@ HGE_Impl::HGE_Impl()
 
     size_t i;
     for (i = strlen(tmp) - 1; i > 0; i--)
-      if (app_path_[i] == '\\') {
+      if (tmp[i] == '\\') {
         break;
       }
     tmp[i + 1] = 0;

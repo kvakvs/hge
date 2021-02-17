@@ -90,11 +90,11 @@ bool HGE_CALL HGE_Impl::Input_GetKeyState(const int key) {
 }
 
 bool HGE_CALL HGE_Impl::Input_KeyDown(const int key) {
-  return (key_table_[key] & 1) != 0;
+  return key_table_[key].pressed;
 }
 
 bool HGE_CALL HGE_Impl::Input_KeyUp(const int key) {
-  return (key_table_[key] & 2) != 0;
+  return key_table_[key].released;
 }
 
 const char *HGE_CALL HGE_Impl::Input_GetKeyName(const int key) {
@@ -152,13 +152,13 @@ void HGE_Impl::build_event(const int type, const int key, const int scan,
   GetKeyboardState(kbstate);
   if (type == INPUT_KEYDOWN) {
     if ((flags & HGEINP_REPEAT) == 0) {
-      key_table_[key] |= 1;
+      key_table_[key].pressed = true;
     }
     ToAscii(key, scan, kbstate,
             reinterpret_cast<uint16_t *>(&eptr->event.chr), 0);
   }
   if (type == INPUT_KEYUP) {
-    key_table_[key] |= 2;
+    key_table_[key].released = true;
     ToAscii(key, scan, kbstate,
             reinterpret_cast<uint16_t *>(&eptr->event.chr), 0);
   }
@@ -172,12 +172,12 @@ void HGE_Impl::build_event(const int type, const int key, const int scan,
   }
 
   if (type == INPUT_MBUTTONDOWN) {
-    key_table_[key] |= 1;
+    key_table_[key].pressed = true;
     SetCapture(hwnd_);
     is_captured_ = true;
   }
   if (type == INPUT_MBUTTONUP) {
-    key_table_[key] |= 2;
+    key_table_[key].released = true;
     ReleaseCapture();
     Input_SetMousePos(xpos_, ypos_);
     pt.x = static_cast<int>(xpos_);
