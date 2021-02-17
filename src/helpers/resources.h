@@ -145,10 +145,6 @@ struct RSprite : public ResDesc {
     uint32_t color;
     float z;
     bool bXFlip, bYFlip;
-    //	float		x,y;
-    //	float		scale;
-    //	float		rotation;
-    //	int			collision;
 
     static void Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
                       const char *basename);

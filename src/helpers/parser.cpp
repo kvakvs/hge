@@ -220,5 +220,9 @@ uint32_t RScriptParser::tkn_hex() {
 
 void RScriptParser::script_post_error(const char *msg1, const char *msg2) {
   hge_->System_Log("%s, line %d: %s'%s'%s",
-                   get_name(), get_line(), msg1, tokenvalue_[0] ? tkn_string() : "<EOF>", msg2);
+                   get_name().c_str(),
+                   get_line(),
+                   msg1,
+                   tokenvalue_[0] ? tkn_string() : "<EOF>",
+                   msg2);
 }

@@ -35,9 +35,6 @@
 #define sinf (float)sin
 #define powf (float)pow
 #define fabsf (float)fabs
-
-#define min(x,y) ((x) < (y)) ? (x) : (y)
-#define max(x,y) ((x) > (y)) ? (x) : (y)
 #endif
 
 

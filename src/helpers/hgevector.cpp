@@ -14,15 +14,15 @@
 #include "../../include/hgevector.h"
 
 float hgeVector::InvSqrt(const float x) {
-    union {
-        int int_part;
-        float float_part;
-    } convertor{};
+  union {
+      int int_part;
+      float float_part;
+  } convertor{};
 
-    convertor.float_part = x;
-    convertor.int_part = 0x5f3759df - (convertor.int_part >> 1);
-    return convertor.float_part * 
-        (1.5f - 0.4999f * x * convertor.float_part * convertor.float_part);
+  convertor.float_part = x;
+  convertor.int_part = 0x5f3759df - (convertor.int_part >> 1);
+  return convertor.float_part *
+         (1.5f - 0.4999f * x * convertor.float_part * convertor.float_part);
 }
 
 /*
@@ -44,25 +44,25 @@ hgeVector *hgeVector::Normalize()
 }
 */
 
-float hgeVector::Angle(const hgeVector* v) const {
-    if (v) {
-        hgeVector s = *this, t = *v;
+float hgeVector::Angle(const hgeVector *v) const {
+  if (v) {
+    hgeVector s = *this, t = *v;
 
-        s.Normalize();
-        t.Normalize();
-        return acosf(s.Dot(&t));
-    }
-    return atan2f(y, x);
+    s.Normalize();
+    t.Normalize();
+    return acosf(s.Dot(&t));
+  }
+  return atan2f(y, x);
 }
 
-hgeVector* hgeVector::Rotate(float a) {
-    hgeVector v;
+hgeVector *hgeVector::Rotate(float a) {
+  hgeVector v;
 
-    v.x = x * cosf(a) - y * sinf(a);
-    v.y = x * sinf(a) + y * cosf(a);
+  v.x = x * cosf(a) - y * sinf(a);
+  v.y = x * sinf(a) + y * cosf(a);
 
-    x = v.x;
-    y = v.y;
+  x = v.x;
+  y = v.y;
 
-    return this;
+  return this;
 }

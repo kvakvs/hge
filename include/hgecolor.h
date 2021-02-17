@@ -10,8 +10,6 @@
 
 #include "hge.h"
 
-#define hgeColor hgeColorRGB
-
 inline void ColorClamp(float &x) {
   if (x < 0.0f) x = 0.0f;
   if (x > 1.0f) x = 1.0f;
@@ -19,6 +17,7 @@ inline void ColorClamp(float &x) {
 
 
 class hgeColorRGB {
+    static constexpr float ONE_DIV_255 = 1.0f / 255.0f;
 public:
     float r, g, b, a;
 
@@ -97,14 +96,15 @@ public:
     }
 
     void SetHWColor(const uint32_t col) {
-      a = (col >> 24) / 255.0f;
-      r = ((col >> 16) & 0xFF) / 255.0f;
-      g = ((col >> 8) & 0xFF) / 255.0f;
-      b = (col & 0xFF) / 255.0f;
+      a = (col >> 24) * ONE_DIV_255;
+      r = ((uint8_t) (col >> 16)) * ONE_DIV_255;
+      g = ((uint8_t) (col >> 8)) * ONE_DIV_255;
+      b = ((uint8_t) col) * ONE_DIV_255;
     }
 
     uint32_t GetHWColor() const {
-      return (uint32_t(a * 255.0f) << 24) + (uint32_t(r * 255.0f) << 16) +
+      return (uint32_t(a * 255.0f) << 24) +
+             (uint32_t(r * 255.0f) << 16) +
              (uint32_t(g * 255.0f) << 8) +
              uint32_t(b * 255.0f);
     }
@@ -116,6 +116,7 @@ inline hgeColorRGB operator*(const float sc, const hgeColorRGB &c) {
 
 
 class hgeColorHSV {
+    static constexpr float ONE_DIV_255 = 1.0f / 255.0f;
 public:
     float h, s, v, a;
 
@@ -201,3 +202,5 @@ public:
 inline hgeColorHSV operator*(const float sc, const hgeColorHSV &c) {
   return c * sc;
 }
+
+using hgeColor = hgeColorRGB;

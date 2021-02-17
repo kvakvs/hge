@@ -12,16 +12,18 @@
 
 #include "../../include/hgecolor.h"
 #include <cmath>
-
+#include <algorithm>
+#undef min
+#undef max
 
 void hgeColorHSV::SetHWColor(uint32_t col) {
   a = (col >> 24) / 255.0f;
-  auto r = ((col >> 16) & 0xFF) / 255.0f;
-  auto g = ((col >> 8) & 0xFF) / 255.0f;
-  auto b = (col & 0xFF) / 255.0f;
+  auto r = (float)((uint8_t)(col >> 16)) * ONE_DIV_255;
+  auto g = (float)((uint8_t)(col >> 8)) * ONE_DIV_255;
+  auto b = (float)((uint8_t)col) * ONE_DIV_255;
 
-  const auto minv = min(min(r, g), b);
-  const auto maxv = max(max(r, g), b);
+  const auto minv = std::min(std::min(r, g), b);
+  const auto maxv = std::max(std::max(r, g), b);
   const auto delta = maxv - minv;
 
   v = maxv;
