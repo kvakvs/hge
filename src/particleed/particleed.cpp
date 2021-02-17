@@ -171,7 +171,7 @@ void init_editor() {
   state.texBG = 0;
   state.sprBG = nullptr;
 
-  char *bgName = hge->Ini_GetString("HGE", "Background", nullptr);
+  const char *bgName = hge->Ini_GetString("HGE", "Background", nullptr);
   if (bgName) {
     state.texBG = hge->Texture_Load(bgName);
     const auto bgw = hge->Texture_GetWidth(state.texBG, true);

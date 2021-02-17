@@ -61,7 +61,7 @@ hgeFont::hgeFont(const char *font, const bool mipmap) {
   desc[size] = 0;
   hge_->Resource_Free(data);
 
-  char *pdesc = _get_line(desc, linebuf);
+  auto pdesc = _get_line(desc, linebuf);
   if (strcmp(linebuf, fnt_header_tag) != 0) {
     hge_->System_Log("Font %s has incorrect format.", font);
     delete[] desc;
@@ -340,14 +340,14 @@ void hgeFont::SetZ(const float z) {
 void hgeFont::SetBlendMode(const hgeBlendMode blend) {
   blend_ = blend;
 
-  for (auto & letter : letters_) {
+  for (auto &letter : letters_) {
     if (letter) {
       letter->SetBlendMode(blend);
     }
   }
 }
 
-char *hgeFont::_get_line(char *file, char *line) {
+const char *hgeFont::_get_line(const char *file, char *line) const {
   auto i = 0;
 
   if (!file[i]) {

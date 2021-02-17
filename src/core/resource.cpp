@@ -22,7 +22,8 @@
 bool HGE_CALL HGE_Impl::Resource_AttachPack(const char *filename, const char *password) {
   auto res_item = res_list_;
 
-  const auto sz_name = Resource_MakePath(filename);
+  char sz_name[MAX_PATH];
+  strcpy(sz_name, Resource_MakePath(filename));
   strupr(sz_name);
 
   while (res_item) {
@@ -55,7 +56,8 @@ void HGE_CALL HGE_Impl::Resource_RemovePack(const char *filename) {
   auto res_item = res_list_;
   CResourceList *res_prev = nullptr;
 
-  const auto sz_name = Resource_MakePath(filename);
+  char sz_name[MAX_PATH];
+  strcpy(sz_name, Resource_MakePath(filename));
   strupr(sz_name);
 
   while (res_item) {
@@ -209,7 +211,9 @@ void HGE_CALL HGE_Impl::Resource_Free(void *res) {
 
 
 // NOLINTNEXTLINE
-char *HGE_CALL HGE_Impl::Resource_MakePath(const char *filename) {
+const char *HGE_CALL HGE_Impl::Resource_MakePath(const char *filename) {
+  static char tmp_filename_[_MAX_PATH];
+
   if (!filename) {
     strcpy(tmp_filename_, app_path_);
   } else if (filename[0] == '\\' || filename[0] == '/' || filename[1] == ':') {
@@ -228,7 +232,7 @@ char *HGE_CALL HGE_Impl::Resource_MakePath(const char *filename) {
 }
 
 // NOLINTNEXTLINE
-char *HGE_CALL HGE_Impl::Resource_EnumFiles(const char *wildcard) {
+const char *HGE_CALL HGE_Impl::Resource_EnumFiles(const char *wildcard) {
   if (wildcard) {
     if (h_search_) {
       FindClose(h_search_);
@@ -261,7 +265,7 @@ char *HGE_CALL HGE_Impl::Resource_EnumFiles(const char *wildcard) {
 }
 
 // NOLINTNEXTLINE
-char *HGE_CALL HGE_Impl::Resource_EnumFolders(const char *wildcard) {
+const char *HGE_CALL HGE_Impl::Resource_EnumFolders(const char *wildcard) {
   if (wildcard) {
     if (h_search_) {
       FindClose(h_search_);

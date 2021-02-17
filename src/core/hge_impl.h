@@ -15,6 +15,7 @@
 #include <hge.h>
 #include <cstdio>
 #include <hge_gapi.h>
+#include <string>
 
 
 #define HGE_SPLASH_ENABLE
@@ -99,7 +100,7 @@ public:
 
     const char *HGE_CALL System_GetStateString(hgeStringState) override;
 
-    char *HGE_CALL System_GetErrorMessage() override;
+    const char *HGE_CALL System_GetErrorMessage() const override;
 
     // NOLINTNEXTLINE
     void HGE_CALL System_Log(const char *format, ...) override;
@@ -123,13 +124,13 @@ public:
     void HGE_CALL Resource_RemoveAllPacks() override;
 
     // NOLINTNEXTLINE
-    char *HGE_CALL Resource_MakePath(const char *filename = nullptr) override;
+    const char *HGE_CALL Resource_MakePath(const char *filename = nullptr) override;
 
     // NOLINTNEXTLINE
-    char *HGE_CALL Resource_EnumFiles(const char *wildcard = nullptr) override;
+    const char *HGE_CALL Resource_EnumFiles(const char *wildcard = nullptr) override;
 
     // NOLINTNEXTLINE
-    char *HGE_CALL Resource_EnumFolders(const char *wildcard = nullptr) override;
+    const char *HGE_CALL Resource_EnumFolders(const char *wildcard = nullptr) override;
 
     void HGE_CALL Ini_SetInt(const char *section, const char *name, int value) override;
 
@@ -142,8 +143,8 @@ public:
     void HGE_CALL Ini_SetString(const char *section, const char *name,
                                 const char *value) override;
 
-    char *HGE_CALL Ini_GetString(const char *section, const char *name,
-                                 const char *def_val) override;
+    const char *HGE_CALL Ini_GetString(const char *section, const char *name,
+                                       const char *def_val) override;
 
     // NOLINTNEXTLINE
     void HGE_CALL Random_Seed(int seed = 0) override;
@@ -330,10 +331,10 @@ public:
     HWND hwnd_;
 
     bool active_;
-    char error_[256];
-    char app_path_[_MAX_PATH];
-    char ini_string_[256];
+    std::string error_;
 
+    // Path to our program (GetModuleFilename)
+    char app_path_[_MAX_PATH];
 
     // System States
     bool (*proc_frame_func_)();
@@ -348,8 +349,8 @@ public:
 
     bool (*proc_exit_func_)();
 
-    const char *icon_;
-    char win_title_[256];
+    std::string icon_;
+    std::string win_title_;
     int screen_width_;
     int screen_height_;
     int screen_bpp_;
@@ -476,7 +477,6 @@ public:
 
 
     // Resources
-    char tmp_filename_[_MAX_PATH];
     CResourceList *res_list_;
     HANDLE h_search_;
     WIN32_FIND_DATA search_data_;

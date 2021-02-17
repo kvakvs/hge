@@ -69,13 +69,13 @@ void HGE_CALL HGE_Impl::Ini_SetString(const char *section, const char *name,
 }
 
 
-char *HGE_CALL HGE_Impl::Ini_GetString(const char *section, const char *name,
-                                       const char *def_val) {
+const char *HGE_CALL HGE_Impl::Ini_GetString(const char *section, const char *name,
+                                             const char *def_val) {
+  static char tmp[256];
   if (ini_file_[0]) {
-    GetPrivateProfileString(section, name, def_val, ini_string_, sizeof(ini_string_),
-                            ini_file_);
+    GetPrivateProfileString(section, name, def_val, tmp, sizeof(tmp), ini_file_);
   } else {
-    strcpy(ini_string_, def_val);
+    strcpy(tmp, def_val);
   }
-  return ini_string_;
+  return tmp;
 }

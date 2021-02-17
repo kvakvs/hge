@@ -335,7 +335,7 @@ public:
 
     virtual bool HGE_CALL System_Start() = 0;
 
-    virtual char *HGE_CALL System_GetErrorMessage() = 0;
+    virtual const char *HGE_CALL System_GetErrorMessage() const = 0;
 
     // NOLINTNEXTLINE
     virtual void HGE_CALL System_Log(const char *format, ...) = 0;
@@ -418,11 +418,11 @@ public:
 
     virtual void HGE_CALL Resource_RemoveAllPacks() = 0;
 
-    virtual char *HGE_CALL Resource_MakePath(const char *filename = nullptr) = 0;
+    virtual const char *HGE_CALL Resource_MakePath(const char *filename = nullptr) = 0;
 
-    virtual char *HGE_CALL Resource_EnumFiles(const char *wildcard = nullptr) = 0;
+    virtual const char *HGE_CALL Resource_EnumFiles(const char *wildcard = nullptr) = 0;
 
-    virtual char *HGE_CALL Resource_EnumFolders(const char *wildcard = nullptr) = 0;
+    virtual const char *HGE_CALL Resource_EnumFolders(const char *wildcard = nullptr) = 0;
 
     virtual void HGE_CALL Ini_SetInt(const char *section, const char *name,
                                      int value) = 0;
@@ -439,8 +439,8 @@ public:
     virtual void HGE_CALL Ini_SetString(const char *section, const char *name,
                                         const char *value) = 0;
 
-    virtual char *HGE_CALL Ini_GetString(const char *section, const char *name,
-                                         const char *def_val) = 0;
+    virtual const char *HGE_CALL Ini_GetString(const char *section, const char *name,
+                                               const char *def_val) = 0;
 
     virtual void HGE_CALL Random_Seed(int seed = 0) = 0;
 
@@ -713,3 +713,6 @@ typedef enum {
     HGEK_F11 = 0x7A,
     HGEK_F12 = 0x7B
 } hgeKeyCode_t;
+
+// Used to mark mutable/out parameters, declares intent to write to that variable
+#define hgeMutable /* mutable */

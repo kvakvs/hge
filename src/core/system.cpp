@@ -79,7 +79,7 @@ bool HGE_CALL HGE_Impl::System_Initiate() {
   System_Log("Date: %02d.%02d.%d, %02d:%02d:%02d\n", tm.wDay, tm.wMonth, tm.wYear, tm.wHour,
              tm.wMinute, tm.wSecond);
 
-  System_Log("Application: %s", win_title_);
+  System_Log("Application: %s", win_title_.c_str());
   os_ver.dwOSVersionInfoSize = sizeof(os_ver);
 
   // Deprecated? Too bad
@@ -104,8 +104,8 @@ bool HGE_CALL HGE_Impl::System_Initiate() {
   winclass.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
   winclass.lpszMenuName = nullptr;
   winclass.lpszClassName = WINDOW_CLASS_NAME;
-  if (icon_) {
-    winclass.hIcon = LoadIcon(h_instance_, icon_);
+  if (icon_.length() > 0) {
+    winclass.hIcon = LoadIcon(h_instance_, icon_.c_str());
   } else {
     winclass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
   }
@@ -154,14 +154,14 @@ bool HGE_CALL HGE_Impl::System_Initiate() {
   AdjustWindowRect(&rect_windowed_, style_windowed_, false);
 
   if (windowed_)
-    hwnd_ = CreateWindowEx(0, WINDOW_CLASS_NAME, win_title_, style_windowed_,
+    hwnd_ = CreateWindowEx(0, WINDOW_CLASS_NAME, win_title_.c_str(), style_windowed_,
                            rect_windowed_.left, rect_windowed_.top,
                            rect_windowed_.right - rect_windowed_.left,
                            rect_windowed_.bottom - rect_windowed_.top,
                            hwnd_parent_, nullptr, h_instance_, nullptr);
   else
     hwnd_ = CreateWindowEx(WS_EX_TOPMOST, WINDOW_CLASS_NAME,
-                           win_title_, style_fullscreen_,
+                           win_title_.c_str(), style_fullscreen_,
                            0, 0, 0, 0,
                            nullptr, nullptr, h_instance_, nullptr);
   if (!hwnd_) {
@@ -563,7 +563,7 @@ void HGE_CALL HGE_Impl::System_SetStateInt(const hgeIntState state, const int va
       }
       hgefps_ = value;
       if (hgefps_ > 0) {
-        fixed_delta_ = int(1000.0f / (float)value);
+        fixed_delta_ = int(1000.0f / (float) value);
       } else {
         fixed_delta_ = 0;
       }
@@ -583,13 +583,13 @@ void HGE_CALL HGE_Impl::System_SetStateString(const hgeStringState state, const 
       icon_ = value;
       if (pHGE->hwnd_) {
         SetClassLong(pHGE->hwnd_, GCL_HICON,
-                     reinterpret_cast<LONG>(LoadIcon(pHGE->h_instance_, icon_)));
+                     reinterpret_cast<LONG>(LoadIcon(pHGE->h_instance_, icon_.c_str())));
       }
       break;
     case HGE_TITLE:
-      strcpy(win_title_, value);
+      win_title_ = value;
       if (pHGE->hwnd_) {
-        SetWindowText(pHGE->hwnd_, win_title_);
+        SetWindowText(pHGE->hwnd_, win_title_.c_str());
       }
       break;
     case HGE_INIFILE:
@@ -697,9 +697,9 @@ int HGE_CALL HGE_Impl::System_GetStateInt(const hgeIntState state) {
 const char *HGE_CALL HGE_Impl::System_GetStateString(const hgeStringState state) {
   switch (state) {
     case HGE_ICON:
-      return icon_;
+      return icon_.c_str();
     case HGE_TITLE:
-      return win_title_;
+      return win_title_.c_str();
     case HGE_INIFILE: {
       if (ini_file_[0]) {
         return ini_file_;
@@ -717,8 +717,8 @@ const char *HGE_CALL HGE_Impl::System_GetStateString(const hgeStringState state)
   return nullptr;
 }
 
-char *HGE_CALL HGE_Impl::System_GetErrorMessage() {
-  return error_;
+const char *HGE_CALL HGE_Impl::System_GetErrorMessage() const {
+  return error_.c_str();
 }
 
 // NOLINTNEXTLINE
@@ -760,7 +760,7 @@ void HGE_CALL HGE_Impl::System_Snapshot(const char *filename) {
 
   if (!filename) {
     int i = 0;
-    char *shotname = Resource_EnumFiles("shot???.bmp");
+    const char *shotname = Resource_EnumFiles("shot???.bmp");
     while (shotname) {
       i++;
       shotname = Resource_EnumFiles();
@@ -825,8 +825,7 @@ HGE_Impl::HGE_Impl()
   proc_focus_gain_func_ = nullptr;
   proc_gfx_restore_func_ = nullptr;
   proc_exit_func_ = nullptr;
-  icon_ = nullptr;
-  strcpy(win_title_, "HGE");
+  win_title_ = "HGE";
   screen_width_ = 800;
   screen_height_ = 600;
   screen_bpp_ = 32;
@@ -865,7 +864,7 @@ HGE_Impl::HGE_Impl()
 
 void HGE_Impl::post_error(char const *error) {
   System_Log(error);
-  strcpy(error_, error);
+  error_ = error;
 }
 
 void HGE_Impl::focus_change(const bool b_act) {
