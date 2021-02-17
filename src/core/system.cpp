@@ -850,14 +850,20 @@ HGE_Impl::HGE_Impl()
   splash_screen_enabled_ = true;
 #endif
 
+  // Get application path and trim trailing slashes to get the directory
+  {
+    char tmp[MAX_PATH];
+    GetModuleFileName(GetModuleHandle(nullptr), tmp, sizeof(tmp));
 
-  GetModuleFileName(GetModuleHandle(nullptr), app_path_, sizeof(app_path_));
-  int i;
-  for (i = strlen(app_path_) - 1; i > 0; i--)
-    if (app_path_[i] == '\\') {
-      break;
-    }
-  app_path_[i + 1] = 0;
+    size_t i;
+    for (i = strlen(tmp) - 1; i > 0; i--)
+      if (app_path_[i] == '\\') {
+        break;
+      }
+    tmp[i + 1] = 0;
+
+    app_path_ = tmp;
+  }
 }
 
 void HGE_Impl::post_error(char const *error) {

@@ -334,7 +334,7 @@ public:
     std::string error_;
 
     // Path to our program (GetModuleFilename)
-    char app_path_[_MAX_PATH];
+    std::string app_path_;
 
     // System States
     bool (*proc_frame_func_)();

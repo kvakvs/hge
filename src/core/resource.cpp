@@ -215,11 +215,11 @@ const char *HGE_CALL HGE_Impl::Resource_MakePath(const char *filename) {
   static char tmp_filename_[_MAX_PATH];
 
   if (!filename) {
-    strcpy(tmp_filename_, app_path_);
+    strcpy(tmp_filename_, app_path_.c_str());
   } else if (filename[0] == '\\' || filename[0] == '/' || filename[1] == ':') {
     strcpy(tmp_filename_, filename);
   } else {
-    strcpy(tmp_filename_, app_path_);
+    strcpy(tmp_filename_, app_path_.c_str());
     strcat(tmp_filename_, filename);
   }
 
