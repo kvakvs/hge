@@ -115,9 +115,17 @@ void cmd_generate_font() {
     hge->Texture_Free(tex_font);
   }
   tex_font = generate_font(
-          state.font_family_, state.size_, state.pad_top_, state
-                  .pad_btm_, state.pad_lft_, state.pad_rgt_,
-          state.italic_, state.bold_, state.antialias_, &state.sr_, 1);
+          state.font_family_.c_str(),
+          state.size_,
+          state.pad_top_,
+          state.pad_btm_,
+          state.pad_lft_,
+          state.pad_rgt_,
+          state.italic_,
+          state.bold_,
+          state.antialias_,
+          &state.sr_,
+          1);
   spr_font = new hgeSprite(tex_font, 0.0f, 0.0f,
                            static_cast<float>(hge->Texture_GetWidth(tex_font)),
                            static_cast<float>(hge->Texture_GetHeight(tex_font)));

@@ -10,6 +10,7 @@
 #pragma once
 
 
+#include <string>
 #include "../../include/hge.h"
 #include "../../include/hgefont.h"
 #include "../../include/hgegui.h"
@@ -65,7 +66,7 @@ struct FEditorState {
     float mx_;
     float my_;
 
-    char *font_family_;
+    std::string font_family_;
     int size_;
     int pad_top_;
     int pad_btm_;

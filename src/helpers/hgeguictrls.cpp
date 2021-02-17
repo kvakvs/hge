@@ -32,8 +32,6 @@ hgeGUIText::hgeGUIText(const int _id, const float x, const float y,
   font_ = fnt;
   tx_ = x;
   ty_ = y + (h - fnt->GetHeight()) / 2.0f;
-
-  text_[0] = 0;
 }
 
 void hgeGUIText::SetMode(const int _align) {
@@ -47,17 +45,19 @@ void hgeGUIText::SetMode(const int _align) {
   }
 }
 
-void hgeGUIText::SetText(const char *_text) {
-  strcpy(text_, _text);
+void hgeGUIText::SetText(const char *t) {
+  text_ = t;
 }
 
 void hgeGUIText::printf(const char *format, ...) {
-  vsprintf(text_, format, reinterpret_cast<char *>(&format) + sizeof(format));
+  static char tmp[256];
+  vsprintf(tmp, format, reinterpret_cast<char *>(&format) + sizeof(format));
+  text_ = tmp;
 }
 
 void hgeGUIText::Render() {
   font_->SetColor(color);
-  font_->Render(tx_, ty_, align_, text_);
+  font_->Render(tx_, ty_, align_, text_.c_str());
 }
 
 /*
@@ -267,12 +267,11 @@ hgeGUIListbox::~hgeGUIListbox() {
 }
 
 
-int hgeGUIListbox::AddItem(char *item) {
+int hgeGUIListbox::AddItem(const char *item) {
   hgeGUIListboxItem *pItem = items_2_, *pPrev = nullptr, *pNew;
 
   pNew = new hgeGUIListboxItem;
-  memcpy(pNew->text, item, min(sizeof(pNew->text), strlen(item) + 1));
-  pNew->text[sizeof(pNew->text) - 1] = '\0';
+  pNew->text = item;
   pNew->next = nullptr;
 
   while (pItem) {
@@ -312,7 +311,7 @@ void hgeGUIListbox::DeleteItem(const int n) {
   items_--;
 }
 
-char *hgeGUIListbox::GetItemText(const int n) {
+const char *hgeGUIListbox::GetItemText(const int n) {
   hgeGUIListboxItem *pItem = items_2_;
 
   if (n < 0 || n >= GetNumItems()) {
@@ -323,7 +322,7 @@ char *hgeGUIListbox::GetItemText(const int n) {
     pItem = pItem->next;
   }
 
-  return pItem->text;
+  return pItem->text.c_str();
 }
 
 void hgeGUIListbox::Clear() {
@@ -358,7 +357,9 @@ void hgeGUIListbox::Render() {
       font_->SetColor(text_color_);
     }
 
-    font_->Render(rect.x1 + 3, rect.y1 + i * font_->GetHeight(), HGETEXT_LEFT, pItem->text);
+    font_->Render(rect.x1 + 3, rect.y1 + i * font_->GetHeight(),
+                  HGETEXT_LEFT,
+                  pItem->text.c_str());
     pItem = pItem->next;
   }
 }

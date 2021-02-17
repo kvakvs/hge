@@ -8,19 +8,12 @@
  *-----------------------------------------------------------------------------*/
 #pragma once
 
+#include <string>
 #include "hge.h"
 #include "hgesprite.h"
 #include "hgefont.h"
 #include "hgerect.h"
 #include "hgegui.h"
-
-#define hgeButtonGetState(gui, id)                ((hgeGUIButton*)gui->GetCtrl(id))->GetState()
-#define hgeButtonSetState(gui, id, b)                ((hgeGUIButton*)gui->GetCtrl(id))->SetState(b)
-#define hgeSliderGetValue(gui, id)                ((hgeGUISlider*)gui->GetCtrl(id))->GetValue()
-#define hgeSliderSetValue(gui, id, f)                ((hgeGUISlider*)gui->GetCtrl(id))->SetValue(f)
-#define hgeGetTextCtrl(gui, id)                        ((hgeGUIText*)gui->GetCtrl(id))
-#define hgeGetListboxCtrl(gui, id)                ((hgeGUIListbox*)gui->GetCtrl(id))
-
 
 /*
 ** hgeGUIText
@@ -31,7 +24,7 @@ public:
 
     void SetMode(int _align);
 
-    void SetText(const char *_text);
+    void SetText(const char *t);
 
     void printf(const char *format, ...);
 
@@ -42,7 +35,7 @@ private:
     float tx_;
     float ty_;
     int align_;
-    char text_[256];
+    std::string text_;
 };
 
 
@@ -130,7 +123,7 @@ private:
 ** hgeGUIListbox
 */
 struct hgeGUIListboxItem {
-    char text[64];
+    std::string text;
     hgeGUIListboxItem *next;
 };
 
@@ -141,7 +134,7 @@ public:
 
     virtual ~hgeGUIListbox();
 
-    int AddItem(char *item);
+    int AddItem(const char *item);
 
     void DeleteItem(int n);
 
@@ -161,7 +154,7 @@ public:
       if (n >= 0 && n <= GetNumItems() - GetNumRows()) top_item_ = n;
     }
 
-    char *GetItemText(int n);
+    const char *GetItemText(int n);
 
     int GetNumItems() {
       return items_;
@@ -200,3 +193,13 @@ private:
     float my_;
     hgeGUIListboxItem *items_2_;
 };
+
+
+#define hgeButtonGetState(gui, id)                ((hgeGUIButton*)gui->GetCtrl(id))->GetState()
+#define hgeButtonSetState(gui, id, b)                ((hgeGUIButton*)gui->GetCtrl(id))->SetState(b)
+#define hgeSliderGetValue(gui, id)                ((hgeGUISlider*)gui->GetCtrl(id))->GetValue()
+#define hgeSliderSetValue(gui, id, f)                ((hgeGUISlider*)gui->GetCtrl(id))->SetValue(f)
+#define hgeGetTextCtrl(gui, id)                        ((hgeGUIText*)gui->GetCtrl(id))
+static hgeGUIListbox* hgeGetListboxCtrl(hgeGUI *gui, int id)  {
+  return (hgeGUIListbox*)gui->GetCtrl(id);
+}
