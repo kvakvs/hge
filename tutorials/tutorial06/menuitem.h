@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <string>
 #include "../../include/hge.h"
 #include "../../include/hgegui.h"
 #include "../../include/hgefont.h"
@@ -37,7 +38,7 @@ private:
     hgeFont* fnt;
     HEFFECT snd;
     float delay;
-    char* title;
+    std::string title;
 
     hgeColor scolor, dcolor, scolor2, dcolor2, sshadow, dshadow;
     hgeColor color, shadow;

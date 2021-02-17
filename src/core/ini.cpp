@@ -15,9 +15,8 @@
 
 void HGE_CALL HGE_Impl::Ini_SetInt(const char *section, const char *name,
                                    const int value) {
-  char buf[256];
-
   if (!ini_file_.empty()) {
+    char buf[256];
     sprintf(buf, "%d", value);
     WritePrivateProfileString(section, name, buf, ini_file_.c_str());
   }
@@ -26,9 +25,8 @@ void HGE_CALL HGE_Impl::Ini_SetInt(const char *section, const char *name,
 
 int HGE_CALL HGE_Impl::Ini_GetInt(const char *section, const char *name,
                                   const int def_val) {
-  char buf[256];
-
   if (!ini_file_.empty()) {
+    char buf[256];
     if (GetPrivateProfileString(section, name, "", buf, sizeof(buf), ini_file_.c_str())) {
       return atoi(buf);
     }
@@ -50,9 +48,8 @@ void HGE_CALL HGE_Impl::Ini_SetFloat(const char *section, const char *name,
 
 float HGE_CALL HGE_Impl::Ini_GetFloat(const char *section, const char *name,
                                       const float def_val) {
-  char buf[256];
-
   if (!ini_file_.empty()) {
+    char buf[256];
     if (GetPrivateProfileString(section, name, "", buf, sizeof(buf), ini_file_.c_str())) {
       return static_cast<float>(atof(buf));
     }
@@ -72,6 +69,7 @@ void HGE_CALL HGE_Impl::Ini_SetString(const char *section, const char *name,
 const char *HGE_CALL HGE_Impl::Ini_GetString(const char *section, const char *name,
                                              const char *def_val) {
   static char tmp[256];
+
   if (!ini_file_.empty()) {
     GetPrivateProfileString(section, name, def_val, tmp, sizeof(tmp), ini_file_.c_str());
   } else {

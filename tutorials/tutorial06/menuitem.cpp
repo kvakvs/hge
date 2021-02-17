@@ -33,16 +33,17 @@ hgeGUIMenuItem::hgeGUIMenuItem(const int _id, hgeFont* _fnt, const HEFFECT _snd,
     bVisible = true;
     bEnabled = true;
 
-    const float w = fnt->GetStringWidth(title);
+    const float w = fnt->GetStringWidth(title.c_str());
     rect.Set(_x - w / 2, _y, _x + w / 2, _y + fnt->GetHeight());
 }
 
 // This method is called when the control should be rendered
 void hgeGUIMenuItem::Render() {
     fnt->SetColor(shadow.GetHWColor());
-    fnt->Render(rect.x1 + offset + 3, rect.y1 + 3, HGETEXT_LEFT, title);
+  const char *title_ptr = title.c_str();
+  fnt->Render(rect.x1 + offset + 3, rect.y1 + 3, HGETEXT_LEFT, title_ptr);
     fnt->SetColor(color.GetHWColor());
-    fnt->Render(rect.x1 - offset, rect.y1 - offset, HGETEXT_LEFT, title);
+    fnt->Render(rect.x1 - offset, rect.y1 - offset, HGETEXT_LEFT, title_ptr);
 }
 
 // This method is called each frame,
