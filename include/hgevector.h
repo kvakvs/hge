@@ -9,7 +9,7 @@
 #pragma once
 
 #include <hge.h>
-#include <math.h>
+#include <cmath>
 
 class hgeVector {
 public:

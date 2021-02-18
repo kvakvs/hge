@@ -28,6 +28,11 @@ set( HGECORE_SRC
     ${HGE_SOURCE_DIR}/include/hgesprite.h
     ${HGE_SOURCE_DIR}/include/hgestrings.h
     ${HGE_SOURCE_DIR}/include/hgevector.h
+    ${HGE_SOURCE_DIR}/include/impl/hgegapi.h
+    ${HGE_SOURCE_DIR}/include/impl/hgehandle.h
+    ${HGE_SOURCE_DIR}/include/impl/hgekeys.h
+    ${HGE_SOURCE_DIR}/include/impl/hgedefs.h
+    ${HGE_SOURCE_DIR}/include/impl/hgecolor.h
     )
 
 #------ additional includes ------

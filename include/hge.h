@@ -12,90 +12,10 @@
 
 #define HGE_VERSION 0x190
 
-// CMake adds PROJECTNAME_EXPORTS when compiles DLL
-#ifdef hge_EXPORTS
-#define HGEDLL
-#endif
-//------
-
-#ifdef HGEDLL
-#define HGE_EXPORT  __declspec(dllexport)
-#else
-#define HGE_EXPORT
-#endif
-
-#define HGE_CALL  __stdcall
-
-#ifdef __BORLANDC__
-#define floorf (float)floor
-#define sqrtf (float)sqrt
-#define acosf (float)acos
-#define atan2f (float)atan2
-#define cosf (float)cos
-#define sinf (float)sin
-#define powf (float)pow
-#define fabsf (float)fabs
-#endif
-
-
-/*
-** Common data types; use uint?_t, int?_t, size_t
-*/
-#include <cstdint>
-
-/*
-** Common math constants
-*/
-#ifndef M_PI
-#   define M_PI    3.14159265358979323846f
-#   define M_PI_2  1.57079632679489661923f
-#   define M_PI_4  0.785398163397448309616f
-#   define M_1_PI  0.318309886183790671538f
-#   define M_2_PI  0.636619772367581343076f
-#endif
-
-
-/*
-** HGE Handle types
-*/
-
-// FIXME: Won't compile in 64-bit mode due to handles (4 bytes) holding a pointer (8 bytes)
-using HTEXTURE = size_t;
-using HTARGET = size_t;
-using HSHADER = size_t;
-using HEFFECT = size_t;
-
-using HMUSIC = uint32_t; // defined by bass.h
-using HSTREAM = uint32_t; // defined by bass.h
-using HCHANNEL = uint32_t; // defined by bass.h
-
-
-/*
-** Hardware color inlines
-*
-** Expecting that compiler will inline this. Declared static to avoid duplicate 
-** function errors
-*/
-
-/*
-** HGE Blending constants
-*/
-enum hgeBlendMode : uint32_t {
-    BLEND_COLORADD = 1,
-    BLEND_COLORMUL = 0,
-    BLEND_ALPHABLEND = 2,
-    BLEND_ALPHAADD = 0,
-    BLEND_ZWRITE = 4,
-    BLEND_NOZWRITE = 0,
-
-    // Darken does real color multiplication, white source pixels don't change destination, while
-    // black source pixels make destination completely black
-    // Use example: http://relishgames.com/forum/index.php?p=/discussion/5799/darken-screen-plus-uneffected-hole/p1
-    BLEND_DARKEN = 8,
-    BLEND_BLACKEN = 8, /* synonym for darken */
-    BLEND_DEFAULT = (BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE),
-    BLEND_DEFAULT_Z = (BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_ZWRITE),
-};
+#include <impl/hgedefs.h>
+#include <impl/hgehandle.h>
+#include <impl/hgekeys.h>
+#include <impl/hgecolor.h>
 
 /*
 ** HGE System state constants
@@ -178,48 +98,54 @@ enum hgeStringState : int32_t {
     // char*    log file            (default: NULL) (meaning no file)
 };
 
-/*
-** Callback protoype used by HGE
-*/
+//
+// Callback protoype used by HGE
+//
 typedef bool (*hgeCallback)();
 
 
-/*
-** HGE_FPS system state special constants
-*/
-#define HGEFPS_UNLIMITED    0
-#define HGEFPS_VSYNC        -1
+//
+// HGE_FPS system state special constants
+//
+enum {
+    HGEFPS_UNLIMITED = 0,
+    HGEFPS_VSYNC = -1,
+};
 
 
-/*
-** HGE_POWERSTATUS system state special constants
-*/
-#define HGEPWR_AC           -1
-#define HGEPWR_UNSUPPORTED  -2
+//
+// HGE_POWERSTATUS system state special constants
+//
+enum {
+    HGEPWR_AC = -1,
+    HGEPWR_UNSUPPORTED = -2,
+};
 
 
-/*
-** HGE Primitive type constants
-*/
-#define HGEPRIM_LINES       2
-#define HGEPRIM_TRIPLES     3
-#define HGEPRIM_QUADS       4
+//
+// HGE Primitive type constants
+//
+enum {
+    HGEPRIM_LINES = 2,
+    HGEPRIM_TRIPLES = 3,
+    HGEPRIM_QUADS = 4,
+};
 
 
-/*
-** HGE Vertex structure
-*/
+//
+// HGE Vertex structure
+//
 struct hgeVertex {
-    float x, y; // screen position    
+    float x, y; // screen position
     float z; // Z-buffer depth 0..1
     uint32_t col; // color
     float tx, ty; // texture coordinates
 };
 
 
-/*
-** HGE Triple structure
-*/
+//
+// HGE Triple structure, represents a textured triangle
+//
 struct hgeTriple {
     hgeVertex v[3];
     HTEXTURE tex;
@@ -227,9 +153,9 @@ struct hgeTriple {
 };
 
 
-/*
-** HGE Quad structure
-*/
+//
+// HGE Quad structure
+//
 struct hgeQuad {
     hgeVertex v[4];
     HTEXTURE tex;
@@ -237,138 +163,11 @@ struct hgeQuad {
 };
 
 
-/*
-** HGE Input Event structure
-*/
-struct hgeInputEvent {
-    int type; // event type
-    int key; // key code
-    int flags; // event flags
-    int chr; // character code
-    int wheel; // wheel shift
-    float x; // mouse cursor x-coordinate
-    float y; // mouse cursor y-coordinate
-};
-
-
-/*
-** HGE Input Event type constants
-*/
-enum {
-    INPUT_KEYDOWN = 1,
-    INPUT_KEYUP = 2,
-    INPUT_MBUTTONDOWN = 3,
-    INPUT_MBUTTONUP = 4,
-    INPUT_MOUSEMOVE = 5,
-    INPUT_MOUSEWHEEL = 6,
-};
-
-
-/*
-** HGE Input Event flags
-*/
-enum {
-    HGEINP_SHIFT = 1,
-    HGEINP_CTRL = 2,
-    HGEINP_ALT = 4,
-    HGEINP_CAPSLOCK = 8,
-    HGEINP_SCROLLLOCK = 16,
-    HGEINP_NUMLOCK = 32,
-    HGEINP_REPEAT = 64,
-};
-
-struct hgeColor32 {
-    // Stores color as 0xAA RR GG BB
-    uint32_t argb;
-
-    constexpr hgeColor32() : argb(0) {}
-
-    constexpr hgeColor32(uint32_t argb_) : argb(argb_) {}
-
-    constexpr hgeColor32(uint8_t a, uint8_t r, uint8_t g, uint8_t b) : argb(
-            (uint32_t(a) << 24) + (uint32_t(r) << 16) + (uint32_t(g) << 8) + uint32_t(b)
-    ) {}
-
-    bool operator ==(const hgeColor32 &other) const {
-      return argb == other.argb;
-    }
-
-    bool operator !=(const hgeColor32 &other) const {
-      return argb != other.argb;
-    }
-
-    static constexpr hgeColor32 WHITE() { return {0xFFFFFFFF}; }
-    static constexpr hgeColor32 BLACK() { return {0xFF000000}; }
-    static constexpr hgeColor32 TRANSPARENT_BLACK() { return {0x00000000}; }
-
-    uint8_t get_a() const { return argb >> 24; }
-
-    uint8_t get_r() const { return argb >> 16 & 0xFF; }
-
-    uint8_t get_g() const { return argb >> 8 & 0xFF; }
-
-    uint8_t get_b() const { return argb & 0xFF; }
-
-    hgeColor32 set_a(uint8_t a) {
-      argb = (argb & 0x00FFFFFF) + (uint32_t(a) << 24);
-      return *this;
-    }
-
-    hgeColor32 set_r(uint8_t r) {
-      argb = (argb & 0xFF00FFFF) + (uint32_t(r) << 16);
-      return *this;
-    }
-
-    hgeColor32 set_g(uint8_t g) {
-      argb = (argb & 0xFFFF00FF) + (uint32_t(g) << 8);
-      return *this;
-    }
-
-    hgeColor32 set_b(uint8_t b) {
-      argb = (argb & 0xFFFFFF00) + uint32_t(b);
-      return *this;
-    }
-
-    hgeColor32 set_a(uint8_t a) const {
-      return {(argb & 0x00FFFFFF) + (uint32_t(a) << 24)};
-    }
-
-    hgeColor32 set_r(uint8_t r) const {
-      return { (argb & 0xFF00FFFF) + (uint32_t(r) << 16) };
-    }
-
-    hgeColor32 set_g(uint8_t g) const {
-      return { (argb & 0xFFFF00FF) + (uint32_t(g) << 8) };
-    }
-
-    hgeColor32 set_b(uint8_t b) const {
-      return { (argb & 0xFFFFFF00) + uint32_t(b) };
-    }
-};
-
-// Legacy macros became functions and now delegate work to the hgeColor32 class
-static hgeColor32 ARGB(uint8_t a, uint8_t r, uint8_t g, uint8_t b) { return {a, r, g, b}; }
-
-static uint8_t GETA(const hgeColor32 col) { return col.get_a(); }
-
-static uint8_t GETR(const hgeColor32 col) { return col.get_r(); }
-
-static uint8_t GETG(const hgeColor32 col) { return col.get_g(); }
-
-static uint8_t GETB(const hgeColor32 col) { return col.get_b(); }
-
-static hgeColor32 SETA(hgeColor32 col, const uint8_t a) { return col.set_a(a); }
-
-static hgeColor32 SETR(hgeColor32 col, const uint8_t r) { return col.set_r(r); }
-
-static hgeColor32 SETG(hgeColor32 col, const uint8_t g) { return col.set_g(g); }
-
-static hgeColor32 SETB(hgeColor32 col, const uint8_t b) { return col.set_b(b); }
-
-
-/*
-** HGE Interface class
-*/
+//
+// HGE Interface class
+// Using PImpl pattern HGE class hides internal implementation detail from the user program.
+// The actual implementation is in hge_impl.h and not exported from the DLL.
+//
 class HGE {
 public:
     virtual ~HGE() = default;
@@ -649,116 +448,6 @@ public:
 extern "C" {
 HGE_EXPORT HGE *HGE_CALL hgeCreate(int ver);
 }
-
-
-/*
-** HGE Virtual-key codes
-*/
-typedef enum {
-    HGEK_NO_KEY = 0x00,
-    HGEK_LBUTTON = 0x01,
-    HGEK_RBUTTON = 0x02,
-    HGEK_MBUTTON = 0x04,
-    HGEK_ESCAPE = 0x1B,
-    HGEK_BACKSPACE = 0x08,
-    HGEK_TAB = 0x09,
-    HGEK_ENTER = 0x0D,
-    HGEK_SPACE = 0x20,
-    HGEK_SHIFT = 0x10,
-    HGEK_CTRL = 0x11,
-    HGEK_ALT = 0x12,
-    HGEK_LWIN = 0x5B,
-    HGEK_RWIN = 0x5C,
-    HGEK_APPS = 0x5D,
-    HGEK_PAUSE = 0x13,
-    HGEK_CAPSLOCK = 0x14,
-    HGEK_NUMLOCK = 0x90,
-    HGEK_SCROLLLOCK = 0x91,
-    HGEK_PGUP = 0x21,
-    HGEK_PGDN = 0x22,
-    HGEK_HOME = 0x24,
-    HGEK_END = 0x23,
-    HGEK_INSERT = 0x2D,
-    HGEK_DELETE = 0x2E,
-    HGEK_LEFT = 0x25,
-    HGEK_UP = 0x26,
-    HGEK_RIGHT = 0x27,
-    HGEK_DOWN = 0x28,
-    HGEK_0 = 0x30,
-    HGEK_1 = 0x31,
-    HGEK_2 = 0x32,
-    HGEK_3 = 0x33,
-    HGEK_4 = 0x34,
-    HGEK_5 = 0x35,
-    HGEK_6 = 0x36,
-    HGEK_7 = 0x37,
-    HGEK_8 = 0x38,
-    HGEK_9 = 0x39,
-    HGEK_A = 0x41,
-    HGEK_B = 0x42,
-    HGEK_C = 0x43,
-    HGEK_D = 0x44,
-    HGEK_E = 0x45,
-    HGEK_F = 0x46,
-    HGEK_G = 0x47,
-    HGEK_H = 0x48,
-    HGEK_I = 0x49,
-    HGEK_J = 0x4A,
-    HGEK_K = 0x4B,
-    HGEK_L = 0x4C,
-    HGEK_M = 0x4D,
-    HGEK_N = 0x4E,
-    HGEK_O = 0x4F,
-    HGEK_P = 0x50,
-    HGEK_Q = 0x51,
-    HGEK_R = 0x52,
-    HGEK_S = 0x53,
-    HGEK_T = 0x54,
-    HGEK_U = 0x55,
-    HGEK_V = 0x56,
-    HGEK_W = 0x57,
-    HGEK_X = 0x58,
-    HGEK_Y = 0x59,
-    HGEK_Z = 0x5A,
-    HGEK_GRAVE = 0xC0,
-    HGEK_MINUS = 0xBD,
-    HGEK_EQUALS = 0xBB,
-    HGEK_BACKSLASH = 0xDC,
-    HGEK_LBRACKET = 0xDB,
-    HGEK_RBRACKET = 0xDD,
-    HGEK_SEMICOLON = 0xBA,
-    HGEK_APOSTROPHE = 0xDE,
-    HGEK_COMMA = 0xBC,
-    HGEK_PERIOD = 0xBE,
-    HGEK_SLASH = 0xBF,
-    HGEK_NUMPAD0 = 0x60,
-    HGEK_NUMPAD1 = 0x61,
-    HGEK_NUMPAD2 = 0x62,
-    HGEK_NUMPAD3 = 0x63,
-    HGEK_NUMPAD4 = 0x64,
-    HGEK_NUMPAD5 = 0x65,
-    HGEK_NUMPAD6 = 0x66,
-    HGEK_NUMPAD7 = 0x67,
-    HGEK_NUMPAD8 = 0x68,
-    HGEK_NUMPAD9 = 0x69,
-    HGEK_MULTIPLY = 0x6A,
-    HGEK_DIVIDE = 0x6F,
-    HGEK_ADD = 0x6B,
-    HGEK_SUBTRACT = 0x6D,
-    HGEK_DECIMAL = 0x6E,
-    HGEK_F1 = 0x70,
-    HGEK_F2 = 0x71,
-    HGEK_F3 = 0x72,
-    HGEK_F4 = 0x73,
-    HGEK_F5 = 0x74,
-    HGEK_F6 = 0x75,
-    HGEK_F7 = 0x76,
-    HGEK_F8 = 0x77,
-    HGEK_F9 = 0x78,
-    HGEK_F10 = 0x79,
-    HGEK_F11 = 0x7A,
-    HGEK_F12 = 0x7B
-} hgeKeyCode_t;
 
 // Used to mark mutable/out parameters, declares intent to write to that variable
 #define hgeMutable /* mutable */

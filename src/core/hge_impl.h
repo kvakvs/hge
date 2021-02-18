@@ -14,7 +14,7 @@
 
 #include <hge.h>
 #include <cstdio>
-#include <hge_gapi.h>
+#include <impl/hgegapi.h>
 #include <string>
 
 
@@ -26,7 +26,7 @@
 
 typedef BOOL (WINAPI *GetSystemPowerStatusFunc)(LPSYSTEM_POWER_STATUS);
 
-
+// HTARGET internal structure
 struct CRenderTargetList {
     int width;
     int height;
@@ -35,6 +35,7 @@ struct CRenderTargetList {
     CRenderTargetList *next;
 };
 
+// HTEXTURE internal structure
 struct CTextureList {
     HTEXTURE tex;
     int width;
