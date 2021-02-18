@@ -1,5 +1,0 @@
-https://github.com/kvakvs/hge
-POSSIBLE ISSUES LIST
-
--Added "/NODEFAULTLIB:libci" option for MSVC, because D3D8.LIB refers to this library but
-it was removed in few recent major releases of Visual Studio.

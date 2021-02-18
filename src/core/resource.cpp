@@ -17,286 +17,289 @@
 //#define NOUNCRYPT
 #include <unzip.h>
 
+namespace hgeImpl {
 
 // NOLINTNEXTLINE
-bool HGE_CALL HGE_Impl::Resource_AttachPack(const char *filename, const char *password) {
-  auto res_item = res_list_;
+    bool HGE_CALL HGE_Impl::Resource_AttachPack(const char *filename, const char *password) {
+      auto res_item = res_list_;
 
-  char sz_name[MAX_PATH];
-  strcpy(sz_name, Resource_MakePath(filename));
-  strupr(sz_name);
+      char sz_name[MAX_PATH];
+      strcpy(sz_name, Resource_MakePath(filename));
+      strupr(sz_name);
 
-  while (res_item) {
-    if (res_item->filename == sz_name) {
-      return false;
-    }
-    res_item = res_item->next;
-  }
+      while (res_item) {
+        if (res_item->filename == sz_name) {
+          return false;
+        }
+        res_item = res_item->next;
+      }
 
-  const auto zip = unzOpen(sz_name);
-  if (!zip) {
-    return false;
-  }
-  unzClose(zip);
+      const auto zip = unzOpen(sz_name);
+      if (!zip) {
+        return false;
+      }
+      unzClose(zip);
 
-  res_item = new CResourceList;
-  res_item->filename = sz_name;
-  if (password) {
-    res_item->password = password;
-  } else {
-    res_item->password[0] = 0;
-  }
-  res_item->next = res_list_;
-  res_list_ = res_item;
-
-  return true;
-}
-
-void HGE_CALL HGE_Impl::Resource_RemovePack(const char *filename) {
-  auto res_item = res_list_;
-  CResourceList *res_prev = nullptr;
-
-  char sz_name[MAX_PATH];
-  strcpy(sz_name, Resource_MakePath(filename));
-  strupr(sz_name);
-
-  while (res_item) {
-    if (res_item->filename == sz_name) {
-      if (res_prev) {
-        res_prev->next = res_item->next;
+      res_item = new CResourceList;
+      res_item->filename = sz_name;
+      if (password) {
+        res_item->password = password;
       } else {
-        res_list_ = res_item->next;
+        res_item->password[0] = 0;
       }
-      delete res_item;
-      break;
+      res_item->next = res_list_;
+      res_list_ = res_item;
+
+      return true;
     }
 
-    res_prev = res_item;
-    res_item = res_item->next;
-  }
-}
+    void HGE_CALL HGE_Impl::Resource_RemovePack(const char *filename) {
+      auto res_item = res_list_;
+      CResourceList *res_prev = nullptr;
 
-void HGE_CALL HGE_Impl::Resource_RemoveAllPacks() {
-  auto res_item = res_list_;
+      char sz_name[MAX_PATH];
+      strcpy(sz_name, Resource_MakePath(filename));
+      strupr(sz_name);
 
-  while (res_item) {
-    const auto res_next_item = res_item->next;
-    delete res_item;
-    res_item = res_next_item;
-  }
+      while (res_item) {
+        if (res_item->filename == sz_name) {
+          if (res_prev) {
+            res_prev->next = res_item->next;
+          } else {
+            res_list_ = res_item->next;
+          }
+          delete res_item;
+          break;
+        }
 
-  res_list_ = nullptr;
-}
+        res_prev = res_item;
+        res_item = res_item->next;
+      }
+    }
+
+    void HGE_CALL HGE_Impl::Resource_RemoveAllPacks() {
+      auto res_item = res_list_;
+
+      while (res_item) {
+        const auto res_next_item = res_item->next;
+        delete res_item;
+        res_item = res_next_item;
+      }
+
+      res_list_ = nullptr;
+    }
 
 // NOLINTNEXTLINE
-void *HGE_CALL HGE_Impl::Resource_Load(const char *filename, uint32_t *size) {
-  static const char *res_err = "Can't load resource: %s";
+    void *HGE_CALL HGE_Impl::Resource_Load(const char *filename, uint32_t *size) {
+      static const char *res_err = "Can't load resource: %s";
 
-  auto res_item = res_list_;
-  char sz_name[_MAX_PATH];
-  char sz_zip_name[_MAX_PATH];
-  unz_file_info file_info;
-  int i;
-  void *ptr;
+      auto res_item = res_list_;
+      char sz_name[_MAX_PATH];
+      char sz_zip_name[_MAX_PATH];
+      unz_file_info file_info;
+      int i;
+      void *ptr;
 
-  if (filename[0] == '\\' || filename[0] == '/' || filename[1] == ':') {
-    goto _fromfile; // skip absolute paths
-  }
+      if (filename[0] == '\\' || filename[0] == '/' || filename[1] == ':') {
+        goto _fromfile; // skip absolute paths
+      }
 
-  // Load from pack
+      // Load from pack
 
-  strcpy(sz_name, filename);
-  strupr(sz_name);
-  for (i = 0; sz_name[i]; i++) {
-    if (sz_name[i] == '/') {
-      sz_name[i] = '\\';
-    }
-  }
-
-  while (res_item) {
-    const auto zip = unzOpen(res_item->filename.c_str());
-    auto done = unzGoToFirstFile(zip);
-    while (done == UNZ_OK) {
-      unzGetCurrentFileInfo(zip, &file_info, sz_zip_name, sizeof(sz_zip_name), nullptr, 0,
-                            nullptr, 0);
-      strupr(sz_zip_name);
-      for (i = 0; sz_zip_name[i]; i++) {
-        if (sz_zip_name[i] == '/') {
-          sz_zip_name[i] = '\\';
+      strcpy(sz_name, filename);
+      strupr(sz_name);
+      for (i = 0; sz_name[i]; i++) {
+        if (sz_name[i] == '/') {
+          sz_name[i] = '\\';
         }
       }
-      if (!strcmp(sz_name, sz_zip_name)) {
-        if (unzOpenCurrentFilePassword(
-                zip, res_item->password.empty() ? nullptr : res_item->password.c_str()
-        ) != UNZ_OK) {
-          unzClose(zip);
-          sprintf(sz_name, res_err, filename);
-          post_error(sz_name);
-          return nullptr;
+
+      while (res_item) {
+        const auto zip = unzOpen(res_item->filename.c_str());
+        auto done = unzGoToFirstFile(zip);
+        while (done == UNZ_OK) {
+          unzGetCurrentFileInfo(zip, &file_info, sz_zip_name, sizeof(sz_zip_name), nullptr, 0,
+                                nullptr, 0);
+          strupr(sz_zip_name);
+          for (i = 0; sz_zip_name[i]; i++) {
+            if (sz_zip_name[i] == '/') {
+              sz_zip_name[i] = '\\';
+            }
+          }
+          if (!strcmp(sz_name, sz_zip_name)) {
+            if (unzOpenCurrentFilePassword(
+                    zip, res_item->password.empty() ? nullptr : res_item->password.c_str()
+            ) != UNZ_OK) {
+              unzClose(zip);
+              sprintf(sz_name, res_err, filename);
+              post_error(sz_name);
+              return nullptr;
+            }
+
+            ptr = malloc(file_info.uncompressed_size);
+            if (!ptr) {
+              unzCloseCurrentFile(zip);
+              unzClose(zip);
+              sprintf(sz_name, res_err, filename);
+              post_error(sz_name);
+              return nullptr;
+            }
+
+            if (unzReadCurrentFile(zip, ptr, file_info.uncompressed_size) < 0) {
+              unzCloseCurrentFile(zip);
+              unzClose(zip);
+              free(ptr);
+              sprintf(sz_name, res_err, filename);
+              post_error(sz_name);
+              return nullptr;
+            }
+            unzCloseCurrentFile(zip);
+            unzClose(zip);
+            if (size) {
+              *size = file_info.uncompressed_size;
+            }
+            return ptr;
+          }
+
+          done = unzGoToNextFile(zip);
         }
 
-        ptr = malloc(file_info.uncompressed_size);
-        if (!ptr) {
-          unzCloseCurrentFile(zip);
-          unzClose(zip);
-          sprintf(sz_name, res_err, filename);
-          post_error(sz_name);
-          return nullptr;
-        }
-
-        if (unzReadCurrentFile(zip, ptr, file_info.uncompressed_size) < 0) {
-          unzCloseCurrentFile(zip);
-          unzClose(zip);
-          free(ptr);
-          sprintf(sz_name, res_err, filename);
-          post_error(sz_name);
-          return nullptr;
-        }
-        unzCloseCurrentFile(zip);
         unzClose(zip);
-        if (size) {
-          *size = file_info.uncompressed_size;
-        }
-        return ptr;
+        res_item = res_item->next;
       }
 
-      done = unzGoToNextFile(zip);
+      // Load from file
+      _fromfile:
+      const auto h_f = CreateFile(Resource_MakePath(filename), GENERIC_READ,
+                                  FILE_SHARE_READ, nullptr, OPEN_EXISTING,
+                                  FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS,
+                                  nullptr);
+      if (h_f == INVALID_HANDLE_VALUE) {
+        sprintf(sz_name, res_err, filename);
+        post_error(sz_name);
+        return nullptr;
+      }
+      file_info.uncompressed_size = GetFileSize(h_f, nullptr);
+      ptr = malloc(file_info.uncompressed_size);
+      if (!ptr) {
+        CloseHandle(h_f);
+        sprintf(sz_name, res_err, filename);
+        post_error(sz_name);
+        return nullptr;
+      }
+      if (ReadFile(h_f, ptr, file_info.uncompressed_size, &file_info.uncompressed_size,
+                   nullptr) == 0) {
+        CloseHandle(h_f);
+        free(ptr);
+        sprintf(sz_name, res_err, filename);
+        post_error(sz_name);
+        return nullptr;
+      }
+
+      CloseHandle(h_f);
+      if (size) {
+        *size = file_info.uncompressed_size;
+      }
+      return ptr;
     }
 
-    unzClose(zip);
-    res_item = res_item->next;
-  }
 
-  // Load from file
-  _fromfile:
-  const auto h_f = CreateFile(Resource_MakePath(filename), GENERIC_READ,
-                              FILE_SHARE_READ, nullptr, OPEN_EXISTING,
-                              FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS,
-                              nullptr);
-  if (h_f == INVALID_HANDLE_VALUE) {
-    sprintf(sz_name, res_err, filename);
-    post_error(sz_name);
-    return nullptr;
-  }
-  file_info.uncompressed_size = GetFileSize(h_f, nullptr);
-  ptr = malloc(file_info.uncompressed_size);
-  if (!ptr) {
-    CloseHandle(h_f);
-    sprintf(sz_name, res_err, filename);
-    post_error(sz_name);
-    return nullptr;
-  }
-  if (ReadFile(h_f, ptr, file_info.uncompressed_size, &file_info.uncompressed_size,
-               nullptr) == 0) {
-    CloseHandle(h_f);
-    free(ptr);
-    sprintf(sz_name, res_err, filename);
-    post_error(sz_name);
-    return nullptr;
-  }
-
-  CloseHandle(h_f);
-  if (size) {
-    *size = file_info.uncompressed_size;
-  }
-  return ptr;
-}
-
-
-void HGE_CALL HGE_Impl::Resource_Free(void *res) {
-  if (res) {
-    free(res);
-  }
-}
+    void HGE_CALL HGE_Impl::Resource_Free(void *res) {
+      if (res) {
+        free(res);
+      }
+    }
 
 
 // NOLINTNEXTLINE
-const char *HGE_CALL HGE_Impl::Resource_MakePath(const char *filename) {
-  static char tmp_filename_[_MAX_PATH];
+    const char *HGE_CALL HGE_Impl::Resource_MakePath(const char *filename) {
+      static char tmp_filename_[_MAX_PATH];
 
-  if (!filename) {
-    strcpy(tmp_filename_, app_path_.c_str());
-  } else if (filename[0] == '\\' || filename[0] == '/' || filename[1] == ':') {
-    strcpy(tmp_filename_, filename);
-  } else {
-    strcpy(tmp_filename_, app_path_.c_str());
-    strcat(tmp_filename_, filename);
-  }
+      if (!filename) {
+        strcpy(tmp_filename_, app_path_.c_str());
+      } else if (filename[0] == '\\' || filename[0] == '/' || filename[1] == ':') {
+        strcpy(tmp_filename_, filename);
+      } else {
+        strcpy(tmp_filename_, app_path_.c_str());
+        strcat(tmp_filename_, filename);
+      }
 
-  for (auto i = 0; tmp_filename_[i]; i++) {
-    if (tmp_filename_[i] == '/') {
-      tmp_filename_[i] = '\\';
+      for (auto i = 0; tmp_filename_[i]; i++) {
+        if (tmp_filename_[i] == '/') {
+          tmp_filename_[i] = '\\';
+        }
+      }
+      return tmp_filename_;
     }
-  }
-  return tmp_filename_;
-}
-
-// NOLINTNEXTLINE
-const char *HGE_CALL HGE_Impl::Resource_EnumFiles(const char *wildcard) {
-  if (wildcard) {
-    if (h_search_) {
-      FindClose(h_search_);
-      h_search_ = nullptr;
-    }
-    h_search_ = FindFirstFile(Resource_MakePath(wildcard), &search_data_);
-    if (h_search_ == INVALID_HANDLE_VALUE) {
-      h_search_ = nullptr;
-      return nullptr;
-    }
-
-    if (!(search_data_.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-      return search_data_.cFileName;
-    }
-    return Resource_EnumFiles();
-  }
-  if (!h_search_) {
-    return nullptr;
-  }
-  for (;;) {
-    if (!FindNextFile(h_search_, &search_data_)) {
-      FindClose(h_search_);
-      h_search_ = nullptr;
-      return nullptr;
-    }
-    if (!(search_data_.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-      return search_data_.cFileName;
-    }
-  }
-}
 
 // NOLINTNEXTLINE
-const char *HGE_CALL HGE_Impl::Resource_EnumFolders(const char *wildcard) {
-  if (wildcard) {
-    if (h_search_) {
-      FindClose(h_search_);
-      h_search_ = nullptr;
-    }
-    h_search_ = FindFirstFile(Resource_MakePath(wildcard), &search_data_);
-    if (h_search_ == INVALID_HANDLE_VALUE) {
-      h_search_ = nullptr;
-      return nullptr;
+    const char *HGE_CALL HGE_Impl::Resource_EnumFiles(const char *wildcard) {
+      if (wildcard) {
+        if (h_search_) {
+          FindClose(h_search_);
+          h_search_ = nullptr;
+        }
+        h_search_ = FindFirstFile(Resource_MakePath(wildcard), &search_data_);
+        if (h_search_ == INVALID_HANDLE_VALUE) {
+          h_search_ = nullptr;
+          return nullptr;
+        }
+
+        if (!(search_data_.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+          return search_data_.cFileName;
+        }
+        return Resource_EnumFiles();
+      }
+      if (!h_search_) {
+        return nullptr;
+      }
+      for (;;) {
+        if (!FindNextFile(h_search_, &search_data_)) {
+          FindClose(h_search_);
+          h_search_ = nullptr;
+          return nullptr;
+        }
+        if (!(search_data_.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+          return search_data_.cFileName;
+        }
+      }
     }
 
-    if ((search_data_.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-        && strcmp(search_data_.cFileName, ".") != 0
-        && strcmp(search_data_.cFileName, "..") != 0) {
-      return search_data_.cFileName;
+// NOLINTNEXTLINE
+    const char *HGE_CALL HGE_Impl::Resource_EnumFolders(const char *wildcard) {
+      if (wildcard) {
+        if (h_search_) {
+          FindClose(h_search_);
+          h_search_ = nullptr;
+        }
+        h_search_ = FindFirstFile(Resource_MakePath(wildcard), &search_data_);
+        if (h_search_ == INVALID_HANDLE_VALUE) {
+          h_search_ = nullptr;
+          return nullptr;
+        }
+
+        if ((search_data_.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+            && strcmp(search_data_.cFileName, ".") != 0
+            && strcmp(search_data_.cFileName, "..") != 0) {
+          return search_data_.cFileName;
+        }
+        return Resource_EnumFolders();
+      }
+      if (!h_search_) {
+        return nullptr;
+      }
+      for (;;) {
+        if (!FindNextFile(h_search_, &search_data_)) {
+          FindClose(h_search_);
+          h_search_ = nullptr;
+          return nullptr;
+        }
+        if ((search_data_.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+            && strcmp(search_data_.cFileName, ".") != 0
+            && strcmp(search_data_.cFileName, "..") != 0) {
+          return search_data_.cFileName;
+        }
+      }
     }
-    return Resource_EnumFolders();
-  }
-  if (!h_search_) {
-    return nullptr;
-  }
-  for (;;) {
-    if (!FindNextFile(h_search_, &search_data_)) {
-      FindClose(h_search_);
-      h_search_ = nullptr;
-      return nullptr;
-    }
-    if ((search_data_.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-        && strcmp(search_data_.cFileName, ".") != 0
-        && strcmp(search_data_.cFileName, "..") != 0) {
-      return search_data_.cFileName;
-    }
-  }
-}
+
+} // namespace

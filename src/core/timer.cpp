@@ -9,16 +9,19 @@
 
 #include "hge_impl.h"
 
+namespace hgeImpl {
 
-float HGE_CALL HGE_Impl::Timer_GetTime() {
-  return time_;
-}
+    float HGE_CALL HGE_Impl::Timer_GetTime() {
+      return time_;
+    }
 
-float HGE_CALL HGE_Impl::Timer_GetDelta() {
-  return delta_time_;
-}
+    float HGE_CALL HGE_Impl::Timer_GetDelta() {
+      return delta_time_;
+    }
 
 
-int HGE_CALL HGE_Impl::Timer_GetFPS() {
-  return fps_;
-}
+    int HGE_CALL HGE_Impl::Timer_GetFPS() {
+      return fps_;
+    }
+
+} // namespace
