@@ -76,48 +76,11 @@ using HCHANNEL = uint32_t; // defined by bass.h
 ** Expecting that compiler will inline this. Declared static to avoid duplicate 
 ** function errors
 */
-template<typename T>
-static uint32_t ARGB(T a, T r, T g, T b) {
-  return (uint32_t(a) << 24) + (uint32_t(r) << 16) + (uint32_t(g) << 8) + uint32_t(b);
-}
-
-static uint8_t GETA(const uint32_t col) {
-  return col >> 24;
-}
-
-static uint8_t GETR(const uint32_t col) {
-  return col >> 16 & 0xFF;
-}
-
-static uint8_t GETG(const uint32_t col) {
-  return col >> 8 & 0xFF;
-}
-
-static uint8_t GETB(const uint32_t col) {
-  return col & 0xFF;
-}
-
-static uint32_t SETA(const uint32_t col, const uint8_t a) {
-  return (col & 0x00FFFFFF) + (uint32_t(a) << 24);
-}
-
-static uint32_t SETR(const uint32_t col, const uint8_t r) {
-  return (col & 0xFF00FFFF) + (uint32_t(r) << 16);
-}
-
-static uint32_t SETG(const uint32_t col, const uint8_t g) {
-  return (col & 0xFFFF00FF) + (uint32_t(g) << 8);
-}
-
-static uint32_t SETB(const uint32_t col, const uint8_t b) {
-  return (col & 0xFFFFFF00) + uint32_t(b);
-}
-
 
 /*
 ** HGE Blending constants
 */
-enum hgeBlendMode: uint32_t {
+enum hgeBlendMode : uint32_t {
     BLEND_COLORADD = 1,
     BLEND_COLORMUL = 0,
     BLEND_ALPHABLEND = 2,
@@ -313,6 +276,94 @@ enum {
     HGEINP_NUMLOCK = 32,
     HGEINP_REPEAT = 64,
 };
+
+struct hgeColor32 {
+    // Stores color as 0xAA RR GG BB
+    uint32_t argb;
+
+    constexpr hgeColor32() : argb(0) {}
+
+    constexpr hgeColor32(uint32_t argb_) : argb(argb_) {}
+
+    constexpr hgeColor32(uint8_t a, uint8_t r, uint8_t g, uint8_t b) : argb(
+            (uint32_t(a) << 24) + (uint32_t(r) << 16) + (uint32_t(g) << 8) + uint32_t(b)
+    ) {}
+
+    bool operator ==(const hgeColor32 &other) const {
+      return argb == other.argb;
+    }
+
+    bool operator !=(const hgeColor32 &other) const {
+      return argb != other.argb;
+    }
+
+    static constexpr hgeColor32 WHITE() { return {0xFFFFFFFF}; }
+    static constexpr hgeColor32 BLACK() { return {0xFF000000}; }
+    static constexpr hgeColor32 TRANSPARENT_BLACK() { return {0x00000000}; }
+
+    uint8_t get_a() const { return argb >> 24; }
+
+    uint8_t get_r() const { return argb >> 16 & 0xFF; }
+
+    uint8_t get_g() const { return argb >> 8 & 0xFF; }
+
+    uint8_t get_b() const { return argb & 0xFF; }
+
+    hgeColor32 set_a(uint8_t a) {
+      argb = (argb & 0x00FFFFFF) + (uint32_t(a) << 24);
+      return *this;
+    }
+
+    hgeColor32 set_r(uint8_t r) {
+      argb = (argb & 0xFF00FFFF) + (uint32_t(r) << 16);
+      return *this;
+    }
+
+    hgeColor32 set_g(uint8_t g) {
+      argb = (argb & 0xFFFF00FF) + (uint32_t(g) << 8);
+      return *this;
+    }
+
+    hgeColor32 set_b(uint8_t b) {
+      argb = (argb & 0xFFFFFF00) + uint32_t(b);
+      return *this;
+    }
+
+    hgeColor32 set_a(uint8_t a) const {
+      return {(argb & 0x00FFFFFF) + (uint32_t(a) << 24)};
+    }
+
+    hgeColor32 set_r(uint8_t r) const {
+      return { (argb & 0xFF00FFFF) + (uint32_t(r) << 16) };
+    }
+
+    hgeColor32 set_g(uint8_t g) const {
+      return { (argb & 0xFFFF00FF) + (uint32_t(g) << 8) };
+    }
+
+    hgeColor32 set_b(uint8_t b) const {
+      return { (argb & 0xFFFFFF00) + uint32_t(b) };
+    }
+};
+
+// Legacy macros became functions and now delegate work to the hgeColor32 class
+static hgeColor32 ARGB(uint8_t a, uint8_t r, uint8_t g, uint8_t b) { return {a, r, g, b}; }
+
+static uint8_t GETA(const hgeColor32 col) { return col.get_a(); }
+
+static uint8_t GETR(const hgeColor32 col) { return col.get_r(); }
+
+static uint8_t GETG(const hgeColor32 col) { return col.get_g(); }
+
+static uint8_t GETB(const hgeColor32 col) { return col.get_b(); }
+
+static hgeColor32 SETA(hgeColor32 col, const uint8_t a) { return col.set_a(a); }
+
+static hgeColor32 SETR(hgeColor32 col, const uint8_t r) { return col.set_r(r); }
+
+static hgeColor32 SETG(hgeColor32 col, const uint8_t g) { return col.set_g(g); }
+
+static hgeColor32 SETB(hgeColor32 col, const uint8_t b) { return col.set_b(b); }
 
 
 /*
@@ -547,10 +598,10 @@ public:
 
     virtual void HGE_CALL Gfx_EndScene() = 0;
 
-    virtual void HGE_CALL Gfx_Clear(uint32_t color) = 0;
+    virtual void HGE_CALL Gfx_Clear(hgeColor32 color) = 0;
 
     virtual void HGE_CALL Gfx_RenderLine(float x1, float y1, float x2, float y2,
-                                         uint32_t color = 0xFFFFFFFF, float z = 0.5f) = 0;
+                                         hgeColor32 color, float z = 0.5f) = 0;
 
     virtual void HGE_CALL Gfx_RenderTriple(const hgeTriple *triple) = 0;
 

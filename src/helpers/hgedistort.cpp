@@ -10,7 +10,7 @@
 // hgeDistortionMesh helper class implementation
 //
 
-#include "../../include/hgedistort.h"
+#include <hgedistort.h>
 
 
 HGE *hgeDistortionMesh::hge_ = nullptr;
@@ -124,13 +124,12 @@ void hgeDistortionMesh::SetBlendMode(const hgeBlendMode blend) {
   quad_.blend = blend;
 }
 
-void hgeDistortionMesh::Clear(const uint32_t col, const float z) {
-
+void hgeDistortionMesh::Clear(hgeColor32 col, const float z) {
   for (auto j = 0; j < rows_; j++)
     for (auto i = 0; i < cols_; i++) {
       disp_array_[j * cols_ + i].x = i * cellw_;
       disp_array_[j * cols_ + i].y = j * cellh_;
-      disp_array_[j * cols_ + i].col = col;
+      disp_array_[j * cols_ + i].col = col.argb;
       disp_array_[j * cols_ + i].z = z;
     }
 }
@@ -180,9 +179,9 @@ void hgeDistortionMesh::SetZ(const int col, const int row, const float z) {
 }
 
 void hgeDistortionMesh::SetColor(const int col, const int row,
-                                 const uint32_t color) {
+                                 const hgeColor32 color) {
   if (row < rows_ && col < cols_) {
-    disp_array_[row * cols_ + col].col = color;
+    disp_array_[row * cols_ + col].col = color.argb;
   }
 }
 

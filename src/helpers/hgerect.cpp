@@ -11,7 +11,7 @@
 //
 
 
-#include "../../include/hgerect.h"
+#include <hgerect.h>
 #include <cmath>
 
 

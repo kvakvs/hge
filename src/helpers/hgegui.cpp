@@ -9,7 +9,7 @@
 //
 // hgeGUI helper class implementation
 //
-#include "../../include/hgegui.h"
+#include <hgegui.h>
 
 
 HGE *hgeGUI::hge_ = nullptr;
@@ -121,7 +121,7 @@ void hgeGUI::SetCursor(hgeSprite *spr) {
 }
 
 
-void hgeGUI::SetColor(const uint32_t color) {
+void hgeGUI::SetColor(const hgeColor32 color) {
   auto ctrl = ctrls_;
 
   while (ctrl) {

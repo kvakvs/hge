@@ -11,7 +11,7 @@
 //
 
 
-#include "../../include/hgestrings.h"
+#include <hgestrings.h>
 #include <cctype>
 #include <memory>
 

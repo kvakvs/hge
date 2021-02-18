@@ -10,7 +10,7 @@
 // hgeFont helper class implementation
 //
 
-#include "../../include/hgefont.h"
+#include <hgefont.h>
 #include <cstdio>
 #include <string>
 
@@ -44,7 +44,7 @@ hgeFont::hgeFont(const char *font, const bool mipmap) {
 
   z_ = 0.5f;
   blend_ = (hgeBlendMode)(BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE);
-  col_ = 0xFFFFFFFF;
+  col_ = hgeColor32::WHITE();
 
   ZeroMemory(&letters_, sizeof(letters_));
   ZeroMemory(&pre_, sizeof(letters_));
@@ -314,7 +314,7 @@ float hgeFont::GetStringWidth(const char *string, const bool b_multiline) const 
   return w * scale_ * proportion_;
 }
 
-void hgeFont::SetColor(const uint32_t col) {
+void hgeFont::SetColor(const hgeColor32 col) {
   col_ = col;
 
   for (auto &letter : letters_)

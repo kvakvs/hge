@@ -10,7 +10,7 @@
 // hgeParticleManager helper class implementation
 //
 
-#include "../../include/hgeparticle.h"
+#include <hgeparticle.h>
 
 
 // NOLINTNEXTLINE

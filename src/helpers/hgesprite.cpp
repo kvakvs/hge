@@ -11,7 +11,7 @@
 //
 
 
-#include "../../include/hgesprite.h"
+#include <hgesprite.h>
 #include <cmath>
 
 
@@ -326,11 +326,11 @@ void hgeSprite::SetTextureRect(const float x, const float y,
 }
 
 
-void hgeSprite::SetColor(const uint32_t col, const int i) {
+void hgeSprite::SetColor(const hgeColor32 col, const int i) {
   if (i != -1) {
-    quad_.v[i].col = col;
+    quad_.v[i].col = col.argb;
   } else {
-    quad_.v[0].col = quad_.v[1].col = quad_.v[2].col = quad_.v[3].col = col;
+    quad_.v[0].col = quad_.v[1].col = quad_.v[2].col = quad_.v[3].col = col.argb;
   }
 }
 

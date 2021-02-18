@@ -264,11 +264,11 @@ public:
 
     void HGE_CALL Gfx_EndScene() override;
 
-    void HGE_CALL Gfx_Clear(uint32_t color) override;
+    void HGE_CALL Gfx_Clear(hgeColor32 color) override;
 
     // NOLINTNEXTLINE
     void HGE_CALL Gfx_RenderLine(float x1, float y1, float x2, float y2,
-                                 uint32_t color = 0xFFFFFFFF, float z = 0.5f) override;
+                                 hgeColor32 color, float z = 0.5f) override;
 
     void HGE_CALL Gfx_RenderTriple(const hgeTriple *triple) override;
 

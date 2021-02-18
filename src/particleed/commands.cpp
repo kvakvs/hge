@@ -495,8 +495,8 @@ void cmdLoadPreset(const int n) {
   SLIDER_SET_VALUE(CMD_PA_BEND, state.ps->info.colColorEnd.b);
   SLIDER_SET_VALUE(CMD_PA_RGBVAR, state.ps->info.fColorVar);
 
-  const auto col1 = state.ps->info.colColorStart.GetHWColor() | 0xFF000000;
-  const auto col2 = state.ps->info.colColorEnd.GetHWColor() | 0xFF000000;
+  hgeColor32 col1 = state.ps->info.colColorStart.GetHWColor().set_a(0xFF);
+  hgeColor32 col2 = state.ps->info.colColorEnd.GetHWColor().set_a(0xFF);
   sprColor->SetColor(col1, 0);
   sprColor->SetColor(col1, 1);
   sprColor->SetColor(col2, 2);
@@ -527,8 +527,8 @@ void cmdChangeColor(int id) {
       break;
   }
 
-  const auto col1 = state.ps->info.colColorStart.GetHWColor() | 0xFF000000;
-  const auto col2 = state.ps->info.colColorEnd.GetHWColor() | 0xFF000000;
+  hgeColor32 col1 = state.ps->info.colColorStart.GetHWColor().set_a(0xFF);
+  hgeColor32 col2 = state.ps->info.colColorEnd.GetHWColor().set_a(0xFF);
   sprColor->SetColor(col1, 0);
   sprColor->SetColor(col1, 1);
   sprColor->SetColor(col2, 2);

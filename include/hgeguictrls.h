@@ -129,8 +129,8 @@ struct hgeGUIListboxItem {
 
 class hgeGUIListbox : public hgeGUIObject {
 public:
-    hgeGUIListbox(int id, float x, float y, float w, float h, hgeFont *fnt, uint32_t tColor,
-                  uint32_t thColor, uint32_t hColor);
+    hgeGUIListbox(int id, float x, float y, float w, float h, hgeFont *fnt,
+                  hgeColor32 tColor, hgeColor32 thColor, hgeColor32 hColor);
 
     virtual ~hgeGUIListbox();
 
@@ -183,8 +183,8 @@ public:
 private:
     hgeSprite *spr_highlight_;
     hgeFont *font_;
-    uint32_t text_color_;
-    uint32_t text_highlight_color_;
+    hgeColor32 text_color_;
+    hgeColor32 text_highlight_color_;
 
     int items_;
     int selected_item_;

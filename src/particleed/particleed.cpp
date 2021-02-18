@@ -107,7 +107,7 @@ bool render_func() {
     sprRightPane2->Render(632, 512);
 
     gui->Render();
-    sprParticles->SetColor(state.ps->info.colColorStart.GetHWColor() | 0xFF000000);
+    sprParticles->SetColor(state.ps->info.colColorStart.GetHWColor().argb | 0xFF000000);
     sprParticles->Render(26, 189);
     sprColor->Render(642, 221);
   }

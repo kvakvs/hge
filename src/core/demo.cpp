@@ -220,7 +220,7 @@ bool demo_render_frame() {
   dquad.v[3].col = col;
 
   pHGE->Gfx_BeginScene();
-  pHGE->Gfx_Clear(0);
+  pHGE->Gfx_Clear(hgeColor32::TRANSPARENT_BLACK());
   pHGE->Gfx_RenderQuad(&dquad);
   pHGE->Gfx_EndScene();
 

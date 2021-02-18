@@ -84,7 +84,7 @@ bool render_func() {
   // Render
 
   hge->Gfx_BeginScene();
-  hge->Gfx_Clear(0xFF404040);
+  hge->Gfx_Clear(hgeColor32(0xFF404040));
 
   spr_black->SetTextureRect(0, 0, spr_font->GetWidth(), spr_font->GetHeight());
   spr_black->Render(psx - fw2, psy - fh2);
@@ -99,10 +99,10 @@ bool render_func() {
       v0 = static_cast<float>(vChars[i].y) + psy - fh2;
       v1 = v0 + vChars[i].h;
 
-      hge->Gfx_RenderLine(u0 + 0.5f, v0 + 0.5f, u1, v0 + 0.5f, 0xFF95883F);
-      hge->Gfx_RenderLine(u1, v0 + 0.5f, u1, v1, 0xFF95883F);
-      hge->Gfx_RenderLine(u1, v1, u0 + 0.5f, v1, 0xFF95883F);
-      hge->Gfx_RenderLine(u0 + 0.5f, v1, u0 + 0.5f, v0 + 0.5f, 0xFF95883F);
+      hge->Gfx_RenderLine(u0 + 0.5f, v0 + 0.5f, u1, v0 + 0.5f, hgeColor32(0xFF95883F));
+      hge->Gfx_RenderLine(u1, v0 + 0.5f, u1, v1, hgeColor32(0xFF95883F));
+      hge->Gfx_RenderLine(u1, v1, u0 + 0.5f, v1, hgeColor32(0xFF95883F));
+      hge->Gfx_RenderLine(u0 + 0.5f, v1, u0 + 0.5f, v0 + 0.5f, hgeColor32(0xFF95883F));
     }
 
   sprintf(szTemp, "Texture size: %dx%d",
@@ -285,7 +285,7 @@ void create_gui() {
   gui->AddCtrl(listbox);
 
   auto *slider = new hgeGUISlider(CMD_FAMILYSLIDER, 152, 44, 6, 128, tex_gui, 417, 177, 6,
-                                          6, true);
+                                  6, true);
   slider->SetMode(0, static_cast<float>(listbox->GetNumItems()) - listbox->GetNumRows(),
                   HGESLIDER_BAR);
   slider->SetValue(0);

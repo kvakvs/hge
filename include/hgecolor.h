@@ -102,11 +102,11 @@ public:
       b = ((uint8_t) col) * ONE_DIV_255;
     }
 
-    uint32_t GetHWColor() const {
-      return (uint32_t(a * 255.0f) << 24) +
-             (uint32_t(r * 255.0f) << 16) +
-             (uint32_t(g * 255.0f) << 8) +
-             uint32_t(b * 255.0f);
+    hgeColor32 GetHWColor() const {
+      return hgeColor32(uint8_t(a * 255.0f),
+                        uint8_t(r * 255.0f),
+                        uint8_t(g * 255.0f),
+                        uint8_t(b * 255.0f));
     }
 };
 

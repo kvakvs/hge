@@ -300,7 +300,7 @@ void UpdateSimulation() {
   float pos_x = 0;
   const float cellw = SCREEN_WIDTH / (SEA_SUBDIVISION - 1);
   hgeColor col1, col2;
-  uint32_t dwCol1;
+  hgeColor32 dwCol1;
 
   // Update time of day
 

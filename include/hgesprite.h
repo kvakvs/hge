@@ -36,7 +36,7 @@ public:
 
     void SetTextureRect(float x, float y, float w, float h, bool adjSize = true);
 
-    void SetColor(uint32_t col, int i = -1);
+    void SetColor(hgeColor32 col, int i = -1);
 
     void SetZ(float z, int i = -1);
 
@@ -62,8 +62,8 @@ public:
       *h = height_;
     }
 
-    uint32_t GetColor(const int i = 0) const {
-      return quad_.v[i].col;
+    hgeColor32 GetColor(const int i = 0) const {
+      return hgeColor32(quad_.v[i].col);
     }
 
     float GetZ(const int i = 0) const {

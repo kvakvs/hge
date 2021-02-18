@@ -32,7 +32,7 @@ struct sprObject {
     float dx, dy;
     float scale, rot;
     float dscale, drot;
-    uint32_t color;
+    hgeColor32 color;
 };
 
 std::vector<sprObject> pObjects;

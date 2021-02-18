@@ -72,9 +72,9 @@ bool CSpriteObject::SaveDescription(FILE *fp, char *texname) {
     }
   }
 
-  const auto color = spr->GetColor();
+  hgeColor32 color = spr->GetColor();
   if (color != 0xFFFFFFFF) {
-    fprintf(fp, " color = %08X\n", color);
+    fprintf(fp, " color = %08X\n", color.argb);
   }
 
   const auto z_order = spr->GetZ();

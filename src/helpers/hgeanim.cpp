@@ -10,7 +10,7 @@
 // hgeAnimation helper class implementation
 //
 
-#include "../../include/hgeanim.h"
+#include <hgeanim.h>
 
 
 // NOLINTNEXTLINE

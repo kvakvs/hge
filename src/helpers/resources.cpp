@@ -198,7 +198,7 @@ void _hgeResources::ScriptParseSpriteAnim(RScriptParser *sp, RSprite *rc, const 
       case TTPAR_COLOR:
         sp->get_token();
         sp->get_token();
-        rc->color = sp->tkn_hex();
+        rc->color = hgeColor32(sp->tkn_hex());
         break;
 
       case TTPAR_ZORDER:
@@ -679,7 +679,7 @@ void RSprite::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
     rc->w = rc->h = 0;
     rc->hotx = rc->hoty = 0;
     rc->blend = (hgeBlendMode) (BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE);
-    rc->color = 0xFFFFFFFF;
+    rc->color = hgeColor32::WHITE();
     rc->z = 0.5f;
     rc->bXFlip = false;
     rc->bYFlip = false;
@@ -729,7 +729,7 @@ void RAnimation::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *na
     rc->w = rc->h = 0;
     rc->hotx = rc->hoty = 0;
     rc->blend = (hgeBlendMode) (BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE);
-    rc->color = 0xFFFFFFFF;
+    rc->color = hgeColor32::WHITE();
     rc->z = 0.5f;
     rc->bXFlip = false;
     rc->bYFlip = false;
@@ -789,7 +789,7 @@ void RFont::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
     rc->mipmap = false;
     rc->filename[0] = 0;
     rc->blend = (hgeBlendMode) (BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE);
-    rc->color = 0xFFFFFFFF;
+    rc->color = hgeColor32::WHITE();
     rc->z = 0.5f;
     rc->scale = 1.0f;
     rc->proportion = 1.0f;
@@ -815,7 +815,7 @@ void RFont::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,
       case TTPAR_COLOR:
         sp->get_token();
         sp->get_token();
-        rc->color = sp->tkn_hex();
+        rc->color = hgeColor32(sp->tkn_hex());
         break;
 
       case TTPAR_ZORDER:
@@ -976,7 +976,7 @@ void RDistort::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name
     rc->w = rc->h = 0;
     rc->cols = rc->rows = 2;
     rc->blend = (hgeBlendMode) (BLEND_COLORMUL | BLEND_ALPHABLEND | BLEND_NOZWRITE);
-    rc->color = 0xFFFFFFFF;
+    rc->color = hgeColor32::WHITE();
     rc->z = 0.5f;
   }
   rc->handle = 0;
@@ -1021,7 +1021,7 @@ void RDistort::Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name
       case TTPAR_COLOR:
         sp->get_token();
         sp->get_token();
-        rc->color = sp->tkn_hex();
+        rc->color = hgeColor32(sp->tkn_hex());
         break;
 
       case TTPAR_ZORDER:

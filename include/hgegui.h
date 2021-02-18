@@ -28,7 +28,7 @@ class hgeGUIObject {
 public:
     hgeGUIObject() {
       hge_ = hgeCreate(HGE_VERSION);
-      color = 0xFFFFFFFF;
+      color = hgeColor32::WHITE();
     }
 
     virtual ~hgeGUIObject() {
@@ -79,20 +79,20 @@ public:
       return false;
     }
 
-    virtual void SetColor(const uint32_t _color) {
+    virtual void SetColor(const hgeColor32 _color) {
       color = _color;
     }
 
-    int id;
-    bool bStatic;
-    bool bVisible;
-    bool bEnabled;
+    int id{};
+    bool bStatic{};
+    bool bVisible{};
+    bool bEnabled{};
     hgeRect rect;
-    uint32_t color;
+    hgeColor32 color{};
 
-    hgeGUI *gui;
-    hgeGUIObject *next;
-    hgeGUIObject *prev;
+    hgeGUI *gui{};
+    hgeGUIObject *next{};
+    hgeGUIObject *prev{};
 
 protected:
     hgeGUIObject(const hgeGUIObject &go) {}
@@ -128,7 +128,7 @@ public:
 
     void SetCursor(hgeSprite *spr);
 
-    void SetColor(const uint32_t color);
+    void SetColor(const hgeColor32 color);
 
     void SetFocus(int id);
 

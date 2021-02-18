@@ -10,7 +10,7 @@
 // hgeGUI default controls implementation
 //
 
-#include "../../include/hgeguictrls.h"
+#include <hgeguictrls.h>
 #include <cstring>
 #include <cstdio>
 
@@ -240,8 +240,9 @@ bool hgeGUISlider::MouseMove(float x, float y) {
 
 hgeGUIListbox::hgeGUIListbox(const int _id, const float x, const float y,
                              const float w, const float h, hgeFont *fnt,
-                             const uint32_t tColor, const uint32_t thColor,
-                             const uint32_t hColor) {
+                             const hgeColor32 tColor,
+                             const hgeColor32 thColor,
+                             const hgeColor32 hColor) {
   id = _id;
   bStatic = false;
   bVisible = true;

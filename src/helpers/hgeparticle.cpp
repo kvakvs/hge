@@ -10,7 +10,7 @@
 // hgeParticleSystem helper class implementation
 //
 
-#include "../../include/hgeparticle.h"
+#include <hgeparticle.h>
 
 
 HGE *hgeParticleSystem::hge_ = nullptr;
@@ -252,7 +252,7 @@ void hgeParticleSystem::Render() {
 
   for (auto i = 0; i < particles_alive_; i++) {
     if (info.colColorStart.r < 0) {
-      info.sprite->SetColor(SETA(info.sprite->GetColor(), par->colColor.a * 255));
+      info.sprite->SetColor(info.sprite->GetColor().set_a(par->colColor.a * 255));
     } else {
       info.sprite->SetColor(par->colColor.GetHWColor());
     }

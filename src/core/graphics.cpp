@@ -13,20 +13,20 @@
 #include "hge_gapi.h"
 
 
-void HGE_CALL HGE_Impl::Gfx_Clear(const uint32_t color) {
+void HGE_CALL HGE_Impl::Gfx_Clear(const hgeColor32 color) {
   if (cur_target_) {
     if (cur_target_->pDepth) {
       d3d_device_->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
-                         color, 1.0f, 0);
+                         color.argb, 1.0f, 0);
     } else {
-      d3d_device_->Clear(0, nullptr, D3DCLEAR_TARGET, color, 1.0f, 0);
+      d3d_device_->Clear(0, nullptr, D3DCLEAR_TARGET, color.argb, 1.0f, 0);
     }
   } else {
     if (z_buffer_) {
       d3d_device_->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
-                         color, 1.0f, 0);
+                         color.argb, 1.0f, 0);
     } else {
-      d3d_device_->Clear(0, nullptr, D3DCLEAR_TARGET, color, 1.0f, 0);
+      d3d_device_->Clear(0, nullptr, D3DCLEAR_TARGET, color.argb, 1.0f, 0);
     }
   }
 }
@@ -207,7 +207,7 @@ void HGE_CALL HGE_Impl::Gfx_EndScene() {
 // NOLINTNEXTLINE
 void HGE_CALL HGE_Impl::Gfx_RenderLine(const float x1, const float y1,
                                        const float x2, const float y2,
-                                       const uint32_t color, const float z) {
+                                       const hgeColor32 color, const float z) {
   if (vert_array_) {
     if (cur_prim_type_ != HGEPRIM_LINES
         || n_prim_ >= VERTEX_BUFFER_SIZE / HGEPRIM_LINES
@@ -230,7 +230,7 @@ void HGE_CALL HGE_Impl::Gfx_RenderLine(const float x1, const float y1,
     vert_array_[i].y = y1;
     vert_array_[i + 1].y = y2;
     vert_array_[i].z = vert_array_[i + 1].z = z;
-    vert_array_[i].col = vert_array_[i + 1].col = color;
+    vert_array_[i].col = vert_array_[i + 1].col = color.argb;
     vert_array_[i].tx = vert_array_[i + 1].tx =
     vert_array_[i].ty = vert_array_[i + 1].ty = 0.0f;
 
@@ -836,7 +836,7 @@ bool HGE_Impl::gfx_init() {
     return false;
   }
 
-  Gfx_Clear(0);
+  Gfx_Clear(hgeColor32::TRANSPARENT_BLACK());
 
   return true;
 }

@@ -32,7 +32,7 @@ public:
 
     void Render(float x, float y);
 
-    void Clear(uint32_t col = 0xFFFFFFFF, float z = 0.5f);
+    void Clear(hgeColor32 col, float z = 0.5f);
 
     void SetTexture(HTEXTURE tex);
 
@@ -42,7 +42,7 @@ public:
 
     void SetZ(int col, int row, float z);
 
-    void SetColor(int col, int row, uint32_t color);
+    void SetColor(int col, int row, hgeColor32 color);
 
     void SetDisplacement(int col, int row, float dx, float dy, int ref);
 

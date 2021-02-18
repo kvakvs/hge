@@ -3,6 +3,9 @@
 *  Multiple API calls changed some types from `char*` to `const char*`, also blending mode is now using 
    `hgeBlendMode` enum - use type cast like so:
    `spt->SetBlendMode((hgeBlendMode)(BLEND_COLORMUL | BLEND_ALPHAADD | BLEND_NOZWRITE));`
+*  `uint32_t` color argument in many functions and classes is now a simple wrapper class `hgeColor32`.
+   To give default clear/draw color, you can use `hgeColor32::WHITE()` and `BLACK()` constexpr functions 
+   or create your colors.
 
 # Support & Questions
 

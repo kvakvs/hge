@@ -142,7 +142,7 @@ struct RSprite : public ResDesc {
     float tx, ty, w, h;
     float hotx, hoty;
     hgeBlendMode blend;
-    uint32_t color;
+    hgeColor32 color;
     float z;
     bool bXFlip, bYFlip;
 
@@ -171,7 +171,7 @@ struct RFont : public ResDesc {
     char filename[MAXRESCHARS];
     bool mipmap;
     hgeBlendMode blend;
-    uint32_t color;
+    hgeColor32 color;
     float z;
     float scale;
     float proportion;
@@ -204,7 +204,7 @@ struct RDistort : public ResDesc {
     float tx, ty, w, h;
     int cols, rows;
     hgeBlendMode blend;
-    uint32_t color;
+    hgeColor32 color;
     float z;
 
     static void Parse(hgeResourceManager *rm, RScriptParser *sp, const char *name,

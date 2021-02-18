@@ -40,7 +40,7 @@ public:
 
     void printfb(float x, float y, float w, float h, int align, const char *format, ...);
 
-    void SetColor(uint32_t col);
+    void SetColor(hgeColor32 col);
 
     void SetZ(float z);
 
@@ -66,7 +66,7 @@ public:
       spacing_ = spacing;
     }
 
-    uint32_t GetColor() const {
+    hgeColor32 GetColor() const {
       return col_;
     }
 
@@ -140,7 +140,7 @@ private:
     float tracking_;
     float spacing_;
 
-    uint32_t col_;
+    hgeColor32 col_;
     float z_;
     hgeBlendMode blend_;
 };

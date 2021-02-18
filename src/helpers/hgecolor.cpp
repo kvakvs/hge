@@ -10,7 +10,7 @@
 // hgeColor*** helper classes implementation
 //
 
-#include "../../include/hgecolor.h"
+#include <hgecolor.h>
 #include <cmath>
 #include <algorithm>
 #undef min
