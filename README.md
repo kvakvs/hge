@@ -6,6 +6,9 @@
 *  `uint32_t` color argument in many functions and classes is now a simple wrapper class `hgeColor32`.
    To give default clear/draw color, you can use `hgeColor32::WHITE()` and `BLACK()` constexpr functions 
    or create your colors.
+*  Multiple improvements to memory safety (strings and vectors where `char *` has a risk of overflow),
+   modernising the source (smart pointers, etc), and type safety (replacing generic pointers and ints with
+   structs and enums).
 
 # Support & Questions
 
