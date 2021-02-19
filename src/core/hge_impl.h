@@ -17,6 +17,7 @@
 #include <impl/hgegapi.h>
 #include <string>
 #include <queue>
+#include <list>
 
 
 #define HGE_SPLASH_ENABLE
@@ -38,7 +39,7 @@ namespace hgeImpl {
         CRenderTargetList *next;
     };
 
-// HTEXTURE internal structure
+    // HTEXTURE internal structure
     struct CTextureList {
         HTEXTURE tex;
         int width;
@@ -46,10 +47,14 @@ namespace hgeImpl {
         CTextureList *next;
     };
 
-    struct CResourceList {
+    // Contains info about attached resource pack
+    struct ResourcePackInfo {
         std::string filename;
         std::string password;
-        CResourceList *next;
+
+        ResourcePackInfo(const char *filename, const char *password)
+                : filename(filename),
+                  password(password ? password : "") {}
     };
 
     struct CStreamList {
@@ -58,12 +63,6 @@ namespace hgeImpl {
         CStreamList *next;
     };
 
-//    struct CInputEventList {
-//        hgeInputEvent event;
-//        CInputEventList *next;
-//    };
-
-
     void prepare_demo();
 
     void finish_demo();
@@ -71,9 +70,9 @@ namespace hgeImpl {
     bool demo_render_frame();
 
 
-/*
-** HGE Interface implementation
-*/
+    //
+    // HGE Interface implementation
+    //
     class HGE_Impl : public HGE {
     public:
         void HGE_CALL Release() override;
@@ -326,6 +325,7 @@ namespace hgeImpl {
         // Interaction with outer layer in system.cpp
         //-----------------------------------------------
         LRESULT window_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
         static HGE_Impl *interface_get();
 
     private:
@@ -505,7 +505,7 @@ namespace hgeImpl {
         //-----------------------------------------------
         // Resources
         //-----------------------------------------------
-        CResourceList *res_list_;
+        std::list<ResourcePackInfo> res_list_;
         HANDLE h_search_;
         WIN32_FIND_DATA search_data_;
 

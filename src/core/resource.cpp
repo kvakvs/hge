@@ -21,17 +21,17 @@ namespace hgeImpl {
 
 // NOLINTNEXTLINE
     bool HGE_CALL HGE_Impl::Resource_AttachPack(const char *filename, const char *password) {
-      auto res_item = res_list_;
+//      auto res_item = res_list_;
 
       char sz_name[MAX_PATH];
       strcpy(sz_name, Resource_MakePath(filename));
       strupr(sz_name);
 
-      while (res_item) {
-        if (res_item->filename == sz_name) {
-          return false;
-        }
-        res_item = res_item->next;
+      // Search if already attached
+      if (std::any_of(res_list_.begin(),
+                      res_list_.end(),
+                      [sz_name](const ResourcePackInfo &i) { return i.filename == sz_name; })) {
+        return false;
       }
 
       const auto zip = unzOpen(sz_name);
@@ -40,60 +40,29 @@ namespace hgeImpl {
       }
       unzClose(zip);
 
-      res_item = new CResourceList;
-      res_item->filename = sz_name;
-      if (password) {
-        res_item->password = password;
-      } else {
-        res_item->password[0] = 0;
-      }
-      res_item->next = res_list_;
-      res_list_ = res_item;
-
+      res_list_.emplace_back(sz_name, password);
       return true;
     }
 
     void HGE_CALL HGE_Impl::Resource_RemovePack(const char *filename) {
-      auto res_item = res_list_;
-      CResourceList *res_prev = nullptr;
-
       char sz_name[MAX_PATH];
       strcpy(sz_name, Resource_MakePath(filename));
       strupr(sz_name);
 
-      while (res_item) {
-        if (res_item->filename == sz_name) {
-          if (res_prev) {
-            res_prev->next = res_item->next;
-          } else {
-            res_list_ = res_item->next;
-          }
-          delete res_item;
-          break;
-        }
-
-        res_prev = res_item;
-        res_item = res_item->next;
-      }
+      auto _ = std::remove_if(
+              res_list_.begin(),
+              res_list_.end(),
+              [sz_name](ResourcePackInfo &p) { return p.filename == sz_name; });
     }
 
     void HGE_CALL HGE_Impl::Resource_RemoveAllPacks() {
-      auto res_item = res_list_;
-
-      while (res_item) {
-        const auto res_next_item = res_item->next;
-        delete res_item;
-        res_item = res_next_item;
-      }
-
-      res_list_ = nullptr;
+      res_list_.clear();
     }
 
 // NOLINTNEXTLINE
     void *HGE_CALL HGE_Impl::Resource_Load(const char *filename, uint32_t *size) {
       static const char *res_err = "Can't load resource: %s";
 
-      auto res_item = res_list_;
       char sz_name[_MAX_PATH];
       char sz_zip_name[_MAX_PATH];
       unz_file_info file_info;
@@ -114,8 +83,8 @@ namespace hgeImpl {
         }
       }
 
-      while (res_item) {
-        const auto zip = unzOpen(res_item->filename.c_str());
+      for (const auto &res_item: res_list_) {
+        const auto zip = unzOpen(res_item.filename.c_str());
         auto done = unzGoToFirstFile(zip);
         while (done == UNZ_OK) {
           unzGetCurrentFileInfo(zip, &file_info, sz_zip_name, sizeof(sz_zip_name), nullptr, 0,
@@ -128,7 +97,9 @@ namespace hgeImpl {
           }
           if (!strcmp(sz_name, sz_zip_name)) {
             if (unzOpenCurrentFilePassword(
-                    zip, res_item->password.empty() ? nullptr : res_item->password.c_str()
+                    zip,
+                    res_item.password.empty() ? nullptr
+                                              : res_item.password.c_str()
             ) != UNZ_OK) {
               unzClose(zip);
               sprintf(sz_name, res_err, filename);
@@ -165,7 +136,6 @@ namespace hgeImpl {
         }
 
         unzClose(zip);
-        res_item = res_item->next;
       }
 
       // Load from file

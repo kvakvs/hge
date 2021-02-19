@@ -799,7 +799,6 @@ namespace hgeImpl {
       sound_streams_ = nullptr;
 
       h_search_ = nullptr;
-      res_list_ = nullptr;
 
       input_char_ = v_key_ = zpos_ = 0;
       xpos_ = ypos_ = 0.0f;
