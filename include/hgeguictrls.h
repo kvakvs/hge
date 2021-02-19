@@ -10,6 +10,7 @@
 
 #include <string>
 #include <hge.h>
+#include <list>
 #include "hgesprite.h"
 #include "hgefont.h"
 #include "hgerect.h"
@@ -120,49 +121,45 @@ private:
 };
 
 
-/*
-** hgeGUIListbox
-*/
-struct hgeGUIListboxItem {
-    std::string text;
-    hgeGUIListboxItem *next;
-};
-
+//
+// hgeGUIListbox
+//
 class hgeGUIListbox : public hgeGUIObject {
 public:
-    hgeGUIListbox(int id, float x, float y, float w, float h, hgeFont *fnt,
+    hgeGUIListbox(int id, float x, float y, float w, float h,
+                  hgeMUTABLE hgeFont *fnt,
                   hgeColor32 tColor, hgeColor32 thColor, hgeColor32 hColor);
 
     virtual ~hgeGUIListbox();
 
-    int AddItem(const char *item);
+    size_t AddItem(const char *item);
 
-    void DeleteItem(int n);
+    void DeleteItem(size_t n);
 
-    int GetSelectedItem() {
+    size_t GetSelectedItem() {
       return selected_item_;
     }
 
-    void SetSelectedItem(const int n) {
+    void SetSelectedItem(const size_t n) {
       if (n >= 0 && n < GetNumItems()) { selected_item_ = n; }
     }
 
-    int GetTopItem() {
+    size_t GetTopItem() {
       return top_item_;
     }
 
-    void SetTopItem(const int n) {
+    void SetTopItem(const size_t n) {
       if (n >= 0 && n <= GetNumItems() - GetNumRows()) { top_item_ = n; }
     }
 
-    const char *GetItemText(int n);
+    const char *GetItemText(size_t n);
 
-    int GetNumItems() {
-      return items_;
+    size_t GetNumItems() {
+      return list_items_.size();
     }
 
-    int GetNumRows() {
-      return int((rect.y2 - rect.y1) / font_->GetHeight());
+    size_t GetNumRows() {
+      return size_t((rect.y2 - rect.y1) / font_->GetHeight());
     }
 
     void Clear();
@@ -187,12 +184,11 @@ private:
     hgeColor32 text_color_;
     hgeColor32 text_highlight_color_;
 
-    int items_;
-    int selected_item_;
-    int top_item_;
+    size_t selected_item_;
+    size_t top_item_;
     float mx_;
     float my_;
-    hgeGUIListboxItem *items_2_;
+    std::list<std::string> list_items_;
 };
 
 

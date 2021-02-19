@@ -158,7 +158,7 @@ void hgeGUISlider::Render() {
   const auto xx = rect.x1 + (rect.x2 - rect.x1) * (val_ - min_) / (max_ - min_);
   const auto yy = rect.y1 + (rect.y2 - rect.y1) * (val_ - min_) / (max_ - min_);
 
-  if (vertical_)
+  if (vertical_) {
     switch (mode_) {
       case HGESLIDER_BAR:
         x1 = rect.x1;
@@ -179,7 +179,7 @@ void hgeGUISlider::Render() {
         y2 = yy + sl_h_ / 2;
         break;
     }
-  else
+  } else {
     switch (mode_) {
       case HGESLIDER_BAR:
         x1 = rect.x1;
@@ -200,6 +200,7 @@ void hgeGUISlider::Render() {
         y2 = (rect.y1 + rect.y2 + sl_h_) / 2;
         break;
     }
+  }
 
   spr_slider_->RenderStretch(x1, y1, x2, y2);
 }
@@ -240,7 +241,8 @@ bool hgeGUISlider::MouseMove(float x, float y) {
 */
 
 hgeGUIListbox::hgeGUIListbox(const int _id, const float x, const float y,
-                             const float w, const float h, hgeFont *fnt,
+                             const float w, const float h,
+                             hgeMUTABLE hgeFont *fnt,
                              const hgeColor32 tColor,
                              const hgeColor32 thColor,
                              const hgeColor32 hColor) {
@@ -254,8 +256,6 @@ hgeGUIListbox::hgeGUIListbox(const int _id, const float x, const float y,
   spr_highlight_->SetColor(hColor);
   text_color_ = tColor;
   text_highlight_color_ = thColor;
-  items_2_ = nullptr;
-  items_ = 0;
 
   selected_item_ = 0;
   top_item_ = 0;
@@ -269,89 +269,56 @@ hgeGUIListbox::~hgeGUIListbox() {
 }
 
 
-int hgeGUIListbox::AddItem(const char *item) {
-  hgeGUIListboxItem *pItem = items_2_, *pPrev = nullptr, *pNew;
-
-  pNew = new hgeGUIListboxItem;
-  pNew->text = item;
-  pNew->next = nullptr;
-
-  while (pItem) {
-    pPrev = pItem;
-    pItem = pItem->next;
-  }
-
-  if (pPrev) {
-    pPrev->next = pNew;
-  } else {
-    items_2_ = pNew;
-  }
-  items_++;
-
-  return items_ - 1;
+size_t hgeGUIListbox::AddItem(const char *item) {
+  list_items_.emplace_back(item);
+  return list_items_.size();
 }
 
-void hgeGUIListbox::DeleteItem(const int n) {
-  hgeGUIListboxItem *pItem = items_2_, *pPrev = nullptr;
 
+void hgeGUIListbox::DeleteItem(const size_t n) {
   if (n < 0 || n >= GetNumItems()) {
     return;
   }
 
-  for (int i = 0; i < n; i++) {
-    pPrev = pItem;
-    pItem = pItem->next;
+  auto remove_iter = list_items_.begin();
+  for (size_t i = 0; i < n; i++) {
+    remove_iter++;
   }
 
-  if (pPrev) {
-    pPrev->next = pItem->next;
-  } else {
-    items_2_ = pItem->next;
+  if (remove_iter != list_items_.end()) {
+    list_items_.erase(remove_iter);
   }
-
-  delete pItem;
-  items_--;
 }
 
-const char *hgeGUIListbox::GetItemText(const int n) {
-  hgeGUIListboxItem *pItem = items_2_;
-
+const char *hgeGUIListbox::GetItemText(const size_t n) {
   if (n < 0 || n >= GetNumItems()) {
     return nullptr;
   }
 
-  for (int i = 0; i < n; i++) {
-    pItem = pItem->next;
+  auto item_iter = list_items_.cbegin();
+  for (size_t i = 0; i < n; i++) {
+    item_iter++;
   }
 
-  return pItem->text.c_str();
+  if (item_iter != list_items_.end()) {
+    return item_iter->c_str();
+  }
+  return nullptr; // not found, should not arrive at this line
 }
 
 void hgeGUIListbox::Clear() {
-  hgeGUIListboxItem *pItem = items_2_;
-
-  while (pItem) {
-    hgeGUIListboxItem *pNext = pItem->next;
-    delete pItem;
-    pItem = pNext;
-  }
-
-  items_2_ = nullptr;
-  items_ = 0;
+  list_items_.clear();
 }
 
 void hgeGUIListbox::Render() {
-  int i;
-  hgeGUIListboxItem *pItem = items_2_;
+  auto item_iter = list_items_.cbegin();
 
-  for (i = 0; i < top_item_; i++) {
-    pItem = pItem->next;
+  for (size_t i = 0; i < top_item_; i++) {
+    item_iter++;
   }
 
-  for (i = 0; i < GetNumRows(); i++) {
-    if (i >= items_) {
-      return;
-    }
+  for (size_t i = 0; i < GetNumRows(); i++) {
+    if (item_iter == list_items_.cend()) { return; }
 
     if (top_item_ + i == selected_item_) {
       spr_highlight_->Render(rect.x1, rect.y1 + i * font_->GetHeight());
@@ -362,16 +329,16 @@ void hgeGUIListbox::Render() {
 
     font_->Render(rect.x1 + 3, rect.y1 + i * font_->GetHeight(),
                   HGETEXT_LEFT,
-                  pItem->text.c_str());
-    pItem = pItem->next;
+                  item_iter->c_str());
+    item_iter++;
   }
 }
 
 bool hgeGUIListbox::MouseLButton(const bool b_down) {
-
   if (b_down) {
     const auto n_item = top_item_ + int(my_) / int(font_->GetHeight());
-    if (n_item < items_) {
+
+    if (n_item < list_items_.size()) {
       selected_item_ = n_item;
       return true;
     }
@@ -395,7 +362,7 @@ bool hgeGUIListbox::MouseWheel(const int n_notches) {
 bool hgeGUIListbox::KeyClick(const int key, int chr) {
   switch (key) {
     case HGEK_DOWN:
-      if (selected_item_ < items_ - 1) {
+      if (selected_item_ < list_items_.size() - 1) {
         selected_item_++;
         if (selected_item_ > top_item_ + GetNumRows() - 1) {
           top_item_ = selected_item_ - GetNumRows() + 1;
