@@ -21,7 +21,8 @@
 
 // NOLINTNEXTLINE
 hgeGUIText::hgeGUIText(const int _id, const float x, const float y,
-                       const float w, const float h, hgeFont *fnt)
+                       const float w, const float h,
+                       hgeMUTABLE hgeFont *fnt)
         : align_(0) {
   id = _id;
   bStatic = true;
@@ -346,6 +347,7 @@ void hgeGUIListbox::Render() {
   for (i = 0; i < top_item_; i++) {
     pItem = pItem->next;
   }
+
   for (i = 0; i < GetNumRows(); i++) {
     if (i >= items_) {
       return;

@@ -70,13 +70,23 @@ hgeSprite::hgeSprite(const HTEXTURE texture, const float texx, const float texy,
   quad_.blend = BLEND_DEFAULT;
 }
 
-hgeSprite::hgeSprite(const hgeSprite &spr) {
-  memcpy(this, &spr, sizeof(hgeSprite));
+hgeSprite::hgeSprite(const hgeSprite &spr)
+        : quad_(spr.quad_),
+          tx_(spr.tx_),
+          ty_(spr.ty_),
+          width_(spr.width_),
+          height_(spr.height_),
+          tex_width_(spr.tex_width_),
+          tex_height_(spr.tex_height_),
+          hot_x_(spr.hot_x_),
+          hot_y_(spr.hot_y_),
+          x_flip_(spr.x_flip_),
+          y_flip_(spr.y_flip_),
+          hs_flip_(spr.hs_flip_) {
   hge_ = hgeCreate(HGE_VERSION);
 }
 
 void hgeSprite::Render(const float x, const float y) {
-
   const auto tempx1 = x - hot_x_;
   const auto tempy1 = y - hot_y_;
   const auto tempx2 = x + width_ - hot_x_;
@@ -170,8 +180,9 @@ void hgeSprite::Render4V(const float x0, const float y0,
 
 
 hgeRect *hgeSprite::GetBoundingBoxEx(const float x, const float y,
-                                     const float rot, const float hscale,
-                                     const float vscale, hgeRect *rect) const {
+                                     const float rot,
+                                     const float hscale, const float vscale,
+                                     hgeOUT hgeRect *rect) const {
   rect->Clear();
 
   const auto tx1 = -hot_x_ * hscale;
@@ -180,8 +191,8 @@ hgeRect *hgeSprite::GetBoundingBoxEx(const float x, const float y,
   const auto ty2 = (height_ - hot_y_) * vscale;
 
   if (rot != 0.0f) {
-    const auto cost = cosf(rot);
-    const auto sint = sinf(rot);
+    const auto cost = std::cosf(rot);
+    const auto sint = std::sinf(rot);
 
     rect->Encapsulate(tx1 * cost - ty1 * sint + x, tx1 * sint + ty1 * cost + y);
     rect->Encapsulate(tx2 * cost - ty1 * sint + x, tx2 * sint + ty1 * cost + y);

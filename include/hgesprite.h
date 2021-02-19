@@ -11,9 +11,9 @@
 #include <hge.h>
 #include "hgerect.h"
 
-/*
-** HGE Sprite class
-*/
+//
+// HGE Sprite class
+//
 class hgeSprite {
 public:
     hgeSprite(HTEXTURE tex, float x, float y, float w, float h);
@@ -55,7 +55,10 @@ public:
       return quad_.tex;
     }
 
-    void GetTextureRect(float *x, float *y, float *w, float *h) const {
+    void GetTextureRect(hgeOUT float *x,
+                        hgeOUT float *y,
+                        hgeOUT float *w,
+                        hgeOUT float *h) const {
       *x = tx_;
       *y = ty_;
       *w = width_;
@@ -74,12 +77,14 @@ public:
       return quad_.blend;
     }
 
-    void GetHotSpot(float *x, float *y) const {
+    void GetHotSpot(hgeOUT float *x,
+                    hgeOUT float *y) const {
       *x = hot_x_;
       *y = hot_y_;
     }
 
-    void GetFlip(bool *bX, bool *bY) const {
+    void GetFlip(hgeOUT bool *bX,
+                 hgeOUT bool *bY) const {
       *bX = x_flip_;
       *bY = y_flip_;
     }
@@ -98,8 +103,10 @@ public:
       return rect;
     }
 
-    hgeRect *GetBoundingBoxEx(float x, float y, float rot, float hscale, float vscale,
-                              hgeRect *rect) const;
+    hgeRect *GetBoundingBoxEx(float x, float y,
+                              float rot,
+                              float hscale, float vscale,
+                              hgeOUT hgeRect *rect) const;
 
 protected:
     hgeSprite() {}
@@ -107,15 +114,15 @@ protected:
     static HGE *hge_;
 
     hgeQuad quad_{};
-    float tx_;
-    float ty_;
-    float width_;
-    float height_;
-    float tex_width_;
-    float tex_height_;
-    float hot_x_;
-    float hot_y_;
-    bool x_flip_;
-    bool y_flip_;
-    bool hs_flip_;
+    float tx_{};
+    float ty_{};
+    float width_{};
+    float height_{};
+    float tex_width_{};
+    float tex_height_{};
+    float hot_x_{};
+    float hot_y_{};
+    bool x_flip_{};
+    bool y_flip_{};
+    bool hs_flip_{};
 };

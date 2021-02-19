@@ -128,12 +128,14 @@ public:
       return age_;
     }
 
-    void GetPosition(float *x, float *y) const {
+    void GetPosition(hgeOUT float *x,
+                     hgeOUT float *y) const {
       *x = location_.x;
       *y = location_.y;
     }
 
-    void GetTransposition(float *x, float *y) const {
+    void GetTransposition(hgeOUT float *x,
+                          hgeOUT float *y) const {
       *x = tx_;
       *y = ty_;
     }
@@ -142,25 +144,25 @@ public:
       return scale_;
     }
 
-    hgeRect *GetBoundingBox(hgeRect *rect) const;
+    hgeRect *GetBoundingBox(hgeOUT hgeRect *rect) const;
 
 private:
     hgeParticleSystem() = default;
 
     static HGE *hge_;
 
-    float age_;
-    float emission_residue_;
+    float age_{};
+    float emission_residue_{};
 
     hgeVector prev_location_;
     hgeVector location_;
-    float tx_;
-    float ty_;
-    float scale_;
+    float tx_{};
+    float ty_{};
+    float scale_{};
 
-    int particles_alive_;
+    int particles_alive_{};
     hgeRect bounding_box_;
-    bool update_bounding_box_;
+    bool update_bounding_box_{};
 
     hgeParticle particles_[MAX_PARTICLES];
 };
@@ -181,7 +183,8 @@ public:
 
     void Transpose(float x, float y);
 
-    void GetTransposition(float *dx, float *dy) const {
+    void GetTransposition(hgeOUT float *dx,
+                          hgeOUT float *dy) const {
       *dx = x_;
       *dy = y_;
     }

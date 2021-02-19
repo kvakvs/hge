@@ -20,7 +20,8 @@
 */
 class hgeGUIText : public hgeGUIObject {
 public:
-    hgeGUIText(int id, float x, float y, float w, float h, hgeFont *fnt);
+    hgeGUIText(int id, float x, float y, float w, float h,
+               hgeMUTABLE hgeFont *fnt);
 
     void SetMode(int _align);
 
@@ -143,7 +144,7 @@ public:
     }
 
     void SetSelectedItem(const int n) {
-      if (n >= 0 && n < GetNumItems()) selected_item_ = n;
+      if (n >= 0 && n < GetNumItems()) { selected_item_ = n; }
     }
 
     int GetTopItem() {
@@ -151,7 +152,7 @@ public:
     }
 
     void SetTopItem(const int n) {
-      if (n >= 0 && n <= GetNumItems() - GetNumRows()) top_item_ = n;
+      if (n >= 0 && n <= GetNumItems() - GetNumRows()) { top_item_ = n; }
     }
 
     const char *GetItemText(int n);
@@ -200,6 +201,7 @@ private:
 #define hgeSliderGetValue(gui, id)                ((hgeGUISlider*)gui->GetCtrl(id))->GetValue()
 #define hgeSliderSetValue(gui, id, f)                ((hgeGUISlider*)gui->GetCtrl(id))->SetValue(f)
 #define hgeGetTextCtrl(gui, id)                        ((hgeGUIText*)gui->GetCtrl(id))
-static hgeGUIListbox* hgeGetListboxCtrl(hgeGUI *gui, int id)  {
-  return (hgeGUIListbox*)gui->GetCtrl(id);
+
+static hgeGUIListbox *hgeGetListboxCtrl(hgeGUI *gui, int id) {
+  return (hgeGUIListbox *) gui->GetCtrl(id);
 }

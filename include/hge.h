@@ -450,4 +450,5 @@ HGE_EXPORT HGE *HGE_CALL hgeCreate(int ver);
 }
 
 // Used to mark mutable/out parameters, declares intent to write to that variable
-#define hgeMutable /* mutable */
+#define hgeMUTABLE /* mutable */
+#define hgeOUT /* mutable, used to return data into a pointer */

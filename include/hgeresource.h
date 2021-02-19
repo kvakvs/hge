@@ -28,9 +28,9 @@ protected:
     friend class CTextureAssembler;
 
     std::string name;
-    int resgroup;
-    uint32_t handle;
-    ResDesc *next;
+    int resgroup{};
+    uint32_t handle{};
+    ResDesc *next{};
 
 public:
     ResDesc() {
@@ -54,7 +54,7 @@ protected:
 */
 class hgeResourceManager {
 public:
-    hgeResourceManager(const char *scriptname = nullptr);
+    explicit hgeResourceManager(const char *scriptname = nullptr);
 
     ~hgeResourceManager();
 

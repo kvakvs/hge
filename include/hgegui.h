@@ -128,7 +128,7 @@ public:
 
     void SetCursor(hgeSprite *spr);
 
-    void SetColor(const hgeColor32 color);
+    void SetColor(hgeColor32 color);
 
     void SetFocus(int id);
 

@@ -123,7 +123,7 @@ private:
 
     hgeFont &operator=(const hgeFont &fnt);
 
-    const char *_get_line(const char *file, hgeMutable char *line) const;
+    const char *_get_line(const char *file, hgeMUTABLE char *line) const;
 
     static HGE *hge_;
 
