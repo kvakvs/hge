@@ -801,7 +801,6 @@ namespace hgeImpl {
       h_search_ = nullptr;
       res_list_ = nullptr;
 
-      ev_queue_ = nullptr;
       input_char_ = v_key_ = zpos_ = 0;
       xpos_ = ypos_ = 0.0f;
       mouse_over_ = false;
@@ -878,156 +877,160 @@ namespace hgeImpl {
       }
     }
 
+    LRESULT HGE_Impl::window_proc(HWND hwnd, const UINT msg, WPARAM wparam, LPARAM lparam) {
+      switch (msg) {
+        case WM_CREATE:
+          return FALSE;
+
+        case WM_PAINT:
+          if (hgeImpl::pHGE->d3d_
+              && hgeImpl::pHGE->proc_render_func_
+              && hgeImpl::pHGE->windowed_) {
+            hgeImpl::pHGE->proc_render_func_();
+          }
+          break;
+
+        case WM_DESTROY:
+          PostQuitMessage(0);
+          return FALSE;
+
+          /*
+                  case WM_ACTIVATEAPP:
+                      bActivating = (wparam == TRUE);
+                      if(pHGE->pD3D && pHGE->bActive != bActivating) pHGE->_FocusChange(bActivating);
+                      return FALSE;
+          */
+        case WM_ACTIVATE: {
+          // tricky: we should catch WA_ACTIVE and WA_CLICKACTIVE,
+          // but only if HIWORD(wParam) (fMinimized) == FALSE (0)
+          const bool activating = LOWORD(wparam) != WA_INACTIVE && HIWORD(wparam) == 0;
+          if (hgeImpl::pHGE->d3d_
+              && hgeImpl::pHGE->active_ != activating) {
+            hgeImpl::pHGE->focus_change(activating);
+          }
+          return FALSE;
+        }
+
+        case WM_SETCURSOR:
+          if (hgeImpl::pHGE->active_
+              && LOWORD(lparam) == HTCLIENT
+              && hgeImpl::pHGE->hide_mouse_) {
+            SetCursor(nullptr);
+          } else {
+            SetCursor(LoadCursor(nullptr, IDC_ARROW));
+          }
+          return FALSE;
+
+        case WM_SYSKEYDOWN: {
+          if (wparam == VK_F4) {
+            if (hgeImpl::pHGE->proc_exit_func_
+                && !hgeImpl::pHGE->proc_exit_func_()) {
+              return FALSE;
+            }
+            return DefWindowProc(hwnd, msg, wparam, lparam);
+          }
+          if (wparam == VK_RETURN) {
+            hgeImpl::pHGE->System_SetState(HGE_WINDOWED, !hgeImpl::pHGE->System_GetState(HGE_WINDOWED));
+            return FALSE;
+          }
+          hgeImpl::pHGE->build_event(INPUT_KEYDOWN, wparam, HIWORD(lparam) & 0xFF,
+                                     (lparam & 0x40000000) ? HGEINP_REPEAT : 0, -1, -1);
+          return FALSE;
+        }
+
+        case WM_KEYDOWN:
+          hgeImpl::pHGE->build_event(INPUT_KEYDOWN, wparam, HIWORD(lparam) & 0xFF,
+                                     (lparam & 0x40000000) ? HGEINP_REPEAT : 0, -1, -1);
+          return FALSE;
+
+        case WM_SYSKEYUP:
+        case WM_KEYUP:
+          hgeImpl::pHGE->build_event(INPUT_KEYUP, wparam, HIWORD(lparam) & 0xFF, 0, -1, -1);
+          return FALSE;
+
+        case WM_LBUTTONDOWN:
+          SetFocus(hwnd);
+          hgeImpl::pHGE->build_event(INPUT_MBUTTONDOWN, HGEK_LBUTTON, 0, 0, LOWORDINT(lparam),
+                                     HIWORDINT(lparam));
+          return FALSE;
+        case WM_MBUTTONDOWN:
+          SetFocus(hwnd);
+          hgeImpl::pHGE->build_event(INPUT_MBUTTONDOWN, HGEK_MBUTTON, 0, 0, LOWORDINT(lparam),
+                                     HIWORDINT(lparam));
+          return FALSE;
+        case WM_RBUTTONDOWN:
+          SetFocus(hwnd);
+          hgeImpl::pHGE->build_event(INPUT_MBUTTONDOWN, HGEK_RBUTTON, 0, 0, LOWORDINT(lparam),
+                                     HIWORDINT(lparam));
+          return FALSE;
+
+        case WM_LBUTTONDBLCLK:
+          hgeImpl::pHGE->build_event(INPUT_MBUTTONDOWN, HGEK_LBUTTON, 0, HGEINP_REPEAT,
+                                     LOWORDINT(lparam),
+                                     HIWORDINT(lparam));
+          return FALSE;
+        case WM_MBUTTONDBLCLK:
+          hgeImpl::pHGE->build_event(INPUT_MBUTTONDOWN, HGEK_MBUTTON, 0, HGEINP_REPEAT,
+                                     LOWORDINT(lparam),
+                                     HIWORDINT(lparam));
+          return FALSE;
+        case WM_RBUTTONDBLCLK:
+          hgeImpl::pHGE->build_event(INPUT_MBUTTONDOWN, HGEK_RBUTTON, 0, HGEINP_REPEAT,
+                                     LOWORDINT(lparam),
+                                     HIWORDINT(lparam));
+          return FALSE;
+
+        case WM_LBUTTONUP:
+          hgeImpl::pHGE->build_event(INPUT_MBUTTONUP, HGEK_LBUTTON, 0, 0, LOWORDINT(lparam),
+                                     HIWORDINT(lparam));
+          return FALSE;
+        case WM_MBUTTONUP:
+          hgeImpl::pHGE->build_event(INPUT_MBUTTONUP, HGEK_MBUTTON, 0, 0, LOWORDINT(lparam),
+                                     HIWORDINT(lparam));
+          return FALSE;
+        case WM_RBUTTONUP:
+          hgeImpl::pHGE->build_event(INPUT_MBUTTONUP, HGEK_RBUTTON, 0, 0, LOWORDINT(lparam),
+                                     HIWORDINT(lparam));
+          return FALSE;
+
+        case WM_MOUSEMOVE:
+          hgeImpl::pHGE->build_event(INPUT_MOUSEMOVE, 0, 0, 0, LOWORDINT(lparam), HIWORDINT(lparam));
+          return FALSE;
+        case 0x020A: // WM_MOUSEWHEEL, GET_WHEEL_DELTA_WPARAM(wparam);
+          hgeImpl::pHGE->build_event(INPUT_MOUSEWHEEL, short(HIWORD(wparam)) / 120, 0, 0,
+                                     LOWORDINT(lparam),
+                                     HIWORDINT(lparam));
+          return FALSE;
+
+        case WM_SIZE:
+          if (hgeImpl::pHGE->d3d_
+              && wparam == SIZE_RESTORED) {
+            hgeImpl::pHGE->resize(LOWORD(lparam), HIWORD(lparam));
+          }
+          //return FALSE;
+          break;
+
+        case WM_SYSCOMMAND:
+          if (wparam == SC_CLOSE) {
+            if (hgeImpl::pHGE->proc_exit_func_
+                && !hgeImpl::pHGE->proc_exit_func_()) {
+              return FALSE;
+            }
+            hgeImpl::pHGE->active_ = false;
+            return DefWindowProc(hwnd, msg, wparam, lparam);
+          }
+          break;
+        default:
+          break;
+      }
+
+      return DefWindowProc(hwnd, msg, wparam, lparam);
+    }
+
 } // namespace
 
 LRESULT CALLBACK WindowProc(HWND hwnd, const UINT msg, WPARAM wparam, LPARAM lparam) {
-  switch (msg) {
-    case WM_CREATE:
-      return FALSE;
-
-    case WM_PAINT:
-      if (hgeImpl::pHGE->d3d_
-          && hgeImpl::pHGE->proc_render_func_
-          && hgeImpl::pHGE->windowed_) {
-        hgeImpl::pHGE->proc_render_func_();
-      }
-      break;
-
-    case WM_DESTROY:
-      PostQuitMessage(0);
-      return FALSE;
-
-      /*
-              case WM_ACTIVATEAPP:
-                  bActivating = (wparam == TRUE);
-                  if(pHGE->pD3D && pHGE->bActive != bActivating) pHGE->_FocusChange(bActivating);
-                  return FALSE;
-      */
-    case WM_ACTIVATE: {
-      // tricky: we should catch WA_ACTIVE and WA_CLICKACTIVE,
-      // but only if HIWORD(wParam) (fMinimized) == FALSE (0)
-      const bool activating = LOWORD(wparam) != WA_INACTIVE && HIWORD(wparam) == 0;
-      if (hgeImpl::pHGE->d3d_
-          && hgeImpl::pHGE->active_ != activating) {
-        hgeImpl::pHGE->focus_change(activating);
-      }
-      return FALSE;
-    }
-
-    case WM_SETCURSOR:
-      if (hgeImpl::pHGE->active_
-          && LOWORD(lparam) == HTCLIENT
-          && hgeImpl::pHGE->hide_mouse_) {
-        SetCursor(nullptr);
-      } else {
-        SetCursor(LoadCursor(nullptr, IDC_ARROW));
-      }
-      return FALSE;
-
-    case WM_SYSKEYDOWN: {
-      if (wparam == VK_F4) {
-        if (hgeImpl::pHGE->proc_exit_func_
-            && !hgeImpl::pHGE->proc_exit_func_()) {
-          return FALSE;
-        }
-        return DefWindowProc(hwnd, msg, wparam, lparam);
-      }
-      if (wparam == VK_RETURN) {
-        hgeImpl::pHGE->System_SetState(HGE_WINDOWED, !hgeImpl::pHGE->System_GetState(HGE_WINDOWED));
-        return FALSE;
-      }
-      hgeImpl::pHGE->build_event(INPUT_KEYDOWN, wparam, HIWORD(lparam) & 0xFF,
-                                 (lparam & 0x40000000) ? HGEINP_REPEAT : 0, -1, -1);
-      return FALSE;
-    }
-
-    case WM_KEYDOWN:
-      hgeImpl::pHGE->build_event(INPUT_KEYDOWN, wparam, HIWORD(lparam) & 0xFF,
-                                 (lparam & 0x40000000) ? HGEINP_REPEAT : 0, -1, -1);
-      return FALSE;
-
-    case WM_SYSKEYUP:
-    case WM_KEYUP:
-      hgeImpl::pHGE->build_event(INPUT_KEYUP, wparam, HIWORD(lparam) & 0xFF, 0, -1, -1);
-      return FALSE;
-
-    case WM_LBUTTONDOWN:
-      SetFocus(hwnd);
-      hgeImpl::pHGE->build_event(INPUT_MBUTTONDOWN, HGEK_LBUTTON, 0, 0, LOWORDINT(lparam),
-                                 HIWORDINT(lparam));
-      return FALSE;
-    case WM_MBUTTONDOWN:
-      SetFocus(hwnd);
-      hgeImpl::pHGE->build_event(INPUT_MBUTTONDOWN, HGEK_MBUTTON, 0, 0, LOWORDINT(lparam),
-                                 HIWORDINT(lparam));
-      return FALSE;
-    case WM_RBUTTONDOWN:
-      SetFocus(hwnd);
-      hgeImpl::pHGE->build_event(INPUT_MBUTTONDOWN, HGEK_RBUTTON, 0, 0, LOWORDINT(lparam),
-                                 HIWORDINT(lparam));
-      return FALSE;
-
-    case WM_LBUTTONDBLCLK:
-      hgeImpl::pHGE->build_event(INPUT_MBUTTONDOWN, HGEK_LBUTTON, 0, HGEINP_REPEAT,
-                                 LOWORDINT(lparam),
-                                 HIWORDINT(lparam));
-      return FALSE;
-    case WM_MBUTTONDBLCLK:
-      hgeImpl::pHGE->build_event(INPUT_MBUTTONDOWN, HGEK_MBUTTON, 0, HGEINP_REPEAT,
-                                 LOWORDINT(lparam),
-                                 HIWORDINT(lparam));
-      return FALSE;
-    case WM_RBUTTONDBLCLK:
-      hgeImpl::pHGE->build_event(INPUT_MBUTTONDOWN, HGEK_RBUTTON, 0, HGEINP_REPEAT,
-                                 LOWORDINT(lparam),
-                                 HIWORDINT(lparam));
-      return FALSE;
-
-    case WM_LBUTTONUP:
-      hgeImpl::pHGE->build_event(INPUT_MBUTTONUP, HGEK_LBUTTON, 0, 0, LOWORDINT(lparam),
-                                 HIWORDINT(lparam));
-      return FALSE;
-    case WM_MBUTTONUP:
-      hgeImpl::pHGE->build_event(INPUT_MBUTTONUP, HGEK_MBUTTON, 0, 0, LOWORDINT(lparam),
-                                 HIWORDINT(lparam));
-      return FALSE;
-    case WM_RBUTTONUP:
-      hgeImpl::pHGE->build_event(INPUT_MBUTTONUP, HGEK_RBUTTON, 0, 0, LOWORDINT(lparam),
-                                 HIWORDINT(lparam));
-      return FALSE;
-
-    case WM_MOUSEMOVE:
-      hgeImpl::pHGE->build_event(INPUT_MOUSEMOVE, 0, 0, 0, LOWORDINT(lparam), HIWORDINT(lparam));
-      return FALSE;
-    case 0x020A: // WM_MOUSEWHEEL, GET_WHEEL_DELTA_WPARAM(wparam);
-      hgeImpl::pHGE->build_event(INPUT_MOUSEWHEEL, short(HIWORD(wparam)) / 120, 0, 0,
-                                 LOWORDINT(lparam),
-                                 HIWORDINT(lparam));
-      return FALSE;
-
-    case WM_SIZE:
-      if (hgeImpl::pHGE->d3d_
-          && wparam == SIZE_RESTORED) {
-        hgeImpl::pHGE->resize(LOWORD(lparam), HIWORD(lparam));
-      }
-      //return FALSE;
-      break;
-
-    case WM_SYSCOMMAND:
-      if (wparam == SC_CLOSE) {
-        if (hgeImpl::pHGE->proc_exit_func_
-            && !hgeImpl::pHGE->proc_exit_func_()) {
-          return FALSE;
-        }
-        hgeImpl::pHGE->active_ = false;
-        return DefWindowProc(hwnd, msg, wparam, lparam);
-      }
-      break;
-    default:
-      break;
-  }
-
-  return DefWindowProc(hwnd, msg, wparam, lparam);
+  return hgeImpl::pHGE->window_proc(hwnd, msg, wparam, lparam);
 }
 
 HGE *HGE_CALL hgeCreate(const int ver) {

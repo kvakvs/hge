@@ -16,6 +16,7 @@
 #include <cstdio>
 #include <impl/hgegapi.h>
 #include <string>
+#include <queue>
 
 
 #define HGE_SPLASH_ENABLE
@@ -57,10 +58,10 @@ namespace hgeImpl {
         CStreamList *next;
     };
 
-    struct CInputEventList {
-        hgeInputEvent event;
-        CInputEventList *next;
-    };
+//    struct CInputEventList {
+//        hgeInputEvent event;
+//        CInputEventList *next;
+//    };
 
 
     void prepare_demo();
@@ -321,15 +322,21 @@ namespace hgeImpl {
 
         void HGE_CALL Texture_Unlock(HTEXTURE tex) override;
 
-        //////// Implementation ////////
-
+        //-----------------------------------------------
+        // Interaction with outer layer in system.cpp
+        //-----------------------------------------------
+        LRESULT window_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
         static HGE_Impl *interface_get();
 
+    private:
+        //------------------------------------------------------------
+        // Implementation
+        //------------------------------------------------------------
         void focus_change(bool bAct);
 
         void post_error(char const *error);
 
-
+    private:
         HINSTANCE h_instance_;
         HWND hwnd_;
 
@@ -380,8 +387,9 @@ namespace hgeImpl {
         bool splash_screen_enabled_;
 #endif
 
-
+        //-----------------------------------------------
         // Power
+        //-----------------------------------------------
         int power_status_;
         HMODULE krnl32_;
         GetSystemPowerStatusFunc get_system_power_status_;
@@ -393,7 +401,9 @@ namespace hgeImpl {
         void done_power_status() const;
 
 
+        //-----------------------------------------------
         // Graphics
+        //-----------------------------------------------
         D3DPRESENT_PARAMETERS *d3dpp_;
 
         D3DPRESENT_PARAMETERS d3dpp_windowed_;
@@ -447,7 +457,9 @@ namespace hgeImpl {
         void set_projection_matrix(int width, int height);
 
 
+        //-----------------------------------------------
         // Audio
+        //-----------------------------------------------
         HINSTANCE hBass;
         bool is_silent_;
         CStreamList *sound_streams_;
@@ -478,7 +490,8 @@ namespace hgeImpl {
         };
         KeyState key_table_[256];
 
-        CInputEventList *ev_queue_;
+//        CInputEventList *ev_queue_;
+        std::queue<hgeInputEvent> ev_queue_;
 
         void update_mouse();
 
@@ -489,13 +502,17 @@ namespace hgeImpl {
         void build_event(int type, int key, int scan, int flags, int x, int y);
 
 
+        //-----------------------------------------------
         // Resources
+        //-----------------------------------------------
         CResourceList *res_list_;
         HANDLE h_search_;
         WIN32_FIND_DATA search_data_;
 
 
+        //-----------------------------------------------
         // Timer
+        //-----------------------------------------------
         float time_;
         float delta_time_;
         uint32_t fixed_delta_;
@@ -504,7 +521,6 @@ namespace hgeImpl {
         uint32_t t0_fps_;
         uint32_t dt_;
         int cfps_;
-
 
     private:
         HGE_Impl();

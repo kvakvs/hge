@@ -52,16 +52,10 @@ namespace hgeImpl {
 
 
     bool HGE_CALL HGE_Impl::Input_GetEvent(hgeInputEvent *event) {
-
-      if (ev_queue_) {
-        auto eptr = ev_queue_;
-        memcpy(event, &eptr->event, sizeof(hgeInputEvent));
-        ev_queue_ = eptr->next;
-        delete eptr;
-        return true;
-      }
-
-      return false;
+      if (ev_queue_.empty()) { return false; }
+      memcpy(event, &ev_queue_.front(), sizeof(hgeInputEvent));
+      ev_queue_.pop();
+      return true;
     }
 
     void HGE_CALL HGE_Impl::Input_GetMousePos(float *x, float *y) {
@@ -141,12 +135,9 @@ namespace hgeImpl {
 
     void HGE_Impl::build_event(const int type, const int key, const int scan,
                                int flags, const int x, const int y) {
-      auto eptr = new CInputEventList;
       unsigned char kbstate[256];
       POINT pt;
-
-      eptr->event.type = type;
-      eptr->event.chr = 0;
+      hgeInputEvent new_event(type, 0);
       pt.x = x;
       pt.y = y;
 
@@ -156,20 +147,20 @@ namespace hgeImpl {
           key_table_[key].pressed = true;
         }
         ToAscii(key, scan, kbstate,
-                reinterpret_cast<uint16_t *>(&eptr->event.chr), 0);
+                reinterpret_cast<uint16_t *>(&new_event.chr), 0);
       }
       if (type == INPUT_KEYUP) {
         key_table_[key].released = true;
         ToAscii(key, scan, kbstate,
-                reinterpret_cast<uint16_t *>(&eptr->event.chr), 0);
+                reinterpret_cast<uint16_t *>(&new_event.chr), 0);
       }
       if (type == INPUT_MOUSEWHEEL) {
-        eptr->event.key = 0;
-        eptr->event.wheel = key;
+        new_event.key = 0;
+        new_event.wheel = key;
         ScreenToClient(hwnd_, &pt);
       } else {
-        eptr->event.key = key;
-        eptr->event.wheel = 0;
+        new_event.key = key;
+        new_event.wheel = 0;
       }
 
       if (type == INPUT_MBUTTONDOWN) {
@@ -204,11 +195,11 @@ namespace hgeImpl {
       if (kbstate[VK_NUMLOCK] & 0x1) {
         flags |= HGEINP_NUMLOCK;
       }
-      eptr->event.flags = flags;
+      new_event.flags = flags;
 
       if (pt.x == -1) {
-        eptr->event.x = xpos_;
-        eptr->event.y = ypos_;
+        new_event.x = xpos_;
+        new_event.y = ypos_;
       } else {
         if (pt.x < 0) {
           pt.x = 0;
@@ -223,45 +214,29 @@ namespace hgeImpl {
           pt.y = screen_height_ - 1;
         }
 
-        eptr->event.x = static_cast<float>(pt.x);
-        eptr->event.y = static_cast<float>(pt.y);
+        new_event.x = static_cast<float>(pt.x);
+        new_event.y = static_cast<float>(pt.y);
       }
 
-      eptr->next = nullptr;
-
-      if (!ev_queue_) {
-        ev_queue_ = eptr;
-      } else {
-        auto last = ev_queue_;
-        while (last->next) {
-          last = last->next;
-        }
-        last->next = eptr;
+      if (new_event.type == INPUT_KEYDOWN
+          || new_event.type == INPUT_MBUTTONDOWN) {
+        v_key_ = new_event.key;
+        input_char_ = new_event.chr;
+      } else if (new_event.type == INPUT_MOUSEMOVE) {
+        xpos_ = new_event.x;
+        ypos_ = new_event.y;
+      } else if (new_event.type == INPUT_MOUSEWHEEL) {
+        zpos_ += new_event.wheel;
       }
 
-      if (eptr->event.type == INPUT_KEYDOWN || eptr->event.type == INPUT_MBUTTONDOWN) {
-        v_key_ = eptr->event.key;
-        input_char_ = eptr->event.chr;
-      } else if (eptr->event.type == INPUT_MOUSEMOVE) {
-        xpos_ = eptr->event.x;
-        ypos_ = eptr->event.y;
-      } else if (eptr->event.type == INPUT_MOUSEWHEEL) {
-        zpos_ += eptr->event.wheel;
-      }
+      ev_queue_.push(new_event); // TODO: Can use C++11 emplace
     }
 
     void HGE_Impl::clear_queue() {
-      auto eptr = ev_queue_;
+      while (!ev_queue_.empty()) { ev_queue_.pop(); }
 
       memset(&key_table_, 0, sizeof(key_table_));
 
-      while (eptr) {
-        const auto nexteptr = eptr->next;
-        delete eptr;
-        eptr = nexteptr;
-      }
-
-      ev_queue_ = nullptr;
       v_key_ = 0;
       input_char_ = 0;
       zpos_ = 0;

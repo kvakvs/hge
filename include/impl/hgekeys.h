@@ -13,13 +13,15 @@
 // HGE Input Event structure
 //
 struct hgeInputEvent {
+    hgeInputEvent(int type, int chr) : type(type), chr(chr) {}
+
     int type; // event type
-    int key; // key code
-    int flags; // event flags
+    int key{}; // key code
+    int flags{}; // event flags
     int chr; // character code
-    int wheel; // wheel shift
-    float x; // mouse cursor x-coordinate
-    float y; // mouse cursor y-coordinate
+    int wheel{}; // wheel shift
+    float x{}; // mouse cursor x-coordinate
+    float y{}; // mouse cursor y-coordinate
 };
 
 
